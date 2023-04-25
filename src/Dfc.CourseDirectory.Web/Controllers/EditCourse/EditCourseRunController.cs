@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
@@ -357,7 +358,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                     //Generate Live service URL accordingly based on current host
                     string host = HttpContext.Request.Host.ToString();
-                    ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("The course name displayed on the National Career Service, <a href='");
+                    sb.Append(LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search");
+                    sb.Append("' class='govuk-link' target='_blank'>Find a course</a>.");
+                    ViewBag.LiveServiceURL = sb.ToString();
 
                     return View("EditCourseRun", vm);
                 }

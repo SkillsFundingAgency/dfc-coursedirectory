@@ -1,9 +1,6 @@
-﻿using System.Security.AccessControl;
-using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
+﻿using System;
 
-namespace Dfc.CourseDirectory.Web.Helpers
+namespace Dfc.CourseDirectory.WebV2
 {
     public static class LiveServiceURLHelper
     {

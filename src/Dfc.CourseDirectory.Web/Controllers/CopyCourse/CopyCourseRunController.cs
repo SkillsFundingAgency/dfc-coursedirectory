@@ -352,11 +352,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
-            StringBuilder sb = new StringBuilder();
-            sb.Append("The course name displayed on the National Career Service, <a href='");
-            sb.Append(LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search");
-            sb.Append("' class='govuk-link' target='_blank'>Find a course</a>.");
-            ViewBag.LiveServiceURL = sb.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
             return View("CopyCourseRun", vm);
         }
