@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.Controllers
