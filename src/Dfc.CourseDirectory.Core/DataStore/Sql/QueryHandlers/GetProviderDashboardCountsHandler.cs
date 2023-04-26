@@ -18,6 +18,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT COUNT(*)
 FROM Pttcd.CourseRuns cr
 JOIN Pttcd.Courses c ON c.CourseId = cr.CourseId
+JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 WHERE c.ProviderId = @ProviderId
 AND cr.CourseRunStatus = {(int)CourseStatus.Live}
 
@@ -34,6 +35,7 @@ AND v.VenueStatus = {(int)VenueStatus.Live}
 SELECT COUNT(*)
 FROM Pttcd.CourseRuns cr
 JOIN Pttcd.Courses c ON c.CourseId = cr.CourseId
+JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 WHERE c.ProviderId = @ProviderId
 AND cr.CourseRunStatus = {(int)CourseStatus.Live}
 AND cr.StartDate < @{nameof(query.Date)}
