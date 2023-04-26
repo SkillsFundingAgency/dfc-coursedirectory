@@ -16,9 +16,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string Email { get; set; }
         public DateTime? PassedQAOn { get; set; }
         public DateTime? FailedQAOn { get; set; }
-        public ApprenticeshipQAUnableToCompleteReasons? UnableToCompleteReasons { get; set; }
         public DateTime? UnabletoCompleteOn { get; set; }
         public string Notes { get; set; }
-        public ApprenticeshipQAStatus? QAStatus { get; set; }
     }
 }

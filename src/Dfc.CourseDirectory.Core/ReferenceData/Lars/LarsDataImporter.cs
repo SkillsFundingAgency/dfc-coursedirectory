@@ -62,6 +62,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             var learningDeliveryRefs = await ImportLearningDeliveryToSql();
             await ImportLearnAimRefTypeToSql();
             await ImportLearningDeliveryCategoryToSql(categoriesRefs, learningDeliveryRefs);
+            foreach (var learnAimRef in learningDeliveryRefs)
+            {
+                await UpdateFreeCoursesWithExpiredFundingFromFindACourseIndexInSql(learnAimRef);
+            }
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
             await ImportStandardsToSql();
@@ -262,6 +266,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveryCategories()
                 {
                     Records = validRecords
+                }));
+            }
+
+            Task UpdateFreeCoursesWithExpiredFundingFromFindACourseIndexInSql(string learningDeliveryRef)
+            {
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpdateFindACourseIndexForExpiredFreeCourseFunding()
+                {
+                    LearnAimRef = learningDeliveryRef
                 }));
             }
 

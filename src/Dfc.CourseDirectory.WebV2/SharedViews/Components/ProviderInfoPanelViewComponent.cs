@@ -9,7 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.WebV2.SharedViews.Components;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.NewApprenticeshipProvider
+namespace Dfc.CourseDirectory.WebV2.Features
 {
     public class ProviderInfoPanelViewComponent : ViewComponent
     {

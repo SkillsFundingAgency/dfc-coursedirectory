@@ -234,7 +234,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
             var (venueUpload, _) = await TestData.CreateVenueUpload(providerId: provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus: UploadStatus.ProcessedWithErrors,
@@ -265,7 +264,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
         {
             // Arrange
             var provider = await TestData.CreateProvider(
-                apprenticeshipQAStatus: ApprenticeshipQAStatus.NotStarted,
                 providerType: ProviderType.FE);
 
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;

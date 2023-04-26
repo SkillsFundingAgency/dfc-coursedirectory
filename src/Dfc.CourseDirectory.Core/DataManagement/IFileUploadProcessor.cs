@@ -36,14 +36,5 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<SaveVenueFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow);
         Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
-
-        // Apprenticeships
-        Task<SaveApprenticeshipFileResult> SaveApprenticeshipFile(Guid providerId, Stream stream, UserInfo uploadedBy);
-        Task ProcessApprenticeshipFile(Guid apprenticeshipUploadId, Stream stream);
-        IObservable<UploadStatus> GetApprenticeshipUploadStatusUpdatesForProvider(Guid providerId);
-        Task DeleteApprenticeshipUploadForProvider(Guid providerId);
-        Task<IReadOnlyCollection<ApprenticeshipUploadRow>> GetApprenticeshipUploadRowsWithErrorsForProvider(Guid providerId);
-        Task<(IReadOnlyCollection<ApprenticeshipUploadRow> Rows, UploadStatus UploadStatus)> GetApprenticeshipUploadRowsForProvider(Guid providerId);
-        Task<PublishResult> PublishApprenticeshipUploadForProvider(Guid providerId, UserInfo publishedBy);
     }
 }

@@ -63,6 +63,9 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(124);
                 (await CountSqlRows("LARS.LearningDelivery")).Should().Be(123760);
                 (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(88071);
+                (await CountFindACourseIndexRowsWithLevel3FreeTag("5011394X")).Should().Be(0); //free courses with expired funding should have no 'LEVEL3_FREE' tags on any rows
+                (await CountFindACourseIndexRowsWithLevel3FreeTag("60131391")).Should().BeGreaterThan(0);//free courses with ongoing funding should still have 'LEVEL3_FREE' tags
+                (await CountFindACourseIndexRowsWhichHaveBeenUpdated("60307262")).Should().Be(0); //non-free courses should not have been updated at all
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
                 (await CountSqlRows("Pttcd.Standards")).Should().Be(683);
@@ -101,6 +104,20 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         private Task<int> CountSqlRows(string tableName)
         {
             var query = $"SELECT COUNT(*) FROM {tableName}";
+
+            return WithSqlQueryDispatcher(dispatcher => dispatcher.Transaction.Connection.QuerySingleAsync<int>(query, transaction: dispatcher.Transaction));
+        }
+
+        private Task<int> CountFindACourseIndexRowsWithLevel3FreeTag(string LearnAimRef)
+        {
+            var query = $"SELECT COUNT(*) FROM [Pttcd].[FindACourseIndex] WHERE LearnAimRef = '{LearnAimRef}' AND CHARINDEX('LEVEL3_FREE', CampaignCodes) > 0";
+
+            return WithSqlQueryDispatcher(dispatcher => dispatcher.Transaction.Connection.QuerySingleAsync<int>(query, transaction: dispatcher.Transaction));
+        }
+
+        private Task<int> CountFindACourseIndexRowsWhichHaveBeenUpdated(string LearnAimRef)
+        {
+            var query = $"SELECT COUNT(*) FROM [Pttcd].[FindACourseIndex] WHERE LearnAimRef = '{LearnAimRef}' AND DATEDIFF(minute, GETDATE(), UpdatedOn) = 0"; ;
 
             return WithSqlQueryDispatcher(dispatcher => dispatcher.Transaction.Connection.QuerySingleAsync<int>(query, transaction: dispatcher.Transaction));
         }

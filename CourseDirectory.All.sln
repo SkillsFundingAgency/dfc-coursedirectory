@@ -41,13 +41,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Functions.Tests", "tests\Dfc.CourseDirectory.Functions.Tests\Dfc.CourseDirectory.Functions.Tests.csproj", "{FB58F910-217D-4473-A33F-AB8782DBFEE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindAnApprenticeshipApi", "src\Dfc.CourseDirectory.FindAnApprenticeshipApi\Dfc.CourseDirectory.FindAnApprenticeshipApi.csproj", "{3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindAnApprenticeship.Tests", "tests\Dfc.CourseDirectory.FindAnApprenticeship.Tests\Dfc.CourseDirectory.FindAnApprenticeship.Tests.csproj", "{8C1D152F-332B-4F5A-B2BD-30ADC8A9BEB9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3} = {3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Api", "src\Dfc.CourseDirectory.Api\Dfc.CourseDirectory.Api.csproj", "{5EBB5DED-63D9-4A9D-88F6-92A848300E07}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Api.Tests", "tests\Dfc.CourseDirectory.Api.Tests\Dfc.CourseDirectory.Api.Tests.csproj", "{87C195EB-B67E-4DED-951F-EFF2A98D75A9}"
@@ -110,14 +103,6 @@ Global
 		{FB58F910-217D-4473-A33F-AB8782DBFEE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB58F910-217D-4473-A33F-AB8782DBFEE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB58F910-217D-4473-A33F-AB8782DBFEE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3BD1F1CC-9CC9-4C45-A6AC-31D662710FA3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C1D152F-332B-4F5A-B2BD-30ADC8A9BEB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C1D152F-332B-4F5A-B2BD-30ADC8A9BEB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C1D152F-332B-4F5A-B2BD-30ADC8A9BEB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C1D152F-332B-4F5A-B2BD-30ADC8A9BEB9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5EBB5DED-63D9-4A9D-88F6-92A848300E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5EBB5DED-63D9-4A9D-88F6-92A848300E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EBB5DED-63D9-4A9D-88F6-92A848300E07}.Release|Any CPU.ActiveCfg = Release|Any CPU

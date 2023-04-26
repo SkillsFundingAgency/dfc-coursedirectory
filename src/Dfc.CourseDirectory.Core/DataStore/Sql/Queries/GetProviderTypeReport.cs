@@ -16,8 +16,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string UkrlpProviderStatusDescription { get; set; }
         public int LiveCourseCount { get; set; }
         public int OtherCourseCount { get; set; }
-        public int LiveApprenticeshipCount { get; set; }
-        public int OtherApprenticeshipCount { get; set; }
         public int LiveTLevelCount { get; set; }
         public int OtherTLevelCount { get; set; }
     }

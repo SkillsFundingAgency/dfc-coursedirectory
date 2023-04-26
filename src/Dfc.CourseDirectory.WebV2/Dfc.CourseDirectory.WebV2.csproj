@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
@@ -10,15 +10,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
-    <PackageReference Include="CsvHelper" Version="27.1.1" />
-    <PackageReference Include="Flurl" Version="2.8.2" />
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Flurl" Version="3.0.7" />
     <PackageReference Include="FormFlow" Version="0.4.4" />
     <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.5.1" />
-    <PackageReference Include="JWT" Version="5.2.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.3" />
+    <PackageReference Include="JWT" Version="10.0.2" />
+	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,16 +47,8 @@
     <None Remove="Content\layout.css" />
     <None Remove="Content\nav.css" />
     <None Remove="Content\notification.css" />
-    <None Remove="Content\pages\apprenticeship-qa\apprenticeship-qa-info-panel.css" />
-    <None Remove="Content\pages\apprenticeship-qa\provider-selected.css" />
-    <None Remove="Content\pages\apprenticeships\classroom-location.js" />
-    <None Remove="Content\pages\apprenticeships\find-standard-or-framework.css" />
     <None Remove="Content\pages\data-upload.css" />
     <None Remove="Content\pages\helpdesk-dashboard.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-classroom-locations.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\apprenticeship-summary.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail-info-panel.css" />
-    <None Remove="Content\pages\new-apprenticeship-provider\provider-detail.css" />
     <None Remove="Content\pages\provider-dashboard.css" />
     <None Remove="Content\pages\providers\provider-details.css" />
     <None Remove="Content\pages\data-upload.css" />
