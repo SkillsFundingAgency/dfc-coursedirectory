@@ -230,6 +230,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 }
             }
 
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return View("EditCourseRun", vm);
         }
 
