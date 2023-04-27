@@ -102,8 +102,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("resolve/{rowNumber}/description")]
-        public async Task<IActionResult> ResolveRowDescription(ResolveRowDescription.Query query) =>
-            await _mediator.SendAndMapResponse(query, errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+        public async Task<IActionResult> ResolveRowDescription(ResolveRowDescription.Query query)
+        {
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
+            return await _mediator.SendAndMapResponse(query, errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+        }
 
         [HttpPost("resolve/{rowNumber}/description")]
         public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber, ResolveRowDescription.Command command)
@@ -132,6 +138,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 DeliveryMode = deliveryMode,
                 RowNumber = rowNumber
             };
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
             return await _mediator.SendAndMapResponse(
                 query,
@@ -242,14 +252,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("success")]
         [RequireJourneyInstance]
         [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
-        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm));
+        public async Task<IActionResult> Published() 
+        {
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
+            return await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm)); 
+        }
 
         [HttpGet("template")]
         public IActionResult Template() =>
            new CsvResult<CsvCourseRow>("courses-template.csv", Enumerable.Empty<CsvCourseRow>());
 
         [HttpGet("formatting")]
-        public IActionResult Formatting() => View();
+        public IActionResult Formatting()
+        {
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
+            return View(); 
+        }
 
         [HttpGet("download-errors")]
         public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
