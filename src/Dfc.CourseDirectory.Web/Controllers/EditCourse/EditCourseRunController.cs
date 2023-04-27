@@ -239,6 +239,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             if (Session.GetInt32("UKPRN") != null)
             {
                 UKPRN = Session.GetInt32("UKPRN").Value;
@@ -355,10 +359,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
-
-                    //Generate Live service URL accordingly based on current host
-                    string host = HttpContext.Request.Host.ToString();
-                    ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
                     return View("EditCourseRun", vm);
                 }
