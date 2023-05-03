@@ -1,7 +1,14 @@
-﻿@addTagHelper *, GovUk.Frontend.AspNetCore
+﻿@using Dfc.CourseDirectory.Web.Views.Shared;
+@addTagHelper *, GovUk.Frontend.AspNetCore
 @model PublishedCourseViewModel
 @{
-    Layout = "_V2LayoutProviderContext";
+    //Layout = "_V2LayoutProviderContext";
+    Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+            {
+                BackLink = false,
+            });
     ViewBag.Title = "Your course has been published";
 }
 
