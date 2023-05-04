@@ -204,7 +204,7 @@
 
             <button name="saveButton" type="submit" class="govuk-button cd-cancel-btn" id="save">Continue</button>
 
-            <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="govuk-link cd-cancel-link govuk-!-margin-left-3">Cancel</a>
+            <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="govuk-link govuk-!-margin-left-3">Cancel</a>
 
         </form>
 
