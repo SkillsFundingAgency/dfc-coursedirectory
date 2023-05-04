@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "appInsightsInstrumentationKey": {
+            "type": "string"
+        },
     "webAppPrefix": {
       "type": "string",
       "metadata": {
@@ -72,29 +75,10 @@
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "webAppName": "[concat(parameters('webAppPrefix'),'-as')]",
+    "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]",
     "appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
   },
   "resources": [
-    {
-      "apiVersion": "2017-05-10",
-      "name": "ppapiAppInsights",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('appInsightName')]"
-          },
-          "attachedService": {
-            "value": "[variables('webAppName')]"
-          }
-        }
-      }
-    },
     {
       "name": "ppapiAppService",
       "type": "Microsoft.Resources/deployments",
@@ -122,7 +106,7 @@
             "value": [
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
+                "value": "[variables('webAppInsightsInstrumentationKey')]"
               },
               {
                 "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -177,7 +161,7 @@
     },
     "appInsightInstrumentationKey": {
       "type": "string",
-      "value": "[reference('ppapiAppInsights').outputs.InstrumentationKey.value]"
+      "value": "[variables('webAppInsightsInstrumentationKey')]"
     }
   }
 }
