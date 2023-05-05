@@ -133,6 +133,9 @@
     },
     "FindACourseUrl": {
       "value": "https://not-a-real-env.nationalcareersservice.org.uk/find-a-course"
+    },
+    "appInsightsInstrumentationKey": {
+      "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8" 
     }
   }
 }

@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "appInsightsInstrumentationKey": {
+            "type": "string"
+    },
     "projectPrefix": {
       "type": "string",
       "metadata": {
@@ -267,32 +270,33 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "appInsightsName": "[concat(variables('appServiceName'),'-ai')]",
+    //"appInsightsName": "[concat(variables('appServiceName'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
     "functionAppName": "[concat(parameters('projectPrefix'),'-fa')]",
-    "functionAppInsightsName": "[concat(variables('functionAppName'),'-ai')]"
+    //"functionAppInsightsName": "[concat(variables('functionAppName'),'-ai')]",
+    "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]"
   },
   "resources": [
-    {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryAppInsights",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('appInsightsName')]"
-          },
-          "attachedService": {
-            "value": "[variables('appServiceName')]"
-          }
-        }
-      }
-    },
+  //  {
+  //    "apiVersion": "2017-05-10",
+  //    "name": "courseDirectoryAppInsights",
+  //    "type": "Microsoft.Resources/deployments",
+  //    "properties": {
+  //      "mode": "Incremental",
+  //      "templateLink": {
+  //        "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+  //        "contentVersion": "1.0.0.0"
+  //      },
+  //      "parameters": {
+  //        "appInsightsName": {
+  //          "value": "[variables('appInsightsName')]"
+  //        },
+  //        "attachedService": {
+  //          "value": "[variables('appServiceName')]"
+  //       }
+  //      }
+  //    }
+  // },
     {
       "name": "courseDirectoryCertificates",
       "type": "Microsoft.Resources/deployments",
@@ -361,7 +365,8 @@
             "value": [
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+              //  "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+              "value": "[variables('webAppInsightsInstrumentationKey')]"
               },
               {
                 "name": "LarsSearchSettings__ApiUrl",
@@ -601,26 +606,26 @@
         }
       }
     },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "[variables('functionAppInsightsName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppInsightsName')]"
-          },
-          "attachedService": {
-            "value": ""
-          }
-        }
-      }
-    },
+   // {
+   //   "apiVersion": "2017-05-10",
+   //   "name": "[variables('functionAppInsightsName')]",
+   //   "type": "Microsoft.Resources/deployments",
+   //   "properties": {
+   //     "mode": "Incremental",
+   //     "templateLink": {
+   //       "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
+   //       "contentVersion": "1.0.0.0"
+   //     },
+   //     "parameters": {
+   //       "appInsightsName": {
+   //         "value": "[variables('functionAppInsightsName')]"
+   //       },
+   //       "attachedService": {
+   //         "value": ""
+   //       }
+   //     }
+   //   }
+   // },
     {
       "apiVersion": "2017-05-10",
       "name": "[variables('functionAppName')]",
@@ -659,7 +664,8 @@
               },
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
+               // "value": "[reference(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
+              "value": "[variables('webAppInsightsInstrumentationKey')]"
               },
               {
                 "name": "AzureWebJobsStorage",
@@ -705,16 +711,17 @@
             ]
           }
         }
-      },
-      "dependsOn": [
-        "[variables('functionAppInsightsName')]"
-      ]
+      }
+    //  "dependsOn": [
+    //    "[variables('functionAppInsightsName')]"
+    //  ]
     }
   ],
   "outputs": {
     "appInsightInstrumentationKey": {
       "type": "string",
-      "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+      // "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+      "value": "[variables('webAppInsightsInstrumentationKey')]"
     },
     "appServiceName": {
       "type": "string",
