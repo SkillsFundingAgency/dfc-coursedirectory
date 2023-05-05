@@ -34,6 +34,9 @@
     },
     "providerPortalApplicationInsights": {
       "value": "dfc-dev-prov-as-ai"
+    },
+    "appInsightsInstrumentationKey": {
+      "value": "__appInsightsInstrumentationKey__" 
     }
   }
 }
