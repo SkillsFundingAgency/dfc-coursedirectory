@@ -79,6 +79,26 @@
     //"appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
   },
   "resources": [
+   // {
+      //"apiVersion": "2017-05-10",
+      //"name": "ppapiAppInsights",
+      //"type": "Microsoft.Resources/deployments",
+      //"properties": {
+        //"mode": "Incremental",
+        //"templateLink": {
+          //"uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+          //"contentVersion": "1.0.0.0"
+        //},
+        //"parameters": {
+          //"appInsightsName": {
+           // "value": "[variables('appInsightName')]"
+         // },
+          //"attachedService": {
+           // "value": "[variables('webAppName')]"
+         // }
+       // }
+     // }
+   // },
     {
       "name": "ppapiAppService",
       "type": "Microsoft.Resources/deployments",
@@ -106,6 +126,7 @@
             "value": [
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                //"value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
                 "value": "[variables('webAppInsightsInstrumentationKey')]"
               },
               {
@@ -161,6 +182,7 @@
    // },
     "appInsightInstrumentationKey": {
       "type": "string",
+      // "value": "[reference('ppapiAppInsights').outputs.InstrumentationKey.value]"
       "value": "[variables('webAppInsightsInstrumentationKey')]"
     }
   }
