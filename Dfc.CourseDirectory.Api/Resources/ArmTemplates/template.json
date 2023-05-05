@@ -79,16 +79,16 @@
     //"appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
   },
   "resources": [
-   // {
+  // {
       //"apiVersion": "2017-05-10",
-      //"name": "ppapiAppInsights",
-      //"type": "Microsoft.Resources/deployments",
-      //"properties": {
-        //"mode": "Incremental",
-        //"templateLink": {
-          //"uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          //"contentVersion": "1.0.0.0"
-        //},
+     // "name": "ppapiAppInsights",
+     // "type": "Microsoft.Resources/deployments",
+    //  "properties": {
+      //  "mode": "Incremental",
+       // "templateLink": {
+     //     "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
+      //    "contentVersion": "1.0.0.0"
+      //  }
         //"parameters": {
           //"appInsightsName": {
            // "value": "[variables('appInsightName')]"
@@ -97,15 +97,15 @@
            // "value": "[variables('webAppName')]"
          // }
        // }
-     // }
+    // }
    // },
     {
       "name": "ppapiAppService",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
-      "dependsOn": [
-        "ppapiAppInsights"
-      ],
+      //"dependsOn": [
+      //  "ppapiAppInsights"
+     // ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -176,10 +176,10 @@
       "type": "string",
       "value": "[variables('webAppName')]"
     },
-    //"appInsightName": {
-      //"type": "string",
-      //"value": "[variables('appInsightName')]"
-   // },
+    "appInsightName": {
+      "type": "string",
+      "value": ""
+   },
     "appInsightInstrumentationKey": {
       "type": "string",
       // "value": "[reference('ppapiAppInsights').outputs.InstrumentationKey.value]"
