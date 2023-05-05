@@ -76,7 +76,7 @@
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "webAppName": "[concat(parameters('webAppPrefix'),'-as')]",
     "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]",
-    "appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
+    //"appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
   },
   "resources": [
     {
@@ -155,10 +155,10 @@
       "type": "string",
       "value": "[variables('webAppName')]"
     },
-    "appInsightName": {
-      "type": "string",
-      "value": "[variables('appInsightName')]"
-    },
+    //"appInsightName": {
+      //"type": "string",
+      //"value": "[variables('appInsightName')]"
+   // },
     "appInsightInstrumentationKey": {
       "type": "string",
       "value": "[variables('webAppInsightsInstrumentationKey')]"
