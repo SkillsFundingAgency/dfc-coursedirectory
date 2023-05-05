@@ -329,10 +329,10 @@
       "apiVersion": "2017-05-10",
       "name": "courseDirectoryAppService",
       "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "courseDirectoryCertificates",
-        "courseDirectoryAppInsights"
-      ],
+    //  "dependsOn": [
+    //    "courseDirectoryCertificates",
+    //    "courseDirectoryAppInsights"
+    //  ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
