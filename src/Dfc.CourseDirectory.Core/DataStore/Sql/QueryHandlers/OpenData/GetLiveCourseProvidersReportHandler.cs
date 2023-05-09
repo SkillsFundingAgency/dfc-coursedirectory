@@ -31,6 +31,7 @@ WHERE       p.ProviderId IN(
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
                 and [OfferingType]=1
             )
+AND         (p.ProviderType = 1 OR p.ProviderType = 3 OR p.ProviderType = 5 OR p.ProviderType = 7)
 ORDER BY    p.Ukprn ASC";
 
 
