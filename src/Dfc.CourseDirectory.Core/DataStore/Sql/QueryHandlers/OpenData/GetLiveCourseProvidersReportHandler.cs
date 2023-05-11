@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
@@ -31,7 +32,7 @@ WHERE       p.ProviderId IN(
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
                 and [OfferingType]=1
             )
-AND         (p.ProviderType = 1 OR p.ProviderType = 3 OR p.ProviderType = 5 OR p.ProviderType = 7)
+AND         p.ProviderType IN({(int)ProviderType.FE}, 3, {(int)ProviderType.FE + (int)ProviderType.TLevels}, 7)
 ORDER BY    p.Ukprn ASC";
 
 
