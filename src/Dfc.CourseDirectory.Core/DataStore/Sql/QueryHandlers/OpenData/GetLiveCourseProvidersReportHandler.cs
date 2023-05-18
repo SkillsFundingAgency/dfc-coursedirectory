@@ -10,10 +10,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
         : ISqlAsyncEnumerableQueryHandler<GetLiveCourseProvidersReport, LiveCourseProvidersReportItem>
     {
         public async IAsyncEnumerable<LiveCourseProvidersReportItem> Execute(SqlTransaction transaction, GetLiveCourseProvidersReport query)
-        {
-            string FECourses = ProviderType.FE.ToString();
-            string FECoursesAndTLevels = (ProviderType.FE | ProviderType.TLevels).ToString();
-            
+        {  
             var sql = @$"
 SELECT
             p.Ukprn,
@@ -35,7 +32,7 @@ WHERE       p.ProviderId IN(
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
                 and [OfferingType]=1
             )
-AND         p.ProviderType IN({FECourses}, {FECoursesAndTLevels})
+AND         p.ProviderType IN({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
 ORDER BY    p.Ukprn ASC";
 
 
