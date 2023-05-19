@@ -229,6 +229,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                     {
                         await sqlDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
+                        await sqlDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
+                        await sqlDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
                         await sqlDispatcher.Commit();
                     }
                 }
