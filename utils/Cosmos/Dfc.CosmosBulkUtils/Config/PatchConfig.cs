@@ -12,6 +12,9 @@ namespace Dfc.CosmosBulkUtils.Config
         public string FilterPredicate { get; set; }
         public List<string> FilterIds { get; set; }
         public IEnumerable<PatchCommand> Operations { get; set; }
-
+        public PatchConfig()
+        {
+            this.FilterIds = new List<string>();
+        }
     }
 }
