@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
@@ -13,6 +14,7 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
@@ -348,6 +350,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 }
             }
 
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("The course name displayed on the National Career Service, <a href='");
+            sb.Append(LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search");
+            sb.Append("' class='govuk-link' target='_blank'>Find a course</a>.");
+            ViewBag.LiveServiceURL = sb.ToString();
+
             return View("CopyCourseRun", vm);
         }
 
@@ -558,6 +568,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             }
 
             _session.Remove(CopyCourseRunPublishedCourseSessionKey);
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + 
+                "find-a-course/course-details?CourseId=" + publishedCourse.CourseId + "&r=" + publishedCourse.CourseRunId; 
 
             return View(publishedCourse);
         }

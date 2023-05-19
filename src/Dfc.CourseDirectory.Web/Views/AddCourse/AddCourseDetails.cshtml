@@ -25,9 +25,9 @@
     Layout = "_Layout_Your_Courses";
 
     ViewData.SetLayoutModel(new LayoutModel
-    {
-        BackLink = false,
-    });
+            {
+                BackLink = false,
+            });
 }
 
 @model AddCourseDetailsViewModel
@@ -58,59 +58,57 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">
-                                        Course details
-                                        </h1>
+            Course details
+        </h1>
         <p class="govuk-body-l">Add information on how the course will be delivered.</p>
         <form asp-controller="AddCourse" asp-action="AddCourseRun" id="addCourseSection2">
 
-        <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is an issue with this qualification
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list"></ul>
+            <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is an issue with this qualification
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list"></ul>
+                </div>
             </div>
-        </div>
 
-        @Html.HiddenFor(x => x.CourseMode)
-        @Html.HiddenFor(x => x.CourseId)
-        @Html.HiddenFor(x => x.CourseRunId)
-        <div id="sectionCourseName">
-            @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
-            {
+            @Html.HiddenFor(x => x.CourseMode)
+            @Html.HiddenFor(x => x.CourseId)
+            @Html.HiddenFor(x => x.CourseRunId)
+            <div id="sectionCourseName">
+                @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+                {
                 CourseName = Model.CourseName,
                 LabelText = "Course name",
-                HintText = new HtmlString(@"The course name displayed on the National Career Service,
-                                            <a href='https://nationalcareers.service.gov.uk/find-a-course/search'
-                                               target='_blank'>Find a course</a>."),
+                HintText = new HtmlString(@"The course name displayed on the National Career Service, <a href='" +@ViewBag.LiveServiceURl + "' class='govuk-link'  target='_blank'>Find a course</a>."),
                 AriaDescribedBy = "Please enter the course name."
-            })
-        </div>
+                })
+            </div>
 
-        <div id="sectionCourseProviderReference">
-            @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-            {
+            <div id="sectionCourseProviderReference">
+                @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+                {
                 CourseProviderReference = Model.CourseProviderReference,
                 LabelText = "Your reference",
                 HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
                 AriaDescribedBy = "Please enter the ID for this course"
-            })
-        </div>
+                })
+            </div>
 
-        <div id="sectionDeliveryType">
-            @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
-            {
+            <div id="sectionDeliveryType">
+                @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
+                {
                 DeliveryMode = Model.DeliveryMode,
                 LabelText = "Course type",
                 HintText = "Select one option.",
                 SecondHintText = "Select how you will deliver this course",
                 AriaDescribedBy = "Select how you will deliver this course"
-            })
-        </div>
+                })
+            </div>
 
-        <div id="sectionStartDate">
-            @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-            {
+            <div id="sectionStartDate">
+                @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+                {
                 StartDateType = Model.StartDateType,
                 Day = Model.Day,
                 Month = Model.Month,
@@ -127,52 +125,54 @@
                 LabelText = "Start date",
                 ValPastDateRef = DateTime.Now,
                 ValPastDateMessage = "Start Date cannot be earlier than today’s date"
-            })
-        </div>
-        <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
-            <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                        <h2 class="govuk-fieldset__heading govuk-heading-m">
-                            @Model.SelectVenue.LabelText
-                        </h2>
-                    </legend>
+                })
+            </div>
+            <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" id="govuk-label-SelectVenueCheckBoxes">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading govuk-heading-m">
+                                @Model.SelectVenue.LabelText
+                            </h2>
+                        </legend>
 
-                    <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
-
-
+                        <div class="govuk-checkboxes govuk-checkboxes--small" id="SelectVenueCheckBoxes" val-required-message="Select a venue">
 
 
-                        @{ var i = 0; }
-                        @if (Model.SelectVenue.VenueItems.Count() == 1)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
-                                <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
-                            </div>
-                        }
-                        else
-                        {
-                            foreach (var item in Model.SelectVenue.VenueItems)
-                            {
-                                i++;
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
-                                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
-                                </div>
 
 
+                            @{
+                                var i = 0;
                             }
-                        }
+                            @if (Model.SelectVenue.VenueItems.Count() == 1)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@Model.SelectVenue.VenueItems.First().Id" checked="checked" onclick="return false;" />
+                                    <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="VenueName-@i" aria-label="VenueName-@i">@Model.SelectVenue.VenueItems.First().VenueName</label>
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.SelectVenue.VenueItems)
+                                {
+                                    i++;
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="VenueName-@i" for="VenueName-@i" name="SelectedVenues" type="checkbox" aria-labelledby="VenueNameLabel-@i" value="@item.Id" @item.Checked.ThenNullableCheck() />
+                                        <label id="VenueNameLabel-@i" class="govuk-label govuk-checkboxes__label" for="SelectedVenues-@i" aria-label="VenueName-@i">@item.VenueName</label>
+                                    </div>
 
-                    </div>
 
-                </fieldset>
+                                }
+                            }
+
+                        </div>
+
+                    </fieldset>
+                </div>
+                <span class="">
+                    <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">Add another venue</a>
+                </span>
             </div>
-            <span class="">
-                <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">Add another venue</a>
-            </span>
-        </div>
 
 
 
@@ -180,25 +180,25 @@
 
 
 
-        <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
-            <div id="sectionRegions">
-                @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
+            <div class="govuk-form-group" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+                <div id="sectionRegions">
+                    @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
+                </div>
             </div>
-        </div>
 
-        <div id="sectionUrl">
-            @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
-            {
+            <div id="sectionUrl">
+                @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+                {
                 Url = Model.Url,
                 LabelText = "Course webpage",
                 HintText = "The webpage for this course. For example, http://www.provider.com/coursename.",
                 AriaDescribedBy = "Enter the URL for this course"
-            })
-        </div>
+                })
+            </div>
 
-        <div id="sectionCost">
-            @await Component.InvokeAsync(nameof(Cost), new CostModel
-            {
+            <div id="sectionCost">
+                @await Component.InvokeAsync(nameof(Cost), new CostModel
+                {
                 Cost = Model.Cost,
                 CostDescription = Model.CostDescription,
                 CostLabelText = "Cost",
@@ -207,46 +207,46 @@
                 CostDescriptionLabelText = "Cost description",
                 CostDescriptionHintText = "A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.",
                 CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
-            })
-        </div>
+                })
+            </div>
 
-        <div id="sectionDuration">
-            @await Component.InvokeAsync(nameof(Duration), new DurationModel
-            {
+            <div id="sectionDuration">
+                @await Component.InvokeAsync(nameof(Duration), new DurationModel
+                {
                 DurationLength = Model.DurationLength,
                 DurationUnit = Model.DurationUnit,
                 LabelText = "Duration",
                 HintText = "",
                 AriaDescribedBy = "Select course duration"
-            })
-        </div>
+                })
+            </div>
 
-        <div id="FullPartTimeRadioButtons" style="display: none;">
-            @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
-            {
+            <div id="FullPartTimeRadioButtons" style="display: none;">
+                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+                {
                 StudyMode = Model.StudyMode,
                 LabelText = "Course hours",
                 HintText = "Select one option."
-            })
-        </div>
+                })
+            </div>
 
-        <div id="AttendancePatternRadioButtons" style="display: none;">
-            @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
-            {
+            <div id="AttendancePatternRadioButtons" style="display: none;">
+                @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+                {
                 AttendanceMode = Model.AttendanceMode,
                 LabelText = "Attendance pattern",
                 HintText = "Select one option."
-            })
-        </div>
+                })
+            </div>
 
-        <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">Continue</button>
+            <button name="submitButton" type="submit" class="govuk-button" id="publish" value="publish">Continue</button>
 
         </form>
     </div>
 </div>
 
 <script>
-    (function($) {
+    (function ($) {
         $(function () {
             var $addNewVenueButton = $("#addNewVenue");
             var validStates = [];
@@ -278,19 +278,19 @@
 
 
             switch ($radioStartDate.find("input[type='radio']:checked").val()) {
-            case "SpecifiedStartDate":
-            {
+                case "SpecifiedStartDate":
+                    {
 
-                break;
-            }
-            case "FlexibleStartDate":
-            {
-                $("#govuk-label-start_date").hide();
-                $("#Day").val("");
-                $("#Month").val("");
-                $("#Year").val("");
-                break;
-            }
+                        break;
+                    }
+                case "FlexibleStartDate":
+                    {
+                        $("#govuk-label-start_date").hide();
+                        $("#Day").val("");
+                        $("#Month").val("");
+                        $("#Year").val("");
+                        break;
+                    }
 
             }
 
@@ -324,17 +324,17 @@
                     }
             }
 
-            switch ($radioStartDate.find("input[type='radio']:checked").val()===true) {
-            case "SpecifiedStartDate":
-            {
-                $("#govuk-label-start_date").show();
-                break;
-            }
-            case "FlexibleStartDate":
-            {
-                $("#govuk-label-start_date").hide();
-                break;
-            }
+            switch ($radioStartDate.find("input[type='radio']:checked").val() === true) {
+                case "SpecifiedStartDate":
+                    {
+                        $("#govuk-label-start_date").show();
+                        break;
+                    }
+                case "FlexibleStartDate":
+                    {
+                        $("#govuk-label-start_date").hide();
+                        break;
+                    }
 
             }
 
@@ -510,20 +510,20 @@
                     validStates.push(false);
                 }
                 validStates.push(true);
-                if ($nationalRadioChecked != undefined ) {
-                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked.toLowerCase() === "false") {
-                    $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
-                    var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
+                if ($nationalRadioChecked != undefined) {
+                    if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked.toLowerCase() === "false") {
+                        $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
+                        var regionsErrorHashLinks = $regions.govUkCheckboxes("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", regionsErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
                     }
                 }
 
                 // url
                 var enteredUrl = $url.val();
                 var urlToValidate = "";
-                if ($url.val().indexOf("http")>=0) {
+                if ($url.val().indexOf("http") >= 0) {
                     urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
                 }
                 else {
@@ -596,7 +596,7 @@
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                }    else if (!$.requiredValidate($("#durationDropDown").val())) {
+                } else if (!$.requiredValidate($("#durationDropDown").val())) {
                     $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
                     var durationErrorHashLinks = $duration.govUkDurationInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", durationErrorHashLinks);
@@ -655,21 +655,21 @@
                 return validStates.every(isAllValid);
             }
 
-               var $goToSection1Link = $("#goToSection1Link");
+            var $goToSection1Link = $("#goToSection1Link");
             $goToSection1Link.click(function () {
                 event.preventDefault();
-               // if (validate()) {
-                    $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
-                    $("#addCourseSection2").submit();
+                // if (validate()) {
+                $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
+                $("#addCourseSection2").submit();
                 //}
             });
 
 
-             var replaceAll = function (search, find, replace) {
+            var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
 
-    var makeRequestWithPayload = function (payload, success) {
+            var makeRequestWithPayload = function (payload, success) {
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
@@ -678,16 +678,16 @@
 
 
 
-                    var onSucess = function (data) {
-                        window.location.href = data;
-                    };
+            var onSucess = function (data) {
+                window.location.href = data;
+            };
 
             $addNewVenueButton.on("click", function (e) {
                 e.preventDefault();
 
-               var $allCheckedVenues =
-                        $("input[name='SelectedVenues']:checkbox:checked");
-                     var $allCheckedRegions =
+                var $allCheckedVenues =
+                    $("input[name='SelectedVenues']:checkbox:checked");
+                var $allCheckedRegions =
                     $("input[name='SelectedRegions']:checkbox:checked");
 
 
@@ -699,25 +699,25 @@
                     Day: $("#Day").val(),
                     Month: $("#Month").val(),
                     Year: $("#Year").val(),
-                    Url:$url.val(),
-                     Cost:$cost.val(),
-                     CostDescription :$costDescription.val(),
-                     //AdvancedLearnerLoan
-                     DurationUnit :$duration.find("select").val(),
-                     DurationLength:$duration.find("input").val(),
-                     StudyMode:$studyMode.find("input[type='radio']:checked").val() ,
-                     AttendanceMode:$attendance.find("input[type='radio']:checked").val(),
-                                    SelectedVenues: $allCheckedVenues.map(function () {
-                                        return $(this).val();
-                                    }).get(),
-                                    LevelFilter: $allCheckedRegions.map(function () {
-                                        return $(this).val();
-                                    }).get()
+                    Url: $url.val(),
+                    Cost: $cost.val(),
+                    CostDescription: $costDescription.val(),
+                    //AdvancedLearnerLoan
+                    DurationUnit: $duration.find("select").val(),
+                    DurationLength: $duration.find("input").val(),
+                    StudyMode: $studyMode.find("input[type='radio']:checked").val(),
+                    AttendanceMode: $attendance.find("input[type='radio']:checked").val(),
+                    SelectedVenues: $allCheckedVenues.map(function () {
+                        return $(this).val();
+                    }).get(),
+                    LevelFilter: $allCheckedRegions.map(function () {
+                        return $(this).val();
+                    }).get()
 
-                    },
-                        onSucess);
+                },
+                    onSucess);
 
-                });
+            });
 
 
             $button.on("click", function (event) {
