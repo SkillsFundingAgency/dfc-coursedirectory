@@ -68,8 +68,6 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddTransient((provider) => new HttpClient());
 
-            services.Configure<ApprenticeshipSettings>(Configuration.GetSection(nameof(ApprenticeshipSettings)));
-
             services.Configure<LarsSearchSettings>(Configuration.GetSection(nameof(LarsSearchSettings)));
 
             services.AddScoped<IPaginationHelper, PaginationHelper>();
@@ -115,10 +113,6 @@ namespace Dfc.CourseDirectory.Web
                 options.AddPolicy("Helpdesk", policy => policy.RequireRole("Helpdesk"));
                 options.AddPolicy("ProviderSuperUser", policy => policy.RequireRole("Provider Superuser"));
                 options.AddPolicy("Provider", policy => policy.RequireRole("Provider User", "Provider Superuser"));
-
-                options.AddPolicy(
-                    "Apprenticeship",
-                    policy => policy.AddRequirements(new ProviderTypeRequirement(Core.Models.ProviderType.Apprenticeships)));
 
                 options.AddPolicy(
                     "Fe",

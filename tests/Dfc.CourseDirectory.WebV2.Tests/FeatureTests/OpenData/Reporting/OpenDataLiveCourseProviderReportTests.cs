@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_WithAdminUser_ReturnsExpectedCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contacts: new[]
             {
                 CreateContact("CV17 9AD", null, null, null)
             });
@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_CsvHeaderIsCorrect(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.None, "ProviderType", contacts: new[]
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contacts: new[]
             {
                 CreateContact("CV17 9AD", null, null, null)
             });

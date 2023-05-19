@@ -20,11 +20,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public string ProviderName { get; set; }
         public int Ukprn { get; set; }
         public bool ShowCourses { get; set; }
-        public bool ShowApprenticeships { get; set; }
         public bool ShowTLevels { get; set; }
         public int CourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
-        public int ApprenticeshipCount { get; set; }
         public int TLevelCount { get; set; }
         public int VenueCount { get; set; }
         public bool IsNewProvider { get; set; }
@@ -32,8 +30,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
-        public bool ApprenticeshipUploadInProgress { get; set; }
-        public int UnpublishedApprenticeshipCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -76,22 +72,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                     ProviderId = provider.ProviderId
                 });
 
-            var apprenticeshipUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetLatestUnpublishedApprenticeshipUploadForProvider()
-                {
-                    ProviderId = provider.ProviderId
-                });
-
             var vm = new ViewModel()
             {
                 ProviderName = provider.ProviderName,
                 Ukprn = provider.Ukprn,
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
-                ShowApprenticeships = provider.ProviderType.HasFlag(ProviderType.Apprenticeships) && provider.ApprenticeshipQAStatus == ApprenticeshipQAStatus.Passed,
                 ShowTLevels = provider.ProviderType.HasFlag(ProviderType.TLevels),
                 CourseRunCount = dashboardCounts.CourseRunCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
-                ApprenticeshipCount = dashboardCounts.ApprenticeshipCounts.GetValueOrDefault(ApprenticeshipStatus.Live),
                 TLevelCount = dashboardCounts.TLevelCount,
                 VenueCount = dashboardCounts.VenueCount,
                 IsNewProvider = provider.ProviderType == ProviderType.None,
@@ -99,8 +87,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
                 UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
-                ApprenticeshipUploadInProgress = apprenticeshipUploadStatus != null && (apprenticeshipUploadStatus.UploadStatus == UploadStatus.Processing || apprenticeshipUploadStatus.UploadStatus == UploadStatus.Created),
-                UnpublishedApprenticeshipCount = dashboardCounts.UnpublishedApprenticeshipCount
             };
 
             return vm;

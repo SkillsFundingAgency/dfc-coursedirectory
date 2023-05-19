@@ -24,44 +24,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             return table.AsTableValuedParameter(typeName: "Pttcd.ApprenticeshipLocationSubRegionsTable");
         }
 
-        public static SqlMapper.ICustomQueryParameter CreateApprenticeshipLocationsTable(
-            IEnumerable<(
-                Guid ApprenticeshipLocationId,
-                string Telephone,
-                Guid? VenueId,
-                bool? National,
-                int? Radius,
-                ApprenticeshipLocationType LocationType,
-                IEnumerable<ApprenticeshipDeliveryMode> DeliveryModes)> rows)
-        {
-            var table = new DataTable();
-            table.Columns.Add("ApprenticeshipLocationId", typeof(Guid));
-            table.Columns.Add("Telephone", typeof(string));
-            table.Columns.Add("VenueId", typeof(Guid));
-            table.Columns.Add("National", typeof(bool));
-            table.Columns.Add("Radius", typeof(int));
-            table.Columns.Add("LocationType", typeof(byte));
-            table.Columns.Add("DeliveryModes", typeof(byte));
-
-            foreach (var row in rows)
-            {
-                var deliveryModes = ApprenticeshipMappingHelper.MapDeliveryModesToSqlValue(row.DeliveryModes);
-
-                table.Rows.Add(new object[]
-                {
-                    row.ApprenticeshipLocationId,
-                    row.Telephone,
-                    row.VenueId,
-                    row.National,
-                    row.Radius,
-                    row.LocationType,
-                    deliveryModes
-                });
-            }
-
-            return table.AsTableValuedParameter(typeName: "Pttcd.ApprenticeshipLocationsTable");
-        }
-
         public static SqlMapper.ICustomQueryParameter CreateCourseRunsTable(
             IEnumerable<(
                 Guid CourseRunId,

@@ -11,13 +11,18 @@
                 Your T Level has been published
             </govuk-panel-title>
             <span data-testid="TLevelName">@Model.TLevelName</span>
+            @if (!string.IsNullOrWhiteSpace(Model.YourReference))
+            {
+                <br>
+                <strong data-testid="YourReference">@Model.YourReference</strong>
+            }
         </govuk-panel>
 
         <p class="govuk-body">
             Your T Level is available to learners searching for learning and training opportunities on the
             National Careers Service and Tlevels.gov.uk.
         </p>
-        <p class="govuk-body">You can <a href="https://nationalcareers.service.gov.uk/find-a-course/tdetails?tlevelId=@Model.TLevelId" target="_blank" class="govuk-link">view your published T Level (opens in a new window or tab)</a> to see how it's viewed by learners.</p>
+        <p class="govuk-body">You can <a href="@ViewBag.LiveServiceURL@Model.TLevelId" target="_blank" class="govuk-link">view your published T Level (opens in a new window or tab)</a> to see how it's viewed by learners.</p>
 
         <h2 class="govuk-heading-m">What next?</h2>
         <ul class="govuk-list">

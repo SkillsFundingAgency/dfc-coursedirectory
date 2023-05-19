@@ -118,6 +118,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         public async Task<IActionResult> Published()
         {
             var query = new Published.Query();
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            string commonurl = "find-a-course/tdetails?tlevelId=";
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + commonurl;
+
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 

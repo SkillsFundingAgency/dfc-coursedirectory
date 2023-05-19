@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.Models;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
@@ -122,12 +123,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 WhereNext = new WhereNextModel()
                 {
                     LabelText = "What you can do next",
-                    HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course, apprenticeship or entry to employment.",
+                    HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course or entry to employment.",
                     AriaDescribedBy = "Please enter what you can do next.",
                     WhereNext = result.WhereNext
                 },
                 QualificationType = result.LearnAimRefTypeDesc
             };
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
             return View("EditCourse", vm);
         }

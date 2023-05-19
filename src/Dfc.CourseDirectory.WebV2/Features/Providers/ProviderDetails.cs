@@ -91,7 +91,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                 MarketingInformation = cosmosProvider.MarketingInformation != null ?
                     Html.SanitizeHtml(cosmosProvider.MarketingInformation) :
                     null,
-                ShowMarketingInformation = cosmosProvider.ProviderType.HasFlag(ProviderType.Apprenticeships),
                 CanUpdateMarketingInformation = AuthorizationRules.CanUpdateProviderMarketingInformation(currentUser),
                 ProviderTLevelDefinitions = providerTLevelDefinitions.Select(d => new TLevelDefinitionViewModel
                 {

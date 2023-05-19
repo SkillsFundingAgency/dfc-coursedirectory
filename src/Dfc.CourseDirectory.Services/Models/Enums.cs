@@ -3,53 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Services.Models
 {
-    public enum ApprenticeShipPreviousPage
-    {
-        [Display(Name = "Undefined")]
-        [Description("Undefined")]
-        Undefined = 0,
-        [Display(Name = "Details")]
-        [Description("Details")]
-        Details = 1,
-        [Display(Name = "DeliveryLocation")]
-        [Description("DeliveryLocation")]
-        DeliveryLocation = 2,
-        [Display(Name = "DeliveryOptions")]
-        [Description("DeliveryOptions")]
-        DeliveryOptions = 3,
-        [Display(Name = "LocationChoice")]
-        [Description("LocationChoice")]
-        LocationChoice = 4,
-        [Display(Name = "LocationRegions")]
-        [Description("LocationRegions")]
-        LocationRegions = 5,
-        [Display(Name = "Summary")]
-        [Description("Summary")]
-        Summary = 6,
-        [Display(Name = "Complete")]
-        [Description("Complete")]
-        Complete = 7,
-        [Display(Name = "YourApprenticeships")]
-        [Description("YourApprenticeships")]
-        YourApprenticeships = 8
-    }
-
-    public enum ApprenticeShipDeliveryLocation
-    {
-        [Display(Name = "Undefined")]
-        [Description("Undefined")]
-        Undefined = 0,
-        [Display(Name = "100% Employer")]
-        [Description("100% Employer")]
-        EmployerAddress = 1,
-        [Display(Name = "Day release")]
-        [Description("Day Release")]
-        DayRelease = 2,
-        [Display(Name = "Block release")]
-        [Description("Block Release")]
-        BlockRelease = 3
-    }
-
     public enum PublishMode
     {
         [Description("Default")]
@@ -60,8 +13,6 @@ namespace Dfc.CourseDirectory.Services.Models
         DataQualityIndicator = 3,
         [Description("Summary")]
         Summary = 4,
-        [Description("ApprenticeshipBulkUpload")]
-        ApprenticeshipBulkUpload = 5
     }
 
     public enum FundingOptions
@@ -77,8 +28,7 @@ namespace Dfc.CourseDirectory.Services.Models
 
     /// <summary>
     /// Obsolete,
-    /// use <see cref="Dfc.CourseDirectory.Core.Models.ApprenticeshipStatus"/>
-    /// or <see cref="Dfc.CourseDirectory.Core.Models.CourseStatus"/> instead.
+    /// use <see cref="Dfc.CourseDirectory.Core.Models.CourseStatus"/> instead.
     /// </summary>
     public enum RecordStatus
     {
@@ -184,30 +134,6 @@ namespace Dfc.CourseDirectory.Services.Models
         Undefined = 0,
         [Description("Further education courses")]
         FE = 1,
-        [Description("Apprenticeship training")]
-        Apprenticeship = 2
-    }
-
-    public enum ApprenticeshipWhatWouldYouLikeToDo
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Add an apprenticeship")]
-        Add = 1,
-        [Description("Upload your apprenticeships with a CSV file")]
-        Upload = 2,
-        [Description("View and edit apprenticeships")]
-        View = 3
-    }
-
-    public enum ApprenticeshipDelete
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Yes, Delete")]
-        Delete = 1,
-        [Description("No, go back")]
-        Back = 2
     }
 
     public enum LocationDelete
@@ -228,28 +154,6 @@ namespace Dfc.CourseDirectory.Services.Models
         Delete = 1,
         [Description("No, go back")]
         Back = 2
-    }
-
-    public enum ApprenticeshipDelivery
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("At one of your venues")]
-        YourLocation = 1,
-        [Description("At an employer's address")]
-        EmployersAddress = 2,
-        [Description("Both")]
-        Both = 3
-    }
-
-    public enum NationalApprenticeship
-    {
-        [Description("Undefined")]
-        Undefined = 0,
-        [Description("Yes")]
-        Yes = 1,
-        [Description("No")]
-        No = 2
     }
 
     public enum WhatAreYouAwarding

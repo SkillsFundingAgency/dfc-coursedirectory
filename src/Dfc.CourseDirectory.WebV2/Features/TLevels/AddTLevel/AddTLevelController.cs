@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using Flurl;
 using FormFlow;
 using MediatR;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
@@ -72,6 +73,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         public async Task<IActionResult> Description()
         {
             var query = new Description.Query();
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -170,6 +175,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         public async Task<IActionResult> Published()
         {
             var query = new Published.Query();
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            string commonurl = "find-a-course/tdetails?tlevelId=";
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + commonurl;
+
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
     }
