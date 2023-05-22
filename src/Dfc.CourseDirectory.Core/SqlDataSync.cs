@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Microsoft.Extensions.Logging;
 using Polly;
 
@@ -58,7 +57,7 @@ namespace Dfc.CourseDirectory.Core
                     ProviderId = provider.Id,
                     Ukprn = provider.Ukprn,
                     ProviderStatus = provider.Status,
-                    ProviderType = ProviderTypeMapper((int)provider.ProviderType),
+                    ProviderType = provider.ProviderType,
                     ProviderName = provider.ProviderName,
                     UkrlpProviderStatusDescription = provider.ProviderStatus,
                     MarketingInformation = provider.MarketingInformation,
@@ -108,20 +107,6 @@ namespace Dfc.CourseDirectory.Core
                         .ExecuteAsync(() => processChunk(c));
                 }
             };
-
-        private static ProviderType ProviderTypeMapper(int providerType) => providerType switch
-        {
-            //there are still apprenticeships 'ProvideTypes' on Cosmos so I created this function to filter then out until they are removed from the Cosmos databases.
-            0 => ProviderType.None,
-            1 => ProviderType.FE,
-            2 => ProviderType.None,
-            3 => ProviderType.FE,
-            4 => ProviderType.TLevels,
-            5 => ProviderType.FE | ProviderType.TLevels,
-            6 => ProviderType.TLevels,
-            7 => ProviderType.FE | ProviderType.TLevels,
-            _ => throw new NotImplementedException($"Unknown provider type: '{providerType}'.")
-        };
 
         private async Task WithExclusiveSqlLock(string lockName, Func<Task> action)
         {
