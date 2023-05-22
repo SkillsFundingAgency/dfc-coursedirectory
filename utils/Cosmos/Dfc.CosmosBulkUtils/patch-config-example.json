@@ -1,9 +1,10 @@
 {
-  "FilterPredicate": "SELECT c.id FROM c where c.ProviderType = 2",
+  "FilterPredicate": "SELECT c.id FROM c where c.X = \"0000000201\"",
+  "PartionKeyValue": "not_required",
   "Operations": [
     {
-      "Field": "/ProviderType",
-      "Value": 0
+      "Field": "/TouchpointID",
+      "Value": "0000000101"
     }
   ]
 }
