@@ -234,12 +234,6 @@
     "ProviderPortalSharedResourceGroupName": {
       "type": "string"
     },
-    "providerPortalApplicationInsights": {
-      "type": "string",
-      "metadata": {
-        "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
-      }
-    },
     "CosmosAccountEndpoint": {
       "type": "string",
       "metadata": {
@@ -665,7 +659,7 @@
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                // "value": "[reference(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
-              "value": "[variables('webAppInsightsInstrumentationKey')]"
+              "value": "[parameters('appInsightsInstrumentationKey')]"
               },
               {
                 "name": "AzureWebJobsStorage",

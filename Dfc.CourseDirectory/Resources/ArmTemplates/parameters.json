@@ -131,9 +131,6 @@
     "providerPortalCosmosDbConnectionString": {
       "value": "__providerPortalCosmosDbConnectionString__"
     },
-    "providerPortalApplicationInsights": {
-      "value": "__providerportalApplicationInsights__"
-    },
     "FindACourseUrl": {
       "value": "__FindACourseUrl__"
     }
