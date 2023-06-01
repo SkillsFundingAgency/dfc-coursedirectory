@@ -40,9 +40,6 @@
       },
       "sqlCourseDirectoryConnectionString": {
         "value": "__sqlCourseDirectoryConnectionString__"
-      },
-      "providerPortalApplicationInsights": {
-        "value": "__providerportalApplicationInsights__"
       }
     }
   }
