@@ -95,7 +95,6 @@
             "value": [
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                //"value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
                 "value": "[parameters('appInsightsInstrumentationKey')]"
               },
               {
