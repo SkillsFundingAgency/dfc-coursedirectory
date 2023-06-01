@@ -715,7 +715,7 @@
     "appInsightInstrumentationKey": {
       "type": "string",
       // "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
-      "value": "[variables('webAppInsightsInstrumentationKey')]"
+      "value": "[parameters('appInsightsInstrumentationKey')]"
     },
     "appServiceName": {
       "type": "string",
