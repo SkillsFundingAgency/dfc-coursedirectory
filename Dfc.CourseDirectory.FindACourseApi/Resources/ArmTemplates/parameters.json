@@ -34,9 +34,6 @@
     },
     "searchQueryKey": {
       "value": "__searchQueryKey__"
-    },
-    "providerPortalApplicationInsights": {
-      "value": "__providerportalApplicationInsights__"
     }
   }
 }
