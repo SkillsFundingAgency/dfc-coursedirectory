@@ -73,48 +73,18 @@
         "metadata": {
           "description": "ADO.NET connection string for the course directory database"
         }
-      },
-      "providerPortalApplicationInsights": {
-        "type": "string",
-        "metadata": {
-          "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
-        }
       }
     },
     "variables": {
       "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-      "functionAppName": "[concat(parameters('functionAppPrefix'),'-fa')]",
-      "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]"
-      //"appInsightName": "[concat(parameters('functionAppPrefix'),'-ai')]"
+      "functionAppName": "[concat(parameters('functionAppPrefix'),'-fa')]"
     },
     "resources": [
-    //  {
-    //    "apiVersion": "2017-05-10",
-    //    "name": "ppfindapprenticeshipAppInsights",
-    //    "type": "Microsoft.Resources/deployments",
-    //    "properties": {
-    //      "mode": "Incremental",
-    //      "templateLink": {
-    //        "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-    //        "contentVersion": "1.0.0.0"
-    //      },
-    //      "parameters": {
-    //        "appInsightsName": {
-    //          "value": "[variables('appInsightName')]"
-    //        },
-    //        "attachedService": {
-    //          "value": "[variables('functionAppName')]"
-    //        }
-    //      }
-    //    }
-    //  },
+  
       {
         "apiVersion": "2017-05-10",
         "name": "ppfindapprenticeshipAppService",
         "type": "Microsoft.Resources/deployments",
-    //    "dependsOn": [
-    //      "ppfindapprenticeshipAppInsights"
-    //    ],
         "properties": {
           "mode": "Incremental",
           "templateLink": {
@@ -138,8 +108,7 @@
               "value": [
                 {
                   "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                //  "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
-                  "value": "[variables('webAppInsightsInstrumentationKey')]"
+                  "value": "[parameters('appInsightsInstrumentationKey')]"
                 },
                 {
                   "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -220,10 +189,9 @@
         "type": "string",
         "value": ""
       },
-      "appInsightInstrumentationKey": {
+      "appInsightsInstrumentationKey": {
         "type": "string",
-      //  "value": "[reference('ppfindapprenticeshipAppInsights').outputs.InstrumentationKey.value]"
-      "value": "[variables('webAppInsightsInstrumentationKey')]"
+        "value": "[parameters('appInsightsInstrumentationKey')]"
       }
     }
   }

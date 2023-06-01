@@ -132,7 +132,7 @@
       "value": "https://not-a-real-env.nationalcareersservice.org.uk/find-a-course"
     },
     "appInsightsInstrumentationKey": {
-      "value": "appinsghtsinstrumentationkey" 
+      "value": "appInsightsInstrumentationKey" 
     }
   }
 }

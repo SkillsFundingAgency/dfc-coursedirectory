@@ -64,48 +64,18 @@
       "metadata": {
         "description": "Query key for reading search (REST API)"
       }
-    },
-    "providerPortalApplicationInsights": {
-      "type": "string",
-      "metadata": {
-        "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
-      }
     }
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "webAppName": "[concat(parameters('webAppPrefix'),'-as')]",
-    "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]"
-    //"appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
+    "webAppName": "[concat(parameters('webAppPrefix'),'-as')]"
   },
   "resources": [
-  //  {
-  //    "apiVersion": "2017-05-10",
-  //    "name": "ppfindcourseAppInsights",
-  //    "type": "Microsoft.Resources/deployments",
-  //    "properties": {
-  //      "mode": "Incremental",
-  //     "templateLink": {
-  //        "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-  //        "contentVersion": "1.0.0.0"
-  //      },
-  //      "parameters": {
-  //        "appInsightsName": {
-  //          "value": "[variables('appInsightName')]"
-  //        },
-  //        "attachedService": {
-  //          "value": "[variables('webAppName')]"
-  //        }
-  //      }
-  //    }
-  //  },
+  
     {
       "name": "ppfindcourseAppService",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
-  //    "dependsOn": [
-  //      "ppfindcourseAppInsights"
-  //    ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -126,8 +96,7 @@
             "value": [
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
- //               "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
-                "value": "[variables('webAppInsightsInstrumentationKey')]"
+                 "value": "[parameters('appInsightsInstrumentationKey')]"
               },
               {
                 "name": "WEBSITE_RUN_FROM_PACKAGE",
@@ -180,10 +149,9 @@
       "type": "string",
       "value": ""
     },
-    "appInsightInstrumentationKey": {
+    "appInsightsInstrumentationKey": {
       "type": "string",
-    //  "value": "[reference('ppfindcourseAppInsights').outputs.InstrumentationKey.value]"
-    "value": "[variables('webAppInsightsInstrumentationKey')]"
+      "value": "[parameters('appInsightsInstrumentationKey')]"
     }
   }
 }
