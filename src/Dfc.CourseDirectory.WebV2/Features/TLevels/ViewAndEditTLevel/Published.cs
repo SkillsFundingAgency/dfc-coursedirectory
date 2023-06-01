@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Published
     {
         public Guid TLevelId { get; set; }
         public string YourReference { get; set; }
+        public string TLevelName { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -29,7 +30,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Published
             Task.FromResult(new ViewModel()
             {
                 TLevelId = _journeyInstance.State.TLevelId,
-                YourReference = _journeyInstance.State.YourReference
+                YourReference = _journeyInstance.State.YourReference,
+                TLevelName=_journeyInstance.State.TLevelName
             });
     }
 }

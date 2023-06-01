@@ -10,9 +10,11 @@
             <govuk-panel-title>
                 Your T Level changes have been published
             </govuk-panel-title>
+            <span data-testid="TLevelName">@Model.TLevelName</span>
             @if (!string.IsNullOrEmpty(Model.YourReference))
             {
-                <span data-testid="YourReference">@Model.YourReference</span>
+                <br>
+                <strong data-testid="YourReference">@Model.YourReference</strong>
             }
         </govuk-panel>
 
