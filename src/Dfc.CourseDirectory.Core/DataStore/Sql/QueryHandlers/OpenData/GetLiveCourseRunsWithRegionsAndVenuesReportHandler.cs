@@ -17,7 +17,20 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
             //In Report, COURSE_DESCRIPTION column maps with 'c.WhatYoullLearn as CourseDescription' column of below SQL query which maps with Add/Edit Course form field @WhatYoullLearn. 
             //This is done as part of working on Jira ID NCSLT-1099 ticket
             var sql = @$"
-WITH 
+
+CREATE TABLE #CourseRunIds (
+    CourseRunId UNIQUEIDENTIFIER
+)
+
+INSERT INTO #CourseRunIds (CourseRunId)
+SELECT DISTINCT c.CourseRunId 
+FROM [Pttcd].[FindACourseIndex] c
+WHERE c.OfferingType = {(int)FindACourseOfferingType.Course}
+AND c.Live = 1
+AND (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}');
+
+
+;WITH 
 cte_course_run_regions (courseRunId, regionList) AS (
     SELECT 
             CourseRunId, 
@@ -66,12 +79,12 @@ LEFT OUTER JOIN [Pttcd].[Venues] v with (nolock) ON cr.VenueId = v.VenueId
 LEFT OUTER JOIN cte_course_run_regions r with (nolock) ON cr.CourseRunId = r.CourseRunId
 WHERE           p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
 AND
-                cr.CourseRunId IN (
-                                    SELECT      DISTINCT c.CourseRunId FROM [Pttcd].[FindACourseIndex] c
-                                    WHERE       c.OfferingType = {(int) FindACourseOfferingType.Course}
-                                    AND         c.Live = 1
-                                    AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                                )";
+                cr.CourseRunId IN (SELECT CourseRunId FROM #CourseRunIds)
+
+
+DROP TABLE #CourseRunIds;
+
+";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
             {
