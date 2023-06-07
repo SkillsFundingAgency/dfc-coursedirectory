@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
 
-                var deactivating = !IsDeactivatedStatus(oldStatusCode) && IsDeactivatedStatus(newStatusCode);
+                var deactivating = IsDeactivatedStatus(newStatusCode);
                 _logger.LogInformation("UKRLP Sync: ukprn {0} - oldStatusCode {1} - newStatusCode {2} - deactivating {3}", ukprn, oldStatusCode, newStatusCode, deactivating);
                 if (deactivating)
                 {
