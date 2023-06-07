@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             foreach (var providerData in allProviders)
             {
-                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount+updatedCount+1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
+                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
                 var result = await CreateOrUpdateProvider(providerData);
 
                 if (result == CreateOrUpdateResult.Created)
@@ -218,14 +218,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         ProviderStatus = providerData.ProviderStatus,
                         UpdatedBy = UpdatedBy
                     });
+                _logger.LogInformation("UKRLP Sync: Update {0} starting...", ukprn);
 
                 var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
 
                 var deactivating = !IsDeactivatedStatus(oldStatusCode) && IsDeactivatedStatus(newStatusCode);
-
+                _logger.LogInformation("UKRLP Sync: ukprn {0} - oldStatusCode {1} - newStatusCode {2} - deactivating {3}", ukprn, oldStatusCode, newStatusCode, deactivating);
                 if (deactivating)
                 {
+                    _logger.LogInformation("UKRLP Sync: Update {0} starting deactivating is {1} ...", ukprn, deactivating);
                     using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
                     {
                         await sqlDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
