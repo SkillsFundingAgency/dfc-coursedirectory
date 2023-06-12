@@ -293,6 +293,8 @@
     <Build Include="Pttcd\Indexes\IX_CourseRuns_CreatedOn.sql" />
     <Build Include="Pttcd\Indexes\IX_FindACourseIndex_CourseRunId.sql" />
     <Build Include="Pttcd\Types\StandardCodesTable.sql" />
+    <Build Include="Pttcd\Indexes\IX_CourseRuns_CourseRunId_CourseId_VenueId.sql" />
+    <Build Include="Pttcd\Indexes\IX_Courses_CourseId_ProviderId.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

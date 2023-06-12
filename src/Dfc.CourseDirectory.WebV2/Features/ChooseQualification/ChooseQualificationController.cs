@@ -71,6 +71,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [MptxAction]
         public async Task<IActionResult> CourseDescription(CourseDescription.Command command)
         {
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -139,6 +143,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 DeliveryMode = deliveryMode,
             };
             var returnUrl = $"add/delivery?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return await _mediator.SendAndMapResponse(
                 query,
                 result => View(result).WithViewData("ReturnUrl", returnUrl));

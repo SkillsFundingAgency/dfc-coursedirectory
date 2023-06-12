@@ -190,6 +190,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.WhereNext.WhereNext = addcoursesteponevalues.WhereNext;
             }
 
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host)+ "find-a-course/search";
+
             return View(vm);
         }
 
@@ -293,6 +297,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
             return View(viewModel);
         }
 
@@ -893,26 +902,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             string commonurl = "find-a-course/course-details?CourseId="+ publishedCourse.CourseId+"&r="+ publishedCourse.CourseRunId;
-            if (host.Contains("dev-", StringComparison.OrdinalIgnoreCase))
-            {
-                ViewBag.LiveServiceURl = "https://dev-beta.nationalcareersservice.org.uk/"+ commonurl;
-            }
-            else if (host.Contains("sit-", StringComparison.OrdinalIgnoreCase))
-            {
-                ViewBag.LiveServiceURl = "https://sit-beta.nationalcareersservice.org.uk/" + commonurl;
-            }
-            else if (host.Contains("sit2-", StringComparison.OrdinalIgnoreCase))
-            {
-                ViewBag.LiveServiceURl = "https://sit-beta.nationalcareersservice.org.uk/" + commonurl;
-            }
-            else if (host.Contains("pp-", StringComparison.OrdinalIgnoreCase))
-            {
-                ViewBag.LiveServiceURl = "https://staging.nationalcareers.service.gov.uk/" + commonurl;
-            }
-            else
-            {
-                ViewBag.LiveServiceURl = "https://nationalcareers.service.gov.uk/" + commonurl;
-            }
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + commonurl;
 
             Session.Remove(SessionPublishedCourse);
 
