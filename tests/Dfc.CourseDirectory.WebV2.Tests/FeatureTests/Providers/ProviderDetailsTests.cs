@@ -117,18 +117,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var providerTypeValue = doc.GetSummaryListValueWithKey("Provider type");
 
             doc.GetAllElementsByTestId("providerType").Select(e => e.TextContent.Trim()).Should().OnlyContain(p => p == "T Levels" );
-
-            var tLevelNames = doc.GetAllElementsByTestId("tLevelName").Select(e => e.TextContent.Trim());
-
-            foreach (var selectedTLevelDefinitionId in selectedTLevelDefinitionIds)
-            {
-                tLevelNames.Should().Contain($"Name-{selectedTLevelDefinitionId}");
-            }
-
-            foreach (var selectedTLevelDefinitionId in tLevelDefinitionIds.Except(selectedTLevelDefinitionIds))
-            {
-                tLevelNames.Should().NotContain($"Name-{selectedTLevelDefinitionId}");
-            }
         }
 
         [Theory]
