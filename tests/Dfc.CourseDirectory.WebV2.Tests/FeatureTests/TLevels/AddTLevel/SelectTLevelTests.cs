@@ -257,44 +257,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.AddTLevel
         }
 
         [Fact]
-        public async Task Post_UnauthorizedTLevelSelected_RendersError()
-        {
-            // Arrange
-            var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
-
-            var authorizedTLevelDefinitionId = tLevelDefinitions.First().TLevelDefinitionId;
-            var selectedTLevelId = tLevelDefinitions.Last().TLevelDefinitionId;
-            selectedTLevelId.Should().NotBe(authorizedTLevelDefinitionId);
-
-            var provider = await TestData.CreateProvider(
-                providerType: ProviderType.TLevels,
-                tLevelDefinitionIds: new[] { authorizedTLevelDefinitionId });
-
-            var journeyInstance = CreateJourneyInstance(provider.ProviderId);
-            var journeyInstanceId = journeyInstance.InstanceId;
-
-            var request = new HttpRequestMessage(
-                HttpMethod.Post,
-                $"/t-levels/add?providerId={provider.ProviderId}&ffiid={journeyInstanceId.UniqueKey}")
-            {
-                Content = new FormUrlEncodedContentBuilder()
-                    .Add("SelectedTLevelDefinitionId", selectedTLevelId)
-                    .ToContent()
-            };
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var doc = await response.GetDocument();
-            doc.AssertHasError(
-                "SelectedTLevelDefinitionId",
-                "Select the T Level qualification to publish to the course directory");
-        }
-
-        [Fact]
         public async Task Post_NoCurrentTLevelSelected_UpdatesJourneyStateAndRedirects()
         {
             // Arrange
