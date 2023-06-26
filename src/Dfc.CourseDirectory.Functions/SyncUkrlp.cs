@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Functions
         [FunctionName("SyncKnownProviders")]
         [Singleton]
         [NoAutomaticTrigger]
-        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncProviderData(10084304);
+        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
 
         [FunctionName("SyncAllKnownProvidersData")]
         [Singleton]
