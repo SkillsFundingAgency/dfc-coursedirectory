@@ -18,7 +18,7 @@
                 <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
                     @ProviderType.FE.ToDescription()
                 </govuk-checkboxes-item>
-                <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels">
+                <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels" onchange="SelectAllTLevelDefinitionCheckboxes($(this));">
                     @ProviderType.TLevels.ToDescription()
                     <govuk-checkboxes-item-conditional>
                         <govuk-checkboxes asp-for="@Model.SelectedProviderTLevelDefinitionIds">
@@ -48,3 +48,15 @@
         </form>
     </div>
 </div>
+
+
+<script>
+    function SelectAllTLevelDefinitionCheckboxes(checkbox) 
+    {
+        var checkBoxesToCheck = $('#conditional-ProviderType-1').find('input[type="checkbox"]');
+        for (let i = 0; i < checkBoxesToCheck.length; i++) 
+        {
+          checkBoxesToCheck[i].checked = true;
+        }
+    }
+</script>
