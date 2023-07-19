@@ -29,6 +29,11 @@ namespace Dfc.CourseDirectory.Functions
         [FunctionName("SyncKnownProviders")]
         [Singleton]
         [NoAutomaticTrigger]
-        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
+
+        [FunctionName("SyncAllKnownProvidersData")]
+        [Singleton]
+        [NoAutomaticTrigger]
+        public Task SyncAllKnownProvidersData(string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
     }
 }

@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
@@ -24,13 +25,15 @@ SELECT
             ISNULL(pc.WebsiteAddress, '') AS WebsiteAddress,
             ISNULL(pc.Email, '') AS Email
 FROM        Pttcd.Providers p with(nolock)
-LEFT JOIN  Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
-WHERE       p.ProviderId IN(
+LEFT JOIN   Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
+WHERE       p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
+AND         p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
                 and [OfferingType]=1
             )
+AND         p.ProviderType IN({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
 ORDER BY    p.Ukprn ASC";
 
 

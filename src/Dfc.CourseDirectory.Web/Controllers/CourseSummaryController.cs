@@ -11,7 +11,9 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
+using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -122,6 +124,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 var regions = GetRegions().RegionItems.Select(x => x.Id);
                 vm.Regions = FormattedRegionsByIds(allRegions, courseRun.SubRegionIds);
             }
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) +
+                "find-a-course/course-details?CourseId=" + vm.CourseId + "&r=" + vm.CourseInstanceId;
+
             return View(vm);
         }
         internal IEnumerable<string> FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
