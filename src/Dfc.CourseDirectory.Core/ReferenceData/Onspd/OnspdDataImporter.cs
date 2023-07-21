@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     _logger.LogInformation($"Find arcgis download url at: {zipfileurl}");
 
                     //Download to temp folder
-                    DownloadZipFileToTempAsync(zipfileurl);
+                    await DownloadZipFileToTempAsync(zipfileurl);
                 }
             }
 
