@@ -112,8 +112,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             bool returnvalue = false;
             // Create a request for the URL. 		
-            HttpClient httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(requesturl);
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(requesturl);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 returnvalue = true;
