@@ -30,18 +30,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ILogger<OnspdDataImporter> _logger;
-        private readonly HttpClient _httpClient;
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ILogger<OnspdDataImporter> logger,
-            HttpClient httpClient)
+            ILogger<OnspdDataImporter> logger)
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _logger = logger;
-            _httpClient = httpClient;
         }
 
         public async Task ImportData()
@@ -171,6 +168,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             _logger.LogInformation($"Start download zip file - {zipfileurl}.");
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
+
+            HttpClient _httpClient=new HttpClient();
             using var resultStream = await _httpClient.GetStreamAsync(zipfileurl);
             using var zip = new ZipArchive(resultStream);
 
