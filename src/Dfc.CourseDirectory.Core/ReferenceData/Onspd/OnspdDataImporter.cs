@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Extensions.Logging;
@@ -24,15 +28,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ILogger<OnspdDataImporter> _logger;
+        private readonly HttpClient _httpClient;
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ILogger<OnspdDataImporter> logger)
+            ILogger<OnspdDataImporter> logger,
+            HttpClient httpClient)
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _logger = logger;
+            _httpClient = httpClient;
         }
 
         public async Task ImportData()
@@ -43,6 +50,157 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             using var dataStream = blob.Value.Content;
             using var streamReader = new StreamReader(dataStream);
+            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+            var rowCount = 0;
+            var importedCount = 0;
+
+            await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
+            {
+                // Some data has invalid lat/lngs that will fail if we try to import..
+                var withValidLatLngs = records
+                    .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
+                    .ToArray();
+
+                await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                {
+                    Records = withValidLatLngs
+                        .Select(r => new UpsertPostcodesRecord()
+                        {
+                            Postcode = r.Postcode,
+                            InEngland = r.Country == EnglandCountryId,
+                            Position = (r.Latitude, r.Longitude)
+                        })
+                });
+
+                rowCount += records.Count;
+                importedCount += withValidLatLngs.Length;
+            }
+
+            _logger.LogInformation($"Processed {rowCount} rows, imported {importedCount} postcodes.");
+        }
+
+        public async Task AutomatedImportData()
+        {
+            string geoportal_url = "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-(month)-(year)(extra)/about";
+
+            string requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
+
+            _logger.LogInformation($"Automated process generate request url at: {requesturl}");
+
+            bool urlexist = await CheckURLExistsAndProcessAsync(requesturl);
+            if (!urlexist)
+            {
+                _logger.LogInformation($"Not found url at: {requesturl}");
+                requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-1");
+                _logger.LogInformation($"Automated process generate request url at: {requesturl}");
+                urlexist = await CheckURLExistsAndProcessAsync(requesturl);
+                if (urlexist)
+                {
+                    _logger.LogInformation($"Find url at: {requesturl}");
+                }
+            }
+            else
+            {
+                _logger.LogInformation($"Find url at: {requesturl}");
+            }
+        }
+
+        private async Task<bool> CheckURLExistsAndProcessAsync(string requesturl)
+        {
+            bool returnvalue = false;
+            // Create a request for the URL. 		
+            WebRequest request = WebRequest.Create(requesturl);
+            // If required by the server, set the credentials.
+            request.Credentials = CredentialCache.DefaultCredentials;
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                returnvalue = true;
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                string responseFromServer = reader.ReadToEnd();
+                string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
+                //string indexofarcgurl = "arcgis.com%2Fsharing%2Frest%2Fcontent%2Fitems%2";
+                if (responseFromServer.Contains(arcgisurl))
+                {
+                    int findindex = responseFromServer.IndexOf(arcgisurl);
+                    int arcgisurllength = arcgisurl.Length;
+                    string zipfileurl = arcgisurl + responseFromServer.Substring(findindex + arcgisurllength, 32) + "/data";
+                    _logger.LogInformation($"Find arcgis download url at: {zipfileurl}");
+
+                    //Download to temp folder
+                    DownloadZipFileToTempAsync(zipfileurl);
+                }
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+            }
+            response.Close();
+
+            return returnvalue;
+        }
+
+        public static string GenerateRequestURL(int month,
+                                         int year,
+                                         string geoportal_url,
+                                         string extra)
+        {
+            if (month == 1 || month == 12 || month == 11)
+            {
+                month = 11;
+                if (month == 1)
+                    year = year - 1;
+            }
+            else if (month == 2 || month == 3 || month == 4)
+            {
+                month = 2;
+            }
+            else if (month == 5 || month == 6 || month == 7)
+            {
+                month = 5;
+            }
+            else if (month == 8 || month == 9 || month == 10)
+            {
+                month = 8;
+            }
+            string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month).ToLower();
+            string returnstring = geoportal_url.Replace("(month)", monthName);
+            returnstring = returnstring.Replace("(year)", year.ToString());
+            returnstring = returnstring.Replace("(extra)", extra);
+            return returnstring;
+        }
+
+        private async Task DownloadZipFileToTempAsync(string zipfileurl)
+        {
+            _logger.LogInformation($"Start download zip file - {zipfileurl}.");
+            var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
+            Directory.CreateDirectory(extractDirectory);
+            using var resultStream = await _httpClient.GetStreamAsync(zipfileurl);
+            using var zip = new ZipArchive(resultStream);
+
+            foreach (var entry in zip.Entries)
+            {
+                if (entry.Name.EndsWith("UK.csv"))
+                {
+                    _logger.LogInformation($"Find csv file - {entry.Name}.");
+                    var destination = Path.Combine(extractDirectory, entry.Name);
+                    entry.ExtractToFile(destination, overwrite: true);
+                    _logger.LogInformation($"Extract csv file - {entry.Name} complete.");
+
+                    using StreamReader streamReader = new StreamReader(destination);
+                    await ProcessCSVtoDBAsync(streamReader);
+                }
+            }
+        }
+
+        private async Task ProcessCSVtoDBAsync(StreamReader streamReader)
+        {
+            _logger.LogInformation($"Start import csv postcodes to DB.");
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
             var rowCount = 0;
