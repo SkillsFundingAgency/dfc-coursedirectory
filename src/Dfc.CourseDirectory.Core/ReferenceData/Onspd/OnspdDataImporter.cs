@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
@@ -12,6 +13,7 @@ using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
@@ -110,22 +112,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             bool returnvalue = false;
             // Create a request for the URL. 		
-            WebRequest request = WebRequest.Create(requesturl);
-            // If required by the server, set the credentials.
-            request.Credentials = CredentialCache.DefaultCredentials;
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpClient httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(requesturl);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 returnvalue = true;
-                // Get the stream containing content returned by the server.
-                Stream dataStream = response.GetResponseStream();
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream);
+                
                 // Read the content.
-                string responseFromServer = reader.ReadToEnd();
+                string responseFromServer = await response.Content.ReadAsStringAsync();
                 string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
-                //string indexofarcgurl = "arcgis.com%2Fsharing%2Frest%2Fcontent%2Fitems%2";
                 if (responseFromServer.Contains(arcgisurl))
                 {
                     int findindex = responseFromServer.IndexOf(arcgisurl);
@@ -136,11 +131,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     //Download to temp folder
                     DownloadZipFileToTempAsync(zipfileurl);
                 }
-                // Cleanup the streams and the response.
-                reader.Close();
-                dataStream.Close();
             }
-            response.Close();
 
             return returnvalue;
         }
