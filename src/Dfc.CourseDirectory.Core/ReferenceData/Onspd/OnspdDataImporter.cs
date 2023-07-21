@@ -179,8 +179,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 {
                     _logger.LogInformation($"Find csv file - {entry.Name}.");
                     var destination = Path.Combine(extractDirectory, entry.Name);
-                    entry.ExtractToFile(destination, overwrite: true);
-                    _logger.LogInformation($"Extract csv file - {entry.Name} complete.");
+                    _logger.LogInformation($"Extract to file location - {destination}.");
+                    try
+                    {
+                        entry.ExtractToFile(destination, overwrite: true);
+                        _logger.LogInformation($"Extract csv file - {entry.Name} complete.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInformation($"Extract csv file error message - {ex.Message}.");
+                    }
 
                     using StreamReader streamReader = new StreamReader(destination);
                     await ProcessCSVtoDBAsync(streamReader);
