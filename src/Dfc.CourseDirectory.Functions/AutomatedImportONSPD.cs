@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName("AutomatedImportONSPD")]
-        public async Task Run([TimerTrigger("0 0 20 28-31 * *", RunOnStartup = true)] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 20 26 * *", RunOnStartup = true)] TimerInfo myTimer)
         {
             await _onspdDataImporter.AutomatedImportData();
         }

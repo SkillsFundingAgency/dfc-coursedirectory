@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             foreach (var entry in zip.Entries)
             {
-                if (entry.Name.EndsWith("UK.csv"))
+                if (entry.Name.EndsWith("_UK.csv") && entry.Name.StartsWith("ONSPD"))
                 {
                     _logger.LogInformation($"Find csv file - {entry.Name}.");
                     var destination = Path.Combine(extractDirectory, entry.Name);
