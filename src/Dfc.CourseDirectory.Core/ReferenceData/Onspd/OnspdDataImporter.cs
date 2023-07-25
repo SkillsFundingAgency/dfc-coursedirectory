@@ -186,6 +186,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
                     using StreamReader streamReader = new StreamReader(destination);
                     await ProcessCSVtoDBAsync(streamReader);
+
+                    //Remove the CSV when process done
+                    using (FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None,
+       4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose))
+                    {
+                        // temp file exists
+                        _logger.LogInformation($"Temp csv file - {entry.Name} has been removed.");
+                    }
                 }
             }
         }
