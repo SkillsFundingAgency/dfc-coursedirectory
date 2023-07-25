@@ -90,18 +90,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             bool urlexist = await CheckURLExistsAndProcessAsync(requesturl);
             if (!urlexist)
             {
+                //sometime the url contains extra string at the end
                 _logger.LogInformation($"Not found url at: {requesturl}");
                 requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-1");
                 _logger.LogInformation($"Automated process generate request url at: {requesturl}");
                 urlexist = await CheckURLExistsAndProcessAsync(requesturl);
-                if (urlexist)
-                {
-                    _logger.LogInformation($"Find url at: {requesturl}");
-                }
-            }
-            else
-            {
-                _logger.LogInformation($"Find url at: {requesturl}");
             }
         }
 
@@ -113,6 +106,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             var response = await client.GetAsync(requesturl);
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                _logger.LogInformation($"Find url at: {requesturl}");
                 returnvalue = true;
                 
                 // Read the content.
