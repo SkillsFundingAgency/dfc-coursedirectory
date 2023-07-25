@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 //sometime the url contains extra string at the end
                 _logger.LogInformation($"Not found url at: {requesturl}");
-                requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-1");
+                requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-version-2");
                 _logger.LogInformation($"Automated process generate request url at: {requesturl}");
                 urlexist = await CheckURLExistsAndProcessAsync(requesturl);
             }
