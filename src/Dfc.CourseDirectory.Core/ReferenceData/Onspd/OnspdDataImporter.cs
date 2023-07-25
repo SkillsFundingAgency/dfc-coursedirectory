@@ -85,6 +85,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             string requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
+            //Roll the data back to Feb-2023, for testing
+            requesturl = GenerateRequestURL(2, DateTime.Now.Year, geoportal_url, "");
+
             _logger.LogInformation($"Automated process generate request url at: {requesturl}");
 
             bool urlexist = await CheckURLExistsAndProcessAsync(requesturl);
