@@ -83,10 +83,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             string geoportal_url = "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-(month)-(year)(extra)/about";
 
-            string requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
+            string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
             //Roll the data back to Feb-2023, for testing
-            requesturl = GenerateRequestURL(2, DateTime.Now.Year, geoportal_url, "-version-2");
+            requesturl = await GenerateRequestURLAsync(2, DateTime.Now.Year, geoportal_url, "-version-2");
 
             _logger.LogInformation($"Automated process generate request url at: {requesturl}");
 
@@ -95,7 +95,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 //sometime the url contains extra string at the end
                 _logger.LogInformation($"Not found url at: {requesturl}");
-                requesturl = GenerateRequestURL(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-version-2");
+                requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-version-2");
                 _logger.LogInformation($"Automated process generate request url at: {requesturl}");
                 urlexist = await CheckURLExistsAndProcessAsync(requesturl);
             }
@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             return returnvalue;
         }
 
-        public static string GenerateRequestURL(int month,
+        public async Task<string> GenerateRequestURLAsync(int month,
                                          int year,
                                          string geoportal_url,
                                          string extra)
@@ -156,8 +156,28 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month).ToLower();
             string returnstring = geoportal_url.Replace("(month)", monthName);
             returnstring = returnstring.Replace("(year)", year.ToString());
+            extra = await CheckURLContainsExtraAsync("/datasets/ons-postcode-directory-" + monthName + "-" + year.ToString());
             returnstring = returnstring.Replace("(extra)", extra);
             return returnstring;
+        }
+
+        private async Task<string> CheckURLContainsExtraAsync(string datasetstring)
+        {
+            string returnvalue = "";
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync("https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=-created&tags=all(PRD_ONSPD)");
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                // Read the content.
+                string responseFromServer = await response.Content.ReadAsStringAsync();
+                if (responseFromServer.Contains(datasetstring))
+                {
+                    int findindex = responseFromServer.IndexOf(datasetstring);
+                    returnvalue = responseFromServer.Substring(findindex).TrimEnd().Replace("\"",string.Empty);
+                    _logger.LogInformation($"Find extra string from URL - {returnvalue}.");
+                }
+            }
+            return returnvalue;
         }
 
         private async Task DownloadZipFileToTempAsync(string zipfileurl)
