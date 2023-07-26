@@ -164,14 +164,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private async Task<string> CheckURLContainsExtraAsync(string datasetstring)
         {
             string returnvalue = "";
+            _logger.LogInformation($"In CheckURLContainsExtraAsync, starting");
             HttpClient client = new HttpClient();
             var response = await client.GetAsync("https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=-created&tags=all(PRD_ONSPD)");
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                _logger.LogInformation($"In CheckURLContainsExtraAsync - response.StatusCode == HttpStatusCode.OK");
                 // Read the content.
                 string responseFromServer = await response.Content.ReadAsStringAsync();
                 if (responseFromServer.Contains(datasetstring))
                 {
+                    _logger.LogInformation($"In CheckURLContainsExtraAsync - contain string {datasetstring}");
                     int findindex = responseFromServer.IndexOf(datasetstring);
                     returnvalue = responseFromServer.Substring(findindex).TrimEnd().Replace("\"",string.Empty);
                     _logger.LogInformation($"Find extra string from URL - {returnvalue}.");
