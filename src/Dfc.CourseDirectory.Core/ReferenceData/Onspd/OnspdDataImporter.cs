@@ -156,28 +156,59 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month).ToLower();
             string returnstring = geoportal_url.Replace("(month)", monthName);
             returnstring = returnstring.Replace("(year)", year.ToString());
-            extra = await CheckURLContainsExtraAsync("/datasets/ons-postcode-directory-" + monthName + "-" + year.ToString());
-            returnstring = returnstring.Replace("(extra)", extra);
+            returnstring = await CheckURLContainsExtraAsync(returnstring);
             return returnstring;
         }
 
         private async Task<string> CheckURLContainsExtraAsync(string datasetstring)
         {
-            string returnvalue = "";
+            string returnvalue = datasetstring.Replace("(extra)", "");
             _logger.LogInformation($"In CheckURLContainsExtraAsync, starting");
             HttpClient client = new HttpClient();
-            var response = await client.GetAsync("https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=-created&tags=all(PRD_ONSPD)");
+            var response = await client.GetAsync(returnvalue);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 _logger.LogInformation($"In CheckURLContainsExtraAsync - response.StatusCode == HttpStatusCode.OK");
                 // Read the content.
                 string responseFromServer = await response.Content.ReadAsStringAsync();
-                if (responseFromServer.Contains(datasetstring))
+                byte[] bytes = Encoding.Default.GetBytes(responseFromServer);
+                responseFromServer = Encoding.UTF8.GetString(bytes);
+                string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
+                if (responseFromServer.Contains(arcgisurl))
                 {
-                    _logger.LogInformation($"In CheckURLContainsExtraAsync - contain string {datasetstring}");
-                    int findindex = responseFromServer.IndexOf(datasetstring);
-                    returnvalue = responseFromServer.Substring(findindex).TrimEnd().Replace("\"",string.Empty);
-                    _logger.LogInformation($"Find extra string from URL - {returnvalue}.");
+                    return returnvalue;
+                }
+                else
+                {
+                    returnvalue = datasetstring.Replace("(extra)", "-version-2");
+                    HttpClient client1 = new HttpClient();
+                    var response1 = await client1.GetAsync(returnvalue);
+                    if (response1.StatusCode == HttpStatusCode.OK)
+                    {
+                        _logger.LogInformation($"In CheckURLContainsExtraAsync - url does have extra '-version-2'");
+                        // Read the content.
+                        string responseFromServer1 = await response1.Content.ReadAsStringAsync();
+                        if (responseFromServer1.Contains(arcgisurl))
+                        {
+                            return returnvalue;
+                        }
+                        else
+                        {
+                            returnvalue = datasetstring.Replace("(extra)", "-1");
+                            HttpClient client2 = new HttpClient();
+                            var response2 = await client1.GetAsync(returnvalue);
+                            if (response2.StatusCode == HttpStatusCode.OK)
+                            {
+                                _logger.LogInformation($"In CheckURLContainsExtraAsync -  - url does have extra '-1'");
+                                // Read the content.
+                                string responseFromServer2 = await response2.Content.ReadAsStringAsync();
+                                if (responseFromServer2.Contains(arcgisurl))
+                                {
+                                    return returnvalue;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             return returnvalue;
