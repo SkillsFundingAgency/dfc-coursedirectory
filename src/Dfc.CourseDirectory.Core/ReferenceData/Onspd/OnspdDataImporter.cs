@@ -137,9 +137,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             if (month == 1 || month == 12 || month == 11)
             {
-                month = 11;
                 if (month == 1)
                     year = year - 1;
+                month = 11;
             }
             else if (month == 2 || month == 3 || month == 4)
             {
