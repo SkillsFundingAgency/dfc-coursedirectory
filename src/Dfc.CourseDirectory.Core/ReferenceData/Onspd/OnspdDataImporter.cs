@@ -83,10 +83,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             string geoportal_url = "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-(month)-(year)(extra)/about";
 
-            //string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
-
-            //Roll the data back to Jun-2022, for testing May-2022 file testing 
-            string requesturl = await GenerateRequestURLAsync(6, 2022, geoportal_url, "");
+            string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
             _logger.LogInformation($"Automated process generate request url at: {requesturl}");
 
