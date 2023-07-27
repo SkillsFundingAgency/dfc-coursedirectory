@@ -85,8 +85,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             //string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
-            //Roll the data back to Oct-2022, for testing Aug-2022 file testing 
-            string requesturl = await GenerateRequestURLAsync(10, 2022, geoportal_url, "");
+            //Roll the data back to Jun-2022, for testing May-2022 file testing 
+            string requesturl = await GenerateRequestURLAsync(6, 2022, geoportal_url, "");
 
             _logger.LogInformation($"Automated process generate request url at: {requesturl}");
 
@@ -185,11 +185,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     var response1 = await client1.GetAsync(returnvalue);
                     if (response1.StatusCode == HttpStatusCode.OK)
                     {
-                        _logger.LogInformation($"In CheckURLContainsExtraAsync - url does have extra '-version-2'");
                         // Read the content.
                         string responseFromServer1 = await response1.Content.ReadAsStringAsync();
                         if (responseFromServer1.Contains(arcgisurl))
                         {
+                            _logger.LogInformation($"In CheckURLContainsExtraAsync - url does have extra '-version-2'");
                             return returnvalue;
                         }
                         else
@@ -199,12 +199,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                             var response2 = await client1.GetAsync(returnvalue);
                             if (response2.StatusCode == HttpStatusCode.OK)
                             {
-                                _logger.LogInformation($"In CheckURLContainsExtraAsync -  - url does have extra '-1'");
                                 // Read the content.
                                 string responseFromServer2 = await response2.Content.ReadAsStringAsync();
                                 if (responseFromServer2.Contains(arcgisurl))
                                 {
+                                    _logger.LogInformation($"In CheckURLContainsExtraAsync -  - url does have extra '-1'");
                                     return returnvalue;
+                                }
+                                else
+                                {
+                                    _logger.LogInformation($"In CheckURLContainsExtraAsync -  - url not found.");
                                 }
                             }
                         }
