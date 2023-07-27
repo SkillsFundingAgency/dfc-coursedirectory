@@ -85,8 +85,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             //string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
-            //Roll the data back to Jan-2023, for testing last year nov file testing 
-            string requesturl = await GenerateRequestURLAsync(11, 2022, geoportal_url, "");
+            //Roll the data back to Oct-2022, for testing Aug-2022 file testing 
+            string requesturl = await GenerateRequestURLAsync(10, 2022, geoportal_url, "");
 
             _logger.LogInformation($"Automated process generate request url at: {requesturl}");
 
