@@ -13,20 +13,21 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 UPDATE Pttcd.CourseRuns
-SET CourseRunStatus = {(int)CourseStatus.Archived}
+SET CourseRunStatus = {(int)CourseStatus.Archived}, UpdatedOn=GETDATE(),UpdatedBy='DeleteCoursesForProvider'
 FROM Pttcd.CourseRuns cr
 JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
 WHERE cr.CourseRunStatus <> {(int)CourseStatus.Archived}
 AND c.ProviderId = @ProviderId
 
 UPDATE Pttcd.Courses
-SET CourseStatus = {(int)CourseStatus.Archived}
+SET CourseStatus = {(int)CourseStatus.Archived}, UpdatedOn=GETDATE(),UpdatedBy='DeleteCoursesForProvider'
 WHERE CourseStatus <> {(int)CourseStatus.Archived}
 AND ProviderId = @ProviderId
 
 UPDATE Pttcd.FindACourseIndex
-SET Live = 0
-WHERE ProviderId = @ProviderId";
+SET Live = 0, UpdatedOn=GETDATE()
+WHERE ProviderId = @ProviderId
+AND OfferingType=1";
 
             var paramz = new
             {

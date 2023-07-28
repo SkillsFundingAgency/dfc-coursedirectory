@@ -57,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SelectTLevel
         {
             ThrowIfFlowStateNotValid();
 
-            var authorizedTLevelDefinitions = await GetAuthorizedTLevelDefinitions(request.ProviderId);
+            var authorizedTLevelDefinitions = await GetAllTLevelDefinitions();
 
             return CreateViewModel(request.ProviderId, authorizedTLevelDefinitions);
         }
@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SelectTLevel
         {
             ThrowIfFlowStateNotValid();
 
-            var authorizedTLevelDefinitions = await GetAuthorizedTLevelDefinitions(request.ProviderId);
+            var authorizedTLevelDefinitions = await GetAllTLevelDefinitions();
 
             var validator = new CommandValidator(authorizedTLevelDefinitions);
             var validationResult = await validator.ValidateAsync(request);
@@ -117,11 +117,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SelectTLevel
             };
         }
 
-        private Task<IReadOnlyCollection<TLevelDefinition>> GetAuthorizedTLevelDefinitions(Guid providerId) =>
+        private Task<IReadOnlyCollection<TLevelDefinition>> GetAllTLevelDefinitions() =>
             _sqlQueryDispatcher.ExecuteQuery(
-                new GetTLevelDefinitionsForProvider()
+                new GetAllTLevelDefinitions()
                 {
-                    ProviderId = providerId
                 });
 
         private void ThrowIfFlowStateNotValid()

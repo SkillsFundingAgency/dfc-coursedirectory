@@ -48,19 +48,7 @@
                         }
                         @if (Model.ProviderType.HasFlag(ProviderType.TLevels))
                         {
-                            <li>
-                                <govuk-details class="govuk-!-margin-bottom-0">
-                                    <govuk-details-summary data-testid="providerType">@ProviderType.TLevels.ToDescription()</govuk-details-summary>
-                                    <govuk-details-text>
-                                        <ul class="govuk-list">
-                                            @foreach (var tLevelDefinition in Model.ProviderTLevelDefinitions)
-                                            {
-                                                <li data-testid="tLevelName">@tLevelDefinition.Name</li>
-                                            }
-                                        </ul>
-                                    </govuk-details-text>
-                                </govuk-details>
-                            </li>
+                            <li data-testid="providerType">@ProviderType.TLevels.ToDescription()</li>
                         }
                     </ul>
                 </govuk-summary-list-row-value>
