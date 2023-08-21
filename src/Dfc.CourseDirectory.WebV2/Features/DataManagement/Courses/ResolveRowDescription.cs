@@ -93,13 +93,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 row.CourseId,
                 new CourseUploadRowGroupUpdate()
                 {
-                    WhoThisCourseIsFor = request.WhoThisCourseIsFor,
-                    EntryRequirements = request.EntryRequirements,
-                    WhatYouWillLearn = request.WhatYouWillLearn,
-                    HowYouWillLearn = request.HowYouWillLearn,
-                    WhatYouWillNeedToBring = request.WhatYouWillNeedToBring,
-                    HowYouWillBeAssessed = request.HowYouWillBeAssessed,
-                    WhereNext = request.WhereNext
+                    WhoThisCourseIsFor = formattedRequest.WhoThisCourseIsFor,
+                    EntryRequirements = formattedRequest.EntryRequirements,
+                    WhatYouWillLearn = formattedRequest.WhatYouWillLearn,
+                    HowYouWillLearn = formattedRequest.HowYouWillLearn,
+                    WhatYouWillNeedToBring = formattedRequest.WhatYouWillNeedToBring,
+                    HowYouWillBeAssessed = formattedRequest.HowYouWillBeAssessed,
+                    WhereNext = formattedRequest.WhereNext
                 });
         }
 
