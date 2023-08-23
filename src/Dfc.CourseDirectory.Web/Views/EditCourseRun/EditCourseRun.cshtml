@@ -191,12 +191,12 @@
             <h3 class="govuk-heading-m">Publish your course changes</h3>
             <p class="govuk-body">Your course details will be updated on Publish to the course directory and available to learners searching for learning and training opportunities on the National Careers Service.</p>
 
-            <button name="saveButton" type="submit" class="govuk-button" id="save">Publish changes</button>
+            <button name="saveButton" type="submit" class="cd-cancel-btn govuk-button" id="save">Publish changes</button>
 
             @switch (Model.Mode)
             {
                 case PublishMode.Summary:
-                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link govuk-!-margin-left-3" })
+                    @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "cd-cancel-link-unset govuk-link cd-cancel-link" })
                     break;
                 default:
                     @Html.ActionLink("Cancel", "Courses", "Provider", new
