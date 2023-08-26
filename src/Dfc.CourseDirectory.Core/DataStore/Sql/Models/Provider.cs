@@ -1,5 +1,9 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 {
@@ -13,6 +17,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public ProviderDisplayNameSource DisplayNameSource { get; set; }
         public decimal? LearnerSatisfaction { get; set; }
         public decimal? EmployerSatisfaction { get; set; }
+
+        public string MarketingInformation { get; set; }
+
+        public string ProviderStatus { get; set; }
+        public string CourseDirectoryName { get; set; }
+
+
 
         public string DisplayName => DisplayNameSource switch
         {

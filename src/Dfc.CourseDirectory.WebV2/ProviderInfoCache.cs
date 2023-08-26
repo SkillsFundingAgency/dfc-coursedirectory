@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,18 +10,18 @@ namespace Dfc.CourseDirectory.WebV2
 {
     public class ProviderInfoCache : IProviderInfoCache
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IDistributedCache _cache;
         private readonly ILogger<ProviderInfoCache> _logger;
 
         private static readonly TimeSpan _slidingExpiration = TimeSpan.FromHours(1);
 
         public ProviderInfoCache(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+           ISqlQueryDispatcher sqlQueryDispatcher,
             IDistributedCache cache,
             ILoggerFactory loggerFactory)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _cache = cache;
             _logger = loggerFactory.CreateLogger<ProviderInfoCache>();
         }
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (result == null)
             {
-                var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+                var provider = await _sqlQueryDispatcher.ExecuteQuery(
                     new GetProviderById() { ProviderId = providerId });
 
                 if (provider == null)
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2
 
                 result = new ProviderInfo()
                 {
-                    ProviderId = provider.Id,
+                    ProviderId = provider.ProviderId,
                     Ukprn = provider.Ukprn,
                     ProviderType = provider.ProviderType,
                     ProviderName = provider.ProviderName
@@ -77,12 +77,12 @@ namespace Dfc.CourseDirectory.WebV2
 
         public async Task<Guid?> GetProviderIdForUkprn(int ukprn)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderByUkprn() { Ukprn = ukprn });
 
             if (provider != null)
             {
-                return provider.Id;
+                return provider.ProviderId;
             }
             else
             {

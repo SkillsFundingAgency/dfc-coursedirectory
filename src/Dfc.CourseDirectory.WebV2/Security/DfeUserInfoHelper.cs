@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -16,18 +16,18 @@ namespace Dfc.CourseDirectory.WebV2.Security
     public class DfeUserInfoHelper : ISignInAction
     {
         private readonly DfeSignInSettings _settings;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly HttpClient _httpClient;
         private readonly UkrlpSyncHelper _ukrlpSyncHelper;
 
         public DfeUserInfoHelper(
             DfeSignInSettings settings,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             UkrlpSyncHelper ukrlpSyncHelper,
             IHttpClientFactory httpClientFactory)
         {
             _settings = settings;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _ukrlpSyncHelper = ukrlpSyncHelper;
             _httpClient = httpClientFactory.CreateClient("DfeSignIn");
         }
@@ -94,12 +94,12 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 }
 
                 context.Provider = provider;
-                context.UserInfo.CurrentProviderId = provider.Id;
+                context.UserInfo.CurrentProviderId = provider.ProviderId;
             }
         }
 
         private Task<Provider> GetProvider(int ukprn) =>
-            _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
+            _sqlQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
 
         private async Task<int?> GetOrganisationUkprn(string organisationId, string userId)
         {
