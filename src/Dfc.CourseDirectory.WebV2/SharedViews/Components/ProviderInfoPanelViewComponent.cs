@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.SharedViews.Components;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,16 +13,16 @@ namespace Dfc.CourseDirectory.WebV2.Features
 {
     public class ProviderInfoPanelViewComponent : ViewComponent
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public ProviderInfoPanelViewComponent(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public ProviderInfoPanelViewComponent(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(Guid providerId)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
                 {
                     ProviderId = providerId
@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features
                     ContactName = contactName,
                     Email = contact.ContactEmail,
                     GotContact = true,
-                    ProviderId = provider.Id,
+                    ProviderId = provider.ProviderId,
                     Telephone = contact.ContactTelephone1,
                     Website = contact.ContactWebsiteAddress != null ? UrlUtil.EnsureHttpPrefixed(contact.ContactWebsiteAddress) : null
                 };
