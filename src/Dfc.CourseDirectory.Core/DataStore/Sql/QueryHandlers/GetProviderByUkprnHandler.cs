@@ -16,6 +16,8 @@ SELECT  ProviderId,
         ProviderName,
         ProviderType,
         Alias,
+        MarketingInformation,
+        ProviderStatus,
         DisplayNameSource,
         LearnerSatisfaction,
         EmployerSatisfaction
