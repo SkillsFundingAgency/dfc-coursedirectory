@@ -129,40 +129,30 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 .OrderByDescending(c => c.LastUpdated)
                 .FirstOrDefault();
 
-        private static ProviderAlias MapAlias(ProviderAliasesStructure alias) => new ProviderAlias()
-        {
-            Alias = alias.ProviderAlias
-        };
+        //private static ProviderAlias MapAlias(ProviderAliasesStructure alias) => new ProviderAlias()
+        //{
+        //    Alias = alias.ProviderAlias
+        //};
 
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
         {
-            ContactAddress = new ProviderContactAddress()
-            {
-                SAON = new ProviderContactAddressSAON { Description = contact.ContactAddress.Address1 },
-                PAON = new ProviderContactAddressPAON { Description = contact.ContactAddress.Address2 },
-                StreetDescription = contact.ContactAddress.Address3,
-                Locality = contact.ContactAddress.Address4,
-                Items = new List<string>
-                {
-                    contact.ContactAddress.Town,
-                    contact.ContactAddress.County,
-                }.Where(s => s != null).ToList(),
-                PostTown = contact.ContactAddress.Town,
-                County = contact.ContactAddress.County,
-                PostCode = contact.ContactAddress.PostCode,
-            },
-            ContactEmail = contact.ContactEmail,
-            ContactFax = contact.ContactFax,
-            ContactPersonalDetails = new ProviderContactPersonalDetails()
-            {
-                PersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle,
-                PersonGivenName = contact.ContactPersonalDetails.PersonGivenName,
-                PersonFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
-            },
-            ContactTelephone1 = contact.ContactTelephone1,
+            AddressSaonDescription = contact.ContactAddress.Address1,
+            AddressPaonDescription = contact.ContactAddress.Address2,
+            AddressStreetDescription = contact.ContactAddress.Address3,
+            AddressLocality = contact.ContactAddress.Address4,
+            AddressItems = contact.ContactAddress.Town + " " + contact.ContactAddress.County,
+            AddressPostTown = contact.ContactAddress.Town,
+            AddressCounty = contact.ContactAddress.County,
+            AddressPostcode = contact.ContactAddress.PostCode,
+            Email = contact.ContactEmail,
+            Fax = contact.ContactFax,
+            PersonalDetailsPersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle[0],
+            PersonalDetailsPersonNameGivenName = contact.ContactPersonalDetails.PersonGivenName[0],
+            PersonalDetailsPersonNameFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
+            Telephone1 = contact.ContactTelephone1,
             ContactType = contact.ContactType,
-            ContactWebsiteAddress = contact.ContactWebsiteAddress,
-            LastUpdated = contact.LastUpdated
+            WebsiteAddress = contact.ContactWebsiteAddress,
+            //LastUpdated = contact.LastUpdated
         };
 
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
@@ -181,7 +171,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     new CreateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        Aliases = providerData.ProviderAliases.Select(MapAlias),
+                        //Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
                         Contacts = contact != null ?
@@ -203,7 +193,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     new UpdateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        Aliases = providerData.ProviderAliases.Select(MapAlias),
+                        //Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
                         Contacts = contact != null ?
