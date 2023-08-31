@@ -6,8 +6,8 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf;
 using OneOf.Types;
@@ -58,6 +58,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             await Task.WhenAll(getProvider, getQualification);
 
             var provider = getProvider.Result;
+            var getProviderContact = _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = provider.ProviderId });
+
             var qualification = getQualification.Result.Items.SingleOrDefault();
 
             var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(new GetProviderById { ProviderId = provider.ProviderId });
@@ -72,8 +74,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 ? venues.Single(v => v.VenueId == courseRun.VenueId)
                 : null;
 
-            var providerContact = provider.ProviderContact.SingleOrDefault(c => c.ContactType == "P");
-            var providerAddressLines = NormalizeAddress(providerContact?.ContactAddress);
+            var providerContact = getProviderContact.Result;
+            var providerAddressLines = NormalizeAddress(providerContact);
 
             var alternativeCourseRuns = course.CourseRuns
                 .Where(r => r.CourseRunId != request.CourseRunId && r.CourseRunStatus == CourseStatus.Live)
@@ -129,7 +131,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     }
                     : null,
                 Provider = new ProviderViewModel
-                {
+                { 
                     ProviderName = sqlProvider.DisplayName,
                     TradingName = sqlProvider.DisplayName,
                     CourseDirectoryName = provider.CourseDirectoryName,
@@ -137,13 +139,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     Ukprn = provider.Ukprn.ToString(),
                     AddressLine1 = HtmlEncode(providerAddressLines.AddressLine1),
                     AddressLine2 = HtmlEncode(providerAddressLines.AddressLine2),
-                    Town = HtmlEncode(providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString()),
-                    Postcode = providerContact?.ContactAddress?.PostCode,
-                    County = HtmlEncode(providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Locality),
-                    Telephone = providerContact?.ContactTelephone1,
-                    Fax = providerContact?.ContactFax,
-                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
-                    Email = providerContact?.ContactEmail,
+                    Town = HtmlEncode(providerContact?.AddressPostTown),
+                    Postcode = HtmlEncode(providerContact?.AddressPostcode),
+                    County = HtmlEncode(providerContact?.AddressCounty) ?? providerContact?.AddressLocality,
+                    Telephone = providerContact?.Telephone1,
+                    Fax = providerContact?.Fax,
+                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress),
+                    Email = providerContact?.Email,
                     EmployerSatisfaction = sqlProvider?.EmployerSatisfaction,
                     LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
                 },
@@ -206,7 +208,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
             static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);
 
-            static (string AddressLine1, string AddressLine2) NormalizeAddress(ProviderContactAddress address)
+            static (string AddressLine1, string AddressLine2) NormalizeAddress(ProviderContact address)
             {
                 if (address == null)
                 {
@@ -215,9 +217,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
                 var parts = new[]
                 {
-                    address?.SAON?.Description,
-                    address?.PAON?.Description,
-                    address?.StreetDescription
+                    address?.AddressSaonDescription,
+                    address?.AddressPaonDescription,
+                    address?.AddressStreetDescription
                 }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
 
                 // Join all parts except the last into a single line and make that line 1
