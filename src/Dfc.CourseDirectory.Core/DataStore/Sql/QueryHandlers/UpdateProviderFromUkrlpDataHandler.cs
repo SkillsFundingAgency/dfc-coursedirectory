@@ -1,9 +1,6 @@
 ﻿using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using OneOf;
 using OneOf.Types;
 using System.Data.SqlClient;
@@ -18,32 +15,79 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             SqlTransaction transaction,
             UpdateProviderFromUkrlpData query)
         {
-            var sql = $@"
-UPDATE 
-";
+            var sql = $@"UPDATE [Pttcd].[Providers]
+                            SET [ProviderName] = @ProviderName,
+                            [Alias] = @Alias,
+                            [ProviderStatus] = @ProviderStatus,
+                            [UpdatedOn] = @UpdatedOn,
+                            [UpdatedBy] = @UpdatedBy
+                        WHERE [ProviderId] = @ProviderId ";
 
 
             var paramz = new
             {
                 query.ProviderName,
-                ProviderAliases = query.Aliases.ToList(),
-                ProviderContacts = query.Contacts.ToList(),
                 query.Alias,
                 query.ProviderStatus,
-                query.DateUpdated,
-                query.UpdatedBy
+                UpdatedOn = query.DateUpdated,
+                query.UpdatedBy,
+                query.ProviderId,
             };
 
             var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);
 
             if (result == Result.Success)
             {
-                return new Success();
-            }
-            else
-            {
+                var pcsql = $@"UPDATE [Pttcd].[ProviderContacts] 
+                                SET [ContactType] = @ContactType
+                                  ,[AddressSaonDescription] = @AddressSaonDescription
+                                  ,[AddressPaonDescription] = @AddressPaonDescription
+                                  ,[AddressStreetDescription] = @AddressStreetDescription
+                                  ,[AddressLocality] = @AddressLocality
+                                  ,[AddressItems] = @AddressItems
+                                  ,[AddressPostTown] = @AddressPostTown
+                                  ,[AddressCounty] = @AddressCounty
+                                  ,[AddressPostcode] = @AddressPostcode
+                                  ,[PersonalDetailsPersonNameTitle] = @PersonalDetailsPersonNameTitle
+                                  ,[PersonalDetailsPersonNameGivenName] = @PersonalDetailsPersonNameGivenName
+                                  ,[PersonalDetailsPersonNameFamilyName] = @PersonalDetailsPersonNameFamilyName
+                                  ,[Telephone1] = @Telephone1
+                                  ,[Fax] = @Fax
+                                  ,[WebsiteAddress] = @WebsiteAddress
+                                  ,[Email] = @Email
+                              WHERE [ProviderId] = @ProviderId ";
+
+                var providerContact = query.Contacts.FirstOrDefault();
+                var pcparamz = new
+                {
+                    providerContact.ContactType,
+                    providerContact.AddressSaonDescription,
+                    providerContact.AddressPaonDescription,
+                    providerContact.AddressStreetDescription,
+                    providerContact.AddressLocality,
+                    providerContact.AddressItems,
+                    providerContact.AddressPostTown,
+                    providerContact.AddressCounty,
+                    providerContact.AddressPostcode,
+                    providerContact.PersonalDetailsPersonNameTitle,
+                    providerContact.PersonalDetailsPersonNameGivenName,
+                    providerContact.PersonalDetailsPersonNameFamilyName,
+                    providerContact.Telephone1,
+                    providerContact.Fax,
+                    providerContact.WebsiteAddress,
+                    providerContact.Email,
+                    query.ProviderId
+                };
+
+                result = await transaction.Connection.QuerySingleAsync<Result>(pcsql, pcparamz, transaction);
+
+                if (result == Result.Success)
+                {
+                    return new Success();
+                }
                 return new NotFound();
             }
+            return new NotFound();
         }
 
         private enum Result { Success = 0, NotFound = 1 }
