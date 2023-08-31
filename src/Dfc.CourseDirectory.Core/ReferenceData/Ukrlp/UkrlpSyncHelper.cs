@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         //};
 
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
-        {
+        { 
             AddressSaonDescription = contact.ContactAddress.Address1,
             AddressPaonDescription = contact.ContactAddress.Address2,
             AddressStreetDescription = contact.ContactAddress.Address3,
@@ -151,8 +151,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             PersonalDetailsPersonNameFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
             Telephone1 = contact.ContactTelephone1,
             ContactType = contact.ContactType,
-            WebsiteAddress = contact.ContactWebsiteAddress,
-            //LastUpdated = contact.LastUpdated
+            WebsiteAddress = contact.ContactWebsiteAddress
         };
 
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
