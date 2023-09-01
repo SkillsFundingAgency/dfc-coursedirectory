@@ -987,9 +987,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             bool expired = true;
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
             var lastNewStartDates = await dispatcher.ExecuteQuery(new GetValidityLastNewStartDate() { LearnAimRef = learnAimRef });
-            var latestdate = lastNewStartDates.OrderByDescending(x => x).First();
-            if (lastNewStartDates.Contains(null) || latestdate > DateTime.Now)
-                expired = false;
+            DateTime? latestdate = new DateTime();
+            if (lastNewStartDates.Count() > 0)
+            {
+                latestdate = lastNewStartDates.OrderByDescending(x => x).First();
+                if (lastNewStartDates.Contains(null) || latestdate > DateTime.Now)
+                    expired = false;
+            }
             return expired;
         }
 
