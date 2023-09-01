@@ -57,6 +57,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportStandardsToCosmos();
             await ImportStandardSectorCodesToCosmos();
 
+            await ImportValidityToSql();
             await ImportAwardOrgCodeToSql();
             var categoriesRefs = await ImportCategoryToSql();
             var learningDeliveryRefs = await ImportLearningDeliveryToSql();
@@ -66,7 +67,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportSectorSubjectAreaTier2ToSql();
             await ImportStandardsToSql();
             await ImportStandardSectorCodesToSql();
-            await ImportValidityToSql();
 
             IEnumerable<T> ReadCsv<T>(string fileName, Action<CsvContext> configureContext = null)
             {
