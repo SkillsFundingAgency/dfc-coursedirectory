@@ -16,19 +16,22 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
 
 
-            var sql = $@"
-UPDATE 
-";
+            var sql = $@"UPDATE Pttcd.Providers
+                         SET ProviderStatus = @ProviderStatus,
+                            UpdatedOn = @UpdatedOn,
+                            UpdatedBy = @UpdatedBy
+                        WHERE ProviderId = @ProviderId ";
 
             var paramz = new
             {
-                ProviderStatus.Onboarded,
-                query.UpdatedDateTime,
-                query.UpdatedBy.UserId
+                ProviderStatus = ProviderStatus.Onboarded,
+                query.UpdatedOn,
+                UpdatedBy = query.UpdatedBy.UserId,
+                query.ProviderId
             };
-            var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);
+            var updated = await transaction.Connection.ExecuteAsync(sql, paramz, transaction) == 1;
 
-            if (result == Result.Success)
+            if (updated)
             {
                 return new Success();
             }
@@ -38,6 +41,5 @@ UPDATE
             }
         }
 
-        private enum Result { Success = 0, NotFound = 1 }
     }
 }

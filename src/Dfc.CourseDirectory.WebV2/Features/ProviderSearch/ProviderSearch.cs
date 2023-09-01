@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
             {
                 ProviderId = request.ProviderId,
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
-                UpdatedDateTime = _clock.UtcNow.ToLocalTime()
+                UpdatedOn = _clock.UtcNow.ToLocalTime()
             });
 
             return result.Match<OneOf<NotFound, Success>>(

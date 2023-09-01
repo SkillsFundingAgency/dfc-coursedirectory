@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 
         public UserInfo UpdatedBy { get; set; }
 
-        public DateTime UpdatedDateTime { get; set; }
+        public DateTime UpdatedOn { get; set; }
     }
 
  
