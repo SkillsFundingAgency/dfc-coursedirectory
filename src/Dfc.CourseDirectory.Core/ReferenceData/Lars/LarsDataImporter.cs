@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             {
                 var assm = typeof(LarsDataImporter).Assembly;
                 var filePath = Path.Join(extractDirectory, fileName);
-
+                _logger.LogInformation("Read file - "+ filePath);
                 using (var stream = File.OpenRead(filePath))
                 using (var streamReader = new StreamReader(stream))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
@@ -320,6 +320,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     "Validity.csv",
                     configuration => configuration.RegisterClassMap<UpsertLarsValidityRecordClassMap>());
 
+                _logger.LogInformation($"Start import validity.csv records count - "+records.Count());
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsValidity
                 {
