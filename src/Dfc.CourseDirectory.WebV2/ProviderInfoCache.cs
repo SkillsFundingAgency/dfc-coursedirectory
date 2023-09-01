@@ -5,23 +5,24 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Components;
 
 namespace Dfc.CourseDirectory.WebV2
 {
     public class ProviderInfoCache : IProviderInfoCache
     {
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly IDistributedCache _cache;
         private readonly ILogger<ProviderInfoCache> _logger;
 
         private static readonly TimeSpan _slidingExpiration = TimeSpan.FromHours(1);
 
         public ProviderInfoCache(
-           ISqlQueryDispatcher sqlQueryDispatcher,
+           ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             IDistributedCache cache,
             ILoggerFactory loggerFactory)
         {
-            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _cache = cache;
             _logger = loggerFactory.CreateLogger<ProviderInfoCache>();
         }
@@ -51,7 +52,8 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (result == null)
             {
-                var provider = await _sqlQueryDispatcher.ExecuteQuery(
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+                var provider = await dispatcher.ExecuteQuery(
                     new GetProviderById() { ProviderId = providerId });
 
                 if (provider == null)
@@ -77,7 +79,8 @@ namespace Dfc.CourseDirectory.WebV2
 
         public async Task<Guid?> GetProviderIdForUkprn(int ukprn)
         {
-            var provider = await _sqlQueryDispatcher.ExecuteQuery(
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+            var provider = await dispatcher.ExecuteQuery(
                 new GetProviderByUkprn() { Ukprn = ukprn });
 
             if (provider != null)
