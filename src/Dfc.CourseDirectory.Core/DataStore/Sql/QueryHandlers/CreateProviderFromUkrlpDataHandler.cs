@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -12,26 +13,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
                 INSERT INTO [Pttcd].[Providers]([ProviderId],[Ukprn],[ProviderName],[Alias],[ProviderStatus],[ProviderType],[UpdatedOn],[UpdatedBy])
-                            VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@ProviderStatus,@ProviderType,@UpdatedOn,@UpdatedBy)";
+                            VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@ProviderStatus,@ProviderType,@UpdatedOn,@UpdatedBy);
 
-            var paramz = new
-            {
-                query.ProviderId,
-                query.Ukprn,
-                query.ProviderName,
-                query.Alias,
-                query.ProviderStatus,
-                query.ProviderType,
-                //query.Status,
-                UpdatedOn = query.DateUpdated,
-                query.UpdatedBy
-            };
-
-            await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
-
-            foreach(var providerContact in query.Contacts)
-            {
-                var pcsql = $@"
                 INSERT INTO [Pttcd].[ProviderContacts]
                         ([ProviderId]
                           ,[ProviderContactIndex]
@@ -72,35 +55,41 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                           ,@Telephone2
                           ,@Fax
                           ,@WebsiteAddress
-                          ,@Email))";
+                          ,@Email);
+                ";
+            var providerContact = query.Contacts.FirstOrDefault();
+            var paramz = new
+            {
+                query.ProviderId,
+                query.Ukprn,
+                query.ProviderName,
+                query.Alias,
+                query.ProviderStatus,
+                query.ProviderType,
+                UpdatedOn = query.DateUpdated,
+                query.UpdatedBy,
+                providerContact.ProviderContactIndex,
+                providerContact.ContactType,
+                providerContact.ContactRole,
+                providerContact.AddressSaonDescription,
+                providerContact.AddressPaonDescription,
+                providerContact.AddressStreetDescription,
+                providerContact.AddressLocality,
+                providerContact.AddressItems,
+                providerContact.AddressPostTown,
+                providerContact.AddressCounty,
+                providerContact.AddressPostcode,
+                providerContact.PersonalDetailsPersonNameTitle,
+                providerContact.PersonalDetailsPersonNameGivenName,
+                providerContact.PersonalDetailsPersonNameFamilyName,
+                providerContact.Telephone1,
+                providerContact.Telephone2,
+                providerContact.Fax,
+                providerContact.WebsiteAddress,
+                providerContact.Email
+            };
 
-                var pcparamz = new
-                {
-                    query.ProviderId,
-                    providerContact.ProviderContactIndex,
-                    providerContact.ContactType,
-                    providerContact.ContactRole,
-                    providerContact.AddressSaonDescription,
-                    providerContact.AddressPaonDescription,
-                    providerContact.AddressStreetDescription,
-                    providerContact.AddressLocality,
-                    providerContact.AddressItems,
-                    providerContact.AddressPostTown,
-                    providerContact.AddressCounty,
-                    providerContact.AddressPostcode,
-                    providerContact.PersonalDetailsPersonNameTitle,
-                    providerContact.PersonalDetailsPersonNameGivenName,
-                    providerContact.PersonalDetailsPersonNameFamilyName,
-                    providerContact.Telephone1,
-                    providerContact.Telephone2,
-                    providerContact.Fax,
-                    providerContact.WebsiteAddress,
-                    providerContact.Email
-                };
-
-                await transaction.Connection.ExecuteAsync(pcsql, pcparamz, transaction);
-            }
-
+            await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
             return new Success();
         }
     }
