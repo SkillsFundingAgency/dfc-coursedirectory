@@ -146,7 +146,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             await _sqlQueryDispatcher.ExecuteQuery(new UpdateProviderType()
             {
                 ProviderId = request.ProviderId,
-                ProviderType = request.ProviderType
+                ProviderType = request.ProviderType,
+                UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                UpdatedOn = _clock.UtcNow.ToLocalTime()
             });
 
             var (_, RemovedTLevelDefinitionIds) = await _sqlQueryDispatcher.ExecuteQuery(
