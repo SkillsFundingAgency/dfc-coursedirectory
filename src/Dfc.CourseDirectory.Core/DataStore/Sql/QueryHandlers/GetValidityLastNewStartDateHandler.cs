@@ -16,7 +16,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"SELECT  * FROM [LARS].[Validity] WHERE LearnAimRef = @LearnAimRef";
 
-            var rows = (await transaction.Connection.QueryAsync<Validity>(sql, transaction: transaction)).AsList();
+            var paramz = new
+            {
+                query.LearnAimRef
+            };
+
+            var rows = (await transaction.Connection.QueryAsync<Validity>(sql, paramz, transaction: transaction)).AsList();
 
             return rows.Select(r=> r.LastNewStartDate).ToList();
         }
