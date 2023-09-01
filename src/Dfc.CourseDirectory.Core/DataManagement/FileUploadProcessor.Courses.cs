@@ -965,7 +965,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             invalid.Add((learnAimRef, rowNumber));
                         }
-                        else if (await IsExpiredInValidityCheckAsync(learnAimRef))
+                        //else if (await IsExpiredInValidityCheckAsync(learnAimRef))
+                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now
+                            || learningDelivery.OperationalEndDate != null
+                            && learningDelivery.OperationalEndDate < DateTime.Now)
                         {
                             expired.Add((learnAimRef, rowNumber));
                         }
