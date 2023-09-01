@@ -315,6 +315,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             Task ImportValidityToSql()
             {
+                _logger.LogInformation($"Start import validity.csv");
                 var records = ReadCsv<UpsertLarsValidityRecord>(
                     "Validity.csv",
                     configuration => configuration.RegisterClassMap<UpsertLarsValidityRecordClassMap>());
