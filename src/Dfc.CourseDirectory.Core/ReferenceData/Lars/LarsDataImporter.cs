@@ -66,6 +66,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportSectorSubjectAreaTier2ToSql();
             await ImportStandardsToSql();
             await ImportStandardSectorCodesToSql();
+            await ImportValidityToSql();
 
             IEnumerable<T> ReadCsv<T>(string fileName, Action<CsvContext> configureContext = null)
             {
@@ -311,6 +312,19 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 await action(dispatcher);
                 await dispatcher.Commit();
             }
+
+            Task ImportValidityToSql()
+            {
+                var records = ReadCsv<UpsertLarsValidityRecord>(
+                    "Validity.csv",
+                    configuration => configuration.RegisterClassMap<UpsertLarsValidityRecordClassMap>());
+
+
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsValidity
+                {
+                    Records = records
+                }));
+            }
         }
 
         private class FrameworkRow
@@ -373,8 +387,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 // Sometimes we get '03 Aug 2015' format, other times '2015-08-03'
                 // Normalize to '2015-08-03'
+                // Validity date is '1/01/2001'
 
-                var formats = new[] { "dd MMM yyyy", "yyyy-MM-dd" };
+                var formats = new[] { "dd MMM yyyy", "yyyy-MM-dd","dd-MM-yyyy" };
                 var preferredFormat = "dd MMM yyyy";
 
                 foreach (var format in formats)
@@ -413,6 +428,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 Map(m => m.Modified_On).TypeConverter<DateConverter>();
                 Map(m => m.EffectiveFrom).TypeConverter<DateConverter>();
                 Map(m => m.EffectiveTo).TypeConverter<DateConverter>();
+            }
+        }
+
+        private class UpsertLarsValidityRecordClassMap : ClassMap<UpsertLarsValidityRecord>
+        {
+            public UpsertLarsValidityRecordClassMap()
+            {
+                AutoMap(CultureInfo.InvariantCulture);
+                Map(m => m.StartDate).TypeConverter<DateConverter>();
+                Map(m => m.EndDate).TypeConverter<DateConverter>();
+                Map(m => m.LastNewStartDate).TypeConverter<DateConverter>();
             }
         }
     }

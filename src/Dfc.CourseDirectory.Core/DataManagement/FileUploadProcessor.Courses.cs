@@ -965,9 +965,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             invalid.Add((learnAimRef, rowNumber));
                         }
-                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now
-                            || learningDelivery.OperationalEndDate != null
-                            && learningDelivery.OperationalEndDate < DateTime.Now)
+                        else if (await IsExpiredInValidityCheckAsync(learnAimRef))
                         {
                             expired.Add((learnAimRef, rowNumber));
                         }
@@ -982,6 +980,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 stream.Seek(0L, SeekOrigin.Begin);
             }
+        }
+
+        private async Task<bool> IsExpiredInValidityCheckAsync(string learnAimRef)
+        {
+            bool expired = true;
+            using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
+            var lastNewStartDates = await dispatcher.ExecuteQuery(new GetValidityLastNewStartDate() { LearnAimRef = learnAimRef });
+            var latestdate = lastNewStartDates.OrderByDescending(x => x).First();
+            if (lastNewStartDates.Contains(null) || latestdate > DateTime.Now)
+                expired = false;
+            return expired;
         }
 
         private static string NormalizeLearnAimRef(string value)
