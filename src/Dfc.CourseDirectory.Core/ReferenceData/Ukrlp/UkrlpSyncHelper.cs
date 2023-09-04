@@ -68,20 +68,25 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             _logger.LogInformation("UKRLP Sync: Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
         }
 
-        public Task SyncAllKnownProvidersData()
+        public async Task SyncAllKnownProvidersData()
         {
             const int chunkSize = 200;
+            bool stopLoop = false;
 
-            return _sqlQueryDispatcher.ExecuteQuery(new ProcessAllProviders()
+            int min = 1, max = chunkSize;
+
+            while (!stopLoop)
             {
-                ProcessChunk = async providers =>
-                {
-                    foreach (var chunk in providers.Buffer(chunkSize))
-                    {
-                        await SyncProviderData(chunk.Select(p => p.Ukprn));
-                    }
-                }
-            });
+                var providers =  await _sqlQueryDispatcher.ExecuteQuery(new GetProviders() { Min = min, Max = max });
+
+                await SyncProviderData(providers.Select(p => p.Ukprn));
+
+                if(providers.Count < chunkSize)
+                    stopLoop = true;
+                
+                min = max + 1;
+                max = max + chunkSize;
+            }
         }
 
         public async Task SyncProviderData(int ukprn)
