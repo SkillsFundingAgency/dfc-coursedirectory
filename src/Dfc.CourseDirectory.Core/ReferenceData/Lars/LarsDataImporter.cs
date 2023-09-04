@@ -316,9 +316,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             Task ImportValidityToSql()
             {
                 _logger.LogInformation($"Start import validity.csv");
-                var records = ReadCsv<UpsertLarsValidityRecord>(
-                    "Validity.csv",
-                    configuration => configuration.RegisterClassMap<UpsertLarsValidityRecordClassMap>());
+                var records = ReadCsv<UpsertLarsValidityRecord>("Validity.csv");
 
                 _logger.LogInformation($"Start import validity.csv records count - "+records.Count());
 
@@ -430,17 +428,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 Map(m => m.Modified_On).TypeConverter<DateConverter>();
                 Map(m => m.EffectiveFrom).TypeConverter<DateConverter>();
                 Map(m => m.EffectiveTo).TypeConverter<DateConverter>();
-            }
-        }
-
-        private class UpsertLarsValidityRecordClassMap : ClassMap<UpsertLarsValidityRecord>
-        {
-            public UpsertLarsValidityRecordClassMap()
-            {
-                AutoMap(CultureInfo.InvariantCulture);
-                Map(m => m.StartDate).TypeConverter<DateConverter>();
-                Map(m => m.EndDate).TypeConverter<DateConverter>();
-                Map(m => m.LastNewStartDate).TypeConverter<DateConverter>();
             }
         }
     }
