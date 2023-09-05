@@ -1,9 +1,5 @@
 ﻿using System;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 {

@@ -21,24 +21,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             [ProviderStatus] = @ProviderStatus,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
-                        WHERE [ProviderId] = @ProviderId ";
+                        WHERE [ProviderId] = @ProviderId;
 
-
-            var paramz = new
-            {
-                query.ProviderName,
-                query.Alias,
-                query.ProviderStatus,
-                UpdatedOn = query.DateUpdated,
-                query.UpdatedBy,
-                query.ProviderId,
-            };
-
-            var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);
-
-            if (result == Result.Success)
-            {
-                var pcsql = $@"UPDATE [Pttcd].[ProviderContacts] 
+            UPDATE [Pttcd].[ProviderContacts] 
                                 SET [ContactType] = @ContactType
                                   ,[AddressSaonDescription] = @AddressSaonDescription
                                   ,[AddressPaonDescription] = @AddressPaonDescription
@@ -55,39 +40,43 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                                   ,[Fax] = @Fax
                                   ,[WebsiteAddress] = @WebsiteAddress
                                   ,[Email] = @Email
-                              WHERE [ProviderId] = @ProviderId; ";
+                              WHERE [ProviderId] = @ProviderId;
+            ";
 
-                var providerContact = query.Contacts.FirstOrDefault();
-                var pcparamz = new
-                {
-                    providerContact.ContactType,
-                    providerContact.AddressSaonDescription,
-                    providerContact.AddressPaonDescription,
-                    providerContact.AddressStreetDescription,
-                    providerContact.AddressLocality,
-                    providerContact.AddressItems,
-                    providerContact.AddressPostTown,
-                    providerContact.AddressCounty,
-                    providerContact.AddressPostcode,
-                    providerContact.PersonalDetailsPersonNameTitle,
-                    providerContact.PersonalDetailsPersonNameGivenName,
-                    providerContact.PersonalDetailsPersonNameFamilyName,
-                    providerContact.Telephone1,
-                    providerContact.Fax,
-                    providerContact.WebsiteAddress,
-                    providerContact.Email,
-                    query.ProviderId
-                };
+            var providerContact = query.Contacts.FirstOrDefault();
+            var paramz = new
+            {
+                query.ProviderName,
+                query.Alias,
+                query.ProviderStatus,
+                UpdatedOn = query.DateUpdated,
+                query.UpdatedBy,
+                providerContact.ContactType,
+                providerContact.AddressSaonDescription,
+                providerContact.AddressPaonDescription,
+                providerContact.AddressStreetDescription,
+                providerContact.AddressLocality,
+                providerContact.AddressItems,
+                providerContact.AddressPostTown,
+                providerContact.AddressCounty,
+                providerContact.AddressPostcode,
+                providerContact.PersonalDetailsPersonNameTitle,
+                providerContact.PersonalDetailsPersonNameGivenName,
+                providerContact.PersonalDetailsPersonNameFamilyName,
+                providerContact.Telephone1,
+                providerContact.Fax,
+                providerContact.WebsiteAddress,
+                providerContact.Email,
+                query.ProviderId
+            };
+            var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);
 
-                result = await transaction.Connection.QuerySingleAsync<Result>(pcsql, pcparamz, transaction);
-
-                if (result == Result.Success)
-                {
-                    return new Success();
-                }
-                return new NotFound();
+            if (result == Result.Success)
+            {
+                return new Success();
             }
             return new NotFound();
+
         }
 
         private enum Result { Success = 0, NotFound = 1 }
