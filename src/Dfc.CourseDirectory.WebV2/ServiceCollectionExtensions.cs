@@ -78,7 +78,6 @@ namespace Dfc.CourseDirectory.WebV2
                     Debug.Assert(options.ModelBinderProviders[0].GetType() == typeof(BinderTypeModelBinderProvider));
                     options.ModelBinderProviders.Insert(1, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
-                    options.ModelBinderProviders.Insert(1, new StandardModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
@@ -145,7 +144,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.TryAddScoped<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.Decorate<IFeatureFlagProvider, DataManagementFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
-            services.AddSingleton<IStandardsCache, StandardsCache>();
             services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();

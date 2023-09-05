@@ -54,8 +54,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportProgTypesToCosmos();
             await ImportSectorSubjectAreaTier1sToCosmos();
             await ImportSectorSubjectAreaTier2sToCosmos();
-            await ImportStandardsToCosmos();
-            await ImportStandardSectorCodesToCosmos();
+
 
             await ImportAwardOrgCodeToSql();
             var categoriesRefs = await ImportCategoryToSql();
@@ -64,8 +63,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportLearningDeliveryCategoryToSql(categoriesRefs, learningDeliveryRefs);
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
-            await ImportStandardsToSql();
-            await ImportStandardSectorCodesToSql();
+
 
             IEnumerable<T> ReadCsv<T>(string fileName, Action<CsvContext> configureContext = null)
             {
@@ -123,33 +121,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 static bool IsTLevel(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
             }
 
-            Task ImportStandardsToCosmos()
-            {
-                var records = ReadCsv<UpsertStandardsRecord>("Standard.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertStandards()
-                {
-                    Records = records
-                });
-            }
-
-            Task ImportStandardSectorCodesToCosmos()
-            {
-                var records = ReadCsv<StandardSectorCodeRow>("StandardSectorCode.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertStandardSectorCodes()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertStandardSectorCodesRecord()
-                    {
-                        StandardSectorCodeId = r.StandardSectorCode.ToString(),
-                        StandardSectorCodeDesc = r.StandardSectorCodeDesc,
-                        StandardSectorCodeDesc2 = r.StandardSectorCodeDesc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
-                });
-            }
+           
 
             Task ImportSectorSubjectAreaTier1sToCosmos()
             {
@@ -285,25 +257,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }));
             }
 
-            Task ImportStandardsToSql()
-            {
-                var records = ReadCsv<UpsertLarsStandardRecord>("Standard.csv", config => config.RegisterClassMap<UpsertLarsStandardRecord.ClassMap>());
-
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsStandards
-                {
-                    Records = records
-                }));
-            }
-
-            Task ImportStandardSectorCodesToSql()
-            {
-                var records = ReadCsv<UpsertLarsStandardSectorCodeRecord>("StandardSectorCode.csv");
-
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsStandardSectorCodes
-                {
-                    Records = records
-                }));
-            }
+            
 
             async Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action)
             {
@@ -353,14 +307,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             public DateTime? EffectiveTo { get; set; }
         }
 
-        private class StandardSectorCodeRow
-        {
-            public int StandardSectorCode { get; set; }
-            public string StandardSectorCodeDesc { get; set; }
-            public string StandardSectorCodeDesc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
+        
 
         private class DateConverter : DefaultTypeConverter
         {
