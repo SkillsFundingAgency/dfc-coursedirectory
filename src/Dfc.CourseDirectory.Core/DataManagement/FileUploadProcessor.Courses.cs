@@ -965,10 +965,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             invalid.Add((learnAimRef, rowNumber));
                         }
-                        //else if (await IsExpiredInValidityCheckAsync(learnAimRef))
-                        else if (learningDelivery.EffectiveTo.HasValue && learningDelivery.EffectiveTo < DateTime.Now
-                            || learningDelivery.OperationalEndDate != null
-                            && learningDelivery.OperationalEndDate < DateTime.Now)
+                        else if (await IsExpiredInValidityCheckAsync(learnAimRef))
                         {
                             expired.Add((learnAimRef, rowNumber));
                         }
@@ -990,12 +987,23 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             bool expired = true;
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
             var lastNewStartDates = await dispatcher.ExecuteQuery(new GetValidityLastNewStartDate() { LearnAimRef = learnAimRef });
-            DateTime? latestdate = new DateTime();
+            
             if (lastNewStartDates.Count() > 0)
             {
-                latestdate = lastNewStartDates.OrderByDescending(x => x).First();
-                if (lastNewStartDates.Contains(null) || latestdate > DateTime.Now)
+                if (lastNewStartDates.Contains(null))
                     expired = false;
+                else
+                {
+                    List<DateTime> dates = new List<DateTime>();
+                    foreach(var  date in lastNewStartDates)
+                    {
+                        DateTime result = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                        dates.Add(result);
+                    }
+                    DateTime latestdate = dates.OrderByDescending(x => x).First();
+                    if (latestdate>DateTime.Now)
+                        expired = false;
+                }
             }
             return expired;
         }

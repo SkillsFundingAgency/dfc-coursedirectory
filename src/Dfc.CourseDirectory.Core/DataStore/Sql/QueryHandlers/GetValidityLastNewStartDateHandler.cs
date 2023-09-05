@@ -10,9 +10,9 @@ using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetValidityLastNewStartDateHandler : ISqlQueryHandler<GetValidityLastNewStartDate, List<DateTime?>>
+    public class GetValidityLastNewStartDateHandler : ISqlQueryHandler<GetValidityLastNewStartDate, List<string>>
     {
-        public async Task<List<DateTime?>> Execute(SqlTransaction transaction, GetValidityLastNewStartDate query)
+        public async Task<List<string>> Execute(SqlTransaction transaction, GetValidityLastNewStartDate query)
         {
             var sql = $@"SELECT  * FROM [LARS].[Validity] WHERE LearnAimRef = @LearnAimRef";
 

@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class GetValidityLastNewStartDate : ISqlQuery<List<DateTime?>>
+    public class GetValidityLastNewStartDate : ISqlQuery<List<string>>
     {
         public string LearnAimRef { get; set; }
     }
