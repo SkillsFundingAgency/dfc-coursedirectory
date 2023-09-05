@@ -11,8 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using CosmosModels = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using CosmosQueries = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
@@ -29,17 +28,17 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetTLevels>()))
                 .ReturnsAsync(Array.Empty<TLevel>());
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CosmosQueries.GetProvidersByIds>()))
-                .ReturnsAsync(new Dictionary<Guid, CosmosModels.Provider>());
+
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProvidersByIds>()))
                 .ReturnsAsync(new Dictionary<Guid, Provider>());
 
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderContactById>()))
+                .ReturnsAsync(new ProviderContact());
+
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByIds>()))
                 .ReturnsAsync(new Dictionary<Guid, Venue>());
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CosmosQueries.GetFeChoicesByProviderUkprns>()))
-                .ReturnsAsync(new Dictionary<int, CosmosModels.FeChoice>());
 
             // Act
             var response = await HttpClient.GetAsync($"tlevels");
@@ -56,8 +55,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         public async Task TLevels_Get_WithTLevels_ReturnsOkWithExpectedTLevelsCollection()
         {
             var provider1 = CreateProvider(1);
-            var sqlProvider1 = CreateSqlProvider(provider1);
-            var provider1FeChoice = CreateFeChoice(1, provider1.Ukprn);
+            var provider1Contact = CreateProviderContact(provider1, 1);
             var provider1Venue1 = CreateVenue(1);
             var provider1Venue2 = CreateVenue(2);
             var provider1TLevelLocation1 = CreateTLevelLocation(1, provider1Venue1.VenueId);
@@ -70,7 +68,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var provider1TLevel2 = CreateTLevel(2, provider1, new[] { provider1TLevelLocation2, provider1TLevelLocation3 });
 
             var provider2 = CreateProvider(2);
-            var sqlProvider2 = CreateSqlProvider(provider2);
+            var provider2Contact = CreateProviderContact(provider2, 2);
             var provider2Venue1 = CreateVenue(3);
             var provider2TLevelLocation1 = CreateTLevelLocation(4, provider2Venue1.VenueId);
             
@@ -80,17 +78,20 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetTLevels>()))
                 .ReturnsAsync(new[] { provider1TLevel1, provider1TLevel2, provider2TLevel1 });
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CosmosQueries.GetProvidersByIds>()))
-                .ReturnsAsync(new[] { provider1, provider2 }.ToDictionary(p => p.Id, p => p));
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProvidersByIds>()))
-                .ReturnsAsync(new[] { sqlProvider1, sqlProvider2 }.ToDictionary(p => p.ProviderId, p => p));
+                .ReturnsAsync(new[] { provider1, provider2 }.ToDictionary(p => p.ProviderId, p => p));
+
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderContactById>()))
+                .ReturnsAsync(provider1Contact);
+
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderContactById>()))
+                .ReturnsAsync(provider2Contact);
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByIds>()))
                 .ReturnsAsync(new[] { provider1Venue1, provider1Venue2, provider2Venue1 }.ToDictionary(v => v.VenueId, v => v));
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<CosmosQueries.GetFeChoicesByProviderUkprns>()))
-                .ReturnsAsync(new[] { provider1FeChoice }.ToDictionary(f => f.UKPRN, f => f));
+            
 
             // Act
             var response = await HttpClient.GetAsync($"tlevels");
@@ -104,16 +105,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             tLevels.Should().NotBeNullOrEmpty();
             tLevels.Length.Should().Be(3);
 
-            AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel1, provider1FeChoice);
-            AssertHasTLevel(tLevels, provider1, sqlProvider1, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel2, provider1FeChoice);
-            AssertHasTLevel(tLevels, provider2, sqlProvider2, new[] { provider2Venue1 }, provider2TLevel1, null);
+            AssertHasTLevel(tLevels, provider1, provider1Contact, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel1);
+            AssertHasTLevel(tLevels, provider1, provider1Contact, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel2);
+            AssertHasTLevel(tLevels, provider2, provider2Contact, new[] { provider2Venue1 }, provider2TLevel1);
 
-            static void AssertHasTLevel(JToken[] tLevels, CosmosModels.Provider provider, Provider sqlProvider, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel, CosmosModels.FeChoice feChoice)
+            static void AssertHasTLevel(JToken[] tLevels, Provider provider, ProviderContact providerContact, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel)
             {
                 var tLevel = tLevels.SingleOrDefault(t => t["tLevelId"].ToObject<Guid>() == expectedTLevel.TLevelId);
                 tLevel.Should().NotBeNull();
 
-                var providerContact = provider.ProviderContact.SingleOrDefault(c => c.ContactType == "P");
 
                 using (new AssertionScope())
                 {
@@ -123,19 +123,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     tLevel["qualification"]["qualificationLevel"].ToObject<string>().Should().Be(expectedTLevel.TLevelDefinition.QualificationLevel.ToString());
                     tLevel["qualification"]["frameworkCode"].ToObject<int>().Should().Be(expectedTLevel.TLevelDefinition.FrameworkCode);
                     tLevel["qualification"]["progType"].ToObject<int>().Should().Be(expectedTLevel.TLevelDefinition.ProgType);
-                    tLevel["provider"]["providerName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
-                    tLevel["provider"]["ukprn"].ToObject<string>().Should().Be(provider.Ukprn.ToString());
-                    tLevel["provider"]["addressLine1"].ToObject<string>().Should().Be($"{providerContact?.ContactAddress?.SAON?.Description} {providerContact?.ContactAddress?.PAON?.Description} {providerContact?.ContactAddress?.StreetDescription}");
-                    tLevel["provider"]["addressLine2"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.Locality);
-                    tLevel["provider"]["town"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.PostTown);
-                    tLevel["provider"]["postcode"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.PostCode);
-                    tLevel["provider"]["county"].ToObject<string>().Should().Be(providerContact?.ContactAddress?.County);
-                    tLevel["provider"]["email"].ToObject<string>().Should().Be(providerContact?.ContactEmail);
-                    tLevel["provider"]["telephone"].ToObject<string>().Should().Be(providerContact?.ContactTelephone1);
-                    tLevel["provider"]["fax"].ToObject<string>().Should().Be(providerContact?.ContactFax);
-                    tLevel["provider"]["website"].ToObject<string>().Should().Be($"http://{providerContact?.ContactWebsiteAddress}");
-                    tLevel["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(feChoice?.LearnerSatisfaction);
-                    tLevel["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(feChoice?.EmployerSatisfaction);
+                    tLevel["provider"]["providerName"].ToObject<string>().Should().Be(provider.DisplayName);
+                    tLevel["provider"]["ukprn"].ToObject<int>().Should().Be(provider.Ukprn);
+                    tLevel["provider"]["addressLine1"].ToObject<string>().Should().Be($"{providerContact?.AddressSaonDescription} {providerContact?.AddressPaonDescription} {providerContact?.AddressStreetDescription}");
+                    tLevel["provider"]["addressLine2"].ToObject<string>().Should().Be(providerContact?.AddressLocality);
+                    tLevel["provider"]["town"].ToObject<string>().Should().Be(providerContact?.AddressPostTown);
+                    tLevel["provider"]["postcode"].ToObject<string>().Should().Be(providerContact?.AddressPostcode);
+                    tLevel["provider"]["county"].ToObject<string>().Should().Be(providerContact?.AddressCounty);
+                    tLevel["provider"]["email"].ToObject<string>().Should().Be(providerContact?.Email);
+                    tLevel["provider"]["telephone"].ToObject<string>().Should().Be(providerContact?.Telephone1);
+                    tLevel["provider"]["fax"].ToObject<string>().Should().Be(providerContact?.Fax);
+                    tLevel["provider"]["website"].ToObject<string>().Should().Be($"http://{providerContact?.WebsiteAddress}");
+                    tLevel["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(provider?.LearnerSatisfaction);
+                    tLevel["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(provider?.EmployerSatisfaction);
                     tLevel["whoFor"].ToObject<string>().Should().Be(expectedTLevel.WhoFor);
                     tLevel["entryRequirements"].ToObject<string>().Should().Be(expectedTLevel.EntryRequirements);
                     tLevel["whatYoullLearn"].ToObject<string>().Should().Be(expectedTLevel.WhatYoullLearn);
@@ -178,48 +178,34 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             }
         }
 
-        private static CosmosModels.Provider CreateProvider(int seed) =>
-            new CosmosModels.Provider
-            {
-                Id = Guid.NewGuid(),
-                UnitedKingdomProviderReferenceNumber = (1234 * seed).ToString(),
-                ProviderName = $"TestProviderName{seed}",
-                ProviderContact = new[]
-                {
-                    new CosmosModels.ProviderContact
-                    {
-                        ContactType = "P",
-                        ContactAddress = new CosmosModels.ProviderContactAddress
-                        {
-                            SAON = new CosmosModels.ProviderContactAddressSAON
-                            {
-                                Description = $"TestSAON{seed}"
-                            },
-                            PAON = new CosmosModels.ProviderContactAddressPAON
-                            {
-                                Description = $"TestPAON{seed}"
-                            },
-                            StreetDescription = "TestStreetDescription{seed}",
-                            Locality = $"TestLocality{seed}",
-                            Items = new[] { $"TestItemsTown{seed}", $"TestItemsCounty{seed}" },
-                            PostTown = $"TestPostTown{seed}",
-                            County = $"TestCounty{seed}",
-                            PostCode = $"TestPostCode{seed}"
-                        },
-                        ContactTelephone1 = $"TestContactTelephone1{seed}",
-                        ContactFax = $"TestContactFax{seed}",
-                        ContactWebsiteAddress = $"testing{seed}.com",
-                        ContactEmail = $"TestContactEmail{seed}"
-                    }
-                }
-            };
-
-        private static Provider CreateSqlProvider(CosmosModels.Provider provider) =>
+        private static Provider CreateProvider(int seed) =>
             new Provider
             {
-                ProviderId = provider.Id,
-                Ukprn = provider.Ukprn,
-                ProviderName = provider.ProviderName
+                ProviderId = Guid.NewGuid(),
+                Ukprn = (1234 * seed),
+                ProviderName = $"TestProviderName{seed}",
+                LearnerSatisfaction = 1.23m * seed,
+                EmployerSatisfaction = 2.34m * seed,
+
+            };
+
+        private static ProviderContact CreateProviderContact(Provider provider, int seed) =>
+            new ProviderContact
+            {
+                ProviderId = provider.ProviderId,
+                ContactType = "P",
+                AddressSaonDescription =  $"TestSAON{seed}",
+                AddressPaonDescription = $"TestPAON{seed}",
+                AddressStreetDescription = $"TestStreetDescription{seed}",
+                AddressLocality = $"TestLocality{seed}",
+                AddressItems = $"TestItemsTown{seed} "+$"TestItemsCounty{seed}",
+                AddressPostTown = $"TestPostTown{seed}",
+                AddressCounty = $"TestCounty{seed}",
+                AddressPostcode = $"TestPostCode{seed}",
+                Telephone1 = $"TestContactTelephone1{seed}",
+                Fax = $"TestContactFax{seed}",
+                WebsiteAddress = $"testing{seed}.com",
+                Email = $"TestContactEmail{seed}"
             };
 
         private static Venue CreateVenue(int seed) =>
@@ -240,7 +226,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 Longitude = 34 * seed
             };
 
-        private static TLevel CreateTLevel(int seed, CosmosModels.Provider provider, IEnumerable<TLevelLocation> locations) =>
+        private static TLevel CreateTLevel(int seed, Provider provider, IEnumerable<TLevelLocation> locations) =>
             new TLevel
             {
                 TLevelId = Guid.NewGuid(),
@@ -253,7 +239,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     QualificationLevel = 56 * seed,
                     Name = $"TestTLevelDefinition{seed}"
                 },
-                ProviderId = provider.Id,
+                ProviderId = provider.ProviderId,
                 ProviderName = provider.ProviderName,
                 WhoFor = $"TestWhoFor{seed}",
                 EntryRequirements = $"TestEntryRequirements{seed}",
@@ -278,14 +264,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 VenueName = $"TestVenueName{seed}"
             };
 
-        private static CosmosModels.FeChoice CreateFeChoice(int seed, int ukprn) =>
-            new CosmosModels.FeChoice
-            {
-                Id = Guid.NewGuid(),
-                UKPRN = ukprn,
-                LearnerSatisfaction = 1.23m * seed,
-                EmployerSatisfaction = 2.34m * seed,
-                CreatedDateTimeUtc = DateTime.UtcNow
-            };
+        
     }
 }
