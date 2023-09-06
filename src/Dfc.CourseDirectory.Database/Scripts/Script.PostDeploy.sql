@@ -1861,20 +1861,6 @@ WHEN NOT MATCHED BY SOURCE
 			N'You could find employment or self-employment as a site carpenter, or site supervisor or move on to to other level 3 woodwork qualifications or level 4 construction management or supervisory courses.' + CHAR(13)
 	),
 	(
-			N'60311319',
-			N'OCR',
-			N'Advanced GCE in Design and Technology - Product Design',
-			N'Level 3',
-			null,
-			N'Anyone move on toing from GCSE or level 2 qualifications with an interest in practical work, design and creativity. A level product design, when taken alongside other subjects will prepare you for a range of design related jobs, apprenticeships and degree courses.',
-			N'4 GCSE''s at grade 5 or above including English and maths or a relevant level 2 qualification.',
-			N'You''ll explore product design in its widest sense through the stages of prototyping, realisation and commercial manufacture. You''ll develop an in-depth knowledge and understanding of materials, components and the processes of manufacturing as well as exploring design principles. You''ll research the market and come up with your own innovative ideas to make prototypes and products that solve real-world problems. You''ll develop practical skills such as using CAD and 3D modelling, drawing and design presentation techniques, model making and using workshop machinery alongside learning about the wider social, moral and environmental issues that impact on the design and manufacturing industries.',
-			N'Through a combination of coursework projects and classroom-based theory.',
-			N'Nothing required.',
-			N'Through two examinations at the end of Year 13 and a major project which takes the form of a design and make task based on a theme given by the examination board.',
-			N'You could move on to to higher and degree apprenticeships in design related subjects such as engineering, industrial design, product design among others. You could go on to study a design related HNC, HND, Foundation Degree or Degree.' + CHAR(13)
-	),
-	(
 			N'60086026',
 			N'NOCN Cskills',
 			N'Diploma in Carpentry and Joinery (Construction)',
@@ -3667,20 +3653,6 @@ WHEN NOT MATCHED BY SOURCE
 			N'You can move on to from this course into a role as an entry level bricklayer or construction site worker. There are also apprenticeships available and Level 2 programmes for those that want to further develop towards semi-skilled and skilled bricklaying.' + CHAR(13)
 	),
 	(
-			N'60175692',
-			N'Pearson BTEC',
-			N'National Extended Certificate in Childrens Play, Learning and Development',
-			N'Level 3',
-			null,
-			N'If you would like to work with small children, this course can give you an insight into the range of opportunities open to you and help you to develop some useful skills. Equivalent to 1 A level, you can study it alongside other level 3 qualifications in preparation for entry to jobs, apprenticeships and higher education courses in early years such as working in nursery and primary schools, children''s nursing and social work.  You don''t need to have studied a childcare qualification previously.',
-			N'4 GCSEs at grade 4 or above, in subjects that are relevant to the course',
-			N'You''ll study child development including the important theories and models that explain how and why children develop and how this relates to the Early Years Foundation Stage.  You''ll get an understanding of how children learn to communicate, read and understand numbers and the ways that early year''s educators can devise activities that encourage children''s development and understanding at each stage. You''ll explore the importance of play, learning how to provide children with purposeful and educational play activities. You will complete one further optional unit from either: keeping children safe, working with parents, children''s physical development or the early years foundation stage.',
-			N'Through a combination of classroom based lectures, presentations and discussions, individual and group project work. There will be talks from visiting speakers and visits to childcare organisations. You''ll have the chance to do some work experience in at least one setting working with children from birth up to the age of 7 years 11 months.',
-			N'You''ll need an enhanced Disclosure and Barring Service (DBS) certificate for any work placement that you undertake as part of this course.',
-			N'Through a combination of coursework assignments and an examination.',
-			N'In combination with other level 3 qualifications, this course can lead to move on toion to a wide range of degree programmes including subjects as childhood studies, children''s nursing or primary teaching. You could go into an early years'' apprenticeship or assistant positions in settings such as private nurseries, nursery classes, children''s centres, health centres, infant and special schools, working in roles including childminder, family support worker or early years educator.' + CHAR(13)
-	),
-	(
 			N'60134070',
 			N'CILEx',
 			N'Certificate in Law and Practice',
@@ -3933,20 +3905,6 @@ WHEN NOT MATCHED BY SOURCE
 			N'You could go directly into employment or an apprenticeship in a business administration role such as receptionist, administrator, personal assistant or secretary. You could move on to to a Level 3 general qualification in business administration, or take a course leading to specialist administration functions such as human resources, medical or legal administration or customer services.' + CHAR(13)
 	),
 	(
-			N'60086038',
-			N'NOCN Cskills',
-			N'Diploma in Site Carpentry (Construction)',
-			N'Level 2',
-			null,
-			N'This course is suitable for anyone looking to start a career as a carpenter in the construction industry, from school leavers with no experience to mature entrants with some previous industry experience. It''s a natural move on toion for anyone who has completed a level 1 carpentry or construction course. You don''t have to be employed to take this course.',
-			N'You must be 16 years or over. GCSE grade 3 or above in English and maths. Level 1 qualification in site carpentry or a similar qualification or have relevant experience. Functional skills maths and English, preferably at level 1. Interview and initial assessment test.',
-			N'You''ll get hands-on experience of using a range of hand and power tools. You''ll carry out first fixing operations including doors, window frames, stairs, handrails, floors and roofing and learn second fixing operations such as fitting timber skirting boards, architrave and door ironmongery. You''ll have a go at structural carcassing techniques such as floor joists, roof gables and eaves and non-structural maintenance work like repairing timber frames and mouldings, sash windows and guttering. You''ll find out about different kinds of construction materials and how sustainability and energy efficiency is important in modern building. You''ll learn about health and safety, how to use drawings, specifications and technical information as well as how to use processes for quoting, pricing and tendering.  You''ll be introduced to the roles of important site personnel such as site managers, supervisors and office staff and the methods used to communicate effectively with them.',
-			N'You will learn from hands-on practical experience in a fully equipped construction workshops using modern machinery and technology. There will be some classroom-based exercises to complete the knowledge components of this course. You will undertake a period of work experience in a real work environment.',
-			N'You will need personal protective equipment including safety boots and overalls at a cost of £??  You will need to purchase recommended text books. You will need a tool kit consisting of...',
-			N'You will complete a practical workbook, which will be marked as you complete each task. You will also sit multiple choice online tests.',
-			N'You could move on to onto an advanced apprenticeship to complete the NVQ Level 3 / Diploma Level 3 in Site Carpentry or an NVQ 3 in wood occupations. You could go directly into employment as a junior site carpenter.' + CHAR(13)
-	),
-	(
 			N'60141931',
 			N'City and Guilds',
 			N'Award in ESOL Skills for Life (Writing) ',
@@ -4001,20 +3959,6 @@ WHEN NOT MATCHED BY SOURCE
 			null,
 			N'Through coursework including written and practical assignments. There are no exams.',
 			N'You''ll have transferable skills including self-confidence, presentation and communication, self-management and teamwork that are useful in a wide range of careers. There are apprenticeships and job opportunities in performance, set design and technical roles, marketing, events, sales, arts administration and arts education. You could move on to to a second year of study to get the extended diploma with a view to entering performing arts related degree courses at university or drama schools.' + CHAR(13)
-	),
-	(
-			N'50078781',
-			N'Pearson BTEC',
-			N'Extended Diploma in Creative Media Production (QCF) TV and Film Pathway',
-			N'Level 3',
-			null,
-			N'This course is for you if you are seeking a career in media or thinking of studying media subjects in higher education. It will give you a general overview of the industry and has a specific focus on the processes involved in making TV and film products. ',
-			N'4-5 GCSEs at grades 9-4 (A*-C) including English language and maths. Merit or distinction at an appropriate Level 2 Diploma and English and maths at grade 4 or above.',
-			N'You''ll explore behind the scenes of TV and film and develop practical skills for planning, production and post production including camera work, scriptwriting and editing. You''ll work on live challenging briefs and plan and produce your own moving image production. You''ll learn more about the TV and film industry, the job roles and career pathways within it and understand where the growth and development in jobs is likely to be in the future. You''ll get some transferable skills such as research, communication and project management that are useful for careers in the media industry as whole. You''ll get hands-on experience of working to a creative brief: planning a strategy, working within current TV and film industry practices to tight budgets and deadlines.',
-			N'You''ll learn through hands-on use of industry standard technologies and techniques in practical skills-based workshops. You''ll work on real life project briefs within strict deadlines, as you would be expected to do in the industry. There will be lectures, demonstrations and tutorials, talks from film and TV professionals, competitions and visits to TV and film related organisations and events. You will undertake a period of relevant work experience.',
-			N'You''ll need a USB stick and an SD card at a cost of £?? There will be visits which will incur costs of £??',
-			N'You''ll be assessed through written and practical assignments such as presentations, group and individual projects. You will build a portfolio of evidence to demonstrate your knowledge, skills and understanding.',
-			N'Employment in junior positions in TV and film production such as a floor or production runner, production assistant, junior camera operator or sound recordist. There are apprenticeship opportunities with the major TV and film producers such as the BBC, ITV and Channel 4. You could move on to to HNC/HND, Foundation or bachelor''s degree in a media related discipline. Many entrants to the field of film and TV go via graduate entry and work experience geted during and after your degree is essential.' + CHAR(13)
 	),
 	(
 			N'5011010X',
@@ -4757,20 +4701,6 @@ WHEN NOT MATCHED BY SOURCE
 			null,
 			N'Through a portfolio of evidence demonstrating your knowledge and skills. Your portfolio can consist of workplace evidence such as assignments, observation reports, case studies, photographs, videos etc.',
 			N'You could go directly into a job as a nail technician working in salons, spas, nail bars, hotels and cruise ships or from home. You could move on to to further study towards nail art or other beauty therapy treatments.' + CHAR(13)
-	),
-	(
-			N'60141931',
-			N'City & Guilds',
-			N'Award in ESOL Skills for Life (Writing) ',
-			N'Entry 3',
-			null,
-			N'If English is not your first language and you would like to improve your written English skills, this course is for you. It''s aimed at learners from 16 years upwards and has various levels, from complete beginner to more advanced, so you can learn at a level that is suitable for you. You can take it alongside other courses including other ESOL courses for reading, speaking and listening.',
-			N'You''ll be assessed at interview to determine the level of the course at which you need to begin.',
-			N'You''ll learn to write simple paragraphs to convey information, using correct grammar, punctuation and spelling. You''ll write about everyday topics like what you do in your spare time, information about your own family and community and work-related topics like health and safety. You''ll practise your skills through tasks such as writing a CV, filling in forms, writing a report or a short story, gradually building your confidence in writing using English.',
-			N'Through friendly, informal, classroom based, practical writing activities drawn from everyday situations.',
-			null,
-			N'You''ll complete a writing task under exam conditions when you and your tutor feel that you are ready.',
-			N'Improving your written English can help you towards getting a job, taking part in with local groups or activities, supporting children with schoolwork and generally being independent in your everyday life. You can move on to through the levels of the qualification or take additional speaking and listening qualifications which may help you to move onto work related or academic learning or work.' + CHAR(13)
 	),
 	(
 			N'50100191',
@@ -6661,20 +6591,6 @@ WHEN NOT MATCHED BY SOURCE
 			N'You''ll need an enhanced DBS clearance certificate for work placement opportunities.',
 			N'Through written assignments, exam and a portfolio of evidence.',
 			N'You could go directly into employment or an apprenticeship as a care worker in hospitals, care homes or other health related fields or work in community and voluntary organisations. There are also degree apprenticeship opportunities for social work, nursing and occupational therapy. You could move on to to Level 4 Health and Social Care courses, HNC/HND, Foundation and degree programmes in related disciplines.' + CHAR(13)
-	),
-	(
-			N'50078781',
-			N'Pearson BTEC',
-			N'Extended Diploma in Creative Media Production (QCF) Games Design Pathway',
-			N'Level 3',
-			null,
-			N'If youve a passion for computer games and dream of being a game designer, programmer, animator, tester, or 3D modeler, this course could be the first step on your journey to an exciting career. You''ll need both creative and technical flair to be successful on this course which can lead to employment, further training or higher education.',
-			N'4-5 GCSEs at grades 9-4 (A*-C) including English language and maths. Merit or distinction at an appropriate Level 2 Diploma and English and maths at grade 4 or above.',
-			N'You''ll get practical experience to develop your creative and technical skills. You''ll work on all aspects of game design from developing the art work, characters and storyline to coding, 2D and 3D animation. You''ll learn more about the computer games industry, the job roles and career pathways within it and understand where the growth and development in jobs is likely to be in the future. You''ll get some transferable skills such as research, communication, production techniques and project management that are useful for careers in the media industry as whole. You''ll get hands-on experience of working to a creative brief: mapping out a strategy and working within industry practices, tight budgets and deadlines.',
-			N'You''ll learn through hands-on use of industry standard computer game software, technologies and techniques in practical workshops. You''ll work on real life projects, to strict deadlines, as you would be expected to do within the industry. There will be lectures, demonstrations and tutorials, talks from industry professionals, competitions and visits to games related organisations and events. You will undertake a period of relevant work experience.',
-			N'SD card at a cost of £?? There will be visits which will incur costs of £??',
-			N'You''ll be assessed through presentations, group and individual projects and assignments.',
-			N'You could find employment in junior positions in games design, games development, animation or 3D design or move on to to HNC/HND, Foundation or bachelor''s degree in computer games design / animation / media. A significant proportion of entrants to the field of computer games design is through graduate entry.' + CHAR(13)
 	),
 	(
 			N'60312233',
