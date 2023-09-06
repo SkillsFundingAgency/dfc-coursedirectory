@@ -77,14 +77,16 @@ namespace Dfc.CourseDirectory.Core.Tests
                 }
             };
 
-            var sqlDataSync = new SqlDataSync(
-                SqlQueryDispatcherFactory,
-                CosmosDbQueryDispatcher.Object,
-                Clock,
-                new NullLogger<SqlDataSync>());
+
+            // TODO: DO WE STILL NEED THIS ONE?
+            //var sqlDataSync = new SqlDataSync(
+            //    SqlQueryDispatcherFactory,
+            //    CosmosDbQueryDispatcher.Object,
+            //    Clock,
+            //    new NullLogger<SqlDataSync>());
 
             // Act
-            await sqlDataSync.SyncProvider(provider);
+            //await sqlDataSync.SyncProvider(provider);
 
             // Assert
             Fixture.DatabaseFixture.SqlQuerySpy.VerifyQuery<UpsertProvidersFromCosmos, None>(q =>

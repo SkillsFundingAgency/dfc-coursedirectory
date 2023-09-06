@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
@@ -195,8 +196,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             return new UkrlpSyncHelper(
                 ukrlpWcfService.Object,
-                CosmosDbQueryDispatcher.Object,
-                SqlQueryDispatcherFactory,
+                SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot),
                 Clock,
                 loggerFactory.Object);
         }

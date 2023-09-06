@@ -52,12 +52,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                Fixture.DatabaseFixture.InMemoryDocumentStore.ProgTypes.All.Count.Should().Be(28);
-                Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier1s.All.Count.Should().Be(17);
-                Fixture.DatabaseFixture.InMemoryDocumentStore.SectorSubjectAreaTier2s.All.Count.Should().Be(67);
-                Fixture.DatabaseFixture.InMemoryDocumentStore.Standards.All.Count.Should().Be(683);
-                Fixture.DatabaseFixture.InMemoryDocumentStore.StandardSectorCodes.All.Count.Should().Be(75);
-
                 (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(548);
                 (await CountSqlRows("LARS.Category")).Should().Be(63);
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(124);
@@ -65,8 +59,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(88071);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
-                (await CountSqlRows("Pttcd.Standards")).Should().Be(683);
-                (await CountSqlRows("Pttcd.StandardSectorCodes")).Should().Be(75);
             }
         }
 

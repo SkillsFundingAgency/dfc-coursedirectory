@@ -12,8 +12,6 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
         public InMemoryDocumentCollection<Provider> Providers { get; } = new InMemoryDocumentCollection<Provider>();
         public InMemoryDocumentCollection<SectorSubjectAreaTier1> SectorSubjectAreaTier1s { get; set; } = new InMemoryDocumentCollection<SectorSubjectAreaTier1>();
         public InMemoryDocumentCollection<SectorSubjectAreaTier2> SectorSubjectAreaTier2s { get; set; } = new InMemoryDocumentCollection<SectorSubjectAreaTier2>();
-        public InMemoryDocumentCollection<Standard> Standards { get; } = new InMemoryDocumentCollection<Standard>();
-        public InMemoryDocumentCollection<StandardSectorCode> StandardSectorCodes { get; } = new InMemoryDocumentCollection<StandardSectorCode>();
 
         public void Clear()
         {
@@ -21,8 +19,6 @@ namespace Dfc.CourseDirectory.Testing.DataStore.CosmosDb
             Providers.Clear();
             SectorSubjectAreaTier1s.Clear();
             SectorSubjectAreaTier2s.Clear();
-            Standards.Clear();
-            StandardSectorCodes.Clear();
         }
     }
 
