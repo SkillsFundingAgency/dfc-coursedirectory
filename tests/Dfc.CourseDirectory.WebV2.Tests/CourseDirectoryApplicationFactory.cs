@@ -24,7 +24,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -51,7 +50,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public TestCookieSettingsProvider CookieSettingsProvider => Services.GetRequiredService<ICookieSettingsProvider>() as TestCookieSettingsProvider;
 
-        public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => DatabaseFixture.CosmosDbQueryDispatcher;
 
         public DatabaseFixture DatabaseFixture { get; }
 

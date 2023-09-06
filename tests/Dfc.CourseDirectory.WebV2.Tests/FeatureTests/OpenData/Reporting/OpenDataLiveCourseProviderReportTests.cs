@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
@@ -258,25 +259,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             records.Length.Should().Be(0);
         }
 
-        private CreateProviderContact CreateContact(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
+        private ProviderContact CreateContact(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
         {
-            return new CreateProviderContact()
+            return new ProviderContact()
             {
                 ContactType = "P",
                 AddressSaonDescription = addressSaonDescription,
                 AddressPaonDescription = addressPaonDescription,
                 AddressStreetDescription = addressStreetDescription,
                 AddressLocality = "The Town",
-                AddressItems = new List<string>()
-                        {
-                            "United Kingdom"
-                        },
-                AddressPostCode = postcode,
-                ContactEmail = "email@provider1.com",
-                ContactTelephone1 = "01234 567890",
-                ContactWebsiteAddress = "provider1.com",
-                PersonalDetailsGivenName = "The",
-                PersonalDetailsFamilyName = "Contact"
+                AddressItems = "United Kingdom",
+                AddressPostcode = postcode,
+                Email = "email@provider1.com",
+                Telephone1 = "01234 567890",
+                WebsiteAddress = "provider1.com",
+                PersonalDetailsPersonNameGivenName = "The",
+                PersonalDetailsPersonNameFamilyName = "Contact"
             };
         }
     }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Testing;
@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(ukprn, ukrlpData);
 
             ICollection<CreateProviderFromUkrlpData> capturedUpdateCommands = new List<CreateProviderFromUkrlpData>();
-            CosmosDbQueryDispatcher.Setup(mock => mock.ExecuteQuery(Capture.In(capturedUpdateCommands)));
+            await WithSqlQueryDispatcher(mock => mock.ExecuteQuery(Capture.In(capturedUpdateCommands)));
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(ukprn);
@@ -62,22 +62,23 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 providerStatus: "Provider deactivated, not verified",
                 contacts: new[]
                 {
-                    new CreateProviderContact
+                    new ProviderContact
                     {
                         ContactType = "P",
-                        ContactTelephone1 = "0123456789",
-                        ContactWebsiteAddress = "http://www.example.com",
-                        ContactEmail = "test@example.com",
+                        Telephone1 = "0123456789",
+                        WebsiteAddress = "http://www.example.com",
+                        Email = "test@example.com",
                         AddressSaonDescription = "SAON Description",
                         AddressPaonDescription = "PAON Description",
                         AddressStreetDescription = "Street",
                         AddressLocality = "Locality",
-                        AddressItems = new[] {"ItemDescription"},
+                        AddressItems = "ItemDescription",
                         AddressPostTown = "PostTown",
                         AddressCounty = "County",
-                        AddressPostCode = "Postcode",
-                        PersonalDetailsFamilyName = "FamilyName",
-                        PersonalDetailsGivenName = "GivenName"
+                        AddressPostcode = "Postcode",
+                        PersonalDetailsPersonNameTitle = "Title",
+                        PersonalDetailsPersonNameFamilyName = "FamilyName",
+                        PersonalDetailsPersonNameGivenName = "GivenName"
                     }
                 });
 
@@ -87,7 +88,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
 
             ICollection<UpdateProviderFromUkrlpData> capturedUpdateCommands = new List<UpdateProviderFromUkrlpData>();
-            CosmosDbQueryDispatcher.Setup(mock => mock.ExecuteQuery(Capture.In(capturedUpdateCommands)));
+            await WithSqlQueryDispatcher(mock => mock.ExecuteQuery(Capture.In(capturedUpdateCommands)));
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
@@ -149,35 +150,29 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         {
             actualContact.ContactType.Should().Be(ukrlpContact.ContactType);
             actualContact.ContactRole.Should().Be(ukrlpContact.ContactRole);
-            actualContact.ContactTelephone1.Should().Be(ukrlpContact.ContactTelephone1);
-            actualContact.ContactWebsiteAddress.Should().Be(ukrlpContact.ContactWebsiteAddress);
-            actualContact.ContactEmail.Should().Be(ukrlpContact.ContactEmail);
-            actualContact.ContactFax.Should().Be(ukrlpContact.ContactFax);
-            actualContact.LastUpdated.Should().Be(Clock.UtcNow);
-            actualContact.AdditionalData.Should().BeNull();
-            actualContact.ContactPersonalDetails.Should().NotBeNull();
+            actualContact.Telephone1.Should().Be(ukrlpContact.ContactTelephone1);
+            actualContact.WebsiteAddress.Should().Be(ukrlpContact.ContactWebsiteAddress);
+            actualContact.Email.Should().Be(ukrlpContact.ContactEmail);
+            actualContact.Fax.Should().Be(ukrlpContact.ContactFax);
+            actualContact.PersonalDetailsPersonNameGivenName.Should().NotBeNull();
 
-            var actualContactAddress = actualContact.ContactAddress;
-            actualContactAddress.SAON.Description.Should().Be(ukrlpContact.ContactAddress.Address1);
-            actualContactAddress.PAON.Description.Should().Be(ukrlpContact.ContactAddress.Address2);
-            actualContactAddress.StreetDescription.Should().Be(ukrlpContact.ContactAddress.Address3);
-            actualContactAddress.Locality.Should().Be(ukrlpContact.ContactAddress.Address4);
-            actualContactAddress.PostTown.Should().Be(ukrlpContact.ContactAddress.Town);
-            actualContactAddress.County.Should().Be(ukrlpContact.ContactAddress.County);
-            actualContactAddress.Items.Should().BeEquivalentTo(new List<string>
-            {
-                ukrlpContact.ContactAddress.Town,
-                ukrlpContact.ContactAddress.County,
-            });
+            actualContact.AddressPaonDescription.Should().Be(ukrlpContact.ContactAddress.Address2);
+            actualContact.AddressSaonDescription.Should().Be(ukrlpContact.ContactAddress.Address1);
+            actualContact.AddressStreetDescription.Should().Be(ukrlpContact.ContactAddress.Address3);
+            actualContact.AddressLocality.Should().Be(ukrlpContact.ContactAddress.Address4);
+            actualContact.AddressPostTown.Should().Be(ukrlpContact.ContactAddress.Town);
+            actualContact.AddressCounty.Should().Be(ukrlpContact.ContactAddress.County);
+            actualContact.AddressItems.Should().BeEquivalentTo(
+            
+                ukrlpContact.ContactAddress.Town +
+                ukrlpContact.ContactAddress.County
+            );
 
-            actualContactAddress.PostCode.Should().Be(ukrlpContact.ContactAddress.PostCode);
-            actualContactAddress.AdditionalData.Should().BeNull();
+            actualContact.AddressPostcode.Should().Be(ukrlpContact.ContactAddress.PostCode);
 
-            var actualPersonalDetails = actualContact.ContactPersonalDetails;
-            actualPersonalDetails.PersonNameTitle.SingleOrDefault().Should().Be(ukrlpContact.ContactPersonalDetails.PersonNameTitle.Single());
-            actualPersonalDetails.PersonGivenName.SingleOrDefault().Should().Be(ukrlpContact.ContactPersonalDetails.PersonGivenName.Single());
-            actualPersonalDetails.PersonFamilyName.Should().Be(ukrlpContact.ContactPersonalDetails.PersonFamilyName);
-            actualPersonalDetails.AdditionalData.Should().BeNull();
+            actualContact.PersonalDetailsPersonNameTitle.Should().Be(ukrlpContact.ContactPersonalDetails.PersonNameTitle.Single());
+            actualContact.PersonalDetailsPersonNameGivenName.Should().Be(ukrlpContact.ContactPersonalDetails.PersonGivenName.Single());
+            actualContact.PersonalDetailsPersonNameFamilyName.Should().Be(ukrlpContact.ContactPersonalDetails.PersonFamilyName);
 
         }
 

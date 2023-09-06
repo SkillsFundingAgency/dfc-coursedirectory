@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Respawn;
 using Xunit.Abstractions;
 using Xunit.Sdk;
-using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -59,7 +57,6 @@ namespace Dfc.CourseDirectory.Testing
         public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher =>
             Mock.Get((CosmosDbQueryDispatcher)_services.GetRequiredService<ICosmosDbQueryDispatcher>());
 
-        public InMemoryDocumentStore InMemoryDocumentStore => _services.GetRequiredService<InMemoryDocumentStore>();
 
         public IServiceScopeFactory ServiceScopeFactory => _services.GetRequiredService<IServiceScopeFactory>();
 
@@ -71,9 +68,7 @@ namespace Dfc.CourseDirectory.Testing
 
         public static void ConfigureServices(IServiceCollection services)
         {
-            services.AddCosmosDbDataStore();
             services.AddSingleton<IClock, MutableClock>();
-            services.AddSingleton<InMemoryDocumentStore>();
             services.AddTransient<TestData>();
             services.AddSingleton<UniqueIdHelper>();
             services.AddSingleton<SqlQuerySpy>();
@@ -91,12 +86,6 @@ namespace Dfc.CourseDirectory.Testing
 
         public void OnTestStarting()
         {
-            // Reset calls on CosmosDbQueryDispatcher
-            CosmosDbQueryDispatcher.Reset();
-
-            // Clear in-memory DB
-            InMemoryDocumentStore.Clear();
-
             // Clear spy calls
             SqlQuerySpy.Reset();
         }
