@@ -74,7 +74,9 @@ namespace Dfc.CourseDirectory.WebV2.Features
                     address.AddressPaonDescription,
                     address.AddressStreetDescription,
                     address.AddressLocality,
+                    address.AddressItems,
                     address.AddressPostcode
+
                 };
 
                 return parts.Where(p => !string.IsNullOrEmpty(p)).ToList();

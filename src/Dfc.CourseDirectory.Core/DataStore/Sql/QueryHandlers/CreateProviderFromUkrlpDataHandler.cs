@@ -12,8 +12,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<Success> Execute(SqlTransaction transaction, CreateProviderFromUkrlpData query)
         {
             var sqlProviders = $@"
-                INSERT INTO [Pttcd].[Providers]([ProviderId],[Ukprn],[ProviderName],[Alias],[ProviderStatus],[ProviderType],[UpdatedOn],[UpdatedBy])
-                            VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@Status,@ProviderType,@UpdatedOn,@UpdatedBy); ";
+                INSERT INTO [Pttcd].[Providers]([ProviderId],[Ukprn],[ProviderName],[Alias],[ProviderStatus],[ProviderType],[UkrlpProviderStatusDescription],[UpdatedOn],[UpdatedBy])
+                            VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@Status,@ProviderType, @ProviderStatus,@UpdatedOn,@UpdatedBy); ";
 
             var sqlProviderContact = $@"
 
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                           ,[Fax]
                           ,[WebsiteAddress]
                           ,[Email])
-                    VALUES (@ProviderId,
+                    VALUES (@ProviderId
                           ,@ProviderContactIndex
                           ,@ContactType
                           ,@ContactRole
@@ -57,8 +57,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                           ,@Telephone2
                           ,@Fax
                           ,@WebsiteAddress
-                          ,@Email);
-                ";
+                          ,@Email);";
 
             var paramz = new
             {
@@ -67,6 +66,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.ProviderName,
                 query.Alias,
                 query.Status,
+                query.ProviderStatus,
                 query.ProviderType,
                 UpdatedOn = query.DateUpdated,
                 query.UpdatedBy
