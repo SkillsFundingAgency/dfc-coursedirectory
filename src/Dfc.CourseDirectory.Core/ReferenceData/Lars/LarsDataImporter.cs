@@ -24,21 +24,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private readonly LarsDataset _larsDataset;
         private readonly HttpClient _httpClient;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IClock _clock;
         private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
             HttpClient httpClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             ILogger<LarsDataImporter> logger,
             IOptions<LarsDataset> larsDatasetOption)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _logger = logger;
             _larsDataset = larsDatasetOption.Value;
@@ -50,11 +47,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             Directory.CreateDirectory(extractDirectory);
 
             await DownloadFiles();
-
-            await ImportProgTypesToCosmos();
-            await ImportSectorSubjectAreaTier1sToCosmos();
-            await ImportSectorSubjectAreaTier2sToCosmos();
-
 
             await ImportAwardOrgCodeToSql();
             var categoriesRefs = await ImportCategoryToSql();
@@ -93,70 +85,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         entry.ExtractToFile(destination, overwrite: true);
                     }
                 }
-            }
-
-            Task ImportProgTypesToCosmos()
-            {
-                const string csv = "ProgType.csv";
-                var records = ReadCsv<ProgTypeRow>(csv).ToList();
-
-                var excluded = records.Where(IsTLevel).Select(r => r.ProgType);
-                _logger.LogInformation($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertProgTypes()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records
-                        .Where(r => !IsTLevel(r))
-                        .Select(r => new UpsertProgTypesRecord
-                        {
-                            ProgTypeId = r.ProgType,
-                            ProgTypeDesc = r.ProgTypeDesc,
-                            ProgTypeDesc2 = r.ProgTypeDesc2,
-                            EffectiveFrom = r.EffectiveFrom,
-                            EffectiveTo = r.EffectiveTo
-                        })
-                });
-
-                static bool IsTLevel(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
-            }
-
-           
-
-            Task ImportSectorSubjectAreaTier1sToCosmos()
-            {
-                var records = ReadCsv<SectorSubjectAreaTier1Row>("SectorSubjectAreaTier1.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertSectorSubjectAreaTier1s()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertSectorSubjectAreaTier1sRecord()
-                    {
-                        SectorSubjectAreaTier1Id = r.SectorSubjectAreaTier1,
-                        SectorSubjectAreaTier1Desc = r.SectorSubjectAreaTier1Desc,
-                        SectorSubjectAreaTier1Desc2 = r.SectorSubjectAreaTier1Desc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
-                });
-            }
-
-            Task ImportSectorSubjectAreaTier2sToCosmos()
-            {
-                var records = ReadCsv<SectorSubjectAreaTier2Row>("SectorSubjectAreaTier2.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertSectorSubjectAreaTier2s()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertSectorSubjectAreaTier2sRecord()
-                    {
-                        SectorSubjectAreaTier2Id = r.SectorSubjectAreaTier2,
-                        SectorSubjectAreaTier2Desc = r.SectorSubjectAreaTier2Desc,
-                        SectorSubjectAreaTier2Desc2 = r.SectorSubjectAreaTier2Desc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
-                });
             }
 
             Task ImportAwardOrgCodeToSql()
@@ -266,48 +194,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 await dispatcher.Commit();
             }
         }
-
-        private class FrameworkRow
-        {
-            public int FworkCode { get; set; }
-            public int ProgType { get; set; }
-            public int PwayCode { get; set; }
-            public string PathwayName { get; set; }
-            public string NASTitle { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-            public decimal SectorSubjectAreaTier1 { get; set; }
-            public decimal SectorSubjectAreaTier2 { get; set; }
-        }
-
-        private class ProgTypeRow
-        {
-            public int ProgType { get; set; }
-            public string ProgTypeDesc { get; set; }
-            public string ProgTypeDesc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
-
-        private class SectorSubjectAreaTier1Row
-        {
-            public decimal SectorSubjectAreaTier1 { get; set; }
-            public string SectorSubjectAreaTier1Desc { get; set; }
-            public string SectorSubjectAreaTier1Desc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
-
-        private class SectorSubjectAreaTier2Row
-        {
-            public decimal SectorSubjectAreaTier2 { get; set; }
-            public string SectorSubjectAreaTier2Desc { get; set; }
-            public string SectorSubjectAreaTier2Desc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
-
-        
 
         private class DateConverter : DefaultTypeConverter
         {

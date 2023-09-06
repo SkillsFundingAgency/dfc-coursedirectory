@@ -11,9 +11,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<Success> Execute(SqlTransaction transaction, CreateProviderFromUkrlpData query)
         {
-            var sql = $@"
+            var sqlProviders = $@"
                 INSERT INTO [Pttcd].[Providers]([ProviderId],[Ukprn],[ProviderName],[Alias],[ProviderStatus],[ProviderType],[UpdatedOn],[UpdatedBy])
-                            VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@ProviderStatus,@ProviderType,@UpdatedOn,@UpdatedBy);
+                            VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@Status,@ProviderType,@UpdatedOn,@UpdatedBy); ";
+
+            var sqlProviderContact = $@"
 
                 INSERT INTO [Pttcd].[ProviderContacts]
                         ([ProviderId]
@@ -57,39 +59,52 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                           ,@WebsiteAddress
                           ,@Email);
                 ";
-            var providerContact = query.Contacts.FirstOrDefault();
+
             var paramz = new
             {
                 query.ProviderId,
                 query.Ukprn,
                 query.ProviderName,
                 query.Alias,
-                query.ProviderStatus,
+                query.Status,
                 query.ProviderType,
                 UpdatedOn = query.DateUpdated,
-                query.UpdatedBy,
-                providerContact.ProviderContactIndex,
-                providerContact.ContactType,
-                providerContact.ContactRole,
-                providerContact.AddressSaonDescription,
-                providerContact.AddressPaonDescription,
-                providerContact.AddressStreetDescription,
-                providerContact.AddressLocality,
-                providerContact.AddressItems,
-                providerContact.AddressPostTown,
-                providerContact.AddressCounty,
-                providerContact.AddressPostcode,
-                providerContact.PersonalDetailsPersonNameTitle,
-                providerContact.PersonalDetailsPersonNameGivenName,
-                providerContact.PersonalDetailsPersonNameFamilyName,
-                providerContact.Telephone1,
-                providerContact.Telephone2,
-                providerContact.Fax,
-                providerContact.WebsiteAddress,
-                providerContact.Email
+                query.UpdatedBy
             };
 
-            await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
+            await transaction.Connection.ExecuteAsync(sqlProviders, paramz, transaction);
+
+            var providerContact = query.Contacts?.FirstOrDefault();
+
+            if (providerContact != null)
+            {
+                var paramzContacts = new
+                {
+                    query.ProviderId,
+                    providerContact.ProviderContactIndex,
+                    providerContact.ContactType,
+                    providerContact.ContactRole,
+                    providerContact.AddressSaonDescription,
+                    providerContact.AddressPaonDescription,
+                    providerContact.AddressStreetDescription,
+                    providerContact.AddressLocality,
+                    providerContact.AddressItems,
+                    providerContact.AddressPostTown,
+                    providerContact.AddressCounty,
+                    providerContact.AddressPostcode,
+                    providerContact.PersonalDetailsPersonNameTitle,
+                    providerContact.PersonalDetailsPersonNameGivenName,
+                    providerContact.PersonalDetailsPersonNameFamilyName,
+                    providerContact.Telephone1,
+                    providerContact.Telephone2,
+                    providerContact.Fax,
+                    providerContact.WebsiteAddress,
+                    providerContact.Email
+                };
+
+                await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
+            }
+
             return new Success();
         }
     }

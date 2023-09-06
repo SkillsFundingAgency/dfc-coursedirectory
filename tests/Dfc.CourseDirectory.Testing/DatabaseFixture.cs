@@ -54,10 +54,6 @@ namespace Dfc.CourseDirectory.Testing
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
 
-        public Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher =>
-            Mock.Get((CosmosDbQueryDispatcher)_services.GetRequiredService<ICosmosDbQueryDispatcher>());
-
-
         public IServiceScopeFactory ServiceScopeFactory => _services.GetRequiredService<IServiceScopeFactory>();
 
         public ISqlQueryDispatcherFactory SqlQueryDispatcherFactory => _services.GetRequiredService<ISqlQueryDispatcherFactory>();

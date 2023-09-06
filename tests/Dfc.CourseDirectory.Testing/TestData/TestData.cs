@@ -10,7 +10,6 @@ namespace Dfc.CourseDirectory.Testing
     public partial class TestData
     {
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IClock _clock;
         private readonly UniqueIdHelper _uniqueIdHelper;
         private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
@@ -18,12 +17,10 @@ namespace Dfc.CourseDirectory.Testing
 
         public TestData(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             UniqueIdHelper uniqueIdHelper)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _uniqueIdHelper = uniqueIdHelper;
         }

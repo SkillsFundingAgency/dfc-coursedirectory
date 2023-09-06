@@ -68,9 +68,6 @@ namespace Dfc.CourseDirectory.Testing
             }));
             Assert.Equal(new Success(), result);
 
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetProviderById() { ProviderId = providerId });
-
             if (displayNameSource != default)
             {
                 await WithSqlQueryDispatcher(

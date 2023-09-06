@@ -144,6 +144,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderById>()))
                 .ReturnsAsync(sqlProvider);
 
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderContactById>()))
+                .ReturnsAsync(providerContact);
+
+
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRun.CourseRunId));
 
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
