@@ -102,8 +102,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             MptxStateProvider.Clear();
 
-            Services.GetRequiredService<IStandardsCache>().Clear();
-
             CookieSettingsProvider.Reset();
 
             (Services.GetRequiredService<IUserInstanceStateStore>() as TestUserInstanceStateStore)?.Clear();

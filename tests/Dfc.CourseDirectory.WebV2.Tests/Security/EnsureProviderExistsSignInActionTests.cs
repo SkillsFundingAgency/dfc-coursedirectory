@@ -22,14 +22,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var cosmosProvider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderById()
-            {
-                ProviderId = provider.ProviderId
-            });
-
             var signInContext = new SignInContext(new System.Security.Claims.ClaimsPrincipal())
             {
-                Provider = cosmosProvider,
+                Provider = provider,
                 ProviderUkprn = provider.Ukprn,
                 UserInfo = new AuthenticatedUserInfo()
                 {

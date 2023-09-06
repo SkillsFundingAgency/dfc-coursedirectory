@@ -78,7 +78,6 @@ namespace Dfc.CourseDirectory.Testing
             services.AddSingleton<UniqueIdHelper>();
             services.AddSingleton<SqlQuerySpy>();
             services.Decorate<ISqlQueryDispatcherFactory, SqlQuerySpyDispatcherFactoryDecorator>();
-            services.AddTransient<SqlDataSync>();
             services.AddLogging();
         }
 
