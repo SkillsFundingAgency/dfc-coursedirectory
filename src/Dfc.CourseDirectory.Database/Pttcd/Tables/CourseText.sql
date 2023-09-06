@@ -11,8 +11,7 @@
 	[HowYoullLearn]					NVARCHAR (MAX),
 	[WhatYoullNeed]					NVARCHAR (MAX),
 	[HowYoullBeAssessed]			NVARCHAR (MAX),
-	[WhereNext]						NVARCHAR (MAX), 
-    CONSTRAINT [FK_CourseText_LearningDelivery_LearnAimRef] FOREIGN KEY ([LearnAimRef]) REFERENCES [LARS].[LearningDelivery]([LearnAimRef])
+	[WhereNext]						NVARCHAR (MAX) 
 
 
 

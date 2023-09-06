@@ -1553,20 +1553,6 @@ WHEN NOT MATCHED BY SOURCE
 			N'Some students may choose to go directly into employment in the creative industries at junior level or through an apprenticeship. You could move on to to specialist art and design courses at Higher National Diploma, Foundation Degree or Degree level.' + CHAR(13)
 	),
 	(
-			N'50067552',
-			N'Pearson BTEC',
-			N'Diploma in Sport (QCF) Development, coaching and fitness pathway',
-			N'Level 3',
-			null,
-			N'If you are passionate about sport and are looking to build a career in it, this course is for you. It''s a good introduction to the sector for anyone aiming for jobs ranging from teaching, coaching, sports management, health and fitness instructing, community and outdoor leisure, sports marketing and journalism. This course follows the coaching and fitness pathway.',
-			N'You will need 5 GCSE''s grade 9-4 (A*-C) including English and maths.',
-			N'You will learn about the functions of the body during sport through anatomy and physiology. You will understand the concept of assessing risk in sport and learn about fitness training, testing and programming. You''ll get skills in sports coaching and sports development whilst also perfecting your own performance in individual or team sport. The remainder of the qualification will be made up of units that are tailored to coaching and fitness such as leadership, exercise and lifestyle, sports psychology, injury, organising events and sport as a business.',
-			N'There''ll be a mix of lectures, workshops, independent research, and sports practice. You''ll have talks and presentations from sports industry professionals. There''s the opportunity to get additional qualifications including coaching, fitness and instructing awards and do work experience in a sports related placement. Therell be trips to sports related organisations, a residential and adventure activities. You''ll be encouraged to take part in sports teams and sporting activities.',
-			N'You will need an appropriate sports kit including ?? at a cost of £??',
-			N'You will be assessed through coursework throughout the course which will include a range of methods such as written assignments, individual and group projects, laboratory reports, presentations, practical tests and simulations.',
-			N'You could go directly into employment as a trainee or an apprentice in fields such as outdoor activities, coaching, exercise and fitness, leisure management, sports development or if you are a talented athlete into a sporting excellence apprenticeship. You could move on to into higher education to study an HNC/HND or Foundation/Honours degree in a sports related discipline.' + CHAR(13)
-	),
-	(
 			N'60136261',
 			N'City and Guilds',
 			N'Entry Level Award in Employability Skills',
@@ -2783,20 +2769,6 @@ WHEN NOT MATCHED BY SOURCE
 			null,
 			N'Written examination, set tasks and coursework.',
 			N'You could move on to to higher education courses such as HNC/HND, Foundation Degree or Degree courses in related subjects such as chemistry physics, biology, biomedical, forensic, food or sports science as well as healthcare therapies and nursing. You could enter technician employment or apprenticeships/degree apprenticeships in science-based roles including laboratory work in hospitals, schools, medical, veterinary or sports science, quality control or research in industry.' + CHAR(13)
-	),
-	(
-			N'50067552',
-			N'Pearson BTEC',
-			N'Diploma in Sport (QCF) Performance and lifestyle pathway',
-			N'Level 3',
-			null,
-			N'If you are passionate about sport and are looking to build a career in it, this course is for you. It''s a good introduction to the sector for anyone aiming for jobs ranging from teaching, coaching, sports management, health and fitness instructing, community and outdoor leisure, sports marketing and journalism. This course follows the performance and excellence specialist pathway.',
-			N'You will need 5 GCSE''s grade 9-4 (A*-C) including English and maths.',
-			N'You will learn about the functions of the body during sport through anatomy and physiology. You will understand the concept of assessing risk in sport and learn about fitness training, testing and programming. You''ll cover sports nutrition, explore psychology for sport and investigate the athlete''s lifestyle. You will also look at technical and tactical skills in sport. The remainder of the qualification will be made up of units that are tailored to sports performance and lifestyle such as coaching, instructing and officiating, sports massage and injury and sports science related units.',
-			N'There''ll be a mix of lectures, workshops, independent research, and sports practice. You''ll have talks and presentations from sports industry professionals. There''s the opportunity to get additional qualifications including coaching, fitness and instructing awards and do work experience in a sports related placement. Therell be trips to sports related organisations, a residential and adventure activities. You''ll be encouraged to take part in sports teams and sporting activities.',
-			N'You will need an appropriate sports kit including ?? at a cost of £??',
-			N'You will be assessed through coursework throughout the course which will include a range of methods such as written assignments, individual and group projects, laboratory reports, presentations, practical tests and simulations.',
-			N'You could go directly into employment as a trainee or an apprentice in fields such as outdoor activities, coaching, exercise and fitness, leisure management, sports development or if you are a talented athlete into a sporting excellence apprenticeship. You could move on to into higher education to study an HNC/HND or Foundation/Honours degree in a sports related discipline.' + CHAR(13)
 	),
 	(
 			N'60100485',
