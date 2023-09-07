@@ -17,6 +17,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string MarketingInformation { get; set; }
 
         public string ProviderStatus { get; set; }
+
+        public ProviderStatus Status { get; set; }
         public string CourseDirectoryName { get; set; }
 
 

@@ -15,15 +15,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             SqlTransaction transaction,
             UpdateProviderFromUkrlpData query)
         {
-            var sql = $@"UPDATE [Pttcd].[Providers]
+            var sqlProvider = $@"UPDATE [Pttcd].[Providers]
                             SET [ProviderName] = @ProviderName,
                             [Alias] = @Alias,
-                            [ProviderStatus] = @Status,
                             [UkrlpProviderStatusDescription] = @ProviderStatus,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
-                        WHERE [ProviderId] = @ProviderId;
-
+                        WHERE [ProviderId] = @ProviderId;";
+            var sqlProviderContact = $@"
             UPDATE [Pttcd].[ProviderContacts] 
                                 SET [ContactType] = @ContactType
                                   ,[AddressSaonDescription] = @AddressSaonDescription
@@ -49,32 +48,41 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             {
                 query.ProviderName,
                 query.Alias,
-                query.Status,
                 query.ProviderStatus,
                 UpdatedOn = query.DateUpdated,
                 query.UpdatedBy,
-                providerContact.ContactType,
-                providerContact.AddressSaonDescription,
-                providerContact.AddressPaonDescription,
-                providerContact.AddressStreetDescription,
-                providerContact.AddressLocality,
-                providerContact.AddressItems,
-                providerContact.AddressPostTown,
-                providerContact.AddressCounty,
-                providerContact.AddressPostcode,
-                providerContact.PersonalDetailsPersonNameTitle,
-                providerContact.PersonalDetailsPersonNameGivenName,
-                providerContact.PersonalDetailsPersonNameFamilyName,
-                providerContact.Telephone1,
-                providerContact.Fax,
-                providerContact.WebsiteAddress,
-                providerContact.Email,
                 query.ProviderId
             };
-            var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);
+            var updated = await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction) == 1;
 
-            if (result == Result.Success)
+            if (updated)
             {
+                if (providerContact != null)
+                {
+                    var paramzContacts = new
+                    {
+                        query.ProviderId,
+                        providerContact.ContactType,
+                        providerContact.AddressSaonDescription,
+                        providerContact.AddressPaonDescription,
+                        providerContact.AddressStreetDescription,
+                        providerContact.AddressLocality,
+                        providerContact.AddressItems,
+                        providerContact.AddressPostTown,
+                        providerContact.AddressCounty,
+                        providerContact.AddressPostcode,
+                        providerContact.PersonalDetailsPersonNameTitle,
+                        providerContact.PersonalDetailsPersonNameGivenName,
+                        providerContact.PersonalDetailsPersonNameFamilyName,
+                        providerContact.Telephone1,
+                        providerContact.Fax,
+                        providerContact.WebsiteAddress,
+                        providerContact.Email
+                    };
+
+                    await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
+
+                }
                 return new Success();
             }
             return new NotFound();

@@ -35,69 +35,22 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var ukrlpData = GenerateUkrlpProviderData(ukprn);
             var ukrlpContact = ukrlpData.ProviderContact.Single();
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(ukprn, ukrlpData);
-                       
-           
-            ICollection<CreateProviderFromUkrlpData> capturedUpdateCommands = new List<CreateProviderFromUkrlpData>();
-
-            string providerName = "Test Provider";
-            ProviderType providerType = ProviderType.FE;
-            string providerStatus = "1";
-            string alias = "";
-            ProviderDisplayNameSource displayNameSource = default;
-            IReadOnlyCollection<Guid> tLevelDefinitionIds = null;
-            ProviderStatus status = ProviderStatus.Onboarded;
-            var providerId = Guid.NewGuid();
-            ProviderContact[] contacts = null;
-          
-           
-
-        var result = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-               new CreateProviderFromUkrlpData()
-               {
-                   ProviderId = providerId,
-                   Ukprn = ukprn,
-                   ProviderType = providerType,
-                   ProviderName = providerName,
-                   ProviderStatus = providerStatus,
-                   Alias = alias,
-                   Contacts = contacts?.Select(c => new ProviderContact()
-                   {
-                       AddressItems = c.AddressItems,
-                       AddressLocality = c.AddressLocality,
-                       AddressPaonDescription = c.AddressPaonDescription,
-                       AddressSaonDescription = c.AddressSaonDescription,
-                       AddressPostTown = c.AddressPostTown,
-                       AddressCounty = c.AddressCounty,
-                       AddressPostcode = c.AddressPostcode,
-                       AddressStreetDescription = c.AddressStreetDescription,
-                       PersonalDetailsPersonNameTitle = c.PersonalDetailsPersonNameTitle,
-                       PersonalDetailsPersonNameGivenName = c.PersonalDetailsPersonNameGivenName,
-                       PersonalDetailsPersonNameFamilyName = c.PersonalDetailsPersonNameFamilyName,
-                       Email = c.Email,
-                       Telephone1 = c.Telephone1,
-                       ContactType = c.ContactType,
-                       WebsiteAddress = c.WebsiteAddress,
-                     
-                   }),
-              
-                   DateUpdated = DateTime.Now,
-                   UpdatedBy = "TestData",
-                   Status = status
-               }));
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(ukprn);
 
+            var dispather = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.ReadUncommitted);
+            var result = await dispather.ExecuteQuery(new GetProviderByUkprn { Ukprn = ukprn });
+
+
             // Assert
-            var createCommand = capturedUpdateCommands.Should().ContainSingle().Subject;
-            createCommand.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
-            //createCommand.DateUpdated.Should().Be(_clock.UtcNow);
-            createCommand.ProviderName.Should().Be(ukrlpData.ProviderName);
-            //createCommand.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-            createCommand.ProviderType.Should().Be(ProviderType.None);
-            //createCommand.Status.Should().Be(ProviderStatus.Registered);
-            createCommand.Ukprn.Should().Be(ukprn);
-            var actualContact = createCommand.Contacts.Should().ContainSingle().Subject;
+            result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
+            result.ProviderName.Should().Be(ukrlpData.ProviderName);
+            result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
+            result.ProviderType.Should().Be(ProviderType.None);
+            result.Status.Should().Be(ProviderStatus.Registered);
+            result.Ukprn.Should().Be(ukprn);
+            var actualContact = await dispather.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
         }
 
@@ -136,20 +89,19 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
 
-            ICollection<UpdateProviderFromUkrlpData> capturedUpdateCommands = new List<UpdateProviderFromUkrlpData>();
-            await WithSqlQueryDispatcher(mock => mock.ExecuteQuery(Capture.In(capturedUpdateCommands)));
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
 
+            var dispather = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.ReadUncommitted);
+            var result = await dispather.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
+
             // Assert
-            var updateCommand = capturedUpdateCommands.Should().ContainSingle().Subject;
-            updateCommand.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
-            updateCommand.DateUpdated.Should().Be(Clock.UtcNow);
-            updateCommand.ProviderName.Should().Be(ukrlpData.ProviderName);
-            updateCommand.ProviderId.Should().Be(provider.ProviderId);
-            updateCommand.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-            var actualContact = updateCommand.Contacts.Should().ContainSingle().Subject;
+            result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
+            result.ProviderName.Should().Be(ukrlpData.ProviderName);
+            result.ProviderId.Should().Be(provider.ProviderId);
+            result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
+            var actualContact = await dispather.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
         }
 
@@ -213,7 +165,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             actualContact.AddressCounty.Should().Be(ukrlpContact.ContactAddress.County);
             actualContact.AddressItems.Should().BeEquivalentTo(
             
-                ukrlpContact.ContactAddress.Town +
+                ukrlpContact.ContactAddress.Town + " " +
                 ukrlpContact.ContactAddress.County
             );
 
