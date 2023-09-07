@@ -18,7 +18,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var sql = $@"UPDATE [Pttcd].[Providers]
                             SET [ProviderName] = @ProviderName,
                             [Alias] = @Alias,
-                            [ProviderStatus] = @ProviderStatus,
+                            [ProviderStatus] = @Status,
+                            [UkrlpProviderStatusDescription] = @ProviderStatus,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
                         WHERE [ProviderId] = @ProviderId;
@@ -48,6 +49,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             {
                 query.ProviderName,
                 query.Alias,
+                query.Status,
                 query.ProviderStatus,
                 UpdatedOn = query.DateUpdated,
                 query.UpdatedBy,

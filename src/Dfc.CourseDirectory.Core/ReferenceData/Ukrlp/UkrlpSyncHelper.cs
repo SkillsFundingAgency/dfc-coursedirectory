@@ -205,6 +205,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                             new List<ProviderContact>(),
                         ProviderName = providerData.ProviderName,
                         ProviderStatus = providerData.ProviderStatus,
+                        Status = NewProviderProviderStatus,
                         UpdatedBy = UpdatedBy
                     });
                 _logger.LogInformation("UKRLP Sync: Update {0} starting...", ukprn);
