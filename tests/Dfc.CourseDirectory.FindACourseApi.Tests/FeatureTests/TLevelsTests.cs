@@ -85,8 +85,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderContactById>()))
                 .ReturnsAsync(provider1Contact);
 
-            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderContactById>()))
-                .ReturnsAsync(provider2Contact);
+
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByIds>()))
                 .ReturnsAsync(new[] { provider1Venue1, provider1Venue2, provider2Venue1 }.ToDictionary(v => v.VenueId, v => v));
@@ -107,6 +106,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             AssertHasTLevel(tLevels, provider1, provider1Contact, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel1);
             AssertHasTLevel(tLevels, provider1, provider1Contact, new[] { provider1Venue1, provider1Venue2 }, provider1TLevel2);
+
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetProviderContactById>()))
+            .ReturnsAsync(provider2Contact);
+             response = await HttpClient.GetAsync($"tlevels");
+             result = JObject.Parse(await response.Content.ReadAsStringAsync());
+             tLevels = result["tLevels"].ToArray();
+
             AssertHasTLevel(tLevels, provider2, provider2Contact, new[] { provider2Venue1 }, provider2TLevel1);
 
             static void AssertHasTLevel(JToken[] tLevels, Provider provider, ProviderContact providerContact, IReadOnlyCollection<Venue> venues, TLevel expectedTLevel)
