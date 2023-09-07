@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 using OneOf;
 using OneOf.Types;
 

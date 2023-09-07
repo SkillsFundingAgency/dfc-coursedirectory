@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 using OneOf;
 using OneOf.Types;
 using System.Data.SqlClient;
