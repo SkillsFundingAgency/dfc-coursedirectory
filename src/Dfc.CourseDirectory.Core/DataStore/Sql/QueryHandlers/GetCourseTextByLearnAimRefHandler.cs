@@ -25,8 +25,8 @@ SELECT  LearnAimRef,
         WhatYoullNeed,
         HowYoullBeAssessed,
         WhereNext
-FROM    LARS.CourseText
-WHERE   Lars = @{nameof(query.LearnAimRef)}";
+FROM    Pttcd.CourseText
+WHERE   LearnAimRef = @{nameof(query.LearnAimRef)}";
 
             return await transaction.Connection.QuerySingleOrDefaultAsync<CourseText>(sql, query, transaction);
         }
