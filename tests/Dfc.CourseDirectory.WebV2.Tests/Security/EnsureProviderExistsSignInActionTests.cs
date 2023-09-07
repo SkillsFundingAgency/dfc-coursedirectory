@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Security;
 using Xunit;

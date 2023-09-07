@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
@@ -109,9 +108,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
-                services.AddCosmosDbDataStore(
-                    endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
-                    key: configuration["CosmosDbSettings:PrimaryKey"]);
+                
 
                 services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             }
