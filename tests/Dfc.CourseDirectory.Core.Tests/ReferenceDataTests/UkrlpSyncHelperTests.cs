@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -22,9 +23,11 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
     public class UkrlpSyncHelperTests : DatabaseTestBase
     {
+        private readonly ISqlQueryDispatcher _dispatcher;
         public UkrlpSyncHelperTests(DatabaseTestBaseFixture fixture)
             : base(fixture)
         {
+            _dispatcher = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot);
         }
 
         [Fact]
@@ -39,8 +42,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Act
             await ukrlpSyncHelper.SyncProviderData(ukprn);
 
-            var dispather = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.ReadUncommitted);
-            var result = await dispather.ExecuteQuery(new GetProviderByUkprn { Ukprn = ukprn });
+            var result = await _dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = ukprn });
 
 
             // Assert
@@ -50,13 +52,16 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             result.ProviderType.Should().Be(ProviderType.None);
             result.Status.Should().Be(ProviderStatus.Registered);
             result.Ukprn.Should().Be(ukprn);
-            var actualContact = await dispather.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
+            var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
+            _dispatcher.Dispose();
         }
 
         [Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
+
+
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Test Provider",
@@ -93,16 +98,16 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
 
-            var dispather = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.ReadUncommitted);
-            var result = await dispather.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
+            var result = await _dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
 
             // Assert
             result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
             result.ProviderName.Should().Be(ukrlpData.ProviderName);
             result.ProviderId.Should().Be(provider.ProviderId);
             result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-            var actualContact = await dispather.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
+            var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
+            _dispatcher.Dispose();
         }
 
         [Fact]
@@ -192,7 +197,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             return new UkrlpSyncHelper(
                 ukrlpWcfService.Object,
-                SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot),
+                _dispatcher,
                 Clock,
                 loggerFactory.Object);
         }
