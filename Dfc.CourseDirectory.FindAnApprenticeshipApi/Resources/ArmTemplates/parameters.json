@@ -14,12 +14,6 @@
       "storageConnectionString": {
         "value": "__providerPortalStorageConnectionStr__"
       },
-      "cosmosDbEndpoint": {
-        "value": "__providerPortalCosmosDbFqdn__"
-      },
-      "cosmosDbAccountKey": {
-        "value": "__providerPortalCosmosDBPrimaryKey__"
-      },
       "providerApiUrl": {
         "value": "__providerApiUrl__"
       },

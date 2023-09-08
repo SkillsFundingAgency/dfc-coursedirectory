@@ -14,12 +14,6 @@
       "storageConnectionString": {
         "value": "DefaultEndpointsProtocol=https;AccountName=dfcfooppapprenticestr;AccountKey=this_is_not_a_real_account==;EndpointSuffix=core.windows.net"
       },
-      "cosmosDbEndpoint": {
-        "value": "https://providerportal-cosmosdb-endpoint:443/"
-      },
-      "cosmosDbAccountKey": {
-        "value": "not-a-real-cosmosdb-account-key"
-      },
       "providerApiUrl": {
         "value": "https://apim-instance/providers"
       },

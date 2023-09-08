@@ -26,18 +26,6 @@
           "description": "Connection string for the storage account to store function app files"
         }
       },
-      "cosmosDbEndpoint": {
-        "type": "string",
-        "metadata": {
-          "description": "Url to the providerportal cosmosb account"
-        }
-      },
-      "cosmosDbAccountKey": {
-        "type": "securestring",
-        "metadata": {
-          "description": "primary key for the providerportal cosmosb account"
-        }
-      },
       "providerApiUrl": {
         "type": "string",
         "metadata": {
@@ -151,22 +139,6 @@
                 {
                   "name": "FUNCTIONS_WORKER_RUNTIME",
                   "value": "dotnet"
-                },
-                {
-                  "name": "CosmosDbSettings__EndpointUri",
-                  "value": "[parameters('cosmosDbEndpoint')]"
-                },
-                {
-                  "name": "CosmosDbSettings__PrimaryKey",
-                  "value": "[parameters('cosmosDbAccountKey')]"
-                },
-                {
-                  "name": "CosmosDbSettings__DatabaseId",
-                  "value": "providerportal"
-                },
-                {
-                  "name": "CosmosDbCollectionSettings__ApprenticeshipCollectionId",
-                  "value": "apprenticeship"
                 },
                 {
                   "name": "ProviderServiceSettings__ApiUrl",

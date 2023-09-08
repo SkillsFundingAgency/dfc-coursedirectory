@@ -11,12 +11,6 @@
     "appServicePlanResourceGroup": {
       "value": "__providerPortalResourceGroup__"
     },
-    "cosmosAccountEndpoint": {
-      "value": "__providerPortalCosmosDbFqdn__"
-    },
-    "cosmosAccountAccessKey": {
-      "value": "__providerPortalCosmosDBPrimaryKey__"
-    },
     "environmentName": {
       "value": "__environmentName__"
     },
