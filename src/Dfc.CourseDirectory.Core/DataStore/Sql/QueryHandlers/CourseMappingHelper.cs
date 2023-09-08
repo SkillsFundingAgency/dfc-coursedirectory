@@ -23,10 +23,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 .GroupBy(r => r.CourseRunId)
                 .ToDictionary(g => g.Key, g => g.Select(r => r.RegionId).AsEnumerable());
 
-            // N.B. We need to normalize HTML-encoded data here. The legacy projects HTML-encoded everything before
-            // persisting it in Cosmos. We want to move the HTML encoding to the edge, where it should be done.
-            // The existing data synced from Cosmos has a DataIsHtmlEncoded column set to true; read that here and
-            // decode the relevant fields if it's set.
+           
 
             return courses.Select(MapCourse).ToArray();
 
