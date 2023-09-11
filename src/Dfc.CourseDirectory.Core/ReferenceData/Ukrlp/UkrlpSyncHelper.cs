@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             AddressPaonDescription = contact.ContactAddress.Address2,
             AddressStreetDescription = contact.ContactAddress.Address3,
             AddressLocality = contact.ContactAddress.Address4,
-            AddressItems = contact.ContactAddress.Town + " " + contact.ContactAddress.County,
+            AddressItems = $"{contact.ContactAddress.Town} {contact.ContactAddress.County}",
             AddressPostTown = contact.ContactAddress.Town,
             AddressCounty = contact.ContactAddress.County,
             AddressPostcode = contact.ContactAddress.PostCode,
