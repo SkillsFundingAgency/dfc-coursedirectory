@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                               WHERE [ProviderId] = @ProviderId;
             ";
 
-            var providerContact = query.Contacts.FirstOrDefault();
+            var providerContact = query?.Contact;
             var paramz = new
             {
                 query.ProviderName,

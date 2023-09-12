@@ -17,6 +17,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public DateTime DateUpdated { get; set; }
         public string UpdatedBy { get; set; }
         //public IEnumerable<ProviderAlias> Aliases { get; set; }
-        public IEnumerable<ProviderContact> Contacts { get; set; }
+        public ProviderContact Contact { get; set; }
     }
 }

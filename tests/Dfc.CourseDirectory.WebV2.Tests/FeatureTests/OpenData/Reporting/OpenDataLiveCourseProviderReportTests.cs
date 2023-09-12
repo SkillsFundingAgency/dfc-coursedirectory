@@ -49,10 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_WithAdminUser_ReturnsExpectedCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contacts: new[]
-            {
-                CreateContact("CV17 9AD", null, null, null)
-            });
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
@@ -82,10 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_CsvHeaderIsCorrect(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contacts: new[]
-            {
-                CreateContact("CV17 9AD", null, null, null)
-            });
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
@@ -124,10 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderHasNoLiveCourses_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contacts: new[]
-            {
-                CreateContact("CV17 9AD", null, null, null)
-            });
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await User.AsTestUser(userType);
 
             var request = new HttpRequestMessage(
@@ -156,10 +147,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderTypeTLevelOnly_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arrange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.TLevels, "ProviderType", contacts: new[]
-            {
-                CreateContact("CV17 9AD", null, null, null)
-            });
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.TLevels, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
@@ -191,10 +179,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderTypeContainingFECourses_ReturnsExpectedCsv(TestUserType userType, ProviderType providerType)
         {
             //Arrange
-            var provider = await TestData.CreateProvider("providerName", providerType, "ProviderType", contacts: new[]
-            {
-                CreateContact("CV17 9AD", null, null, null)
-            });
+            var provider = await TestData.CreateProvider("providerName", providerType, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
@@ -224,10 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderHasOutOfDateCourse_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contacts: new[]
-            {
-                CreateContact("CV17 9AD", null, null, null)
-            });
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
 
             var course1 = await TestData.CreateCourse(
                 provider.ProviderId,

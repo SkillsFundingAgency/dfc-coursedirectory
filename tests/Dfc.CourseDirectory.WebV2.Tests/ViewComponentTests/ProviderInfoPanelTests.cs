@@ -24,8 +24,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
-                contacts: new[]
-                {
+                contact: 
+                
                     new ProviderContact()
                     {
                         ContactType = "P",
@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
                         PersonalDetailsPersonNameGivenName = "The",
                         PersonalDetailsPersonNameFamilyName = "Contact"
                     }
-                });
+                );
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
@@ -81,8 +81,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
-                contacts: new[]
-                {
+                contact: 
+                
                     new ProviderContact()
                     {
                         ContactType = "P",
@@ -98,7 +98,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
                         PersonalDetailsPersonNameGivenName = "The",
                         PersonalDetailsPersonNameFamilyName = "Contact"
                     }
-                });
+                );
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
