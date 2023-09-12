@@ -141,22 +141,22 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
         { 
-            AddressSaonDescription = contact.ContactAddress.Address1,
-            AddressPaonDescription = contact.ContactAddress.Address2,
-            AddressStreetDescription = contact.ContactAddress.Address3,
-            AddressLocality = contact.ContactAddress.Address4,
-            AddressItems = $"{contact.ContactAddress.Town} {contact.ContactAddress.County}",
-            AddressPostTown = contact.ContactAddress.Town,
-            AddressCounty = contact.ContactAddress.County,
-            AddressPostcode = contact.ContactAddress.PostCode,
-            Email = contact.ContactEmail,
-            Fax = contact.ContactFax,
-            PersonalDetailsPersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle[0],
-            PersonalDetailsPersonNameGivenName = contact.ContactPersonalDetails.PersonGivenName[0],
-            PersonalDetailsPersonNameFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
-            Telephone1 = contact.ContactTelephone1,
-            ContactType = contact.ContactType,
-            WebsiteAddress = contact.ContactWebsiteAddress
+            AddressSaonDescription = contact?.ContactAddress.Address1,
+            AddressPaonDescription = contact?.ContactAddress.Address2,
+            AddressStreetDescription = contact?.ContactAddress.Address3,
+            AddressLocality = contact?.ContactAddress.Address4,
+            AddressItems = $"{contact?.ContactAddress.Town} {contact?.ContactAddress.County}",
+            AddressPostTown = contact?.ContactAddress.Town,
+            AddressCounty = contact?.ContactAddress.County,
+            AddressPostcode = contact?.ContactAddress.PostCode,
+            Email = contact?.ContactEmail,
+            Fax = contact?.ContactFax,
+            PersonalDetailsPersonNameTitle = contact?.ContactPersonalDetails.PersonNameTitle[0],
+            PersonalDetailsPersonNameGivenName = contact?.ContactPersonalDetails.PersonGivenName[0],
+            PersonalDetailsPersonNameFamilyName = contact?.ContactPersonalDetails.PersonFamilyName,
+            Telephone1 = contact?.ContactTelephone1,
+            ContactType = contact?.ContactType,
+            WebsiteAddress = contact?.ContactWebsiteAddress
         };
 
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
