@@ -138,6 +138,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private static ProviderContact MapContact(ProviderContactStructure contact)
         {
+            if (contact == null)
+                return new ProviderContact();
             return new ProviderContact()
             {
                 AddressSaonDescription = contact?.ContactAddress?.Address1,
@@ -150,8 +152,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 AddressPostcode = contact?.ContactAddress?.PostCode,
                 Email = contact?.ContactEmail,
                 Fax = contact?.ContactFax,
-                PersonalDetailsPersonNameTitle = contact?.ContactPersonalDetails?.PersonNameTitle[0],
-                PersonalDetailsPersonNameGivenName = contact?.ContactPersonalDetails?.PersonGivenName[0],
+                PersonalDetailsPersonNameTitle = contact?.ContactPersonalDetails?.PersonNameTitle?[0],
+                PersonalDetailsPersonNameGivenName = contact?.ContactPersonalDetails?.PersonGivenName?[0],
                 PersonalDetailsPersonNameFamilyName = contact?.ContactPersonalDetails?.PersonFamilyName,
                 Telephone1 = contact?.ContactTelephone1,
                 ContactType = contact?.ContactType,
