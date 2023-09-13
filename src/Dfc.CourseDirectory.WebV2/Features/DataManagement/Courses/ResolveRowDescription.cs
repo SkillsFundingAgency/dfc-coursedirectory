@@ -68,8 +68,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         {
             var row = await GetRow(request.RowNumber);
 
+            Command formattedRequest = new Command
+            {
+                WhoThisCourseIsFor = request.WhoThisCourseIsFor?.Replace("\r\n", "\n"),
+                EntryRequirements = request.EntryRequirements?.Replace("\r\n", "\n"),
+                WhatYouWillLearn = request.WhatYouWillLearn?.Replace("\r\n", "\n"),
+                HowYouWillLearn = request.HowYouWillLearn?.Replace("\r\n", "\n"),
+                WhatYouWillNeedToBring = request.WhatYouWillNeedToBring?.Replace("\r\n", "\n"),
+                HowYouWillBeAssessed = request.HowYouWillBeAssessed?.Replace("\r\n", "\n"),
+                WhereNext = request.WhereNext?.Replace("\r\n", "\n"),
+                RowNumber = request.RowNumber
+            };
+
             var validator = new CommandValidator();
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(formattedRequest);
 
             if (!validationResult.IsValid)
             {
@@ -81,13 +93,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 row.CourseId,
                 new CourseUploadRowGroupUpdate()
                 {
-                    WhoThisCourseIsFor = request.WhoThisCourseIsFor,
-                    EntryRequirements = request.EntryRequirements,
-                    WhatYouWillLearn = request.WhatYouWillLearn,
-                    HowYouWillLearn = request.HowYouWillLearn,
-                    WhatYouWillNeedToBring = request.WhatYouWillNeedToBring,
-                    HowYouWillBeAssessed = request.HowYouWillBeAssessed,
-                    WhereNext = request.WhereNext
+                    WhoThisCourseIsFor = formattedRequest.WhoThisCourseIsFor,
+                    EntryRequirements = formattedRequest.EntryRequirements,
+                    WhatYouWillLearn = formattedRequest.WhatYouWillLearn,
+                    HowYouWillLearn = formattedRequest.HowYouWillLearn,
+                    WhatYouWillNeedToBring = formattedRequest.WhatYouWillNeedToBring,
+                    HowYouWillBeAssessed = formattedRequest.HowYouWillBeAssessed,
+                    WhereNext = formattedRequest.WhereNext
                 });
         }
 

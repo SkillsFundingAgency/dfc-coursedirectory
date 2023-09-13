@@ -146,9 +146,26 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 return BadRequest();
             }
 
+            EditCourseSaveViewModel formattedModel = new EditCourseSaveViewModel
+            {
+                CourseFor = model.CourseFor?.Replace("\r\n", "\n"),
+                EntryRequirements = model.EntryRequirements?.Replace("\r\n", "\n"),
+                WhatWillLearn = model.WhatWillLearn?.Replace("\r\n", "\n"),
+                HowYouWillLearn = model.HowYouWillLearn?.Replace("\r\n", "\n"),
+                WhatYouNeed = model.WhatYouNeed?.Replace("\r\n", "\n"),
+                HowAssessed = model.HowAssessed?.Replace("\r\n", "\n"),
+                WhereNext = model.WhereNext?.Replace("\r\n", "\n"),
+                AdultEducationBudget = model.AdultEducationBudget,
+                AdvancedLearnerLoan = model.AdvancedLearnerLoan,
+                CourseId = model.CourseId,
+                CourseRunId = model.CourseRunId,
+                Mode = model.Mode,
+                CourseName = model.CourseName
+            };
+
             var courseId = model.CourseId.Value;
 
-            var validationResult = new EditCourseSaveViewModelValidator().Validate(model);
+            var validationResult = new EditCourseSaveViewModelValidator().Validate(formattedModel);
             if (!validationResult.IsValid)
             {
                 return BadRequest();
