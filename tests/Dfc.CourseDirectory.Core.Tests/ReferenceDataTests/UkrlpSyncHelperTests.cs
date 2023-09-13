@@ -67,8 +67,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 providerName: "Test Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
-                contacts: new[]
-                {
+                contact: 
+                
                     new ProviderContact
                     {
                         ContactType = "P",
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                         PersonalDetailsPersonNameFamilyName = "FamilyName",
                         PersonalDetailsPersonNameGivenName = "GivenName"
                     }
-                });
+                );
 
             var ukrlpData = GenerateUkrlpProviderData(provider.Ukprn);
             var ukrlpContact = ukrlpData.ProviderContact.Single();
@@ -154,31 +154,31 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
         private void AssertContactMapping(ProviderContact actualContact, ProviderContactStructure ukrlpContact)
         {
-            actualContact.ContactType.Should().Be(ukrlpContact.ContactType);
-            actualContact.ContactRole.Should().Be(ukrlpContact.ContactRole);
-            actualContact.Telephone1.Should().Be(ukrlpContact.ContactTelephone1);
-            actualContact.WebsiteAddress.Should().Be(ukrlpContact.ContactWebsiteAddress);
-            actualContact.Email.Should().Be(ukrlpContact.ContactEmail);
-            actualContact.Fax.Should().Be(ukrlpContact.ContactFax);
+            actualContact?.ContactType.Should().Be(ukrlpContact?.ContactType);
+            actualContact?.ContactRole.Should().Be(ukrlpContact?.ContactRole);
+            actualContact?.Telephone1.Should().Be(ukrlpContact?.ContactTelephone1);
+            actualContact?.WebsiteAddress.Should().Be(ukrlpContact?.ContactWebsiteAddress);
+            actualContact?.Email.Should().Be(ukrlpContact?.ContactEmail);
+            actualContact?.Fax.Should().Be(ukrlpContact?.ContactFax);
             actualContact.PersonalDetailsPersonNameGivenName.Should().NotBeNull();
 
-            actualContact.AddressPaonDescription.Should().Be(ukrlpContact.ContactAddress.Address2);
-            actualContact.AddressSaonDescription.Should().Be(ukrlpContact.ContactAddress.Address1);
-            actualContact.AddressStreetDescription.Should().Be(ukrlpContact.ContactAddress.Address3);
-            actualContact.AddressLocality.Should().Be(ukrlpContact.ContactAddress.Address4);
-            actualContact.AddressPostTown.Should().Be(ukrlpContact.ContactAddress.Town);
-            actualContact.AddressCounty.Should().Be(ukrlpContact.ContactAddress.County);
-            actualContact.AddressItems.Should().BeEquivalentTo(
+            actualContact?.AddressPaonDescription.Should().Be(ukrlpContact?.ContactAddress.Address2);
+            actualContact?.AddressSaonDescription.Should().Be(ukrlpContact?.ContactAddress.Address1);
+            actualContact?.AddressStreetDescription.Should().Be(ukrlpContact?.ContactAddress.Address3);
+            actualContact?.AddressLocality.Should().Be(ukrlpContact?.ContactAddress.Address4);
+            actualContact?.AddressPostTown.Should().Be(ukrlpContact?.ContactAddress.Town);
+            actualContact?.AddressCounty.Should().Be(ukrlpContact?.ContactAddress.County);
+            actualContact?.AddressItems.Should().BeEquivalentTo(
             
-                ukrlpContact.ContactAddress.Town + " " +
-                ukrlpContact.ContactAddress.County
+                ukrlpContact?.ContactAddress.Town + " " +
+                ukrlpContact?.ContactAddress.County
             );
 
-            actualContact.AddressPostcode.Should().Be(ukrlpContact.ContactAddress.PostCode);
+            actualContact?.AddressPostcode.Should().Be(ukrlpContact?.ContactAddress.PostCode);
 
-            actualContact.PersonalDetailsPersonNameTitle.Should().Be(ukrlpContact.ContactPersonalDetails.PersonNameTitle.Single());
-            actualContact.PersonalDetailsPersonNameGivenName.Should().Be(ukrlpContact.ContactPersonalDetails.PersonGivenName.Single());
-            actualContact.PersonalDetailsPersonNameFamilyName.Should().Be(ukrlpContact.ContactPersonalDetails.PersonFamilyName);
+            actualContact?.PersonalDetailsPersonNameTitle.Should().Be(ukrlpContact?.ContactPersonalDetails.PersonNameTitle.Single());
+            actualContact?.PersonalDetailsPersonNameGivenName.Should().Be(ukrlpContact?.ContactPersonalDetails.PersonGivenName.Single());
+            actualContact?.PersonalDetailsPersonNameFamilyName.Should().Be(ukrlpContact?.ContactPersonalDetails.PersonFamilyName);
 
         }
 

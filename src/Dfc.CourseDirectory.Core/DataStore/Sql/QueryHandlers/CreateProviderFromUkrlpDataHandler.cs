@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
             await transaction.Connection.ExecuteAsync(sqlProviders, paramz, transaction);
 
-            var providerContact = query.Contacts?.FirstOrDefault();
+            var providerContact = query?.Contact;
 
             if (providerContact != null)
             {

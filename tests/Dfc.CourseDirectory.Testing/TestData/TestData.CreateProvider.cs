@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Testing
             ProviderDisplayNameSource displayNameSource = default,
             IReadOnlyCollection<Guid> tLevelDefinitionIds = null,
             ProviderStatus status = ProviderStatus.Onboarded,
-            ProviderContact[] contacts = null,
+            ProviderContact contact = null,
             string marketingInformation = null)
         {
             if (!providerType.HasFlag(ProviderType.TLevels) &&
@@ -44,24 +44,24 @@ namespace Dfc.CourseDirectory.Testing
                 ProviderName = providerName,
                 ProviderStatus = providerStatus,
                 Alias = alias,
-                Contacts = contacts?.Select(c => new ProviderContact()
+                Contact = contact != null ? new ProviderContact
                 {
-                    AddressItems = c.AddressItems,
-                    AddressLocality = c.AddressLocality,
-                    AddressPaonDescription = c.AddressPaonDescription ,
-                    AddressSaonDescription = c.AddressSaonDescription ,
-                    AddressPostTown = c.AddressPostTown,
-                    AddressCounty = c.AddressCounty,
-                    AddressPostcode = c.AddressPostcode,
-                    AddressStreetDescription = c.AddressStreetDescription,
-                    PersonalDetailsPersonNameTitle = c.PersonalDetailsPersonNameTitle,
-                    PersonalDetailsPersonNameGivenName = c.PersonalDetailsPersonNameGivenName,
-                    PersonalDetailsPersonNameFamilyName = c.PersonalDetailsPersonNameFamilyName,
-                    Email = c.Email,
-                    Telephone1 = c.Telephone1,
-                    ContactType = c.ContactType,
-                    WebsiteAddress = c.WebsiteAddress
-                }),
+                    AddressItems = contact?.AddressItems,
+                    AddressLocality = contact?.AddressLocality,
+                    AddressPaonDescription = contact?.AddressPaonDescription ,
+                    AddressSaonDescription = contact?.AddressSaonDescription ,
+                    AddressPostTown = contact?.AddressPostTown,
+                    AddressCounty = contact?.AddressCounty,
+                    AddressPostcode = contact?.AddressPostcode,
+                    AddressStreetDescription = contact?.AddressStreetDescription,
+                    PersonalDetailsPersonNameTitle = contact?.PersonalDetailsPersonNameTitle,
+                    PersonalDetailsPersonNameGivenName = contact?.PersonalDetailsPersonNameGivenName,
+                    PersonalDetailsPersonNameFamilyName = contact?.PersonalDetailsPersonNameFamilyName,
+                    Email = contact?.Email,
+                    Telephone1 = contact?.Telephone1,
+                    ContactType = contact?.ContactType,
+                    WebsiteAddress = contact?.WebsiteAddress
+                } : new ProviderContact { },
                 DateUpdated = _clock.UtcNow,
                 UpdatedBy = "TestData",
                 Status = status
