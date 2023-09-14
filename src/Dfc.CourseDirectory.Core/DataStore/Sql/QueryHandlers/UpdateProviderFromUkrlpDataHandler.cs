@@ -30,7 +30,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             [UkrlpProviderStatusDescription] = @ProviderStatus,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
-                        WHERE [ProviderId] = @ProviderId;";
+                        WHERE [ProviderId] = @ProviderId
+                        AND [Ukprn] = @Ukprn;";
             var sqlProviderContact = $@"
             UPDATE [Pttcd].[ProviderContacts] 
                                 SET [ContactType] = @ContactType
@@ -60,7 +61,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.ProviderStatus,
                 UpdatedOn = query.DateUpdated,
                 query.UpdatedBy,
-                query.ProviderId
+                query.ProviderId,
+                query.Ukprn
             };
             _logger.LogInformation("Update Provider table starting...");
             await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);

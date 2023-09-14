@@ -18,5 +18,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string UpdatedBy { get; set; }
         //public IEnumerable<ProviderAlias> Aliases { get; set; }
         public ProviderContact Contact { get; set; }
+        public int Ukprn { get; set; }
     }
 }

@@ -225,7 +225,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                             Contact = ukrlpProviderContact,
                             ProviderName = providerData.ProviderName,
                             ProviderStatus = providerData.ProviderStatus,
-                            UpdatedBy = UpdatedBy
+                            UpdatedBy = UpdatedBy,
+                            Ukprn = ukprn
                         });
                 }
                 else
