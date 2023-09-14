@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class UpdateProviderFromUkrlpDataHandler :
-        ISqlQueryHandler<UpdateProviderFromUkrlpData, OneOf<NotFound, Success>>
+        ISqlQueryHandler<UpdateProviderFromUkrlpData, Success>
     {
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
 
         }
-    public async Task<OneOf<NotFound, Success>> Execute(
+    public async Task<Success> Execute(
             SqlTransaction transaction,
             UpdateProviderFromUkrlpData query)
         {
@@ -63,15 +63,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.ProviderId
             };
             _logger.LogInformation("Update Provider table starting...");
-            var updated = await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction) == 1;
+            await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
             _logger.LogInformation("Update provider table finished!");
 
-            if (updated)
+            
+            if (providerContact != null)
             {
-                if (providerContact != null)
+                var paramzContacts = new
                 {
-                    var paramzContacts = new
-                    {
                         query.ProviderId,
                         providerContact.ContactType,
                         providerContact.AddressSaonDescription,
@@ -89,18 +88,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         providerContact.Fax,
                         providerContact.WebsiteAddress,
                         providerContact.Email
-                    };
-                    _logger.LogInformation("Update ProviderContacts table starting...");
-                    await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                    _logger.LogInformation("Update ProviderContacts table finishe!");
+                };
+                _logger.LogInformation("Update ProviderContacts table starting...");
+                await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
+                _logger.LogInformation("Update ProviderContacts table finishe!.");
 
-                }
-                return new Success();
             }
-            return new NotFound();
+            return new Success();
+            
 
         }
 
-        private enum Result { Success = 0, NotFound = 1 }
     }
 }

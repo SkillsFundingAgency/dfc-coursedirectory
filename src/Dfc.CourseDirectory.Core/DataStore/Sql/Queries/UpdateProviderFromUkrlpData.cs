@@ -7,7 +7,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class UpdateProviderFromUkrlpData : ISqlQuery<OneOf<NotFound, Success>>
+    public class UpdateProviderFromUkrlpData : ISqlQuery<Success>
     {
         public Guid ProviderId { get; set; }
         public string ProviderName { get; set; }

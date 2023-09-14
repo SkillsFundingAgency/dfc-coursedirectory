@@ -226,7 +226,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                             ProviderName = providerData.ProviderName,
                             ProviderStatus = providerData.ProviderStatus,
                             UpdatedBy = UpdatedBy
-                        }); 
+                        });
+                }
+                else
+                {
+                    _logger.LogInformation("Skipping update as provider already up to date!");
+
                 }
                 _logger.LogInformation("UKRLP Sync: Update [{0}] starting...", ukprn);
 
