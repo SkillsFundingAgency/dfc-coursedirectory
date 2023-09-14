@@ -164,20 +164,25 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
-
+            var providerId = Guid.NewGuid();
+            _logger.LogInformation("Getting the provider for ukprn [{0}]", ukprn);
             var existingProvider = await GetProvider(ukprn);
-
+            if(existingProvider != null) 
+            {
+                _logger.LogInformation("Provider for ukprn [{0}] found", ukprn);
+                providerId = existingProvider.ProviderId;
+            }
+            
             var contact = SelectContact(providerData.ProviderContact);
 
-            var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
 
             if (existingProvider == null)
             {
+                _logger.LogInformation("Couldn't find provider for ukprn [{0}]. Attempting to create one", ukprn);
                 await _sqlQueryDispatcher.ExecuteQuery(
                     new CreateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        //Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
                         Contact = contact != null ?
@@ -195,11 +200,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
             else
             {
+                _logger.LogInformation("Attempting to update provider for ukprn [{0}]", ukprn);
                 await _sqlQueryDispatcher.ExecuteQuery(
                     new UpdateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        //Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
                         Contact = contact != null ?
@@ -209,16 +214,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         ProviderStatus = providerData.ProviderStatus,
                         UpdatedBy = UpdatedBy
                     });
-                _logger.LogInformation("UKRLP Sync: Update {0} starting...", ukprn);
+                _logger.LogInformation("UKRLP Sync: Update [{0}] starting...", ukprn);
 
                 var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
 
                 var deactivating = IsDeactivatedStatus(newStatusCode);
-                _logger.LogInformation("UKRLP Sync: ukprn {0} - oldStatusCode {1} - newStatusCode {2} - deactivating {3}", ukprn, oldStatusCode, newStatusCode, deactivating);
+                _logger.LogInformation("UKRLP Sync: ukprn [{0}] - oldStatusCode [{1}] - newStatusCode [{2}] - deactivating [{3}]", ukprn, oldStatusCode, newStatusCode, deactivating);
                 if (deactivating)
                 {
-                    _logger.LogInformation("UKRLP Sync: Update {0} starting deactivating is {1} ...", ukprn, deactivating);
+                    _logger.LogInformation("UKRLP Sync: Update [{0}] starting deactivating is [{1}] ...", ukprn, deactivating);
                    
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });

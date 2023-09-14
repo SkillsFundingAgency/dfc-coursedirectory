@@ -5,13 +5,22 @@ using OneOf;
 using OneOf.Types;
 using System.Data.SqlClient;
 using Dapper;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class UpdateProviderFromUkrlpDataHandler :
         ISqlQueryHandler<UpdateProviderFromUkrlpData, OneOf<NotFound, Success>>
     {
-        public async Task<OneOf<NotFound, Success>> Execute(
+        private readonly ILogger<UkrlpSyncHelper> _logger;
+
+        public UpdateProviderFromUkrlpDataHandler(ILoggerFactory loggerFactory)
+        {
+                    _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
+
+        }
+    public async Task<OneOf<NotFound, Success>> Execute(
             SqlTransaction transaction,
             UpdateProviderFromUkrlpData query)
         {
@@ -53,7 +62,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.UpdatedBy,
                 query.ProviderId
             };
+            _logger.LogInformation("Update Provider table starting...");
             var updated = await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction) == 1;
+            _logger.LogInformation("Update provider table finished!");
 
             if (updated)
             {
@@ -79,8 +90,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         providerContact.WebsiteAddress,
                         providerContact.Email
                     };
-
+                    _logger.LogInformation("Update ProviderContacts table starting...");
                     await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
+                    _logger.LogInformation("Update ProviderContacts table finishe!");
 
                 }
                 return new Success();
