@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             [UkrlpProviderStatusDescription] = @ProviderStatus,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
-                        WHERE [Ukprn] = @Ukprn,
+                        WHERE [Ukprn] = @Ukprn
                         AND [ProviderId] = @ProviderId;";
             var sqlProviderContact = $@"
             UPDATE [Pttcd].[ProviderContacts] 
