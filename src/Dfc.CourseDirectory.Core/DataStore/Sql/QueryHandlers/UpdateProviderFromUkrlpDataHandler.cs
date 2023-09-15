@@ -30,8 +30,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             [UkrlpProviderStatusDescription] = @ProviderStatus,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
-                        WHERE [Ukprn] = @Ukprn
-                        AND [ProviderId] = @ProviderId;";
+                        WHERE [ProviderId] = @ProviderId;";
             var sqlProviderContact = $@"
             UPDATE [Pttcd].[ProviderContacts] 
                                 SET [ContactType] = @ContactType
@@ -62,12 +61,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 UpdatedOn = query.DateUpdated,
                 query.UpdatedBy,
                 query.ProviderId,
-                query.Ukprn
             };
-            _logger.LogInformation("Update Provider table starting...");
-            await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
-            _logger.LogInformation("Update provider table finished!");
-
+            if (query.UpdateProvider)
+            {
+                _logger.LogInformation("Update Provider table starting...");
+                await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
+                _logger.LogInformation("Update provider table finished!");
+            }
             
             if (providerContact != null)
             {
@@ -91,10 +91,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         providerContact.WebsiteAddress,
                         providerContact.Email
                 };
-                _logger.LogInformation("Update ProviderContacts table starting...");
-                await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                _logger.LogInformation("Update ProviderContacts table finishe!.");
-
+                if (query.UpdateProviderContact)
+                {
+                    _logger.LogInformation("Update ProviderContacts table starting...");
+                    await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
+                    _logger.LogInformation("Update ProviderContacts table finishe!.");
+                }
             }
             return new Success();
             
