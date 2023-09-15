@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Functions
 
         [FunctionName("SyncUkrlpChanges")]
         [Singleton]
-        public async Task RunNightly([TimerTrigger("0 0 5 * * *")] TimerInfo timer)
+        public async Task RunNightly([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
             // Only get records updated in the past week.
             // It times out if you try to pull the world back and doesn't support paging.
