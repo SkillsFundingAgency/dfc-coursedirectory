@@ -256,7 +256,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private bool CheckUpdateProviderContact(ProviderContact existingProviderContact, ProviderContact ukrlpProviderContact)
         {
-            if (existingProviderContact.Equals(ukrlpProviderContact))
+            if (existingProviderContact.IsEqual(ukrlpProviderContact))
             {
                 return false;
             }

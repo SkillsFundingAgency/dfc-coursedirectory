@@ -27,9 +27,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string WebsiteAddress { get; set; }
         public string Email { get; set; }
 
-        public override bool Equals(Object obj)
+        public bool IsEqual(ProviderContact providerContact)
         {
-            var providerContact = obj as ProviderContact;
             if (ContactType == providerContact.ContactType &&
                 AddressSaonDescription == providerContact.AddressSaonDescription &&
                 AddressPaonDescription == providerContact.AddressPaonDescription &&
@@ -51,6 +50,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
             }
             else { return false; }
         }
+
+        
     }
 
 }
