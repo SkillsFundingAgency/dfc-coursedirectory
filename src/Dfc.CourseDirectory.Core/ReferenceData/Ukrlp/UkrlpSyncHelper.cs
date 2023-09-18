@@ -250,7 +250,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
                         await _sqlQueryDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
-                        await _sqlQueryDispatcher.Commit();
                     
                 }
 
