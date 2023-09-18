@@ -26,5 +26,31 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string Fax { get; set; }
         public string WebsiteAddress { get; set; }
         public string Email { get; set; }
+
+        public override bool Equals(Object obj)
+        {
+            var providerContact = obj as ProviderContact;
+            if (ContactType == providerContact.ContactType &&
+                AddressSaonDescription == providerContact.AddressSaonDescription &&
+                AddressPaonDescription == providerContact.AddressPaonDescription &&
+                AddressStreetDescription == providerContact.AddressStreetDescription &&
+                AddressLocality == providerContact.AddressLocality &&
+                AddressItems == providerContact.AddressItems &&
+                AddressPostTown == providerContact.AddressPostTown &&
+                AddressCounty == providerContact.AddressCounty &&
+                AddressPostcode == providerContact.AddressPostcode &&
+                PersonalDetailsPersonNameTitle == providerContact.PersonalDetailsPersonNameTitle &&
+                PersonalDetailsPersonNameGivenName == providerContact.PersonalDetailsPersonNameGivenName &&
+                PersonalDetailsPersonNameFamilyName == providerContact.PersonalDetailsPersonNameFamilyName &&
+                Telephone1 == providerContact.Telephone1 &&
+                Fax == providerContact.Fax &&
+                WebsiteAddress == providerContact.WebsiteAddress &&
+                Email == providerContact.Email)
+            {
+                return true;
+            }
+            else { return false; }
+        }
     }
+
 }

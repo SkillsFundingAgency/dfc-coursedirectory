@@ -214,7 +214,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         await _sqlQueryDispatcher.ExecuteQuery(
                             new UpdateProviderFromUkrlpData()
                             {
-                                Alias = providerData.ProviderAliases?.FirstOrDefault()?.ProviderAlias ?? "",
+                                Alias = providerData.ProviderAliases?.FirstOrDefault().ProviderAlias,
                                 DateUpdated = _clock.UtcNow,
                                 ProviderId = providerId,
                                 Contact = ukrlpProviderContact,
@@ -256,22 +256,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private bool CheckUpdateProviderContact(ProviderContact existingProviderContact, ProviderContact ukrlpProviderContact)
         {
-            if (existingProviderContact.ContactType == ukrlpProviderContact.ContactType &&
-                existingProviderContact.AddressSaonDescription == ukrlpProviderContact.AddressSaonDescription &&
-                existingProviderContact.AddressPaonDescription == ukrlpProviderContact.AddressPaonDescription &&
-                existingProviderContact.AddressStreetDescription == ukrlpProviderContact.AddressStreetDescription &&
-                existingProviderContact.AddressLocality == ukrlpProviderContact.AddressLocality &&
-                existingProviderContact.AddressItems == ukrlpProviderContact.AddressItems &&
-                existingProviderContact.AddressPostTown == ukrlpProviderContact.AddressPostTown &&
-                existingProviderContact.AddressCounty == ukrlpProviderContact.AddressCounty &&
-                existingProviderContact.AddressPostcode == ukrlpProviderContact.AddressPostcode &&
-                existingProviderContact.PersonalDetailsPersonNameTitle == ukrlpProviderContact.PersonalDetailsPersonNameTitle &&
-                existingProviderContact.PersonalDetailsPersonNameGivenName == ukrlpProviderContact.PersonalDetailsPersonNameGivenName &&
-                existingProviderContact.PersonalDetailsPersonNameFamilyName == ukrlpProviderContact.PersonalDetailsPersonNameFamilyName &&
-                existingProviderContact.Telephone1 == ukrlpProviderContact.Telephone1 &&
-                existingProviderContact.Fax == ukrlpProviderContact.Fax &&
-                existingProviderContact.WebsiteAddress == ukrlpProviderContact.WebsiteAddress &&
-                existingProviderContact.Email == ukrlpProviderContact.Email)
+            if (existingProviderContact.Equals(ukrlpProviderContact))
             {
                 return false;
             }
@@ -280,11 +265,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         private bool CheckUpdateProvider(Provider existingProvider, ProviderRecordStructure providerData)
         {
-            var ukrlpAlias = providerData.ProviderAliases?.FirstOrDefault()?.ProviderAlias ?? "";
-            if (existingProvider.Alias == ukrlpAlias &&
+            if (existingProvider.Alias == providerData.ProviderAliases?.FirstOrDefault()?.ProviderAlias &&
                     existingProvider.ProviderName == providerData?.ProviderName &&
-                    existingProvider.ProviderStatus == providerData?.ProviderStatus &&
-                    existingProvider.ProviderType == existingProvider.ProviderType)
+                    existingProvider.ProviderStatus == providerData?.ProviderStatus )
             {
                 return false;
             }
