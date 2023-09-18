@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Configuration;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -13,6 +15,7 @@ using Mapster;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
+using System.Globalization;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {
@@ -68,12 +71,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly ISearchClient<Lars> _searchClient;
         private readonly LarsSearchSettings _larsSearchSettings;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
 
-        public Handler(JourneyInstanceProvider journeyInstanceProvider, ISearchClient<Lars> search, IOptions<LarsSearchSettings> larsSearchSettings)
+        public Handler(JourneyInstanceProvider journeyInstanceProvider, ISearchClient<Lars> search, IOptions<LarsSearchSettings> larsSearchSettings, ISqlQueryDispatcherFactory sqlQueryDispatcherFactory)
         {
             _journeyInstanceProvider = journeyInstanceProvider;
             _searchClient = search;
-            _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
+            _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings)); 
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -121,6 +126,31 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             var unfilteredResult = results[0];
             var result = results[1];
 
+            //Remove expired from result.Items
+            var expiredResults=new List<string>();
+            foreach( var item in result.Items)
+            {
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
+                var lastNewStartDates = await dispatcher.ExecuteQuery(new GetValidityLastNewStartDate() { LearnAimRef = item.Record.LearnAimRef });
+                if (lastNewStartDates.Count() > 0)
+                {
+                    if (lastNewStartDates.Contains(string.Empty))
+                        expiredResults.Add(item.Record.LearnAimRef);
+                    else
+                    {
+                        List<DateTime> dates = new List<DateTime>();
+                        foreach (var date in lastNewStartDates)
+                        {
+                            DateTime resultdate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                            dates.Add(resultdate);
+                        }
+                        DateTime latestdate = dates.OrderByDescending(x => x).First();
+                        if (latestdate > DateTime.Now)
+                            expiredResults.Add(item.Record.LearnAimRef);
+                    }
+                }
+            }
+
             var res = result.Items.Select(x => new Result()
             {
                 CourseName = x.Record.LearnAimRefTitle,
@@ -129,14 +159,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 AwardingOrganisation = x.Record.AwardOrgName,
                 OperationalEndDate = x.Record.OperationalEndDate.HasValue ? x.Record.OperationalEndDate.Value.ToString("dd MMM yyyy") : string.Empty,
                 EffectiveTo = x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
-            }).OrderBy(x => x.CourseName);
+            })
+            .OrderBy(x => x.CourseName);
 
+            IEnumerable<Result> enumerable = res.Where(r => !expiredResults.Contains(r.LARSCode));
+            
             var vmodel = new ViewModel()
             {
                 SearchWasDone = true,
                 PageNumber = request.PageNumber ?? 1,
                 Total = result.TotalCount,
-                SearchResults = res.ToList(),
+                SearchResults = enumerable.ToList(),
                 PageSize = _larsSearchSettings.ItemsPerPage,
                 SearchTerm = request.SearchTerm,
                 TotalPages = result.TotalCount.HasValue ? (int)Math.Ceiling((decimal)result.TotalCount / _larsSearchSettings.ItemsPerPage) : 0,

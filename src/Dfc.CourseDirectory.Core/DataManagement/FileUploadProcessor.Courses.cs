@@ -990,7 +990,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             
             if (lastNewStartDates.Count() > 0)
             {
-                if (lastNewStartDates.Contains(null))
+                if (lastNewStartDates.Contains(string.Empty))
                     expired = false;
                 else
                 {
