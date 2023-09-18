@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 try
                 {
-                    _logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + notChanged + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
+                    //_logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + notChanged + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
                     var result = await CreateOrUpdateProvider(providerData);
 
                     if (result == CreateOrUpdateResult.Created)
@@ -66,11 +66,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         notChanged++;
                     }
 
-                    if ((createdCount + updatedCount) % 200 == 0)
-                    {
-                        _logger.LogInformation(
-                            $"UKRLP Sync: processed provider {createdCount + updatedCount + notChanged} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                    }
+                    //if ((createdCount + updatedCount) % 200 == 0)
+                    //{
+                    //    _logger.LogInformation(
+                    //        $"UKRLP Sync: processed provider {createdCount + updatedCount + notChanged} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
+                    //}
+
+                    _logger.LogInformation($"UKRLP Sync: {providerData.UnitedKingdomProviderReferenceNumber} - {result.ToString()}");
 
                 }
                 catch (Exception e)
@@ -186,7 +188,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
-            _logger.LogInformation("Getting the provider for ukprn [{0}]", ukprn);
+            //_logger.LogInformation("Getting the provider for ukprn [{0}]", ukprn);
             var existingProvider = await GetProvider(ukprn);
             
             var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
@@ -217,8 +219,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
             else
             {
-                _logger.LogInformation("Provider for ukprn [{0}] found", ukprn);
-                _logger.LogInformation("Getting the ProviderContact for provider", ukprn);
+                //_logger.LogInformation("Provider for ukprn [{0}] found", ukprn);
+                //_logger.LogInformation("Getting the ProviderContact for provider", ukprn);
                 var existingProviderContact = await GetProviderContact(providerId);
                 
 
@@ -231,7 +233,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 if (updateProvider || updateProviderContact)
                 {
                     
-                        _logger.LogInformation("Attempting to update provider and providerContact for ukprn [{0}]", ukprn);
+                        //_logger.LogInformation("Attempting to update provider and providerContact for ukprn [{0}]", ukprn);
                         await _sqlQueryDispatcher.ExecuteQuery(
                             new UpdateProviderFromUkrlpData()
                             {
@@ -249,11 +251,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 }
                 else
                 {
-                    _logger.LogInformation("Skipping update as provider already up to date!");
+                    //_logger.LogInformation("Skipping update as provider already up to date!");
                     return CreateOrUpdateResult.Skipped;
 
                 }
-                _logger.LogInformation("UKRLP Sync: Update [{0}] starting...", ukprn);
+                //_logger.LogInformation("UKRLP Sync: Update [{0}] starting...", ukprn);
 
                 var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
