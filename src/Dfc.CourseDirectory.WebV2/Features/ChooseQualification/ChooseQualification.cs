@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 if (lastNewStartDates.Count() > 0)
                 {
                     if (lastNewStartDates.Contains(string.Empty))
-                        expiredResults.Add(item.Record.LearnAimRef);
+                    { }
                     else
                     {
                         List<DateTime> dates = new List<DateTime>();
@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                             dates.Add(resultdate);
                         }
                         DateTime latestdate = dates.OrderByDescending(x => x).First();
-                        if (latestdate > DateTime.Now)
+                        if (latestdate < DateTime.Now)
                             expiredResults.Add(item.Record.LearnAimRef);
                     }
                 }
