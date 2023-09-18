@@ -206,7 +206,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 
 
                 var updateProvider = CheckUpdateProvider(existingProvider,providerData);
-                var updateProviderContact = CheckUpdateProviderContact(existingProviderContact,ukrlpProviderContact);
+                var updateProviderContact = true;
+                if (existingProviderContact != null)
+                {
+                    updateProviderContact = CheckUpdateProviderContact(existingProviderContact, ukrlpProviderContact);
+                }
                 if (updateProvider || updateProviderContact)
                 {
                     
