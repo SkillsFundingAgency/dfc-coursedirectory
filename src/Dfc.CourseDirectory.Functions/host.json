@@ -3,11 +3,12 @@
   "functionTimeout": "03:00:00",
   "logging": {
     "logLevel": {
-      "default": "Information"
+      "default": "Information",
+      "Azure.Core" : "Error"
     },
-    
-      "applicationInsights": {
-        "enableDependencyTracking": false
-      }
+
+    "applicationInsights": { 
+      "enableDependencyTracking": true
+    }
    }
 }

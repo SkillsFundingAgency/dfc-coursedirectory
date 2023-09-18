@@ -44,33 +44,50 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             var createdCount = 0;
             var updatedCount = 0;
             var notChanged = 0;
+            var failed = 0;
 
             foreach (var providerData in allProviders)
             {
-                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + notChanged + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                var result = await CreateOrUpdateProvider(providerData);
+                try
+                {
+                    _logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + notChanged + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
+                    var result = await CreateOrUpdateProvider(providerData);
 
-                if (result == CreateOrUpdateResult.Created)
-                {
-                    createdCount++;
+                    if (result == CreateOrUpdateResult.Created)
+                    {
+                        createdCount++;
+                    }
+                    else if (result == CreateOrUpdateResult.Updated)
+                    {
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        notChanged++;
+                    }
+
+                    if ((createdCount + updatedCount) % 200 == 0)
+                    {
+                        _logger.LogInformation(
+                            $"UKRLP Sync: processed provider {createdCount + updatedCount + notChanged} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
+                    }
+
                 }
-                else if (result == CreateOrUpdateResult.Updated)
+                catch (Exception e)
                 {
-                    updatedCount++;
-                }
-                else
-                {
-                    notChanged++;
+                    _logger.LogError($"UKRLP Sync: Failed to process provider UKPRN: {providerData.UnitedKingdomProviderReferenceNumber} - {e.Message}");
+                    failed++;
                 }
 
-                if ((createdCount + updatedCount) % 200 == 0)
-                {
-                    _logger.LogInformation(
-                        $"UKRLP Sync: processed provider {createdCount + updatedCount + notChanged} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                }
             }
 
-            _logger.LogInformation("UKRLP Sync: Added {0} new providers, updated {1} providers and {2} providers were up to date.", createdCount, updatedCount, notChanged);
+            _logger.LogInformation("UKRLP Sync: Added {0} new providers, updated {1} providers and {2} providers were up to date. {3} providers failed to sync", createdCount, updatedCount, notChanged, failed);
+
+            if (createdCount > 0)
+            {
+                throw new ApplicationException($"Failed to update {updatedCount} providers");
+            }
+
         }
 
         public async Task SyncAllKnownProvidersData()
