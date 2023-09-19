@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             .OrderBy(f => f.Text).ToArray()
                     }
                 },
-                TotalCount = (int)(result.TotalCount ?? 0),
+                TotalCount = (int)(enumerable.ToList().Count()),
                 PageNumber = request.PageNo,
                 ItemsPerPage = _larsSearchSettings.ItemsPerPage,
                 PageParamName = _larsSearchSettings.PageParamName,
