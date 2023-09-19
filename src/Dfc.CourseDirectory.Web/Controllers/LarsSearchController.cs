@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Configuration;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Web.RequestModels;
@@ -17,13 +21,16 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ISearchClient<Lars> _searchClient;
         private readonly LarsSearchSettings _larsSearchSettings;
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
 
         public LarsSearchController(
             ISearchClient<Lars> searchClient,
-            IOptions<LarsSearchSettings> larsSearchSettings)
+            IOptions<LarsSearchSettings> larsSearchSettings,
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory)
         {
             _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
             _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
         [Authorize]
@@ -58,10 +65,35 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var unfilteredResult = results[0];
             var result = results[1];
 
+            //Remove expired from result.Items
+            var expiredResults = new List<string>();
+            foreach (var item in result.Items)
+            {
+                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
+                var lastNewStartDates = await dispatcher.ExecuteQuery(new GetValidityLastNewStartDate() { LearnAimRef = item.Record.LearnAimRef });
+                if (lastNewStartDates.Count() > 0)
+                {
+                    if (lastNewStartDates.Contains(string.Empty))
+                    { }
+                    else
+                    {
+                        List<DateTime> dates = new List<DateTime>();
+                        foreach (var date in lastNewStartDates)
+                        {
+                            DateTime resultdate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                            dates.Add(resultdate);
+                        }
+                        DateTime latestdate = dates.OrderByDescending(x => x).First();
+                        if (latestdate < DateTime.Now)
+                            expiredResults.Add(item.Record.LearnAimRef);
+                    }
+                }
+            }
+            var enumerable = result.Items.Where(r => !expiredResults.Contains(r.Record.LearnAimRef));
             var viewModel = new LarsSearchResultModel
             {
                 SearchTerm = request.SearchTerm,
-                Items = result.Items.Select(r => r.Record).Select(LarsSearchResultItemModel.FromLars),
+                Items = enumerable.Select(r => r.Record).Select(LarsSearchResultItemModel.FromLars),
                 Filters = new[]
                 {
                     new LarsSearchFilterModel
