@@ -72,8 +72,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 throw new InvalidStateException();
             }
 
+            Command formattedRequest = new Command
+            {
+                WhoThisCourseIsFor = request.WhoThisCourseIsFor?.Replace("\r\n", "\n"),
+                EntryRequirements = request.EntryRequirements?.Replace("\r\n", "\n"),
+                WhatYouWillLearn = request.WhatYouWillLearn?.Replace("\r\n", "\n"),
+                HowYouWillLearn = request.HowYouWillLearn?.Replace("\r\n", "\n"),
+                WhatYouWillNeedToBring = request.WhatYouWillNeedToBring?.Replace("\r\n", "\n"),
+                HowYouWillBeAssessed = request.HowYouWillBeAssessed?.Replace("\r\n", "\n"),
+                WhereNext = request.WhereNext?.Replace("\r\n", "\n")
+            };
+
             var validator = new CommandValidator();
-            var validationResult = await validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(formattedRequest);
 
             if (!validationResult.IsValid)
             {
