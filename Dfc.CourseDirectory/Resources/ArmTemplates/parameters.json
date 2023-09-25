@@ -2,6 +2,9 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "appInsightsInstrumentationKey": {
+      "value": "__appInsightsInstrumentationKey__" 
+    },
     "projectPrefix": {
       "value": "__providerPortalPrefix__"
     },
@@ -127,9 +130,6 @@
     },
     "providerPortalCosmosDbConnectionString": {
       "value": "__providerPortalCosmosDbConnectionString__"
-    },
-    "providerPortalApplicationInsights": {
-      "value": "__providerportalApplicationInsights__"
     },
     "FindACourseUrl": {
       "value": "__FindACourseUrl__"
