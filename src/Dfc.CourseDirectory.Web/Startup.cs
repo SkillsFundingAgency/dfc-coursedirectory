@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.Web
                 .AddMvc(options =>
                 {
                     options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
-                })                
+                })
                 .AddSessionStateTempDataProvider();
 
 #if DEBUG
@@ -200,7 +200,7 @@ namespace Dfc.CourseDirectory.Web
             else
             {
                 app.UseCourseDirectoryErrorHandling();
-                app.UseHsts();
+                app.UseHsts(options => options.MaxAge(days: 365).IncludeSubdomains());
             }
 
             app.UseCommitSqlTransaction();
@@ -208,11 +208,69 @@ namespace Dfc.CourseDirectory.Web
             app.UseStaticFiles();
             app.UseSession();
 
+            app.UseCsp(options => options
+                            .DefaultSources(s => s.Self())
+                            .ScriptSources(s => s
+                                .Self()
+                                .CustomSources(
+                                    "www.google-analytics.com",
+                                    "sha256-wd6zPqofWjb5TSs4XzK3yLqmM6aUHeduDqEKaDQSWoU=",
+                                    "sha256-xY2DAB/H7eBQZT2luzwwjJh9xLZKg/fW/ETrbm3/4NM=",
+                                    "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
+                                    "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
+                                    "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
+                                    "www.googletagmanager.com",
+                                    "https://cdnjs.cloudflare.com/",
+                                    "https://www.google-analytics.com",
+                                    "https://optimize.google.com",
+                                    "https://www.googleoptimize.com"
+                                    ))
+                            .StyleSources(s => s
+                                //'unsafe-inline' allows inline JavaScript and CSS. (We'll touch on this in more detail in a bit.)
+                                //.UnsafeInline()
+                                .Self()
+                                .CustomSources(
+                                    "https://optimize.google.com",
+                                    "https://fonts.googleapis.com",
+                                    "https://www.googleoptimize.com"
+                                    ))
+                            .FormActions(s => s
+                                .Self()
+                                )
+                            .FontSources(s => s
+                                .Self()
+                                //.CustomSources(
+                                //    "https://fonts.gstatic.com"
+                                //    )
+                                )
+                            .ImageSources(s => s
+                                .Self()
+                                .CustomSources(
+                                    "www.google-analytics.com",
+                                    "https://optimize.google.com",
+                                    "https://www.googleoptimize.com",
+                                    "https://www.googletagmanager.com"
+                                    ))
+                            .FrameAncestors(s => s.Self())
+                            .FrameSources(s => s
+                                .Self()
+                                .CustomSources("https://optimize.google.com")
+                                )
+                            .ConnectSources(s => s
+                                .Self()
+                                .CustomSources(
+                                    "https://www.google-analytics.com",
+                                    "https://region1.google-analytics.com",
+                                    "https://www.googletagmanager.com"
+                                   )
+                                )
+                            );
+
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
             {
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
-                context.Response.Headers["X-Content-Type-Options"] ="nosniff";
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
                 context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
                 context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
