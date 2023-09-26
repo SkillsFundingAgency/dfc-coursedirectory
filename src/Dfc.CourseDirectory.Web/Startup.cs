@@ -242,7 +242,9 @@ namespace Dfc.CourseDirectory.Web
                                 .CustomSources(
                                     "https://optimize.google.com",
                                     "https://fonts.googleapis.com",
-                                    "https://www.googleoptimize.com"
+                                    "https://www.googleoptimize.com",
+                                    "sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog=",
+                                    "sha256-8IzHpQDffpYha23cLfzM0dhjCGZ6Ig6YyRzLbJ1sJ1o="
                                     ))
                             .FormActions(s => s
                                 .Self()
@@ -255,7 +257,8 @@ namespace Dfc.CourseDirectory.Web
                                     "www.google-analytics.com",
                                     "https://optimize.google.com",
                                     "https://www.googleoptimize.com",
-                                    "https://www.googletagmanager.com"
+                                    "https://www.googletagmanager.com",
+                                    "https://sp.tinymce.com"
                                     ))
                             .FrameAncestors(s => s.Self())
                             .FrameSources(s => s
