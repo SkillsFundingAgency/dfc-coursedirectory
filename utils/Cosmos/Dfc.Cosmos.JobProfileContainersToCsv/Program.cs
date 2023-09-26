@@ -39,6 +39,8 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv
                 }
 
                 exportService.ExportToFile(cosmosContainersData, config.Key, config.Filename);
+
+                Console.WriteLine("Job Profiles' data exported to file {0} successfully.", config.Filename);
             }
         }
 
