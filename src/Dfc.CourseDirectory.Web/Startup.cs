@@ -225,7 +225,12 @@ namespace Dfc.CourseDirectory.Web
                                     "sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog=",
                                     "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
                                     "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
-                                    "https://cloud.tinymce.com/",
+
+                                    "sha256-b9m8owmLL4iYFsGHexbZ85GmGpFbePbN4Rnfz7szdg8=",
+                                    "sha256-wlhq0O7MI86vRqF5r0g82JnVyJtT0Sta+p+ThlaYJgA=",
+                                    "sha256-f265cqgVJGKF5FzP79WDAY7j3k5HwpnQyKvZq2YERz8=",
+                                    "https://cloud.tinymce.com",
+                                    "https://cdn.tiny.cloud",
                                     "www.googletagmanager.com",
                                     "https://cdnjs.cloudflare.com/",
                                     "https://www.google-analytics.com",
@@ -243,7 +248,7 @@ namespace Dfc.CourseDirectory.Web
                                 .Self()
                                 )
                             .FontSources(s => s
-                                .Self()                                )
+                                .Self())
                             .ImageSources(s => s
                                 .Self()
                                 .CustomSources(
