@@ -219,6 +219,7 @@ namespace Dfc.CourseDirectory.Web
                                     "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
                                     "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
                                     "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
+                                    "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
                                     "www.googletagmanager.com",
                                     "https://cdnjs.cloudflare.com/",
                                     "https://www.google-analytics.com",
@@ -226,8 +227,6 @@ namespace Dfc.CourseDirectory.Web
                                     "https://www.googleoptimize.com"
                                     ))
                             .StyleSources(s => s
-                                //'unsafe-inline' allows inline JavaScript and CSS. (We'll touch on this in more detail in a bit.)
-                                //.UnsafeInline()
                                 .Self()
                                 .CustomSources(
                                     "https://optimize.google.com",
@@ -238,11 +237,7 @@ namespace Dfc.CourseDirectory.Web
                                 .Self()
                                 )
                             .FontSources(s => s
-                                .Self()
-                                //.CustomSources(
-                                //    "https://fonts.gstatic.com"
-                                //    )
-                                )
+                                .Self()                                )
                             .ImageSources(s => s
                                 .Self()
                                 .CustomSources(
