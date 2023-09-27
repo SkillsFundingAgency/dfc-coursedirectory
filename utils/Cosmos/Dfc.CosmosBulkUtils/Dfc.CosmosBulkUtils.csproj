@@ -38,6 +38,12 @@
     <None Update="patch-provider-types-6-to-4.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="patch-unconsented-ethnicity-data .json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="patch-unconsented-llddhealth-data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="patch-provider-types-7-to-5.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

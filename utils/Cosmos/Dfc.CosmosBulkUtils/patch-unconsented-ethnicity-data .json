@@ -1,0 +1,9 @@
+{
+  "FilterPredicate": "SELECT * FROM c WHERE c.ConsentToCollectEthnicity = false AND c.Ethnicity <> 99",
+  "Operations": [
+    {
+      "Field": "/Ethnicity",
+      "Value": 99
+    }
+  ]
+}
