@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb.Queries;
+using OneOf.Types;
 using Xunit;
 using Provider = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Provider;
 
@@ -17,13 +17,12 @@ namespace Dfc.CourseDirectory.Testing
             string providerName = "Test Provider",
             ProviderType providerType = ProviderType.FE,
             string providerStatus = "Active",
-            string marketingInformation = "",
-            string courseDirectoryName = "",
             string alias = "",
             ProviderDisplayNameSource displayNameSource = default,
-            IEnumerable<CreateProviderContact> contacts = null,
             IReadOnlyCollection<Guid> tLevelDefinitionIds = null,
-            ProviderStatus status = ProviderStatus.Onboarded)
+            ProviderStatus status = ProviderStatus.Onboarded,
+            ProviderContact contact = null,
+            string marketingInformation = null)
         {
             if (!providerType.HasFlag(ProviderType.TLevels) &&
                 (tLevelDefinitionIds?.Count ?? 0) != 0)
@@ -36,49 +35,38 @@ namespace Dfc.CourseDirectory.Testing
             var providerId = Guid.NewGuid();
             var ukprn = _uniqueIdHelper.GenerateProviderUkprn();
 
-            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new CreateProvider()
+            var result = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
+                new CreateProviderFromUkrlpData()
             {
                 ProviderId = providerId,
                 Ukprn = ukprn,
                 ProviderType = providerType,
                 ProviderName = providerName,
                 ProviderStatus = providerStatus,
-                MarketingInformation = marketingInformation,
-                CourseDirectoryName = courseDirectoryName,
                 Alias = alias,
-                ProviderContact = contacts?.Select(c => new ProviderContact()
+                Contact = contact != null ? new ProviderContact
                 {
-                    ContactAddress = new ProviderContactAddress()
-                    {
-                        Items = c.AddressItems,
-                        Locality = c.AddressLocality,
-                        PAON = new ProviderContactAddressPAON() { Description = c.AddressPaonDescription },
-                        SAON = new ProviderContactAddressSAON() { Description = c.AddressSaonDescription },
-                        PostTown = c.AddressPostTown,
-                        County = c.AddressCounty,
-                        PostCode = c.AddressPostCode,
-                        StreetDescription = c.AddressStreetDescription
-                    },
-                    ContactPersonalDetails = new ProviderContactPersonalDetails()
-                    {
-                        PersonGivenName = new[] { c.PersonalDetailsGivenName },
-                        PersonFamilyName = c.PersonalDetailsFamilyName
-                    },
-                    ContactEmail = c.ContactEmail,
-                    ContactTelephone1 = c.ContactTelephone1,
-                    ContactType = c.ContactType,
-                    ContactWebsiteAddress = c.ContactWebsiteAddress,
-                    LastUpdated = _clock.UtcNow
-                }),
+                    AddressItems = contact?.AddressItems,
+                    AddressLocality = contact?.AddressLocality,
+                    AddressPaonDescription = contact?.AddressPaonDescription ,
+                    AddressSaonDescription = contact?.AddressSaonDescription ,
+                    AddressPostTown = contact?.AddressPostTown,
+                    AddressCounty = contact?.AddressCounty,
+                    AddressPostcode = contact?.AddressPostcode,
+                    AddressStreetDescription = contact?.AddressStreetDescription,
+                    PersonalDetailsPersonNameTitle = contact?.PersonalDetailsPersonNameTitle,
+                    PersonalDetailsPersonNameGivenName = contact?.PersonalDetailsPersonNameGivenName,
+                    PersonalDetailsPersonNameFamilyName = contact?.PersonalDetailsPersonNameFamilyName,
+                    Email = contact?.Email,
+                    Telephone1 = contact?.Telephone1,
+                    ContactType = contact?.ContactType,
+                    WebsiteAddress = contact?.WebsiteAddress
+                } : new ProviderContact { },
                 DateUpdated = _clock.UtcNow,
                 UpdatedBy = "TestData",
                 Status = status
-            });
-            Assert.Equal(CreateProviderResult.Ok, result);
-
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetProviderById() { ProviderId = providerId });
-            await _sqlDataSync.SyncProvider(provider);
+            }));
+            Assert.Equal(new Success(), result);
 
             if (displayNameSource != default)
             {
@@ -98,23 +86,5 @@ namespace Dfc.CourseDirectory.Testing
             return await WithSqlQueryDispatcher(
                 dispatcher => dispatcher.ExecuteQuery(new GetProviderById() { ProviderId = providerId }));
         }
-    }
-
-    public class CreateProviderContact
-    {
-        public string ContactType { get; set; }
-        public string ContactTelephone1 { get; set; }
-        public string ContactWebsiteAddress { get; set; }
-        public string ContactEmail { get; set; }
-        public string AddressSaonDescription { get; set; }
-        public string AddressPaonDescription { get; set; }
-        public string AddressStreetDescription { get; set; }
-        public string AddressLocality { get; set; }
-        public IList<string> AddressItems { get; set; }
-        public string AddressPostTown { get; set; }
-        public string AddressCounty { get; set; }
-        public string AddressPostCode { get; set; }
-        public string PersonalDetailsGivenName { get; set; }
-        public string PersonalDetailsFamilyName { get; set; }
     }
 }

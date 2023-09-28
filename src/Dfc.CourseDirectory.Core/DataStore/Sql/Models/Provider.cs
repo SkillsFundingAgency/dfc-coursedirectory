@@ -14,6 +14,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public decimal? LearnerSatisfaction { get; set; }
         public decimal? EmployerSatisfaction { get; set; }
 
+        public string MarketingInformation { get; set; }
+
+        public string ProviderStatus { get; set; }
+
+        public ProviderStatus Status { get; set; }
+        public string CourseDirectoryName { get; set; }
+
+
+
         public string DisplayName => DisplayNameSource switch
         {
             ProviderDisplayNameSource.TradingName => HaveAlias ? Alias : ProviderName,

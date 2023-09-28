@@ -2,9 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
 using Dfc.CourseDirectory.WebV2.Behaviors;
@@ -31,16 +32,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
         IRequestHandler<Query, Command>,
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
 
         public Handler(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
@@ -77,15 +78,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
                 UpdatedBy = currentUser,
                 UpdatedOn = _clock.UtcNow
             };
-            await _cosmosDbQueryDispatcher.ExecuteQuery(updateCommand);
+            await _sqlQueryDispatcher.ExecuteQuery(updateCommand);
 
             return new Success();
         }
 
         private async Task<Provider> GetProvider(Guid providerId)
         {
-            var query = new GetProviderById() { ProviderId = providerId };
-            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(query);
+            var result = await _sqlQueryDispatcher.ExecuteQuery(
+                new GetProviderById() { ProviderId = providerId });
 
             if (result == null)
             {

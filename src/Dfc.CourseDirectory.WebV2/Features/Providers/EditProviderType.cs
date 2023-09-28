@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -56,20 +55,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>>
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly IClock _clock;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderInfoCache providerInfoCache,
             IClock clock,
             ICurrentUserProvider currentUserProvider)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerInfoCache = providerInfoCache;
             _clock = clock;
@@ -78,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetProviderById()
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderById()
             {
                 ProviderId = request.ProviderId
             });
@@ -88,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
-            return CreateViewModel(provider.Id, provider.ProviderType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
+            return CreateViewModel(provider.ProviderId, provider.ProviderType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -147,10 +143,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 }
             }
 
-            await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderType()
+            await _sqlQueryDispatcher.ExecuteQuery(new UpdateProviderType()
             {
                 ProviderId = request.ProviderId,
-                ProviderType = request.ProviderType
+                ProviderType = request.ProviderType,
+                UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                UpdatedOn = _clock.UtcNow.ToLocalTime()
             });
 
             var (_, RemovedTLevelDefinitionIds) = await _sqlQueryDispatcher.ExecuteQuery(

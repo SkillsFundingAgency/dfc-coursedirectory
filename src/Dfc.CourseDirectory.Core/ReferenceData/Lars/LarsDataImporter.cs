@@ -62,8 +62,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportLearningDeliveryCategoryToSql(categoriesRefs, learningDeliveryRefs);
             await ImportSectorSubjectAreaTier1ToSql();
             await ImportSectorSubjectAreaTier2ToSql();
-            await ImportStandardsToSql();
-            await ImportStandardSectorCodesToSql();
+
 
             IEnumerable<T> ReadCsv<T>(string fileName, Action<CsvContext> configureContext = null)
             {
@@ -95,7 +94,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }
             }
 
-           
             Task ImportAwardOrgCodeToSql()
             {
                 var records = ReadCsv<UpsertLarsAwardOrgCodesRecord>("AwardOrgCode.csv");
@@ -194,25 +192,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }));
             }
 
-            Task ImportStandardsToSql()
-            {
-                var records = ReadCsv<UpsertLarsStandardRecord>("Standard.csv", config => config.RegisterClassMap<UpsertLarsStandardRecord.ClassMap>());
-
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsStandards
-                {
-                    Records = records
-                }));
-            }
-
-            Task ImportStandardSectorCodesToSql()
-            {
-                var records = ReadCsv<UpsertLarsStandardSectorCodeRecord>("StandardSectorCode.csv");
-
-                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsStandardSectorCodes
-                {
-                    Records = records
-                }));
-            }
+            
 
             async Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action)
             {
@@ -233,55 +213,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     Records = records
                 }));
             }
-        }
-
-        private class FrameworkRow
-        {
-            public int FworkCode { get; set; }
-            public int ProgType { get; set; }
-            public int PwayCode { get; set; }
-            public string PathwayName { get; set; }
-            public string NASTitle { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-            public decimal SectorSubjectAreaTier1 { get; set; }
-            public decimal SectorSubjectAreaTier2 { get; set; }
-        }
-
-        private class ProgTypeRow
-        {
-            public int ProgType { get; set; }
-            public string ProgTypeDesc { get; set; }
-            public string ProgTypeDesc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
-
-        private class SectorSubjectAreaTier1Row
-        {
-            public decimal SectorSubjectAreaTier1 { get; set; }
-            public string SectorSubjectAreaTier1Desc { get; set; }
-            public string SectorSubjectAreaTier1Desc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
-
-        private class SectorSubjectAreaTier2Row
-        {
-            public decimal SectorSubjectAreaTier2 { get; set; }
-            public string SectorSubjectAreaTier2Desc { get; set; }
-            public string SectorSubjectAreaTier2Desc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
-        }
-
-        private class StandardSectorCodeRow
-        {
-            public int StandardSectorCode { get; set; }
-            public string StandardSectorCodeDesc { get; set; }
-            public string StandardSectorCodeDesc2 { get; set; }
-            public DateTime EffectiveFrom { get; set; }
-            public DateTime? EffectiveTo { get; set; }
         }
 
         private class DateConverter : DefaultTypeConverter

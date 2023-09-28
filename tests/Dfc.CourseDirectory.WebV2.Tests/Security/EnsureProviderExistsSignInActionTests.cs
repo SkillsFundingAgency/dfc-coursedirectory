@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Security;
 using Xunit;
@@ -22,14 +21,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Security
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var cosmosProvider = await CosmosDbQueryDispatcher.Object.ExecuteQuery(new GetProviderById()
-            {
-                ProviderId = provider.ProviderId
-            });
-
             var signInContext = new SignInContext(new System.Security.Claims.ClaimsPrincipal())
             {
-                Provider = cosmosProvider,
+                Provider = provider,
                 ProviderUkprn = provider.Ukprn,
                 UserInfo = new AuthenticatedUserInfo()
                 {

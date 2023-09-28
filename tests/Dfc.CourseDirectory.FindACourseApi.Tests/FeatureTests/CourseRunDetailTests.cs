@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using FluentAssertions;
@@ -13,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using Provider = Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models.Provider;
+using Provider = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Provider;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
@@ -104,28 +103,24 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var provider = new Provider
             {
-                Id = Guid.NewGuid(),
-                UnitedKingdomProviderReferenceNumber = "12345678",
-                ProviderContact = new[]
-                {
-                    new Core.DataStore.CosmosDb.Models.ProviderContact
-                    {
-                        ContactEmail = "test@test.com",
-                        ContactType = "P"
-                    }
-                }
+                ProviderId = Guid.NewGuid(),
+                Ukprn = 12345678,
+                  
+                
             };
+
+            var providerContact = new ProviderContact
+            {
+                Email = "test@test.com",
+                ContactType = "P"
+            };
+                  
 
             var sqlProvider = new Core.DataStore.Sql.Models.Provider
             {
-                ProviderId = provider.Id,
+                ProviderId = provider.ProviderId,
                 ProviderName = "TestProviderAlias",
-                DisplayNameSource = ProviderDisplayNameSource.ProviderName
-            };
-
-            var feChoice = new Core.DataStore.CosmosDb.Models.FeChoice
-            {
-                UKPRN = course.ProviderUkprn,
+                DisplayNameSource = ProviderDisplayNameSource.ProviderName,
                 EmployerSatisfaction = 1.2M,
                 LearnerSatisfaction = 3.4M
             };
@@ -133,7 +128,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourse>()))
                 .ReturnsAsync(course);
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.CosmosDb.Queries.GetProviderByUkprn>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderByUkprn>()))
                 .ReturnsAsync(provider);
 
             LarsSearchClient.Setup(s => s.Search(It.IsAny<LarsLearnAimRefSearchQuery>()))
@@ -145,11 +140,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
                 .ReturnsAsync(new[] { venue });
 
-            CosmosDbQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetFeChoiceForProvider>()))
-                .ReturnsAsync(feChoice);
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderById>()))
                 .ReturnsAsync(sqlProvider);
+
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderContactById>()))
+                .ReturnsAsync(providerContact);
+
 
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRun.CourseRunId));
 
@@ -164,9 +161,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 resultJson["provider"]["ukprn"].ToObject<int>().Should().Be(provider.Ukprn);
                 resultJson["provider"]["providerName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
                 resultJson["provider"]["tradingName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
-                resultJson["provider"]["email"].ToObject<string>().Should().Be(provider.ProviderContact.Single().ContactEmail);
-                resultJson["provider"]["learnerSatisfaction"].ToObject<decimal>().Should().Be(feChoice.LearnerSatisfaction);
-                resultJson["provider"]["employerSatisfaction"].ToObject<decimal>().Should().Be(feChoice.EmployerSatisfaction);
+                resultJson["provider"]["email"].ToObject<string>().Should().Be(providerContact.Email);
+                resultJson["provider"]["learnerSatisfaction"].ToObject<decimal>().Should().Be(sqlProvider.LearnerSatisfaction);
+                resultJson["provider"]["employerSatisfaction"].ToObject<decimal>().Should().Be(sqlProvider.EmployerSatisfaction);
                 resultJson["course"].ToObject<object>().Should().NotBeNull();
                 resultJson["course"]["courseId"].ToObject<Guid>().Should().Be(course.CourseId);
                 resultJson["venue"].ToObject<object>().Should().NotBeNull();

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -82,10 +81,6 @@ namespace Dfc.CourseDirectory.FindACourseApi
             if (Environment.EnvironmentName != "Testing")
             {
                 services.AddSqlDataStore(Configuration.GetConnectionString("DefaultConnection"));
-
-                services.AddCosmosDbDataStore(
-                    endpoint: new Uri(Configuration["CosmosDbSettings:EndpointUri"]),
-                    key: Configuration["CosmosDbSettings:PrimaryKey"]);
 
                 services.AddAzureSearchClient<FindACourseOffering>(
                     new Uri(Configuration["AzureSearchUrl"]),

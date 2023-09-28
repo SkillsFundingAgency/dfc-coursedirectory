@@ -30,7 +30,7 @@ For an intro to MediatR in controllers see:
 
 There are no controller tests because the controller actions are very thin mappings.
 
-The tests are mostly integration tests that test an endpoint + behaviour, with things like CosmosDB calls mocked out.
+The tests are mostly integration tests that test an endpoint + behaviour.
 
 ### Multi-page transactions - FormFlow
 

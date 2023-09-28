@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Microsoft.AspNetCore.Mvc;
@@ -23,27 +24,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
-                contacts: new[]
-                {
-                    new CreateProviderContact()
+                contact: 
+                
+                    new ProviderContact()
                     {
                         ContactType = "P",
                         AddressSaonDescription = "1st Line of Address",
                         AddressPaonDescription = "2nd Line of Address",
                         AddressStreetDescription = "The Street",
                         AddressLocality = "The Town",
-                        AddressItems = new List<string>()
-                        {
-                            "United Kingdom"
-                        },
-                        AddressPostCode = "AB1 2CD",
-                        ContactEmail = "email@provider1.com",
-                        ContactTelephone1 = "01234 567890",
-                        ContactWebsiteAddress = "provider1.com",
-                        PersonalDetailsGivenName = "The",
-                        PersonalDetailsFamilyName = "Contact"
+                        AddressItems = "United Kingdom",
+                        AddressPostcode = "AB1 2CD",
+                        Email = "email@provider1.com",
+                        Telephone1 = "01234 567890",
+                        WebsiteAddress = "provider1.com",
+                        PersonalDetailsPersonNameGivenName = "The",
+                        PersonalDetailsPersonNameFamilyName = "Contact"
                     }
-                });
+                );
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
@@ -83,27 +81,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Provider 1",
-                contacts: new[]
-                {
-                    new CreateProviderContact()
+                contact: 
+                
+                    new ProviderContact()
                     {
-                        ContactType = "L",
+                        ContactType = "P",
                         AddressSaonDescription = "1st Line of Address",
                         AddressPaonDescription = "2nd Line of Address",
                         AddressStreetDescription = "The Street",
                         AddressLocality = "The Town",
-                        AddressItems = new List<string>()
-                        {
-                            "United Kingdom"
-                        },
-                        AddressPostCode = "AB1 2CD",
-                        ContactEmail = "email@provider1.com",
-                        ContactTelephone1 = "01234 567890",
-                        ContactWebsiteAddress = "provider1.com",
-                        PersonalDetailsFamilyName = "The",
-                        PersonalDetailsGivenName = "Contact"
+                        AddressItems = "United Kingdom",
+                        AddressPostcode = "AB1 2CD",
+                        Email = "email@provider1.com",
+                        Telephone1 = "01234 567890",
+                        WebsiteAddress = "provider1.com",
+                        PersonalDetailsPersonNameGivenName = "The",
+                        PersonalDetailsPersonNameFamilyName = "Contact"
                     }
-                });
+                );
 
             var providerUser = await TestData.CreateUser(providerId: provider.ProviderId);
 
