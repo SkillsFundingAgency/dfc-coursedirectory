@@ -293,6 +293,10 @@
     <Build Include="Pttcd\Indexes\IX_CourseRuns_CourseRunId_CourseId_VenueId.sql" />
     <Build Include="Pttcd\Indexes\IX_Courses_CourseId_ProviderId.sql" />
     <Build Include="Pttcd\Tables\CourseText.sql" />
+    <Build Include="LARS\Tables\Validity.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

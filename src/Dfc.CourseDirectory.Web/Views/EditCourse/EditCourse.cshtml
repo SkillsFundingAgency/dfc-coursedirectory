@@ -67,9 +67,9 @@
             <p class="govuk-body">Your course description will be updated on Publish to the course directory and available to learners searching for learning and training opportunities on the National Careers Service.</p>
             <p class="govuk-body">Changes made to your course description will update all of your courses for this qualification.</p>
 
-            <button type="submit" class="govuk-button" id="save">Publish changes</button>
+            <button type="submit" class="cd-cancel-btn govuk-button" id="save">Publish changes</button>
 
-            @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "govuk-link govuk-!-margin-left-3" })
+            @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "cd-cancel-link-unset govuk-link cd-cancel-link" })
 
         </form>
     </div>

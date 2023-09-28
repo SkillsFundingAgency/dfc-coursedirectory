@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -14,7 +15,7 @@ namespace Dfc.CourseDirectory.Testing
                 string notionalNVQLevelv2 = "3",
                 string awardOrgCode = "EDEXCEL",
                 string learnAimRefTypeDesc = "National Certificate",
-                DateTime? operationalEndDate = null) => 
+                DateTime? operationalEndDate = null) =>
             WithSqlQueryDispatcher(async dispatcher =>
             {
                 learnAimRef ??= new Random().Next(100000, 109999).ToString("D8");
@@ -102,6 +103,32 @@ namespace Dfc.CourseDirectory.Testing
                             SuccessRateMapCode = string.Empty,
                             UnitType = string.Empty,
                             EffectiveTo = effectiveTo
+                        }
+                    }
+                });
+
+                var lastnewstartdate = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+                if (effectiveTo != null)
+                {
+                    lastnewstartdate = (effectiveTo??DateTime.Now.AddDays(-1)).ToString("yyyy-MM-dd");
+                }
+                else if (operationalEndDate != null)
+                {
+                    lastnewstartdate = (operationalEndDate ?? DateTime.Now.AddDays(-1)).ToString("yyyy-MM-dd");
+                }
+
+                await dispatcher.ExecuteQuery(new UpsertLarsValidity()
+                {
+                    Records = new[]
+                    {
+                        new UpsertLarsValidityRecord()
+                        {
+                            LearnAimRef = learnAimRef,
+                            ValidityCategory="ANY",
+                            StartDate=DateTime.Now.ToString("yyyy-MM-dd"),
+                            LastNewStartDate=lastnewstartdate,
+                            Created_On = string.Empty,
+                            Created_By = string.Empty
                         }
                     }
                 });
