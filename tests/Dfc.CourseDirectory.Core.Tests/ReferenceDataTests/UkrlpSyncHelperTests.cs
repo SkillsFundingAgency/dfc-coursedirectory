@@ -111,6 +111,60 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         }
 
         [Fact]
+        public async Task SyncProviderData_ProviderAlreadyExists_UpdateSkippedAsProviderAlreadyUpToDate()
+        {
+
+
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                providerName: "Ukrlp Test Provider",
+                providerType: ProviderType.FE,
+                providerStatus: "Active",
+                alias: "Ukrlp ProviderAliasHere",
+                contact:
+
+                    new ProviderContact
+                    {
+                        ContactType = "P",
+                        Telephone1 = "Ukrlp Telephone 1",
+                        WebsiteAddress = "http://www.ukrlptest.example.com",
+                        Email = "Ukrlptest@example.com",
+                        AddressSaonDescription = "ukrlp Address1",
+                        AddressPaonDescription = "ukrlp Address2",
+                        AddressStreetDescription = "ukrlp Address3",
+                        AddressLocality = "ukrlp Address4",
+                        AddressItems = "ukrlp Town ukrlp County",
+                        AddressPostTown = "ukrlp Town",
+                        AddressCounty = "ukrlp County",
+                        AddressPostcode = "Ukrlp PostCode",
+                        PersonalDetailsPersonNameTitle = "Ukrlp Mr",
+                        PersonalDetailsPersonNameFamilyName = "Ukrlp Family name",
+                        PersonalDetailsPersonNameGivenName = "Ukrlp Given name"
+                    }
+                );
+
+            var ukrlpData = GenerateUkrlpProviderData(provider.Ukprn);
+            var ukrlpContact = ukrlpData.ProviderContact.Single();
+
+            var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
+
+
+            // Act
+            await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
+
+            var result = await _dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
+
+            // Assert
+            result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
+            result.ProviderName.Should().Be(ukrlpData.ProviderName);
+            result.ProviderId.Should().Be(provider.ProviderId);
+            result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
+            var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
+            AssertContactMapping(actualContact, ukrlpContact);
+            _dispatcher.Dispose();
+        }
+
+        [Fact]
         public void SelectContact_SelectsMostRecentlyUpdatedPTypeContact()
         {
             // Arrange

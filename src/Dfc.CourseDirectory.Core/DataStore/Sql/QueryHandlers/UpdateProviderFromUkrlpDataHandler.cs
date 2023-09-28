@@ -5,13 +5,22 @@ using OneOf;
 using OneOf.Types;
 using System.Data.SqlClient;
 using Dapper;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class UpdateProviderFromUkrlpDataHandler :
-        ISqlQueryHandler<UpdateProviderFromUkrlpData, OneOf<NotFound, Success>>
+        ISqlQueryHandler<UpdateProviderFromUkrlpData, Success>
     {
-        public async Task<OneOf<NotFound, Success>> Execute(
+        private readonly ILogger<UkrlpSyncHelper> _logger;
+
+        public UpdateProviderFromUkrlpDataHandler(ILoggerFactory loggerFactory)
+        {
+                    _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
+
+        }
+    public async Task<Success> Execute(
             SqlTransaction transaction,
             UpdateProviderFromUkrlpData query)
         {
@@ -51,16 +60,19 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.ProviderStatus,
                 UpdatedOn = query.DateUpdated,
                 query.UpdatedBy,
-                query.ProviderId
+                query.ProviderId,
             };
-            var updated = await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction) == 1;
-
-            if (updated)
+            if (query.UpdateProvider)
             {
-                if (providerContact != null)
+                _logger.LogInformation("Update Provider table starting...");
+                await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
+                _logger.LogInformation("Update provider table finished!");
+            }
+            
+            if (providerContact != null)
+            {
+                var paramzContacts = new
                 {
-                    var paramzContacts = new
-                    {
                         query.ProviderId,
                         providerContact.ContactType,
                         providerContact.AddressSaonDescription,
@@ -78,17 +90,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         providerContact.Fax,
                         providerContact.WebsiteAddress,
                         providerContact.Email
-                    };
-
+                };
+                if (query.UpdateProviderContact)
+                {
+                    _logger.LogInformation("Update ProviderContacts table starting...");
                     await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-
+                    _logger.LogInformation("Update ProviderContacts table finishe!.");
                 }
-                return new Success();
             }
-            return new NotFound();
+            return new Success();
+            
 
         }
 
-        private enum Result { Success = 0, NotFound = 1 }
     }
 }

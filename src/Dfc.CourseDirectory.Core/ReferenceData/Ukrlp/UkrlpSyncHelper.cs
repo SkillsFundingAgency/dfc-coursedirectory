@@ -43,29 +43,46 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             var createdCount = 0;
             var updatedCount = 0;
+            var notChanged = 0;
+            var failed = 0;
 
             foreach (var providerData in allProviders)
             {
-                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                var result = await CreateOrUpdateProvider(providerData);
+                try
+                {
+                    var result = await CreateOrUpdateProvider(providerData);
 
-                if (result == CreateOrUpdateResult.Created)
-                {
-                    createdCount++;
+                    if (result == CreateOrUpdateResult.Created)
+                    {
+                        createdCount++;
+                    }
+                    else if (result == CreateOrUpdateResult.Updated)
+                    {
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        notChanged++;
+                    }
+
+                    _logger.LogInformation($"UKRLP Sync: {providerData.UnitedKingdomProviderReferenceNumber} - {result.ToString()}");
+
                 }
-                else  
+                catch (Exception e)
                 {
-                    updatedCount++;
+                    _logger.LogError($"UKRLP Sync: Failed to process provider UKPRN: {providerData.UnitedKingdomProviderReferenceNumber} - {e.Message}");
+                    failed++;
                 }
 
-                if ((createdCount + updatedCount) % 200 == 0)
-                {
-                    _logger.LogInformation(
-                        $"UKRLP Sync: processed provider {createdCount + updatedCount} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                }
             }
 
-            _logger.LogInformation("UKRLP Sync: Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
+            _logger.LogInformation("UKRLP Sync: Added {0} new providers, updated {1} providers and {2} providers were up to date. {3} providers failed to sync", createdCount, updatedCount, notChanged, failed);
+
+            if (failed > 0)
+            {
+                throw new ApplicationException($"Failed to update {failed} providers");
+            }
+
         }
 
         public async Task SyncAllKnownProvidersData()
@@ -164,25 +181,24 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
-
             var existingProvider = await GetProvider(ukprn);
+            
+            var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
 
             var contact = SelectContact(providerData.ProviderContact);
+            var ukrlpProviderContact = MapContact(contact);
 
-            var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
 
             if (existingProvider == null)
             {
+                _logger.LogInformation("Couldn't find provider for ukprn [{0}]. Attempting to create one", ukprn);
                 await _sqlQueryDispatcher.ExecuteQuery(
                     new CreateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        //Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
-                        Contact = contact != null ?
-                              MapContact(contact)  :
-                            new ProviderContact(),
+                        Contact = ukrlpProviderContact,
                         ProviderName = providerData.ProviderName,
                         ProviderStatus = providerData.ProviderStatus,
                         ProviderType = NewProviderProviderType,
@@ -195,40 +211,74 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
             else
             {
-                await _sqlQueryDispatcher.ExecuteQuery(
-                    new UpdateProviderFromUkrlpData()
-                    {
-                        Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        //Aliases = providerData.ProviderAliases.Select(MapAlias),
-                        DateUpdated = _clock.UtcNow,
-                        ProviderId = providerId,
-                        Contact = contact != null ?
-                            MapContact(contact)  :
-                            new ProviderContact(),
-                        ProviderName = providerData.ProviderName,
-                        ProviderStatus = providerData.ProviderStatus,
-                        UpdatedBy = UpdatedBy
-                    });
-                _logger.LogInformation("UKRLP Sync: Update {0} starting...", ukprn);
+                var existingProviderContact = await GetProviderContact(providerId);
+                
+
+                var updateProvider = CheckUpdateProvider(existingProvider,providerData);
+                var updateProviderContact = true;
+                if (existingProviderContact != null)
+                {
+                    updateProviderContact = CheckUpdateProviderContact(existingProviderContact, ukrlpProviderContact);
+                }
+                if (updateProvider || updateProviderContact)
+                {
+                        await _sqlQueryDispatcher.ExecuteQuery(
+                            new UpdateProviderFromUkrlpData()
+                            {
+                                Alias = providerData.ProviderAliases?.FirstOrDefault().ProviderAlias,
+                                DateUpdated = _clock.UtcNow,
+                                ProviderId = providerId,
+                                Contact = ukrlpProviderContact,
+                                ProviderName = providerData.ProviderName,
+                                ProviderStatus = providerData.ProviderStatus,
+                                UpdatedBy = UpdatedBy,
+                                UpdateProvider= updateProvider,
+                                UpdateProviderContact= updateProviderContact,
+                            });
+                    
+                }
+                else
+                {
+                    return CreateOrUpdateResult.Skipped;
+                }
 
                 var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
 
                 var deactivating = IsDeactivatedStatus(newStatusCode);
-                _logger.LogInformation("UKRLP Sync: ukprn {0} - oldStatusCode {1} - newStatusCode {2} - deactivating {3}", ukprn, oldStatusCode, newStatusCode, deactivating);
+                _logger.LogInformation("UKRLP Sync: ukprn [{0}] - oldStatusCode [{1}] - newStatusCode [{2}] - deactivating [{3}]", ukprn, oldStatusCode, newStatusCode, deactivating);
                 if (deactivating)
                 {
-                    _logger.LogInformation("UKRLP Sync: Update {0} starting deactivating is {1} ...", ukprn, deactivating);
+                    _logger.LogInformation("UKRLP Sync: Update [{0}] starting deactivating is [{1}] ...", ukprn, deactivating);
                    
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
                         await _sqlQueryDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
-                        await _sqlQueryDispatcher.Commit();
                     
                 }
 
                 return CreateOrUpdateResult.Updated;
             }
+        }
+
+        private bool CheckUpdateProviderContact(ProviderContact existingProviderContact, ProviderContact ukrlpProviderContact)
+        {
+            if (existingProviderContact.IsEqual(ukrlpProviderContact))
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        private bool CheckUpdateProvider(Provider existingProvider, ProviderRecordStructure providerData)
+        {
+            if (existingProvider.Alias == providerData.ProviderAliases?.FirstOrDefault()?.ProviderAlias &&
+                    existingProvider.ProviderName == providerData?.ProviderName &&
+                    existingProvider.ProviderStatus == providerData?.ProviderStatus )
+            {
+                return false;
+            }
+            else { return true; }
         }
 
         private static bool IsDeactivatedStatus(string status) => status switch
@@ -250,6 +300,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private Task<Provider> GetProvider(int ukprn) =>
            _sqlQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
 
-        private enum CreateOrUpdateResult { Created, Updated }
+        private Task<ProviderContact> GetProviderContact(Guid providerId) =>
+           _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById() { ProviderId = providerId });
+
+        private enum CreateOrUpdateResult { Created, Updated, Skipped }
     }
 }
