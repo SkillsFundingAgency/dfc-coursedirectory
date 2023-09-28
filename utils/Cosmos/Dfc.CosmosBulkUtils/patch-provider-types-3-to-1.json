@@ -1,0 +1,9 @@
+{
+  "FilterPredicate": "SELECT c.id FROM c where c.ProviderType = 3",
+  "Operations": [
+    {
+      "Field": "/ProviderType",
+      "Value": 1
+    }
+  ]
+}

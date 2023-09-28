@@ -16,4 +16,8 @@
     margin: 8px 10px 7px;
     float: left;
 }
+
+.cd-cancel-link-unset {
+    position: unset;
+}
 /*-----------------------------------------------------------*/
