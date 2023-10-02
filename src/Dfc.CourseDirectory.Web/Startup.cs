@@ -209,71 +209,70 @@ namespace Dfc.CourseDirectory.Web
             app.UseSession();
 
             app.UseCsp(options => options
-                            .DefaultSources(s => s.Self())
-                            .ScriptSources(s => s
-                                .Self()
-                                .CustomSources(
-                                    "www.google-analytics.com",
-                                    "sha256-wd6zPqofWjb5TSs4XzK3yLqmM6aUHeduDqEKaDQSWoU=",
-                                    "sha256-xY2DAB/H7eBQZT2luzwwjJh9xLZKg/fW/ETrbm3/4NM=",
-                                    "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
-                                    "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
-                                    "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
-                                    "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
-                                    "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
-                                    "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=",
-                                    "sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog=",
-                                    "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
-                                    "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
-
-                                    "sha256-b9m8owmLL4iYFsGHexbZ85GmGpFbePbN4Rnfz7szdg8=",
-                                    "sha256-wlhq0O7MI86vRqF5r0g82JnVyJtT0Sta+p+ThlaYJgA=",
-                                    "sha256-f265cqgVJGKF5FzP79WDAY7j3k5HwpnQyKvZq2YERz8=",
-                                    "https://cloud.tinymce.com",
-                                    "https://cdn.tiny.cloud",
-                                    "www.googletagmanager.com",
-                                    "https://cdnjs.cloudflare.com/",
-                                    "https://www.google-analytics.com",
-                                    "https://optimize.google.com",
-                                    "https://www.googleoptimize.com"
-                                    ))
-                            .StyleSources(s => s
-                                .Self()
-                                .CustomSources(
-                                    "https://optimize.google.com",
-                                    "https://fonts.googleapis.com",
-                                    "https://www.googleoptimize.com",
-                                    "sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog=",
-                                    "sha256-8IzHpQDffpYha23cLfzM0dhjCGZ6Ig6YyRzLbJ1sJ1o="
-                                    ))
-                            .FormActions(s => s
-                                .Self()
-                                )
-                            .FontSources(s => s
-                                .Self())
-                            .ImageSources(s => s
-                                .Self()
-                                .CustomSources(
-                                    "www.google-analytics.com",
-                                    "https://optimize.google.com",
-                                    "https://www.googleoptimize.com",
-                                    "https://www.googletagmanager.com",
-                                    "https://sp.tinymce.com"
-                                    ))
-                            .FrameAncestors(s => s.Self())
-                            .FrameSources(s => s
-                                .Self()
-                                .CustomSources("https://optimize.google.com")
-                                )
-                            .ConnectSources(s => s
-                                .Self()
-                                .CustomSources(
-                                    "https://www.google-analytics.com",
-                                    "https://region1.google-analytics.com",
-                                    "https://www.googletagmanager.com"
-                                   )
-                                )
-                            );
+                .DefaultSources(s => s.Self())
+                .ScriptSources(s => s
+                    .Self()
+                    .CustomSources(
+                    //Home page
+                    "sha256-wd6zPqofWjb5TSs4XzK3yLqmM6aUHeduDqEKaDQSWoU=",
+                    "sha256-xY2DAB/H7eBQZT2luzwwjJh9xLZKg/fW/ETrbm3/4NM=",
+                    "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
+                    "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
+                    "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
+                    //provider-search
+                    "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
+                    //Courses
+                    "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
+                    "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
+                    "https://cloud.tinymce.com",
+                    "https://cdn.tiny.cloud",
+                    "www.googletagmanager.com",
+                    "https://cdnjs.cloudflare.com/",
+                    "https://www.google-analytics.com"))
+                .StyleSources(s => s
+                    .Self()
+                    .CustomSources(
+                    "data:",
+                    "https://cdn.tiny.cloud/",
+                    "https://www.googletagmanager.com/",
+                    "https://tagmanager.google.com/",
+                    "https://fonts.googleapis.com/",
+                    "https://cloud.tinymce.com/",
+                    "https://cdnjs.cloudflare.com/",
+                    //Courses
+                    "sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog="))
+                .FormActions(s => s
+                    .Self()
+                    )
+                .FontSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "data:",
+                        "https://fonts.googleapis.com/",
+                        "https://fonts.gstatic.com/",
+                        "https://cdn.tiny.cloud/"
+                        )
+                    )
+                .ImageSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "*",
+                        "data:",
+                        "https://cdn.tiny.cloud/"
+                        )
+                    )
+                .FrameAncestors(s => s.Self())
+                .FrameSources(s => s
+                    .Self()
+                    .CustomSources("https://optimize.google.com")
+                    )
+                .ConnectSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "https://www.google-analytics.com"
+                        )
+                    )
+                );
 
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
