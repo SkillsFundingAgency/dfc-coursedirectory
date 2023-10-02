@@ -33,6 +33,7 @@ cte_course_run_regions AS (
 )
 SELECT
     c.ProviderUkprn,
+    p.ProviderName,
     cr.CourseRunId,
     c.CourseId,
     c.LearnAimRef,

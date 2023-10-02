@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
     public class LiveCoursesWithRegionsAndVenuesReportItem
     {
         public int ProviderUkprn { get; set; }
+        public string ProviderName { get; set; }
         public Guid CourseRunId { get; set; }
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
