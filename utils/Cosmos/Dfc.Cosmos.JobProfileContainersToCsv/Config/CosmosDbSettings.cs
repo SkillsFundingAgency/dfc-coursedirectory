@@ -1,6 +1,6 @@
 ﻿namespace Dfc.Cosmos.JobProfileContainersToCsv.Config
 {
-    internal class CosmosDbSettings
+    public class CosmosDbSettings
     {
         public static string SectionName => "CosmosDb";
         public string EndpointUrl { get; set; }

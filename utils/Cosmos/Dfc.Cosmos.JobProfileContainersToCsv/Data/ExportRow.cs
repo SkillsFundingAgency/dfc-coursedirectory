@@ -1,10 +1,15 @@
-﻿namespace Dfc.Cosmos.JobProfileContainersToCsv.Data
+﻿using CsvHelper.Configuration.Attributes;
+
+namespace Dfc.Cosmos.JobProfileContainersToCsv.Data
 {
     public class ExportRow
     {
+        [Ignore]
         public string Id { get; set; }
-        public string Title { get; set; }
-        public string CanonicalName { get; set; }
+        public string Title { get; set; }        
+        public string CanonicalName { get; set; }        
+        public string HiddenAlternativeTitles { get; set; }
+        public string JobProfileCategory { get; set; }
         public string CareerProgression { get; set; }
         public string CourseKeywords { get; set; }
         public string ApprenticeshipStandards { get; set; }
@@ -31,5 +36,6 @@
         public string OtherRequirements { get; set; }
         public string DigitalSkill { get; set; }
         public string Tasks { get; set; }
+        public string FullUrl { get { return $"/{CanonicalName}"; } }
     }
 }

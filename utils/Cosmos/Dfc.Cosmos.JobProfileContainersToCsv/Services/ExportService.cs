@@ -1,5 +1,7 @@
-﻿using System.Globalization;
+﻿using System.Data.SqlClient;
+using System.Globalization;
 using CsvHelper;
+using Dfc.Cosmos.JobProfileContainersToCsv.Config;
 using Dfc.Cosmos.JobProfileContainersToCsv.Data;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
@@ -8,43 +10,33 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
 {
     public class ExportService
     {
-        private readonly CosmosClient _client;
-
-        public ExportService(string endpointUrl, string accessKey)
+        public async Task ExportToCsvFile(CosmosDbSettings cosmosDbConfig, SqlDbSettings sqlDbConfig)
         {
-            ArgumentNullException.ThrowIfNull(endpointUrl);
-            ArgumentNullException.ThrowIfNull(accessKey);
-
-            _client = new CosmosClient(endpointUrl, accessKey,
-                new CosmosClientOptions { ConnectionMode = ConnectionMode.Gateway });
-        }
-
-        public async Task<IList<JObject>> GetCosmosData(ExportRequest request)
-        {
-            ArgumentNullException.ThrowIfNull(request.DatabaseId);
-            ArgumentNullException.ThrowIfNull(request.ContainerId);
-            ArgumentNullException.ThrowIfNull(request.Query);
-
-            var results = new List<JObject>();
-
-            var container = _client.GetContainer(request.DatabaseId, request.ContainerId);
-            var queryResults = container.GetItemQueryIterator<JObject>(request.Query);
-
-            while (queryResults.HasMoreResults)
-            {
-                var currentResults = await queryResults.ReadNextAsync();
-                results.AddRange(currentResults);                
-            }
-
-            return results;
-        }
-
-        public void ExportToFile(List<IList<JObject>> containersData, string key, string outputFileName = "output.csv")
-        {
-            using var writer = new StreamWriter(outputFileName);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
             var exportData = new List<ExportRow>();
+
+            await ExtractCosmosData(cosmosDbConfig, exportData);
+            await ExtractSqlData(sqlDbConfig, exportData);            
+            await WriteCsvFile(cosmosDbConfig, exportData);
+        }
+
+        private async Task WriteCsvFile(CosmosDbSettings cosmosDbConfig, List<ExportRow> exportData)
+        {
+            string outputFileName = cosmosDbConfig.Filename;
+            var writer = new StreamWriter(outputFileName);
+            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            csv.WriteHeader<ExportRow>();
+            csv.NextRecord();
+            foreach (var record in exportData)
+            {
+                csv.WriteRecord(record);
+                csv.NextRecord();
+            }
+        }
+
+        private async Task ExtractCosmosData(CosmosDbSettings cosmosDbConfig, List<ExportRow> exportData)
+        {
+            var containersData = await GetCosmosContainersData(cosmosDbConfig);
+            var key = cosmosDbConfig.Key;
 
             foreach (var item in containersData[0])
             {
@@ -68,7 +60,8 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
                 if (exportRow != null)
                 {
                     exportRow.CourseKeywords = (string)row["CourseKeywords"];
-                    exportRow.ApprenticeshipStandards = ((JArray)row["ApprenticeshipStandards"]).ToString();
+                    var jArray = (JArray)row["ApprenticeshipStandards"];
+                    exportRow.ApprenticeshipStandards = string.Join(", ", jArray.Values<string>());
                 }
             }
 
@@ -156,6 +149,9 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
                     exportRow.SalaryExperienced = (long)(row["SalaryExperienced"] ?? default(long));
                     exportRow.MinimumHours = (row["MinimumHours"] ?? string.Empty).ToString();
                     exportRow.MaximumHours = (row["MaximumHours"] ?? string.Empty).ToString();
+
+                    var jArray = (JArray)row["HiddenAlternativeTitles"];
+                    exportRow.HiddenAlternativeTitles = string.Join(", ", jArray.Values<string>());
                 }
             }
 
@@ -167,7 +163,8 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
 
                 if (exportRow != null)
                 {
-                    exportRow.RelatedCareers = ((JArray)row["RelatedCareers"]).ToString();
+                    var jArray = (JArray)row["RelatedCareers"];
+                    exportRow.RelatedCareers = string.Join(", ", jArray.Values<string>());
                 }
             }
 
@@ -195,14 +192,142 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
                     exportRow.Tasks = (string)row["Tasks"];
                 }
             }
-
-            csv.WriteHeader<ExportRow>();
-            csv.NextRecord();
-            foreach (var record in exportData)
-            {
-                csv.WriteRecord(record);
-                csv.NextRecord();
-            }
         }
+
+        private async Task<IList<JObject>> GetCosmosData(ExportRequest request, string endpointUrl, string accessKey)
+        {
+            ArgumentNullException.ThrowIfNull(request.DatabaseId);
+            ArgumentNullException.ThrowIfNull(request.ContainerId);
+            ArgumentNullException.ThrowIfNull(request.Query);
+
+            var results = new List<JObject>();
+
+            var _client = new CosmosClient(endpointUrl, accessKey, new CosmosClientOptions { ConnectionMode = ConnectionMode.Gateway });
+            var container = _client.GetContainer(request.DatabaseId, request.ContainerId);
+            var queryResults = container.GetItemQueryIterator<JObject>(request.Query);
+
+            while (queryResults.HasMoreResults)
+            {
+                var currentResults = await queryResults.ReadNextAsync();
+                results.AddRange(currentResults);
+            }
+
+            return results;
+        }
+
+        private async Task<List<IList<JObject>>> GetCosmosContainersData(CosmosDbSettings config)
+        {
+            List<IList<JObject>> cosmosContainersData = new List<IList<JObject>>();
+
+            foreach (var containerSettings in config.Containers)
+            {
+                var request = new ExportRequest
+                {
+                    DatabaseId = config.DatabaseId,
+                    ContainerId = containerSettings.ContainerId,
+                    Query = new QueryDefinition(containerSettings.Query)
+                };
+
+                var cosmosData = await GetCosmosData(request, config.EndpointUrl, config.AccessKey);
+                cosmosContainersData.Add(cosmosData);
+
+                Console.WriteLine("Found {0} records for container {1}", cosmosData.Count, containerSettings.ContainerId);
+            }
+
+            return cosmosContainersData;
+        }
+
+        private async Task<List<JobProfile>> GetJobProfilesFromSqlDb(SqlDbSettings config)
+        {            
+            var categoriesQuery = "SELECT ContentItemId, DisplayText from [dbo].[ContentItemIndex] WHERE ContentType = 'JobProfileCategory'";
+            var jobProfilesQuery = "SELECT cii.DocumentId, GraphSyncPartId AS JobProfileId, jpi.JobProfileTitle, JobProfileCategory FROM [dbo].[JobProfileIndex] jpi INNER JOIN dbo.ContentItemIndex cii on cii.DocumentId = jpi.DocumentId";
+
+            var categories = await GetCategories(categoriesQuery, config.ConnectionString);
+
+            var jobProfiles = await GetJobProfiles(jobProfilesQuery, config.ConnectionString);
+            
+            foreach (var jobProfile in jobProfiles)
+            {
+                var jobProfileCategoryTitles = new List<string>();
+
+                foreach (var jobProfileCategoryId in jobProfile.Categories.Split(","))
+                {
+                    if (categories.ContainsKey(jobProfileCategoryId))
+                    {
+                        jobProfileCategoryTitles.Add(categories[jobProfileCategoryId]);
+                    }
+                }
+
+                jobProfile.Categories = string.Join(", ", jobProfileCategoryTitles);
+            }
+
+            return jobProfiles;
+        }        
+
+        private async Task ExtractSqlData(SqlDbSettings sqlDbConfig, List<ExportRow> exportData)
+        {
+            var jobProfiles = await GetJobProfilesFromSqlDb(sqlDbConfig);
+            foreach (var row in exportData)
+            {
+                var jobProfile = jobProfiles.FirstOrDefault(jp => jp.Id == row.Id);
+
+                if (jobProfile == null)
+                    continue;
+
+                row.JobProfileCategory = jobProfile.Categories;
+            }
+        }        
+
+        private async Task<List<JobProfile>> GetJobProfiles(string sql, string connectionString)
+        {
+            var jobProfiles = new List<JobProfile>();            
+            using (SqlConnection _sqlConnection = new SqlConnection(connectionString))
+            using (SqlDataAdapter sda = new SqlDataAdapter(sql, _sqlConnection))
+            {
+                await _sqlConnection.OpenAsync();
+                var command = new SqlCommand(sql, _sqlConnection);
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var jobProfile = new JobProfile
+                    {
+                        DocumentId = reader["DocumentId"].ToString(),
+                        Id = reader["JobProfileId"].ToString(),
+                        Title = reader["JobProfileTitle"].ToString(),
+                        Categories = reader["JobProfileCategory"].ToString()
+                    };                   
+                    jobProfiles.Add(jobProfile);
+                }
+
+                await _sqlConnection.CloseAsync();
+            }
+
+            return jobProfiles;
+        }        
+
+        private async Task<Dictionary<string, string>> GetCategories(string sql, string connectionString)
+        {
+            var categories = new Dictionary<string, string>();            
+            using (SqlConnection _sqlConnection = new SqlConnection(connectionString))
+            using (SqlDataAdapter sda = new SqlDataAdapter(sql, _sqlConnection))
+            {
+                await _sqlConnection.OpenAsync();
+                var command = new SqlCommand(sql, _sqlConnection);
+
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var key = reader["ContentItemId"].ToString();
+                    if (!categories.ContainsKey(key))
+                    {
+                        categories.Add(key, reader["DisplayText"].ToString());
+                    }
+                }
+
+                await _sqlConnection.CloseAsync();
+            }
+
+            return categories;
+        }                
     }
 }
