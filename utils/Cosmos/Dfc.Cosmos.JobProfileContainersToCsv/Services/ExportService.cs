@@ -10,18 +10,18 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
 {
     public class ExportService
     {
-        public async Task ExportToCsvFile(CosmosDbSettings cosmosDbConfig, SqlDbSettings sqlDbConfig)
+        public async Task ExportToCsvFile(AppSettings appSettings)
         {
             var exportData = new List<ExportRow>();
 
-            await ExtractCosmosData(cosmosDbConfig, exportData);
-            await ExtractSqlData(sqlDbConfig, exportData);            
-            await WriteCsvFile(cosmosDbConfig, exportData);
+            await ExtractCosmosData(appSettings.CosmosDb, appSettings.Key, exportData);
+            await ExtractSqlData(appSettings.SqlDb, exportData);            
+            await WriteCsvFile(appSettings.OutputFilename, exportData);
         }
 
-        private async Task WriteCsvFile(CosmosDbSettings cosmosDbConfig, List<ExportRow> exportData)
+        private Task WriteCsvFile(string fileName, List<ExportRow> exportData)
         {
-            string outputFileName = cosmosDbConfig.Filename;
+            string outputFileName = fileName;
             var writer = new StreamWriter(outputFileName);
             var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
             csv.WriteHeader<ExportRow>();
@@ -31,12 +31,13 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
                 csv.WriteRecord(record);
                 csv.NextRecord();
             }
+
+            return Task.CompletedTask;
         }
 
-        private async Task ExtractCosmosData(CosmosDbSettings cosmosDbConfig, List<ExportRow> exportData)
+        private async Task ExtractCosmosData(CosmosDbSettings cosmosDbConfig, string key, List<ExportRow> exportData)
         {
-            var containersData = await GetCosmosContainersData(cosmosDbConfig);
-            var key = cosmosDbConfig.Key;
+            var containersData = await GetCosmosContainersData(cosmosDbConfig);            
 
             foreach (var item in containersData[0])
             {

@@ -8,27 +8,18 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv
     {
         private static async Task Main(string[] args)
         {
+            var appSettings = GetCosmosDbConfig();
+
             var exportService = new ExportService();
-            var cosmosDbConfig = GetCosmosDbConfig();
-            var sqlDbConfig = GetSqlDbConfig();
+            await exportService.ExportToCsvFile(appSettings);
+        }       
 
-            await exportService.ExportToCsvFile(cosmosDbConfig, sqlDbConfig);
-        }
-
-        private static SqlDbSettings GetSqlDbConfig()
+        private static AppSettings GetCosmosDbConfig()
         {
             var configurationRoot = new ConfigurationBuilder().AddJsonFile("appSettings.json")
                 .Build();
 
-            return configurationRoot.GetRequiredSection(SqlDbSettings.SectionName).Get<SqlDbSettings>();
-        }
-
-        private static CosmosDbSettings GetCosmosDbConfig()
-        {
-            var configurationRoot = new ConfigurationBuilder().AddJsonFile("appSettings.json")
-                .Build();
-
-            return configurationRoot.GetRequiredSection(CosmosDbSettings.SectionName).Get<CosmosDbSettings>();
+            return configurationRoot.Get<AppSettings>();
         }
     }
 }
