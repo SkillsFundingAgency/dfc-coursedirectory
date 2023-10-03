@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
+//using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -24,21 +24,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private readonly LarsDataset _larsDataset;
         private readonly HttpClient _httpClient;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly IClock _clock;
         private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
             HttpClient httpClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             IClock clock,
             ILogger<LarsDataImporter> logger,
             IOptions<LarsDataset> larsDatasetOption)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _clock = clock;
             _logger = logger;
             _larsDataset = larsDatasetOption.Value;
@@ -57,6 +54,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             await ImportStandardsToCosmos();
             await ImportStandardSectorCodesToCosmos();
 
+            await ImportValidityToSql();
             await ImportAwardOrgCodeToSql();
             var categoriesRefs = await ImportCategoryToSql();
             var learningDeliveryRefs = await ImportLearningDeliveryToSql();
@@ -71,7 +69,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             {
                 var assm = typeof(LarsDataImporter).Assembly;
                 var filePath = Path.Join(extractDirectory, fileName);
-
+                _logger.LogInformation("Read file - "+ filePath);
                 using (var stream = File.OpenRead(filePath))
                 using (var streamReader = new StreamReader(stream))
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
@@ -97,96 +95,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }
             }
 
-            Task ImportProgTypesToCosmos()
-            {
-                const string csv = "ProgType.csv";
-                var records = ReadCsv<ProgTypeRow>(csv).ToList();
-
-                var excluded = records.Where(IsTLevel).Select(r => r.ProgType);
-                _logger.LogInformation($"{csv} - Excluded {nameof(ProgTypeRow.ProgType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(ProgTypeRow.ProgTypeDesc)})");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertProgTypes()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records
-                        .Where(r => !IsTLevel(r))
-                        .Select(r => new UpsertProgTypesRecord
-                        {
-                            ProgTypeId = r.ProgType,
-                            ProgTypeDesc = r.ProgTypeDesc,
-                            ProgTypeDesc2 = r.ProgTypeDesc2,
-                            EffectiveFrom = r.EffectiveFrom,
-                            EffectiveTo = r.EffectiveTo
-                        })
-                });
-
-                static bool IsTLevel(ProgTypeRow r) => r.ProgTypeDesc.StartsWith("T Level", StringComparison.InvariantCultureIgnoreCase);
-            }
-
-            Task ImportStandardsToCosmos()
-            {
-                var records = ReadCsv<UpsertStandardsRecord>("Standard.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertStandards()
-                {
-                    Records = records
-                });
-            }
-
-            Task ImportStandardSectorCodesToCosmos()
-            {
-                var records = ReadCsv<StandardSectorCodeRow>("StandardSectorCode.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertStandardSectorCodes()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertStandardSectorCodesRecord()
-                    {
-                        StandardSectorCodeId = r.StandardSectorCode.ToString(),
-                        StandardSectorCodeDesc = r.StandardSectorCodeDesc,
-                        StandardSectorCodeDesc2 = r.StandardSectorCodeDesc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
-                });
-            }
-
-            Task ImportSectorSubjectAreaTier1sToCosmos()
-            {
-                var records = ReadCsv<SectorSubjectAreaTier1Row>("SectorSubjectAreaTier1.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertSectorSubjectAreaTier1s()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertSectorSubjectAreaTier1sRecord()
-                    {
-                        SectorSubjectAreaTier1Id = r.SectorSubjectAreaTier1,
-                        SectorSubjectAreaTier1Desc = r.SectorSubjectAreaTier1Desc,
-                        SectorSubjectAreaTier1Desc2 = r.SectorSubjectAreaTier1Desc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
-                });
-            }
-
-            Task ImportSectorSubjectAreaTier2sToCosmos()
-            {
-                var records = ReadCsv<SectorSubjectAreaTier2Row>("SectorSubjectAreaTier2.csv");
-
-                return _cosmosDbQueryDispatcher.ExecuteQuery(new UpsertSectorSubjectAreaTier2s()
-                {
-                    Now = _clock.UtcNow,
-                    Records = records.Select(r => new UpsertSectorSubjectAreaTier2sRecord()
-                    {
-                        SectorSubjectAreaTier2Id = r.SectorSubjectAreaTier2,
-                        SectorSubjectAreaTier2Desc = r.SectorSubjectAreaTier2Desc,
-                        SectorSubjectAreaTier2Desc2 = r.SectorSubjectAreaTier2Desc2,
-                        EffectiveFrom = r.EffectiveFrom,
-                        EffectiveTo = r.EffectiveTo
-                    })
-                });
-            }
-
+           
             Task ImportAwardOrgCodeToSql()
             {
                 var records = ReadCsv<UpsertLarsAwardOrgCodesRecord>("AwardOrgCode.csv");
@@ -311,6 +220,19 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 await action(dispatcher);
                 await dispatcher.Commit();
             }
+
+            Task ImportValidityToSql()
+            {
+                _logger.LogInformation($"Start import validity.csv");
+                var records = ReadCsv<UpsertLarsValidityRecord>("Validity.csv");
+
+                _logger.LogInformation($"Start import validity.csv records count - "+records.Count());
+
+                return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsValidity
+                {
+                    Records = records
+                }));
+            }
         }
 
         private class FrameworkRow
@@ -373,8 +295,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 // Sometimes we get '03 Aug 2015' format, other times '2015-08-03'
                 // Normalize to '2015-08-03'
+                // Validity date is '1/01/2001'
 
-                var formats = new[] { "dd MMM yyyy", "yyyy-MM-dd" };
+                var formats = new[] { "dd MMM yyyy", "yyyy-MM-dd","dd-MM-yyyy" };
                 var preferredFormat = "dd MMM yyyy";
 
                 foreach (var format in formats)
