@@ -5,7 +5,6 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
@@ -29,11 +28,7 @@ namespace Dfc.CourseDirectory.Functions
             var configuration = builder.GetContext().Configuration;
 
             builder.Services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
-
-            builder.Services.AddCosmosDbDataStore(
-                endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
-                key: configuration["CosmosDbSettings:PrimaryKey"]);
-
+                        
             builder.Services.AddTransient<LarsDataImporter>();
             builder.Services.Configure<LarsDataset>(
                 configuration.GetSection(nameof(LarsDataset)));
@@ -46,7 +41,6 @@ namespace Dfc.CourseDirectory.Functions
 #pragma warning restore CS0618 // Type or member is obsolete
             builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
-            builder.Services.AddTransient<SqlDataSync>();
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
             builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();

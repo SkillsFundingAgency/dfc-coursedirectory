@@ -19,7 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using CosmosDbQueryDispatcher = Dfc.CourseDirectory.Testing.DataStore.CosmosDb.CosmosDbQueryDispatcher;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -45,7 +44,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         protected TestCookieSettingsProvider CookieSettingsProvider => Factory.CookieSettingsProvider;
 
-        protected Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Factory.CosmosDbQueryDispatcher;
 
         protected T CreateInstance<T>(params object[] parameters) =>
             ActivatorUtilities.CreateInstance<T>(Factory.Services, parameters);

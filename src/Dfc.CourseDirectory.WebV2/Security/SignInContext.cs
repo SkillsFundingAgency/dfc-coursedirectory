@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.WebV2.Security
 {

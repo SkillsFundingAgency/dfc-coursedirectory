@@ -16,7 +16,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
-using Microsoft.Azure.Documents.SystemFunctions;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf.Types;
 

@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
@@ -78,7 +77,6 @@ namespace Dfc.CourseDirectory.WebV2
                     Debug.Assert(options.ModelBinderProviders[0].GetType() == typeof(BinderTypeModelBinderProvider));
                     options.ModelBinderProviders.Insert(1, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
-                    options.ModelBinderProviders.Insert(1, new StandardModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
@@ -110,9 +108,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
-                services.AddCosmosDbDataStore(
-                    endpoint: new Uri(configuration["CosmosDbSettings:EndpointUri"]),
-                    key: configuration["CosmosDbSettings:PrimaryKey"]);
+                
 
                 services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             }
@@ -145,7 +141,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.TryAddScoped<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
             services.Decorate<IFeatureFlagProvider, DataManagementFeatureFlagProvider>();
             services.AddScoped<SignInTracker>();
-            services.AddSingleton<IStandardsCache, StandardsCache>();
             services.AddSingleton<MptxInstanceProvider>();
             services.AddMptxInstanceContext();
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
@@ -167,7 +162,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
             services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
-            services.AddTransient<SqlDataSync>();
             services.AddScoped<RouteValuesHelper>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();

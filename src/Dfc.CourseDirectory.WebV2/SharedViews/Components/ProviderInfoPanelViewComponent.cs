@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.SharedViews.Components;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,16 +13,16 @@ namespace Dfc.CourseDirectory.WebV2.Features
 {
     public class ProviderInfoPanelViewComponent : ViewComponent
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public ProviderInfoPanelViewComponent(ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public ProviderInfoPanelViewComponent(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(Guid providerId)
         {
-            var provider = await _cosmosDbQueryDispatcher.ExecuteQuery(
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetProviderById()
                 {
                     ProviderId = providerId
@@ -32,14 +32,13 @@ namespace Dfc.CourseDirectory.WebV2.Features
             {
                 throw new ResourceDoesNotExistException(ResourceType.Provider, providerId);
             }
+            var providerContact = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = providerId });
 
-            var contact = provider.ProviderContact
-                .OrderByDescending(c => c.LastUpdated)
-                .SingleOrDefault(c => c.ContactType == "P");  // 'P' == Primary
 
+         
             ProviderInfoPanelViewModel vm;
 
-            if (contact == null)
+            if (providerContact == null)
             {
                 vm = new ProviderInfoPanelViewModel()
                 {
@@ -49,42 +48,36 @@ namespace Dfc.CourseDirectory.WebV2.Features
             }
             else
             {
-                var contactName = contact.ContactPersonalDetails?.PersonGivenName != null && contact.ContactPersonalDetails?.PersonFamilyName != null ?
-                    $"{string.Join(" ", contact.ContactPersonalDetails.PersonGivenName)} {contact.ContactPersonalDetails.PersonFamilyName}" :
+                var contactName = providerContact.PersonalDetailsPersonNameGivenName != null && providerContact.PersonalDetailsPersonNameFamilyName != null ?
+                    $"{string.Join(" ", providerContact.PersonalDetailsPersonNameGivenName)} {providerContact.PersonalDetailsPersonNameFamilyName}" :
                     null;
 
                 vm = new ProviderInfoPanelViewModel()
                 {
-                    AddressParts = contact.ContactAddress != null ?
-                        FormatAddress(contact.ContactAddress) :
-                        Array.Empty<string>(),
+                    AddressParts = FormatAddress(providerContact),
                     ContactName = contactName,
-                    Email = contact.ContactEmail,
+                    Email = providerContact.Email,
                     GotContact = true,
-                    ProviderId = provider.Id,
-                    Telephone = contact.ContactTelephone1,
-                    Website = contact.ContactWebsiteAddress != null ? UrlUtil.EnsureHttpPrefixed(contact.ContactWebsiteAddress) : null
+                    ProviderId = provider.ProviderId,
+                    Telephone = providerContact.Telephone1,
+                    Website = providerContact.WebsiteAddress != null ? UrlUtil.EnsureHttpPrefixed(providerContact.WebsiteAddress) : null
                 };
             }
 
             return View("~/SharedViews/Components/ProviderInfoPanel.cshtml", vm);
 
-            static IReadOnlyCollection<string> FormatAddress(ProviderContactAddress address)
+            static IReadOnlyCollection<string> FormatAddress(ProviderContact address)
             {
-                var parts = new List<string>()
+                var parts = new List<string>
                 {
-                    address.SAON?.Description,
-                    address.PAON?.Description,
-                    address.StreetDescription,
-                    address.Locality
+                    address.AddressSaonDescription,
+                    address.AddressPaonDescription,
+                    address.AddressStreetDescription,
+                    address.AddressLocality,
+                    address.AddressItems,
+                    address.AddressPostcode
+
                 };
-
-                if (address.Items != null)
-                {
-                    parts.AddRange(address.Items);
-                }
-
-                parts.Add(address.PostCode);
 
                 return parts.Where(p => !string.IsNullOrEmpty(p)).ToList();
             }

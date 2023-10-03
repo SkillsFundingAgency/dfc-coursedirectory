@@ -3,13 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf;
 using OneOf.Types;
@@ -24,18 +22,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
     public class Handler : IRequestHandler<Query, OneOf<NotFound, CourseRunDetailViewModel>>
     {
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ISearchClient<Core.Search.Models.Lars> _larsSearchClient;
         private readonly IRegionCache _regionCache;
 
         public Handler(
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ISearchClient<Core.Search.Models.Lars> larsSearchClient,
             IRegionCache regionCache)
         {
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
             _larsSearchClient = larsSearchClient ?? throw new ArgumentNullException(nameof(larsSearchClient));
             _regionCache = regionCache ?? throw new ArgumentNullException(nameof(regionCache));
@@ -57,18 +52,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 return new NotFound();
             }
 
-            var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(new Core.DataStore.CosmosDb.Queries.GetProviderByUkprn { Ukprn = course.ProviderUkprn });
+            var getProvider = _sqlQueryDispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = course.ProviderUkprn });
             var getQualification = _larsSearchClient.Search(new LarsLearnAimRefSearchQuery { LearnAimRef = course.LearnAimRef });
-            var getFeChoice = _cosmosDbQueryDispatcher.ExecuteQuery(new GetFeChoiceForProvider { ProviderUkprn = course.ProviderUkprn });
 
-            await Task.WhenAll(getProvider, getQualification, getFeChoice);
+            await Task.WhenAll(getProvider, getQualification);
 
             var provider = getProvider.Result;
-            var qualification = getQualification.Result.Items.SingleOrDefault();
-            var feChoice = getFeChoice.Result;
+            var getProviderContact = _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = provider.ProviderId });
 
-            var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = provider.Id });
-            var getProviderVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = provider.Id });
+            var qualification = getQualification.Result.Items.SingleOrDefault();
+
+            var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(new GetProviderById { ProviderId = provider.ProviderId });
+            var getProviderVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = provider.ProviderId });
 
             await Task.WhenAll(getSqlProvider, getProviderVenues);
 
@@ -79,8 +74,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 ? venues.Single(v => v.VenueId == courseRun.VenueId)
                 : null;
 
-            var providerContact = provider.ProviderContact.SingleOrDefault(c => c.ContactType == "P");
-            var providerAddressLines = NormalizeAddress(providerContact?.ContactAddress);
+            var providerContact = getProviderContact.Result;
+            var providerAddressLines = NormalizeAddress(providerContact);
 
             var alternativeCourseRuns = course.CourseRuns
                 .Where(r => r.CourseRunId != request.CourseRunId && r.CourseRunStatus == CourseStatus.Live)
@@ -136,23 +131,23 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     }
                     : null,
                 Provider = new ProviderViewModel
-                {
+                { 
                     ProviderName = sqlProvider.DisplayName,
                     TradingName = sqlProvider.DisplayName,
                     CourseDirectoryName = provider.CourseDirectoryName,
                     Alias = provider.Alias,
-                    Ukprn = provider.UnitedKingdomProviderReferenceNumber,
+                    Ukprn = provider.Ukprn.ToString(),
                     AddressLine1 = HtmlEncode(providerAddressLines.AddressLine1),
                     AddressLine2 = HtmlEncode(providerAddressLines.AddressLine2),
-                    Town = HtmlEncode(providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.FirstOrDefault()?.ToString()),
-                    Postcode = providerContact?.ContactAddress?.PostCode,
-                    County = HtmlEncode(providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Locality),
-                    Telephone = providerContact?.ContactTelephone1,
-                    Fax = providerContact?.ContactFax,
-                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
-                    Email = providerContact?.ContactEmail,
-                    EmployerSatisfaction = feChoice?.EmployerSatisfaction,
-                    LearnerSatisfaction = feChoice?.LearnerSatisfaction,
+                    Town = HtmlEncode(providerContact?.AddressPostTown),
+                    Postcode = HtmlEncode(providerContact?.AddressPostcode),
+                    County = HtmlEncode(providerContact?.AddressCounty) ?? providerContact?.AddressLocality,
+                    Telephone = providerContact?.Telephone1,
+                    Fax = providerContact?.Fax,
+                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress),
+                    Email = providerContact?.Email,
+                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction,
+                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
                 },
                 Qualification = new QualificationViewModel
                 {
@@ -213,7 +208,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
             static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);
 
-            static (string AddressLine1, string AddressLine2) NormalizeAddress(ProviderContactAddress address)
+            static (string AddressLine1, string AddressLine2) NormalizeAddress(ProviderContact address)
             {
                 if (address == null)
                 {
@@ -222,9 +217,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
                 var parts = new[]
                 {
-                    address?.SAON?.Description,
-                    address?.PAON?.Description,
-                    address?.StreetDescription
+                    address?.AddressSaonDescription,
+                    address?.AddressPaonDescription,
+                    address?.AddressStreetDescription
                 }.Where(part => !string.IsNullOrWhiteSpace(part)).ToArray();
 
                 // Join all parts except the last into a single line and make that line 1

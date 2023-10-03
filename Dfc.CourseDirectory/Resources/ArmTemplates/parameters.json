@@ -116,18 +116,11 @@
     "ProviderPortalSharedResourceGroupName": {
       "value": "__providerPortalResourceGroup__"
     },
-    "CosmosAccountEndpoint": {
-      "value": "__providerPortalCosmosDbFqdn__"
-    },
-    "CosmosAccountAccessKey": {
-      "value": "__providerPortalCosmosDBPrimaryKey__"
-    },
+    
     "RedisCacheName": {
       "value": "__providerPortalRedisCacheName__"
     },
-    "providerPortalCosmosDbConnectionString": {
-      "value": "__providerPortalCosmosDbConnectionString__"
-    },
+    
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"
     },

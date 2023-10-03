@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 
 namespace Dfc.CourseDirectory.Testing
@@ -10,8 +9,6 @@ namespace Dfc.CourseDirectory.Testing
     public partial class TestData
     {
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly SqlDataSync _sqlDataSync;
         private readonly IClock _clock;
         private readonly UniqueIdHelper _uniqueIdHelper;
         private readonly SemaphoreSlim _dispatcherLock = new SemaphoreSlim(1, 1);
@@ -19,14 +16,10 @@ namespace Dfc.CourseDirectory.Testing
 
         public TestData(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            SqlDataSync sqlDataSync,
             IClock clock,
             UniqueIdHelper uniqueIdHelper)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _sqlDataSync = sqlDataSync;
             _clock = clock;
             _uniqueIdHelper = uniqueIdHelper;
         }
