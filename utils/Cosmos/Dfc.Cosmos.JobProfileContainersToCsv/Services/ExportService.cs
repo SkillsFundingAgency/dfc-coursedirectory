@@ -22,15 +22,11 @@ namespace Dfc.Cosmos.JobProfileContainersToCsv.Services
         private Task WriteCsvFile(string fileName, List<ExportRow> exportData)
         {
             string outputFileName = fileName;
-            var writer = new StreamWriter(outputFileName);
-            var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.WriteHeader<ExportRow>();
-            csv.NextRecord();
-            foreach (var record in exportData)
+            using var writer = new StreamWriter(outputFileName);            
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csv.WriteRecord(record);
-                csv.NextRecord();
-            }
+                csv.WriteRecords(exportData);
+            }            
 
             return Task.CompletedTask;
         }
