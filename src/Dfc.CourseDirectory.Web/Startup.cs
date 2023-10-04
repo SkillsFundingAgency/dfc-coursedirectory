@@ -220,6 +220,7 @@ namespace Dfc.CourseDirectory.Web
                         "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
                         //provider-search
                         "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
+                        "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
                         //Courses
                         "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
                         "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
@@ -228,6 +229,8 @@ namespace Dfc.CourseDirectory.Web
                         //ProviderCourses
                         "sha256-fUgH5XnPX9RfHSGD/tc9BW56h7qGMQmbkF8ephN+O84=",
                         "sha256-f265cqgVJGKF5FzP79WDAY7j3k5HwpnQyKvZq2YERz8=",
+                        "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
+                        "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=",
                         //Courses - CopyCourseRun
                         "sha256-2clrXW+/bEbufPlAwRVqvk/W2LGlkC/jej3qSUX+h4g=",
                         "sha256-UREXRjOigNA7d4vVChFbfHyzl1+DWBUHCF4antGyqNU=",
@@ -245,6 +248,10 @@ namespace Dfc.CourseDirectory.Web
                         "sha256-RVouMPytFTnZo+SPrlAgypQidwPQt25rN2siNrPGPLg=",
                         //Venues - delete
                         "sha256-pBkIZd5tfDFCLPmEDcf2/Rr0dUVf3Wn2+PE+E7hFCu0=",
+                        //Dashboard
+                        "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
+                        //CourseSummary
+                        "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=", 
                         "https://cloud.tinymce.com",
                         "https://cdn.tiny.cloud",
                         "www.googletagmanager.com",
@@ -284,7 +291,8 @@ namespace Dfc.CourseDirectory.Web
                 .ConnectSources(s => s
                     .Self()
                     .CustomSources(
-                        "https://www.google-analytics.com"))
+                        "https://www.google-analytics.com",
+                        "https://region1.google-analytics.com"))
                 );
 
             //Preventing ClickJacking Attacks
