@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Caching.Distributed;
@@ -213,34 +212,54 @@ namespace Dfc.CourseDirectory.Web
                 .ScriptSources(s => s
                     .Self()
                     .CustomSources(
-                    //Home page
-                    "sha256-wd6zPqofWjb5TSs4XzK3yLqmM6aUHeduDqEKaDQSWoU=",
-                    "sha256-xY2DAB/H7eBQZT2luzwwjJh9xLZKg/fW/ETrbm3/4NM=",
-                    "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
-                    "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
-                    "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
-                    //provider-search
-                    "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
-                    //Courses
-                    "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
-                    "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
-                    "https://cloud.tinymce.com",
-                    "https://cdn.tiny.cloud",
-                    "www.googletagmanager.com",
-                    "https://cdnjs.cloudflare.com/",
-                    "https://www.google-analytics.com"))
+                        //Home page
+                        "sha256-wd6zPqofWjb5TSs4XzK3yLqmM6aUHeduDqEKaDQSWoU=",
+                        "sha256-xY2DAB/H7eBQZT2luzwwjJh9xLZKg/fW/ETrbm3/4NM=",
+                        "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
+                        "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
+                        "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
+                        //provider-search
+                        "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
+                        //Courses
+                        "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
+                        "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
+                        //data-upload
+                        "sha256-8mM6pQH4tNl8njGuUbm8zDyM4gItu1D+byUinrcbKCk=",
+                        //ProviderCourses
+                        "sha256-fUgH5XnPX9RfHSGD/tc9BW56h7qGMQmbkF8ephN+O84=",
+                        "sha256-f265cqgVJGKF5FzP79WDAY7j3k5HwpnQyKvZq2YERz8=",
+                        //Courses - CopyCourseRun
+                        "sha256-2clrXW+/bEbufPlAwRVqvk/W2LGlkC/jej3qSUX+h4g=",
+                        "sha256-UREXRjOigNA7d4vVChFbfHyzl1+DWBUHCF4antGyqNU=",
+                        "sha256-DNnLQcF+8AYGGsdspJInJ7ZZrRJ6dV4o5FGq66/oLPE=",
+                        "sha256-bwiUuMVp/Stp46vAXZMeKQmhMI6tdZ1Yx4RSj7gvieM=",
+                        "sha256-vwoeBAEG9+ZzZi+NvCog0gCipVdqPSwIas2vbD+CNFU=",
+                        "sha256-PNdTPqwsL8wM1mVq8q9r67TxclTEEaFHiXshczqmu28=",
+                        "sha256-yiXTcuJK6mwrqILfFetO15Pcpq4DzPFdMBTc3gVtbpo=",
+                        "sha256-0HAFMtm1VzJDFQVbBhovhV/tae4xRJ8cfEu1koNDf3M=",
+                        //Courses delete
+                        "sha256-OYkOIzgZMarSeILfpnILAN3UBc497xQPKoluN3dLq/4=",
+                        //Courses - EditCourseRun
+                        "sha256-oIYTvhTO4ThyjBA5aSgReXOgPoQWR6lYxYDsbYgrlDQ=",
+                        //t-levels
+                        "sha256-RVouMPytFTnZo+SPrlAgypQidwPQt25rN2siNrPGPLg=",
+                        //Venues - delete
+                        "sha256-pBkIZd5tfDFCLPmEDcf2/Rr0dUVf3Wn2+PE+E7hFCu0=",
+                        "https://cloud.tinymce.com",
+                        "https://cdn.tiny.cloud",
+                        "www.googletagmanager.com",
+                        "https://cdnjs.cloudflare.com/",
+                        "https://www.google-analytics.com"))
                 .StyleSources(s => s
                     .Self()
+                    .UnsafeInline()
                     .CustomSources(
-                    "data:",
-                    "https://cdn.tiny.cloud/",
-                    "https://www.googletagmanager.com/",
-                    "https://tagmanager.google.com/",
-                    "https://fonts.googleapis.com/",
-                    "https://cloud.tinymce.com/",
-                    "https://cdnjs.cloudflare.com/",
-                    //Courses
-                    "sha256-biLFinpqYMtWHmXfkA1BPeCY0/fNt46SAZ+BBk5YUog="))
+                        "https://cdn.tiny.cloud/",
+                        "https://www.googletagmanager.com/",
+                        "https://tagmanager.google.com/",
+                        "https://fonts.googleapis.com/",
+                        "https://cloud.tinymce.com/",
+                        "https://cdnjs.cloudflare.com/"))
                 .FormActions(s => s
                     .Self()
                     )
@@ -250,28 +269,22 @@ namespace Dfc.CourseDirectory.Web
                         "data:",
                         "https://fonts.googleapis.com/",
                         "https://fonts.gstatic.com/",
-                        "https://cdn.tiny.cloud/"
-                        )
-                    )
+                        "https://cdn.tiny.cloud/"))
                 .ImageSources(s => s
                     .Self()
                     .CustomSources(
                         "*",
                         "data:",
-                        "https://cdn.tiny.cloud/"
-                        )
-                    )
+                        "https://cdn.tiny.cloud/"))
                 .FrameAncestors(s => s.Self())
                 .FrameSources(s => s
                     .Self()
-                    .CustomSources("https://optimize.google.com")
-                    )
+                    .CustomSources(
+                        "https://optimize.google.com"))
                 .ConnectSources(s => s
                     .Self()
                     .CustomSources(
-                        "https://www.google-analytics.com"
-                        )
-                    )
+                        "https://www.google-analytics.com"))
                 );
 
             //Preventing ClickJacking Attacks
