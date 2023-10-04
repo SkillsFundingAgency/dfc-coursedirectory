@@ -251,7 +251,12 @@ namespace Dfc.CourseDirectory.Web
                         //Dashboard
                         "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
                         //CourseSummary
-                        "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=", 
+                        "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=",
+                        //RegulatedQualification
+                        "sha256-wlhq0O7MI86vRqF5r0g82JnVyJtT0Sta+p+ThlaYJgA=",
+                        //UnregulatedCourses
+                        "sha256-bvwZCPRDhFUpa5Z9qFxBLFkCUvvRc6eFVEGukYQpgx4=",
+                        "sha256-LFsotuEqS5Hq/sNF1lWC3h0CvmFCCFKDw3szys+mzUo=",
                         "https://cloud.tinymce.com",
                         "https://cdn.tiny.cloud",
                         "www.googletagmanager.com",
