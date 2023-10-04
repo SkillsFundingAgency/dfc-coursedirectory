@@ -52,11 +52,11 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(590);
+                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(594);
                 (await CountSqlRows("LARS.Category")).Should().Be(66);
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(125);
-                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(126457);
-                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(89257);
+                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(126612);
+                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(89348);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
             }

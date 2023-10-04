@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace Dfc.CourseDirectory.Testing
 {

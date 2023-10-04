@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
-//using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Configuration;
@@ -47,12 +45,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             Directory.CreateDirectory(extractDirectory);
 
             await DownloadFiles();
-
-            await ImportProgTypesToCosmos();
-            await ImportSectorSubjectAreaTier1sToCosmos();
-            await ImportSectorSubjectAreaTier2sToCosmos();
-            await ImportStandardsToCosmos();
-            await ImportStandardSectorCodesToCosmos();
 
             await ImportValidityToSql();
             await ImportAwardOrgCodeToSql();
