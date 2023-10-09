@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Controllers
 {
@@ -9,10 +11,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly IMediator _mediator;
-
-        public CoursesController(IMediator mediator)
+        private readonly ILogger<CoursesController> _log;
+        public CoursesController(IMediator mediator, ILogger<CoursesController> log)
         {
             _mediator = mediator;
+            _log = log;
         }
 
         [HttpGet("~/courserundetail")]
@@ -22,11 +25,20 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CourseRunDetail([FromQuery] Features.CourseRunDetail.Query request)
         {
+            _log.LogInformation($"Start Getting Course Run Details for [{request.CourseRunId}] in course [{request.CourseId}]");
+
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => NotFound(),
-                r => Ok(r));
+                _ => {
+                    _log.LogWarning($"Failed to get Course Run Detail for [{request.CourseRunId}] in course [{request.CourseId}]. Response Code [NOT FOUND]");
+                    return NotFound();
+                },
+                r => {
+                    _log.LogInformation($"Successfully retrieved Course Run Detail for [{request.CourseRunId}] in course [{request.CourseId}]. Response Code [OK]");
+                    return Ok(r);
+                }
+            );
         }
     }
 }
