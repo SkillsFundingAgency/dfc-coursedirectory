@@ -257,6 +257,17 @@ namespace Dfc.CourseDirectory.Web
                         //UnregulatedCourses
                         "sha256-bvwZCPRDhFUpa5Z9qFxBLFkCUvvRc6eFVEGukYQpgx4=",
                         "sha256-LFsotuEqS5Hq/sNF1lWC3h0CvmFCCFKDw3szys+mzUo=",
+                        //Qualifications
+                        "sha256-b9m8owmLL4iYFsGHexbZ85GmGpFbePbN4Rnfz7szdg8=",
+                        //AddCourse
+                        "sha256-Is80Du2GGHMXEmGLdgEMpaLet3g5p2m3ZevQLiXqPOk=",
+                        "sha256-+Z+Ce/JiyDJZIo6lBN9TVKqcb5k/JSXvL3R1UA9MEL4=",
+                        "sha256-gE7druySJnXDZoFxKyjqkI4iKOW4thiekFRMMAYy2ZA=",
+                        "sha256-H7+/MNCK+0LbdYlNDCepR4I8LbtD/gCl+PsW1R0zEEk=",
+                        "sha256-/Z/1KxoV+yf+iFG3LokZo3pKocPTAEfUSQThQMCnfpI=",
+                        "sha256-jHHTximqvghRcS88/v8Nnob7jLblDDZMsGbMNaj9KXo=",
+                        "sha256-p1X5nmO0BfA3MtbueEN7S7tjVSIY2ALKIzojhEEUesk=",
+                        "sha256-G7zhXgoFlCB8ealB1LhGmIoeyreYYhwHgPbSTGoZEDg=", 
                         "https://cloud.tinymce.com",
                         "https://cdn.tiny.cloud",
                         "www.googletagmanager.com",
