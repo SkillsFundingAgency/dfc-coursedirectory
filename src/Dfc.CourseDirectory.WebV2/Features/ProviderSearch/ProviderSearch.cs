@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using OneOf.Types;
 using SearchModels = Dfc.CourseDirectory.Core.Search.Models;
@@ -48,26 +49,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
     {
         private readonly ISearchClient<SearchModels.Provider> _providerSearchClient;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ILogger<Handler> _log;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
 
         public Handler(
             ISearchClient<SearchModels.Provider> providerSearchClient,
+            ILogger<Handler> log,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock)
         {
             _providerSearchClient = providerSearchClient;
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _log = log;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
+
+
             // When no search query is in the request return null Providers so we don't show the results table
             if (request.SearchQuery == null)
             {
+                _log.LogInformation($"No search query.Returning null");
+
                 return new ViewModel
                 {
                     ProviderSearchResults = null
@@ -77,6 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
             // Return empty results when they search query is empty or whitespace
             if (string.IsNullOrWhiteSpace(request.SearchQuery))
             {
+                _log.LogInformation($"Empty search query. rning empty collection");
                 return new ViewModel
                 {
                     ProviderSearchResults = Array.Empty<ProviderSearchResultViewModel>()

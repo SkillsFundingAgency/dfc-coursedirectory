@@ -13,6 +13,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using OneOf.Types;
 
@@ -77,16 +78,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ILogger<Handler> _log;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
+            ILogger<Handler> log,
             IFileUploadProcessor fileUploadProcessor,
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _fileUploadProcessor = fileUploadProcessor;
+            _log = log;
             _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
         }
@@ -97,35 +101,42 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             Command request,
             CancellationToken cancellationToken)
         {
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Upload courses file started for the provider: [{providerId}]");
             var validator = new CommandValidator();
             var result = await validator.ValidateAsync(request);
 
             if (!result.IsValid)
             {
+                _log.LogWarning($"Upload failed with validation errors [{result.Errors}] for provider: [{providerId}].");
                 return new UploadFailedResult(await CreateViewModel(), result);
             }
 
             using var stream = request.File.OpenReadStream();
 
             var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
-                _providerContextProvider.GetProviderId(),
+                providerId,
                 stream,
                 _currentUserProvider.GetCurrentUser());
 
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. The selected file must be a CSV");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must be a CSV");
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidRows)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. The selected file must use the template");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must use the template");
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidHeader)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. Headings must be in the correct format");
+
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "Enter headings in the correct format",
@@ -133,6 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidLars)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. File contains invalid LARS");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The file contains errors",
@@ -143,6 +155,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.EmptyFile)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. The file is empty");
+
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file is empty");

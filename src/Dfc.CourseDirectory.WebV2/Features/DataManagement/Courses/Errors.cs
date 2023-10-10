@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using OneOf.Types;
 
@@ -63,28 +64,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly ILogger<Handler> _log;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
+            ILogger<Handler> log,
             IFileUploadProcessor fileUploadProcessor,
             ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
+            _log = log;
             _fileUploadProcessor = fileUploadProcessor;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
-                _providerContextProvider.GetProviderId());
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Getting Course Upload Rows with errors for the provider: [{providerId}]");
+            var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(providerId);
 
             if (errorRows.Count == 0)
             {
+                _log.LogInformation($"No rows with errors found");
                 return new UploadHasNoErrors();
             }
-
+            _log.LogInformation($"[{errorRows.Count}] rows with errors returned for the provider: [{providerId}]");
             return await CreateViewModel(errorRows);
         }
 

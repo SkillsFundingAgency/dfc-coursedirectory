@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
@@ -42,31 +43,38 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ILogger<Handler> _log;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
+            ILogger<Handler> log,
             ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _log = log;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber);
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Deleting a Course Row for the provider: [{providerId}]");
+            
             if (!request.Confirm)
             {
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
+                _log.LogWarning($"Course Row not deleted. Confirmation required to delete a course for provider: [{providerId}].");
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
 
-            return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber);
+            return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(providerId, request.RowNumber);
         }
 
         private async Task<ViewModel> CreateViewModel(int rowNumber)

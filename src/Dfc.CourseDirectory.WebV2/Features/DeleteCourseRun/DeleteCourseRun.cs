@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteCourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
@@ -73,6 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
     {
         private readonly IProviderOwnershipCache _providerOwnershipCache;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ILogger<Handler> _log;
         private readonly JourneyInstance<JourneyModel> _journeyInstance;
         private readonly IClock _clock;
         private readonly ICurrentUserProvider _currentUserProvider;
@@ -80,12 +82,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         public Handler(
             IProviderOwnershipCache providerOwnershipCache,
             ISqlQueryDispatcher sqlQueryDispatcher,
+            ILogger<Handler> log,
             JourneyInstance<JourneyModel> journeyInstance,
             IClock clock,
             ICurrentUserProvider currentUserProvider)
         {
             _providerOwnershipCache = providerOwnershipCache;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _log = log;
             _journeyInstance = journeyInstance;
             _clock = clock;
             _currentUserProvider = currentUserProvider;
@@ -99,6 +103,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, SuccessViewModel>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var providerId = (await _providerOwnershipCache.GetProviderForCourse(request.CourseId)).Value;
+            _log.LogInformation($"Deleting course run started for courseId [{request.CourseId}] and the provider: [{providerId}]");
+
+
             var (course, courseRun) = await GetCourseAndCourseRun(request.CourseId, request.CourseRunId);
 
             if (!request.Confirm)
@@ -108,10 +116,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
+                _log.LogWarning($"Course Run not deleted. Confirmation required to delete the course for provider: [{providerId}].");
+
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var providerId = (await _providerOwnershipCache.GetProviderForCourse(request.CourseId)).Value;
 
             await _sqlQueryDispatcher.ExecuteQuery(new DeleteCourseRunQuery()
             {
@@ -179,10 +188,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         private async Task<(Course Course, CourseRun CourseRun)> GetCourseAndCourseRun(Guid courseId, Guid courseRunId)
         {
+            _log.LogInformation($"Getting Course and Course Run");
+
             var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
 
             if (course == null)
             {
+                _log.LogError($"Course with Id [{courseId}] does not exist.");
+
                 throw new ResourceDoesNotExistException(ResourceType.Course, courseId);
             }
 
@@ -190,6 +203,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
             if (courseRun == null)
             {
+                _log.LogError($"Course Run with Id [{courseRunId}] does not exist for the course [{courseId}].");
+
                 throw new ResourceDoesNotExistException(ResourceType.CourseRun, courseRunId);
             }
 

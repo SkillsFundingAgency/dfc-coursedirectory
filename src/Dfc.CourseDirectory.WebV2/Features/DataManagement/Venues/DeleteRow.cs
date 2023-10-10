@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
@@ -37,12 +38,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ILogger<Handler> _log;
         private readonly IFileUploadProcessor _fileUploadProcessor;
 
         public Handler(
+            ILogger<Handler> log,
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor)
         {
+            _log = log;
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
         }
@@ -51,30 +55,43 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteRow
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var providerId = _providerContextProvider.GetProviderId();
+
+            _log.LogInformation($"Deleting Venue upload row for the provider: [{providerId}]");
+
             if (!request.Confirm)
             {
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete this venue")
                 });
+                _log.LogWarning($"Row not deleted. Confirmation required to delete venue for provider: [{providerId}].");
+
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
 
-            return await _fileUploadProcessor.DeleteVenueUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber);
+            return await _fileUploadProcessor.DeleteVenueUploadRowForProvider(providerId, request.RowNumber);
         }
 
         private async Task<ViewModel> CreateViewModel(int rowNumber)
         {
-            var (rows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(_providerContextProvider.GetProviderId());
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Creating view model for venue upload row delete page.");
+
+            var (rows, _) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(providerId);
 
             var row = rows.SingleOrDefault(r => r.RowNumber == rowNumber);
             if (row == null)
             {
+                _log.LogError($"Venue Upload Row [{rowNumber}] is null. Resource does not exist for provider: [{providerId}].");
+
                 throw new ResourceDoesNotExistException(ResourceType.VenueUploadRow, rowNumber);
             }
 
             if (!row.IsDeletable)
             {
+                _log.LogError($"Venue Upload Row [{rowNumber}] is not deletable for provider: [{providerId}].");
+
                 throw new InvalidStateException(InvalidStateReason.VenueUploadRowCannotBeDeleted);
             }
 

@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using OneOf.Types;
 
@@ -23,11 +24,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteUpload
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly ILogger<Handler> _log;
         private readonly IProviderContextProvider _providerContextProvider;
 
-        public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
+        public Handler(IFileUploadProcessor fileUploadProcessor, ILogger<Handler> log, IProviderContextProvider providerContextProvider)
         {
             _fileUploadProcessor = fileUploadProcessor;
+            _log = log;
             _providerContextProvider = providerContextProvider;
         }
 
@@ -36,16 +39,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DeleteUpload
 
         public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Deleting venue upload for the provider: [{providerId}]");
+
             if (!request.Confirm)
             {
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete these venues")
                 });
+                _log.LogWarning($"Venue Upload not deleted. Confirmation required to delete venues for provider: [{providerId}].");
+
                 return new ModelWithErrors<Command>(new Command(), validationResult);
             }
 
-            await _fileUploadProcessor.DeleteVenueUploadForProvider(_providerContextProvider.GetProviderId());
+            await _fileUploadProcessor.DeleteVenueUploadForProvider(providerId);
 
             return new Success();
         }

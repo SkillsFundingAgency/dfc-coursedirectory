@@ -15,6 +15,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OneOf;
 
@@ -69,6 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
         IRequestHandler<Command, OneOf<UploadFailedResult, UploadSucceededResult>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ILogger<Handler> _log;
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
@@ -77,12 +79,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
             IFileUploadProcessor fileUploadProcessor,
+            ILogger<Handler> log,
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IOptions<DataManagementOptions> optionsAccessor)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _fileUploadProcessor = fileUploadProcessor;
+            _log = log;
             _providerContextProvider = providerContextProvider;
             _currentUserProvider = currentUserProvider;
             _optionsAccessor = optionsAccessor;
@@ -96,13 +100,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
         {
             var validator = new CommandValidator();
             var result = await validator.ValidateAsync(request);
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Upload venues file started for the provider: [{providerId}]");
 
             if (!result.IsValid)
             {
+                _log.LogWarning($"Upload failed with validation errors [{result.Errors}] for provider: [{providerId}].");
                 return new UploadFailedResult(await CreateViewModel(), result);
             }
 
-            var providerId = _providerContextProvider.GetProviderId();
 
             using var stream = request.File.OpenReadStream();
 
@@ -113,18 +119,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
 
             if (saveFileResult.Status == SaveVenueFileResultStatus.InvalidFile)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. The selected file must be a CSV");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must be a CSV");
             }
             else if (saveFileResult.Status == SaveVenueFileResultStatus.InvalidRows)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. The selected file must use the template");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file must use the template");
             }
             else if (saveFileResult.Status == SaveVenueFileResultStatus.InvalidHeader)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. Headings must be in the correct format");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "Enter headings in the correct format",
@@ -132,6 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
             }
             else if (saveFileResult.Status == SaveVenueFileResultStatus.EmptyFile)
             {
+                _log.LogWarning($"Upload for provider: [{providerId}] failed. The file is empty");
                 return new UploadFailedResult(
                     await CreateViewModel(),
                     "The selected file is empty");
@@ -158,6 +168,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
             }
             catch (OperationCanceledException)
             {
+                _log.LogInformation($"Upload for the provider: [{providerId}] still being processed");
+
                 return UploadSucceededResult.ProcessingInProgress;
             }
         }

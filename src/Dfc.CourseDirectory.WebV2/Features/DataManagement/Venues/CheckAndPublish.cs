@@ -11,6 +11,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPublish
@@ -48,16 +49,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly ILogger<Handler> _log;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
+            ILogger<Handler> log,
             IFileUploadProcessor fileUploadProcessor,
             ICurrentUserProvider currentUserProvider,
             JourneyInstanceProvider journeyInstanceProvider)
         {
             _providerContextProvider = providerContextProvider;
+            _log = log;
             _fileUploadProcessor = fileUploadProcessor;
             _currentUserProvider = currentUserProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
@@ -65,10 +69,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(_providerContextProvider.GetProviderId());
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Getting Venue Upload Rows for the provider: [{providerId}]");
+
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(providerId);
 
             if (uploadStatus == UploadStatus.ProcessedWithErrors)
             {
+                _log.LogWarning($"Get Venue Upload Rows failed. Upload status: [ProcessedWithErrors]");
+
                 return new UploadHasErrors();
             }
 
@@ -78,6 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
         public async Task<OneOf<ModelWithErrors<ViewModel>, PublishResult>> Handle(Command request, CancellationToken cancellationToken)
         {
             var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Trying to publish venue upload for the provider: [{providerId}]");
 
             if (!request.Confirm)
             {
@@ -88,6 +98,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to publish these venues")
                 });
+                _log.LogWarning($"Venue Upload not published. Confirmation required to publish courses for provider: [{providerId}].");
+
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
@@ -98,6 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPubli
                 var journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new PublishJourneyModel());
                 journeyInstance.UpdateState(state => state.VenuesPublished = publishResult.PublishedCount);
             }
+            _log.LogInformation($"Publish [{publishResult.PublishedCount}] venues completed with status [{publishResult.Status}] for the provider: [{providerId}]");
 
             return publishResult;
         }

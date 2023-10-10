@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDescription
@@ -34,10 +35,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, UploadStatus>>
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly ILogger<Handler> _log;
         private readonly IProviderContextProvider _providerContextProvider;
 
-        public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
+        public Handler(IFileUploadProcessor fileUploadProcessor, ILogger<Handler> log,  IProviderContextProvider providerContextProvider)
         {
+            _log = log;
             _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
         }

@@ -12,6 +12,7 @@ using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using OneOf.Types;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -57,6 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         IRequestHandler<Command, OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>>
     {
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ILogger<Handler> _log;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IProviderInfoCache _providerInfoCache;
         private readonly IClock _clock;
@@ -65,12 +67,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         public Handler(
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
+            ILogger<Handler> log,
             IProviderInfoCache providerInfoCache,
             IClock clock,
             ICurrentUserProvider currentUserProvider)
         {
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _log = log;
             _providerInfoCache = providerInfoCache;
             _clock = clock;
             _currentUserProvider = currentUserProvider;
@@ -93,8 +97,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
+            _log.LogInformation($"Edit provider type started for the provider: [{request.ProviderId}].");
+
             if (request.Confirm == false)
             {
+                _log.LogWarning($"Edit failed. Confirmation required to proceed.");
+
                 return new Cancel();
             }
 
@@ -104,6 +112,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
             if (!validationResult.IsValid)
             {
+                _log.LogWarning($"Edit failed. Validation errors: [{validationResult.Errors}].");
+
                 return new ModelWithErrors<ViewModel>(
                     CreateViewModel(request.ProviderId, request.ProviderType, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
                     validationResult);
@@ -138,8 +148,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                     // Using AffectedTLevelIdsChecksum to establish if this the first call to confirm
                     if (request.AffectedTLevelIdsChecksum == null)
                     {
+                        _log.LogInformation($"[{confirmViewModel.AffectedItemCounts}] tlevels affected by the edit. Confirmation required to proceed.");
+
                         return confirmViewModel;
                     }
+                    _log.LogWarning($"Edit failed. Validation errors: [{confirmValidationResult.Errors}].");
 
                     return new ModelWithErrors<ConfirmViewModel>(
                         confirmViewModel,

@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGroup
@@ -47,13 +48,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ILogger<Handler> _log;
 
         public Handler(
             IFileUploadProcessor fileUploadProcessor,
             IProviderContextProvider providerContextProvider,
+            ILogger<Handler> log,
             ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _fileUploadProcessor = fileUploadProcessor;
+            _log = log;
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
@@ -62,20 +66,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Deleting Course Row Group for the provider: [{providerId}]");
             if (!request.Confirm)
             {
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
+                _log.LogWarning($"Course Row Group not deleted. Confirmation required to delete a course for provider: [{providerId}].");
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
             }
 
-            var providerId = _providerContextProvider.GetProviderId();
             var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, request.RowNumber);
 
             if (row == null)
             {
+                _log.LogError($"Course Row not deleted for provider: [{providerId}]. Row is null");
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, request.RowNumber);
             }
 

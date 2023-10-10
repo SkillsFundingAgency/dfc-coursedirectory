@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.WebV2.Mvc;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
@@ -20,13 +21,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
     [RestrictProviderTypes(ProviderType.FE)]
     public class CoursesDataManagementController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly IMediator _mediator; 
+        private readonly ILogger<CoursesDataManagementController> _log;
         private readonly IProviderContextProvider _providerContextProvider;
 
-        public CoursesDataManagementController(IMediator mediator, IProviderContextProvider providerContextProvider)
+        public CoursesDataManagementController(IMediator mediator, ILogger<CoursesDataManagementController> log, IProviderContextProvider providerContextProvider)
         {
             _mediator = mediator;
             _providerContextProvider = providerContextProvider;
+            _log = log;
         }
 
         [HttpGet("")]
@@ -37,6 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         public async Task<IActionResult> Upload(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
+            _log.LogInformation($"Attempting to upload a file");
 
             return await _mediator.SendAndMapResponse(
                 new Upload.Command()
@@ -57,6 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         {
                             ModelState.AddModelError(nameof(command.File), "The file contains errors and could not be uploaded");
                         }
+                        _log.LogWarning($"The upload failed because file contains errors: [{errors}].");
 
                         return this.ViewFromErrors(errors);
                     },

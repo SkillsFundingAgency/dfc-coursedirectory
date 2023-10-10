@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPublish
@@ -58,27 +59,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ILogger<Handler> _log;
+
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
             ICurrentUserProvider currentUserProvider,
             JourneyInstanceProvider journeyInstanceProvider,
+            ILogger<Handler> log,
             ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _currentUserProvider = currentUserProvider;
             _journeyInstanceProvider = journeyInstanceProvider;
+            _log = log;
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId());
-
+            var providerId = _providerContextProvider.GetProviderId();
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId);
+            _log.LogInformation($"Getting Course Upload Rows for the provider: [{providerId}]");
             if (uploadStatus == UploadStatus.ProcessedWithErrors)
             {
+                _log.LogWarning($"Get Course Upload Rows failed. Upload status: [ProcessedWithErrors]");
                 return new UploadHasErrors();
             }
 
@@ -88,6 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
         public async Task<OneOf<ModelWithErrors<ViewModel>, PublishResult>> Handle(Command request, CancellationToken cancellationToken)
         {
             var providerId = _providerContextProvider.GetProviderId();
+            _log.LogInformation($"Trying to publish course upload for the provider: [{providerId}]");
 
             if (!request.Confirm)
             {
@@ -98,6 +106,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to publish these courses")
                 });
+
+                _log.LogWarning($"Course Upload not published. Confirmation required to publish courses for provider: [{providerId}].");
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
@@ -108,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 var journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new PublishJourneyModel());
                 journeyInstance.UpdateState(state => state.CoursesPublished = publishResult.PublishedCount);
             }
-
+            _log.LogInformation($"Publish [{publishResult.PublishedCount}] courses completed with status [{publishResult.Status}] for the provider: [{providerId}]");
             return publishResult;
         }
 
