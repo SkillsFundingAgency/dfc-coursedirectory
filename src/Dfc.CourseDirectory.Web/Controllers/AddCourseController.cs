@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
@@ -679,13 +680,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var addCourseSection1 = Session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
-            var courseFor = addCourseSection1.CourseFor;
-            var entryRequirements = addCourseSection1.EntryRequirements;
-            var whatWillLearn = addCourseSection1.WhatWillLearn;
-            var howYouWillLearn = addCourseSection1.HowYouWillLearn;
-            var whatYouNeed = addCourseSection1.WhatYouNeed;
-            var howAssessed = addCourseSection1.HowAssessed;
-            var whereNext = addCourseSection1.WhereNext;
+            var courseFor = RemoveASCII(addCourseSection1.CourseFor);
+            var entryRequirements = RemoveASCII(addCourseSection1.EntryRequirements);
+            var whatWillLearn = RemoveASCII(addCourseSection1.WhatWillLearn);
+            var howYouWillLearn = RemoveASCII(addCourseSection1.HowYouWillLearn);
+            var whatYouNeed = RemoveASCII(addCourseSection1.WhatYouNeed);
+            var howAssessed = RemoveASCII(addCourseSection1.HowAssessed);
+            var whereNext = RemoveASCII(addCourseSection1.WhereNext);
             var advancedLearnerLoan = addCourseSection1.AdvancedLearnerLoan;
             var adultEducationBudget = addCourseSection1.AdultEducationBudget;
 
@@ -1113,8 +1114,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
-
             return viewModel;
+        }
+
+        private static string RemoveASCII(string src)
+        {
+            return Regex.Replace(src, @"[^\u0000-\u007F]", "");
         }
         #endregion
 
