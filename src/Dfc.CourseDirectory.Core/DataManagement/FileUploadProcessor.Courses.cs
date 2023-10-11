@@ -684,16 +684,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         {
                             AttendancePattern = r.AttendancePattern,
                             Cost = r.Cost,
-                            CostDescription = RemoveASCII(r.CostDescription),
+                            CostDescription = r.CostDescription,
                             CourseName = r.CourseName,
                             CourseWebPage = r.CourseWebPage,
                             DeliveryMode = r.DeliveryMode,
                             Duration = r.Duration,
                             DurationUnit = r.DurationUnit,
-                            EntryRequirements = RemoveASCII(update.EntryRequirements),
+                            EntryRequirements = update.EntryRequirements,
                             FlexibleStartDate = r.FlexibleStartDate,
-                            HowYouWillBeAssessed = RemoveASCII(update.HowYouWillBeAssessed),
-                            HowYouWillLearn = RemoveASCII(update.HowYouWillLearn),
+                            HowYouWillBeAssessed = update.HowYouWillBeAssessed,
+                            HowYouWillLearn = update.HowYouWillLearn,
                             LearnAimRef = r.LearnAimRef,
                             NationalDelivery = r.NationalDelivery,
                             ProviderCourseRef = r.ProviderCourseRef,
@@ -702,9 +702,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             StudyMode = r.StudyMode,
                             SubRegions = r.SubRegions,
                             VenueName = r.VenueName,
-                            WhatYouWillLearn = RemoveASCII(update.WhatYouWillLearn),
-                            WhatYouWillNeedToBring =    RemoveASCII(update.WhatYouWillNeedToBring),
-                            WhereNext = RemoveASCII(update.WhereNext),
+                            WhatYouWillLearn = update.WhatYouWillLearn,
+                            WhatYouWillNeedToBring = update.WhatYouWillNeedToBring,
+                            WhereNext = update.WhereNext,
                             WhoThisCourseIsFor = update.WhoThisCourseIsFor
                         },
                         r.RowNumber,
@@ -863,7 +863,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var courseRunId = Guid.NewGuid();
 
                 var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data, allRegions);
-
+                parsedRow.WhoThisCourseIsFor = RemoveASCII(parsedRow.WhoThisCourseIsFor);
+                parsedRow.EntryRequirements = RemoveASCII(parsedRow.EntryRequirements);
+                parsedRow.WhatYouWillLearn = RemoveASCII(parsedRow.WhatYouWillLearn);
+                parsedRow.HowYouWillLearn = RemoveASCII(parsedRow.HowYouWillLearn);
+                parsedRow.WhatYouWillNeedToBring = RemoveASCII(parsedRow.WhatYouWillNeedToBring);
+                parsedRow.HowYouWillBeAssessed = RemoveASCII(parsedRow.HowYouWillBeAssessed);
+                parsedRow.WhereNext = RemoveASCII(parsedRow.WhereNext);
+                parsedRow.CostDescription = RemoveASCII(parsedRow.CostDescription);
                 var matchedVenue = FindVenue(row, providerVenues);
 
                 var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
@@ -881,13 +888,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     CourseId = row.CourseId,
                     CourseRunId = courseRunId,
                     LearnAimRef = parsedRow.LearnAimRef,
-                    WhoThisCourseIsFor = RemoveASCII(parsedRow.WhoThisCourseIsFor),
-                    EntryRequirements = RemoveASCII(parsedRow.EntryRequirements),
-                    WhatYouWillLearn = RemoveASCII(parsedRow.WhatYouWillLearn),
-                    HowYouWillLearn = RemoveASCII(parsedRow.HowYouWillLearn),
-                    WhatYouWillNeedToBring = RemoveASCII(parsedRow.WhatYouWillNeedToBring),
-                    HowYouWillBeAssessed = RemoveASCII(parsedRow.HowYouWillBeAssessed),
-                    WhereNext = RemoveASCII(parsedRow.WhereNext),
+                    WhoThisCourseIsFor = parsedRow.WhoThisCourseIsFor,
+                    EntryRequirements = parsedRow.EntryRequirements,
+                    WhatYouWillLearn = parsedRow.WhatYouWillLearn,
+                    HowYouWillLearn = parsedRow.HowYouWillLearn,
+                    WhatYouWillNeedToBring = parsedRow.WhatYouWillNeedToBring,
+                    HowYouWillBeAssessed = parsedRow.HowYouWillBeAssessed,
+                    WhereNext = parsedRow.WhereNext,
                     CourseName = parsedRow.CourseName,
                     ProviderCourseRef = parsedRow.ProviderCourseRef,
                     DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode) ?? parsedRow.DeliveryMode,
@@ -899,7 +906,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     SubRegions = parsedRow.SubRegions,
                     CourseWebpage = parsedRow.CourseWebPage,
                     Cost = ParsedCsvCourseRow.MapCost(parsedRow.ResolvedCost) ?? parsedRow.Cost,
-                    CostDescription = RemoveASCII(parsedRow.CostDescription),
+                    CostDescription = parsedRow.CostDescription,
                     Duration = ParsedCsvCourseRow.MapDuration(parsedRow.ResolvedDuration) ?? parsedRow.Duration,
                     DurationUnit = ParsedCsvCourseRow.MapDurationUnit(parsedRow.ResolvedDurationUnit) ?? parsedRow.DurationUnit,
                     StudyMode = ParsedCsvCourseRow.MapStudyMode(parsedRow.ResolvedStudyMode) ?? parsedRow.StudyMode,
