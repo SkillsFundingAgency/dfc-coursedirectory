@@ -49,13 +49,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             var command = new Command()
             {
                 RowNumber = request.RowNumber,
-                WhoThisCourseIsFor = row.WhoThisCourseIsFor,
-                EntryRequirements = row.EntryRequirements,
-                WhatYouWillLearn = row.WhatYouWillLearn,
-                HowYouWillLearn = row.HowYouWillLearn,
-                WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
-                HowYouWillBeAssessed = row.HowYouWillBeAssessed,
-                WhereNext = row.WhereNext
+                WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(row.WhoThisCourseIsFor),
+                EntryRequirements = ASCIICodeHelper.RemoveASCII(row.EntryRequirements),
+                WhatYouWillLearn = ASCIICodeHelper.RemoveASCII(row.WhatYouWillLearn),
+                HowYouWillLearn = ASCIICodeHelper.RemoveASCII(row.HowYouWillLearn),
+                WhatYouWillNeedToBring = ASCIICodeHelper.RemoveASCII(row.WhatYouWillNeedToBring),
+                HowYouWillBeAssessed = ASCIICodeHelper.RemoveASCII(row.HowYouWillBeAssessed),
+                WhereNext = ASCIICodeHelper.RemoveASCII(row.WhereNext)
             };
 
             var validator = new CommandValidator();
