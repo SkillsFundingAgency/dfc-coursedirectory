@@ -863,14 +863,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var courseRunId = Guid.NewGuid();
 
                 var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data, allRegions);
-                parsedRow.WhoThisCourseIsFor = RemoveASCII(parsedRow.WhoThisCourseIsFor);
-                parsedRow.EntryRequirements = RemoveASCII(parsedRow.EntryRequirements);
-                parsedRow.WhatYouWillLearn = RemoveASCII(parsedRow.WhatYouWillLearn);
-                parsedRow.HowYouWillLearn = RemoveASCII(parsedRow.HowYouWillLearn);
-                parsedRow.WhatYouWillNeedToBring = RemoveASCII(parsedRow.WhatYouWillNeedToBring);
-                parsedRow.HowYouWillBeAssessed = RemoveASCII(parsedRow.HowYouWillBeAssessed);
-                parsedRow.WhereNext = RemoveASCII(parsedRow.WhereNext);
-                parsedRow.CostDescription = RemoveASCII(parsedRow.CostDescription);
+                if (parsedRow.WhoThisCourseIsFor != null)
+                    parsedRow.WhoThisCourseIsFor = RemoveASCII(parsedRow.WhoThisCourseIsFor);
+                if (parsedRow.EntryRequirements != null)
+                    parsedRow.EntryRequirements = RemoveASCII(parsedRow.EntryRequirements);
+                if (parsedRow.WhatYouWillLearn != null)
+                    parsedRow.WhatYouWillLearn = RemoveASCII(parsedRow.WhatYouWillLearn);
+                if (parsedRow.HowYouWillLearn != null)
+                    parsedRow.HowYouWillLearn = RemoveASCII(parsedRow.HowYouWillLearn);
+                if (parsedRow.WhatYouWillNeedToBring != null)
+                    parsedRow.WhatYouWillNeedToBring = RemoveASCII(parsedRow.WhatYouWillNeedToBring);
+                if (parsedRow.HowYouWillBeAssessed != null)
+                    parsedRow.HowYouWillBeAssessed = RemoveASCII(parsedRow.HowYouWillBeAssessed);
+                if (parsedRow.WhereNext != null)
+                    parsedRow.WhereNext = RemoveASCII(parsedRow.WhereNext);
+                if (parsedRow.CostDescription != null)
+                    parsedRow.CostDescription = RemoveASCII(parsedRow.CostDescription);
                 var matchedVenue = FindVenue(row, providerVenues);
 
                 var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
