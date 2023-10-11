@@ -174,13 +174,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             var updateResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
             {
                 CourseId = courseId,
-                WhoThisCourseIsFor = model.CourseFor,
-                EntryRequirements = model.EntryRequirements,
-                WhatYoullLearn = model.WhatWillLearn,
-                HowYoullLearn = model.HowYouWillLearn,
-                WhatYoullNeed = model.WhatYouNeed,
-                HowYoullBeAssessed = model.HowAssessed,
-                WhereNext = model.WhereNext,
+                WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(model.CourseFor),
+                EntryRequirements = ASCIICodeHelper.RemoveASCII(model.EntryRequirements),
+                WhatYoullLearn = ASCIICodeHelper.RemoveASCII(model.WhatWillLearn),
+                HowYoullLearn = ASCIICodeHelper.RemoveASCII(model.HowYouWillLearn),
+                WhatYoullNeed = ASCIICodeHelper.RemoveASCII(model.WhatYouNeed),
+                HowYoullBeAssessed = ASCIICodeHelper.RemoveASCII(model.HowAssessed),
+                WhereNext = ASCIICodeHelper.RemoveASCII(model.WhereNext),
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow
             });

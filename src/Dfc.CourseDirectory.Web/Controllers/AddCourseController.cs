@@ -680,13 +680,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var addCourseSection1 = Session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
-            var courseFor = RemoveASCII(addCourseSection1.CourseFor);
-            var entryRequirements = RemoveASCII(addCourseSection1.EntryRequirements);
-            var whatWillLearn = RemoveASCII(addCourseSection1.WhatWillLearn);
-            var howYouWillLearn = RemoveASCII(addCourseSection1.HowYouWillLearn);
-            var whatYouNeed = RemoveASCII(addCourseSection1.WhatYouNeed);
-            var howAssessed = RemoveASCII(addCourseSection1.HowAssessed);
-            var whereNext = RemoveASCII(addCourseSection1.WhereNext);
+            var courseFor = ASCIICodeHelper.RemoveASCII(addCourseSection1.CourseFor);
+            var entryRequirements = ASCIICodeHelper.RemoveASCII(addCourseSection1.EntryRequirements);
+            var whatWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatWillLearn);
+            var howYouWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowYouWillLearn);
+            var whatYouNeed = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatYouNeed);
+            var howAssessed = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowAssessed);
+            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);
             var advancedLearnerLoan = addCourseSection1.AdvancedLearnerLoan;
             var adultEducationBudget = addCourseSection1.AdultEducationBudget;
 
@@ -1115,11 +1115,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
             return viewModel;
-        }
-
-        private static string RemoveASCII(string src)
-        {
-            return Regex.Replace(src, @"[^\u0000-\u007F]", "");
         }
         #endregion
 
