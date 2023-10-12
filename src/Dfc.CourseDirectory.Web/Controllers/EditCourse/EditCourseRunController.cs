@@ -423,7 +423,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 DurationUnit = model.DurationUnit,
                 DeliveryMode = model.DeliveryMode,
                 Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
-                CostDescription = model.CostDescription ?? "",
+                CostDescription = ASCIICodeHelper.RemoveASCII(model.CostDescription) ?? "",
                 CourseName = model.CourseName,
                 CourseUrl = model.Url,
                 DurationValue = Convert.ToInt32(model.DurationLength),

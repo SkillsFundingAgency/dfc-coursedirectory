@@ -748,7 +748,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         StartDate = specifiedStartDate,
                         CourseUrl = addCourseSection2.Url,
                         Cost = addCourseSection2.Cost,
-                        CostDescription = addCourseSection2.CostDescription ?? "",
+                        CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                         DurationUnit = addCourseSection2.DurationUnit.Value,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
@@ -771,7 +771,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StartDate = specifiedStartDate,
                     CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = addCourseSection2.CostDescription ?? "",
+                    CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
                 };
@@ -809,7 +809,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StartDate = specifiedStartDate,
                     CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = addCourseSection2.CostDescription ?? "",
+                    CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
                 };
