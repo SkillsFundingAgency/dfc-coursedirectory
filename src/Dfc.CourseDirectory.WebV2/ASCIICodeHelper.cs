@@ -11,7 +11,10 @@ namespace Dfc.CourseDirectory.WebV2
     {
         public static string RemoveASCII(string src)
         {
-            return Regex.Replace(src, @"[^\u0000-\u007F]", "");
+            string returnstring = string.Empty;
+            if (src != null)
+                returnstring = Regex.Replace(src, @"[^\u0000-\u007F]", "");
+            return returnstring;
         }
     }
 }
