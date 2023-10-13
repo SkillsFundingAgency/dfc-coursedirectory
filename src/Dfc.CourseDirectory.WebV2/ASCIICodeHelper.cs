@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Dfc.CourseDirectory.Core.Validation;
 
 namespace Dfc.CourseDirectory.WebV2
 {
@@ -16,7 +17,8 @@ namespace Dfc.CourseDirectory.WebV2
             if (src != null)
             {
                 returnstring = Regex.Replace(src, @"[^\u0000-\u007F]", "");
-                returnstring = HttpUtility.HtmlDecode(returnstring);
+                //returnstring = HttpUtility.HtmlDecode(returnstring);
+                returnstring= Regex.Replace(returnstring, "<.*?>", string.Empty);
             }
             return returnstring;
         }
