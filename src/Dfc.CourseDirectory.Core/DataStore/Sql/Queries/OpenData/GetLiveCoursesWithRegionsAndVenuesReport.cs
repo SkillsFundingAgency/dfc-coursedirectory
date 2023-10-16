@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Validation;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
 {
@@ -15,7 +16,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
         public string CourseName { get; set; }
-        public string CourseDescription { get; set; }
+        private string courseDescription;
+        public string CourseDescription {
+            get {  return courseDescription; } 
+            set { courseDescription=HTMLDecodeHelper.RemoveHTML(courseDescription); } 
+        }
         public string CourseWebsite { get; set; }
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
