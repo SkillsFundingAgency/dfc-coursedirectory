@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                                   ,[Fax] = @Fax
                                   ,[WebsiteAddress] = @WebsiteAddress
                                   ,[Email] = @Email
-                              WHERE [ProviderId] = @ProviderId;
+                              WHERE [ProviderId] = @ProviderId  AND  ContactType = 'P';
             ";
 
             var providerContact = query?.Contact;

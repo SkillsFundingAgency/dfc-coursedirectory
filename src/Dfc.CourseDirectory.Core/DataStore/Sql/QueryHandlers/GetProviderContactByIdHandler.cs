@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                   ,[WebsiteAddress]
                   ,[Email]
               FROM [Pttcd].[ProviderContacts]
-            WHERE {nameof(Provider.ProviderId)} = @{nameof(query.ProviderId)}";
+            WHERE {nameof(Provider.ProviderId)} = @{nameof(query.ProviderId)} AND  ContactType = 'P'";
 
             return transaction.Connection.QuerySingleOrDefaultAsync<ProviderContact>(sql, query, transaction);
         }
