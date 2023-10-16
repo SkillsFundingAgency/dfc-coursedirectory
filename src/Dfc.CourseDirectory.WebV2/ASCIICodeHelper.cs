@@ -17,8 +17,6 @@ namespace Dfc.CourseDirectory.WebV2
             if (src != null)
             {
                 returnstring = Regex.Replace(src, @"[^\u0000-\u007F]", "");
-                //returnstring = HttpUtility.HtmlDecode(returnstring);
-                returnstring= Regex.Replace(returnstring, "<.*?>", string.Empty);
             }
             return returnstring;
         }
