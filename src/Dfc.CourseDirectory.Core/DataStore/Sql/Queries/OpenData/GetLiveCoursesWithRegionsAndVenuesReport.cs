@@ -16,11 +16,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
         public string CourseName { get; set; }
-        private string courseDescription;
-        public string CourseDescription {
-            get {  return courseDescription; } 
-            set { courseDescription=HTMLDecodeHelper.RemoveHTML(courseDescription); } 
-        }
+        public string CourseDescription { get; set; }
         public string CourseWebsite { get; set; }
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }

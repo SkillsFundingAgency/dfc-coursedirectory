@@ -8,6 +8,7 @@ using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.Validation;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
 {
@@ -141,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         CourseId = result.CourseId.ToString(),
                         CourseRunId = result.CourseRunId.ToString(),
                         CourseName = result.CourseName,
-                        CourseDescription = result.CourseDescription,
+                        CourseDescription = HTMLDecodeHelper.RemoveHTML(result.CourseDescription),
                         CourseUrl = result.CourseWebsite,
                         LarsId = result.LearnAimRef,
                         DeliveryMode = result.DeliveryMode,
@@ -152,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         DurationUnit = result.DurationUnit,
                         DurationValue = result.DurationValue,
                         Cost = ParsedCsvCourseRow.MapCost(result.Cost),
-                        CostDescription = result.CostDescription,
+                        CostDescription = HTMLDecodeHelper.RemoveHTML(result.CostDescription),
                         IsNational = result.National,
                         Regions = result.Regions,
                         LocationName = result.VenueName,
@@ -167,8 +168,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         LocationPhone = result.VenueTelephone,
                         LocationWebsite = result.VenueWebsite,
                         UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
-                        EntryRequirements = result.EntryRequirements,
-                        HowYouWillBeAssessed = result.HowYouWillBeAssessed
+                        EntryRequirements = HTMLDecodeHelper.RemoveHTML(result.EntryRequirements),
+                        HowYouWillBeAssessed = HTMLDecodeHelper.RemoveHTML(result.HowYouWillBeAssessed)
                     };
                 }
             }
