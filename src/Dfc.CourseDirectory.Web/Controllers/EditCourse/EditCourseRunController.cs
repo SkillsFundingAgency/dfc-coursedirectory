@@ -30,6 +30,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Framework;
+using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
@@ -44,6 +46,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+        private readonly ILogger<EditCourseRunController> _log;
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
@@ -54,10 +57,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache, ILogger<EditCourseRunController> log)
         {
+              _log = log;
             if (courseService == null)
             {
+                _log.LogError($"EditCourserRun  CourseService is null");
                 throw new ArgumentNullException(nameof(courseService));
             }
 
@@ -104,7 +109,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 AttendanceMode = model.AttendanceMode,
             };
 
-          
+            _log.LogInformation($"EditCourseRun courseid {vm.CourseId}, coursename {vm.CourseName} ");
             Session.SetObject("EditCourseRunObject", vm);
 
 
@@ -127,6 +132,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             }
             else
             {
+
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
@@ -234,6 +240,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
+            _log.LogInformation($"Edit courseRun {ViewBag.LiveServiceURL} ");
             return View("EditCourseRun", vm);
         }
 
@@ -246,6 +253,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
+            _log.LogInformation($"Edit courseRun {ViewBag.LiveServiceURL} ");
 
             if (Session.GetInt32("UKPRN") != null)
             {
@@ -363,11 +372,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
+                    _log.LogInformation($"successfully updated editcourseRun Courserunid{vm.CourseRunId}, courseid {vm.CourseId} ");
 
                     return View("EditCourseRun", vm);
                 }
             }
-
+            
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
@@ -379,7 +389,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             if (!model.CourseId.HasValue)
             {
-                return BadRequest();
+                _log.LogError("$Edit CourseRun missing badrequest courseid is missing");
+                 return BadRequest();
             }
 
             var courseId = model.CourseId.Value;
@@ -414,6 +425,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
             if (!validationResult.IsValid)
             {
+                _log.LogError("$Edit CourseRun is valid validationresult");
                 return BadRequest();
             }
 

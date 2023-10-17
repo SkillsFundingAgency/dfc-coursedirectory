@@ -8,6 +8,8 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
+using Microsoft.Build.Framework;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 {
@@ -46,17 +48,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+        private readonly ILogger<Handler> _logger;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache, ILogger<Handler> logger)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _regionCache = regionCache;
+            _logger = logger;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -66,6 +70,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                 ProviderId = _providerContextProvider.GetProviderId(),
                 Today = _clock.UtcNow.Date
             });
+            _logger.LogInformation($"Executing Expired Course Runs ");
 
             var allRegions = await _regionCache.GetAllRegions();
             var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);

@@ -58,8 +58,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
         internal string FormatAddress(Venue venue)
         {
-            if (venue == null) return string.Empty;
-
+            if (venue == null)
+            {
+                _logger.LogInformation($"Provider Coursers Formating Address Venue is null");
+                return string.Empty;
+            }
+           
             return venue.VenueName;
         }
 
@@ -357,6 +361,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         [Authorize]
         public IActionResult FilterCourses(ProviderCoursesRequestModel requestModel)
         {
+            _logger.LogInformation($"Provider Coursers Filter Coursers");
 
             Session.SetString("Option", "Courses");
             int? UKPRN = Session.GetInt32("UKPRN");
@@ -391,22 +396,26 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             if (requestModel.LevelFilter.Length > 0)
             {
+                _logger.LogInformation($"Provider Coursers Filtering on NotionalNVQLevelv2 ");
                 model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.LevelFilter.Contains(x.NotionalNVQLevelv2)).ToList();
             }
 
             if (requestModel.DeliveryModeFilter.Length > 0)
             {
+                _logger.LogInformation($"Provider Coursers Filtering on DeliveryModeFilter ");
                 model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.DeliveryModeFilter.Contains(x.DeliveryMode)).ToList();
             }
 
 
             if (requestModel.VenueFilter.Length > 0)
             {
+                _logger.LogInformation($"Provider Coursers Filtering on VenueFilter ");
                 model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.VenueFilter.Contains(x.Venue)).ToList();
             }
 
             if (requestModel.AttendancePatternFilter.Length > 0)
             {
+                _logger.LogInformation($"Provider Coursers Filtering on AttendancePatternFilter ");
                 model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.AttendancePatternFilter.Contains(x.AttendancePattern)).ToList();
             }
 
@@ -516,6 +525,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Venues = venueFilterItems;
             model.Regions = regionFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
+
+            _logger.LogInformation($"Provider Coursers Filtering {nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults)} ");
 
             return ViewComponent(nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults), model);
         }

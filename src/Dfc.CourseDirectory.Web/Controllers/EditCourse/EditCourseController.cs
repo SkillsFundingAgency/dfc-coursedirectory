@@ -22,6 +22,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
@@ -31,17 +32,19 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
+        private readonly ILogger<EditCourseController> _log;
 
         private ISession Session => HttpContext.Session;
 
         public EditCourseController(
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
-            IClock clock)
+            IClock clock, ILogger<EditCourseController> log)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
+                _log = log;
         }
 
         [HttpGet]
@@ -134,6 +137,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
+            _log.LogInformation($"Edit course :{ViewBag.LiveServiceURL}");
             return View("EditCourse", vm);
         }
 
@@ -143,6 +147,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             if (!model.CourseId.HasValue)
             {
+                _log.LogError($"Edit course bad request {model.CourseId}");
                 return BadRequest();
             }
 
@@ -168,6 +173,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             var validationResult = new EditCourseSaveViewModelValidator().Validate(formattedModel);
             if (!validationResult.IsValid)
             {
+                _log.LogError($"Edit course check failed validation  {model.CourseId}");
                 return BadRequest();
             }
 
@@ -184,6 +190,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow
             });
+         
 
             if (!(updateResult.Value is Success))
             {

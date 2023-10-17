@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -28,15 +30,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         private readonly ISearchClient<Lars> _searchClient;
         private readonly LarsSearchSettings _larsSearchSettings;
-        
+        private readonly ILogger<UnregulatedCoursesController> _logger;
+
         private ISession Session => HttpContext.Session;
 
         public UnregulatedCoursesController(
             ISearchClient<Lars> searchClient,
-            IOptions<LarsSearchSettings> larsSearchSettings)
+            IOptions<LarsSearchSettings> larsSearchSettings, ILogger<UnregulatedCoursesController> logger)
         {
             _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
             _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
+            _logger = logger;
         }
 
         [Authorize]
@@ -54,6 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (request == null)
             {
+                _logger.LogError($"UnRegulatedCourses badrequest request is null");
                 return BadRequest();
             }
 
@@ -155,6 +160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 PageSize = _larsSearchSettings.ItemsPerPage,
                 PageNumber = request.PageNo
             });
+            _logger.LogInformation($"UnRegulatedCourses ZCodeNotKnown wildcard applied");
 
             var viewModel = new ZCodeSearchResultModel
             {
@@ -203,7 +209,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 PageParamName = _larsSearchSettings.PageParamName,
                 Url = Request.GetDisplayUrl()
             };
-
+            _logger.LogInformation($"UnRegulatedCourses ZCodeNotKnown {nameof(ZCodeSearchResult)}");
             return ViewComponent(nameof(ZCodeSearchResult), viewModel);
         }
 

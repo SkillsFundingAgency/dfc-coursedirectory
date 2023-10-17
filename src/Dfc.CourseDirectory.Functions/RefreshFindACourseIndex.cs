@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -11,11 +12,13 @@ namespace Dfc.CourseDirectory.Functions
     {
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly IClock _clock;
+        private readonly ILogger<RefreshFindACourseIndex> _log;
 
-        public RefreshFindACourseIndex(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock)
+        public RefreshFindACourseIndex(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock, ILogger<RefreshFindACourseIndex> log)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _clock = clock;
+            _log = log;
         }
 
         [FunctionName("RefreshFindACourseIndex")]
@@ -27,6 +30,7 @@ namespace Dfc.CourseDirectory.Functions
 
             if (timer.IsPastDue)
             {
+                _log.LogInformation($"Refresh Find a course Index is Past the due time");
                 return;
             }
 
@@ -56,13 +60,17 @@ namespace Dfc.CourseDirectory.Functions
                 });
 
                 total += updated;
-
+              
                 await dispatcher.Commit();
             }
+            
+
             while (
                 updated == batchSize &&
                 (total + batchSize) <= maxRecordsPerInvocation &&  
                 !cancellationToken.IsCancellationRequested);
+
+            _log.LogInformation($"Update find a course Index from {createdBefore} {createdAfter}");
         }
     }
 }

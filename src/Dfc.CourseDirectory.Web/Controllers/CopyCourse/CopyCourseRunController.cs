@@ -47,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+       
 
         public CopyCourseRunController(
             ILogger<CopyCourseRunController> logger,
@@ -108,6 +109,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 AttendanceMode = model.AttendanceMode,
             };
 
+            _logger.LogInformation($"Add new venue to CourseId:{vm.CourseId}, courseName {vm.CourseName}  ");
+
             _session.SetObject("CopyCourseRunObject", vm);
 
             return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "CopyCourseRun") }))
@@ -121,6 +124,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         {
             if (!_session.GetInt32("UKPRN").HasValue)
             {
+                _logger.LogWarning($"Reload Please select a provider ");
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
@@ -190,6 +194,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             vm.Url = cachedData.Url;
             vm.VenueId = cachedData.VenueId;
 
+            _logger.LogInformation($"copy courserun CourseId:{vm.CourseId}, courseName {vm.CourseName}  ");
             return View("CopyCourseRun", vm);
         }
 
@@ -228,6 +233,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         {
             if (!_session.GetInt32("UKPRN").HasValue)
             {
+                _logger.LogInformation($"Provider is not select UKPRN is null");
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
@@ -251,6 +257,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             }
             else
             {
+                _logger.LogInformation($"Provider is not select UKPRN is not found");
                 return NotFound();
             }
 
@@ -258,6 +265,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (course == null)
             {
+                _logger.LogInformation($"Course is not found");
                 return NotFound();
             }
 
@@ -265,6 +273,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             if (courseRun == null)
             {
+                _logger.LogInformation($"Courserun is not found");
                 return NotFound();
             }
 

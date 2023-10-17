@@ -34,12 +34,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static GovUk.Frontend.AspNetCore.ComponentDefaults;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class AddCourseController : Controller
     {
         private readonly ICourseService _courseService;
+        private readonly ILogger<AddCourseController> _log;
 
         private ISession Session => HttpContext.Session;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
@@ -60,13 +62,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider,
+            ILogger<AddCourseController> log)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
             _providerContextProvider = providerContextProvider;
+            _log = log;
         }
 
         [Authorize]
@@ -83,15 +87,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             Core.DataStore.Sql.Models.Course course = null;
             Core.DataStore.CosmosDb.Models.CourseText defaultCourseText = null;
-
+            _log.LogInformation($"Add Course HttpGet learnAimRef:{learnAimRef},notionalNVQLevelv2:{notionalNVQLevelv2},courseId:{courseId}");
             if (courseId.HasValue)
             {
+                _log.LogInformation($"Add Course HttpGet courseId:{courseId} has value");
                 course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
             }
             else
             {
                 if (string.IsNullOrWhiteSpace(learnAimRef))
                 {
+                    _log.LogInformation($"Add Course HttpGet courseId:{courseId} learnAimRef is null");
                     throw new ArgumentException($"{nameof(learnAimRef)} cannot be null or whitespace.", nameof(learnAimRef));
                 }
 
@@ -217,6 +223,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (Session.GetInt32("UKPRN") == null)
             {
+                _log.LogWarning($"Add Course details UKPRN is null");
                 return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
             }
             int UKPRN = Session.GetInt32("UKPRN").Value;
@@ -324,6 +331,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var venues = new List<string>();
             var regions = new List<string>();
 
+           
             // sort regions out
             model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions?.ToList() ?? new List<string>());
 
@@ -356,6 +364,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ? "Flexible"
                     : model.Day + "/" + model.Month + "/" + model.Year
             };
+
+            _log.LogInformation($"Add new venue details to course CourseId:{summaryViewModel.CourseId}, courseName {summaryViewModel.CourseName}  ");
 
             switch (model.DeliveryMode)
             {
@@ -468,6 +478,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ? "Flexible"
                     : model.Day + "/" + model.Month + "/" + model.Year
             };
+
+            _log.LogInformation($"Add course run to course CourseId:{summaryViewModel.CourseId}, courseName {summaryViewModel.CourseName}  ");
+
+
 
             switch (model.DeliveryMode)
             {

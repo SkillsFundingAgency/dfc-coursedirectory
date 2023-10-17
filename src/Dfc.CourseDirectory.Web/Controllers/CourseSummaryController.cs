@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -23,14 +24,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ILogger<CourseSummaryController> _log;
 
         public CourseSummaryController(
             ICourseService courseService,
             ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher, ILogger<CourseSummaryController> log)
         {
+            _log = log;
+
             if (courseService == null)
             {
+                _log.LogError($"CourseSummary Controller CouserService is null");
                 throw new ArgumentNullException(nameof(courseService));
             }
 
@@ -97,6 +102,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.UpdatedDate = courseRun.UpdatedOn;
             }
 
+          
+
             if (vm.VenueId != null)
             {
                 if (vm.VenueId != Guid.Empty)
@@ -130,6 +137,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) +
                 "find-a-course/course-details?CourseId=" + vm.CourseId + "&r=" + vm.CourseInstanceId;
 
+            _log.LogInformation($"Generating the LiveService URL with CourseID details  {ViewBag.LiveServiceURL}");
             return View(vm);
         }
         internal IEnumerable<string> FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)

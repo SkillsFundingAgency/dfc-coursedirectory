@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -17,11 +18,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
     {
         private readonly ISearchClient<Lars> _searchClient;
         private readonly LarsSearchSettings _larsSearchSettings;
+        private readonly ILogger<LarsSearchController> _log;
 
         public LarsSearchController(
             ISearchClient<Lars> searchClient,
-            IOptions<LarsSearchSettings> larsSearchSettings)
+            IOptions<LarsSearchSettings> larsSearchSettings, ILogger<LarsSearchController> log)
         {
+            _log = log;
             _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
             _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
         }
@@ -31,6 +34,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             if (request == null)
             {
+                _log.LogError($"LarsSearch Controller BadRequest {request}");
                 return BadRequest();
             }
 
@@ -103,7 +107,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 PageParamName = _larsSearchSettings.PageParamName,
                 Url = Request.GetDisplayUrl()
             };
-
+            _log.LogInformation($"LarsSearch Controller {nameof(LarsSearchResult) }");
             return ViewComponent(nameof(LarsSearchResult), viewModel);
         }
     }

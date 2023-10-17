@@ -7,6 +7,8 @@ using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {
@@ -16,11 +18,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         private readonly IMediator _mediator;
         public MptxInstanceContext<FlowModel> Flow { get; set; }
         private readonly ProviderContext _providerContext;
+        private ILogger<ChooseQualificationController> _logger;
 
-        public ChooseQualificationController(IMediator mediator, IProviderContextProvider providerContextProvider)
+        public ChooseQualificationController(IMediator mediator, IProviderContextProvider providerContextProvider, ILogger<ChooseQualificationController> logger)
         {
             _mediator = mediator;
             _providerContext = providerContextProvider.GetProviderContext();
+            _logger = logger;
         }
 
         [StartsMptx]
@@ -34,10 +38,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 .WithProviderContext(_providerContext);
             ViewData["ReturnUrl"] = returnUrl.ToString();
 
-            return await _mediator.SendAndMapResponse(query,
+            _logger.LogInformation($"ChooseQualification SearchQuery {query}");
+
+            var returnvalue= _mediator.SendAndMapResponse(query,
               response => response.Match<IActionResult>(
                 errors => this.ViewFromErrors(nameof(ChooseQualification), errors),
                 success => View("ChooseQualification", success)));
+
+            _logger.LogInformation($"Choose qualification Search {returnvalue}");
+            return await returnvalue;
         }
 
 
