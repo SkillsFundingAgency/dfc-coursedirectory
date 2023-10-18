@@ -540,6 +540,10 @@
                 "value": "[parameters('environmentName')]"
               },
               {
+                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                "value": "Information"
+              },
+              {
                 "name": "ApprenticeshipSettings__NationalRadius",
                 "value": "600"
               },
