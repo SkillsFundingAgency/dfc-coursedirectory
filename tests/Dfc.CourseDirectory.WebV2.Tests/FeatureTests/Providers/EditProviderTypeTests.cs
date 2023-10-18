@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
@@ -265,8 +264,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
-
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
+            SqlQuerySpy.VerifyQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
                 q.ProviderId == provider.ProviderId && q.ProviderType == providerType);
         }
 
@@ -303,8 +301,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == provider.ProviderId && q.ProviderType == providerType);
 
             SqlQuerySpy.VerifyQuery<SetProviderTLevelDefinitions, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
                 query.ProviderId == provider.ProviderId
@@ -337,9 +333,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
             doc.AssertHasError(nameof(Command.SelectedProviderTLevelDefinitionIds), "Select the T Levels this provider can offer");
-
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == provider.ProviderId && q.ProviderType == providerType, Times.Never());
         }
 
         [Fact]
@@ -375,7 +368,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
             doc.AssertHasError(nameof(Command.SelectedProviderTLevelDefinitionIds), "Select a valid T Level");
 
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
+            SqlQuerySpy.VerifyQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
                 q.ProviderId == provider.ProviderId && q.ProviderType == ProviderType.TLevels, Times.Never());
         }
 
@@ -413,9 +406,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
-
-            CosmosDbQueryDispatcher.VerifyExecuteQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
-                q.ProviderId == provider.ProviderId && q.ProviderType == newProviderType);
 
             SqlQuerySpy.VerifyQuery<SetProviderTLevelDefinitions, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
                 query.ProviderId == provider.ProviderId

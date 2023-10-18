@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -42,7 +40,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
 
         private ISession Session => HttpContext.Session;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -57,13 +54,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         public AddCourseController(
             ICourseService courseService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher ?? throw new ArgumentNullException(nameof(cosmosDbQueryDispatcher));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
             _providerContextProvider = providerContextProvider;
@@ -82,7 +77,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
             Core.DataStore.Sql.Models.Course course = null;
-            Core.DataStore.CosmosDb.Models.CourseText defaultCourseText = null;
+            Core.DataStore.Sql.Models.CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
@@ -95,7 +90,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     throw new ArgumentException($"{nameof(learnAimRef)} cannot be null or whitespace.", nameof(learnAimRef));
                 }
 
-                defaultCourseText = await _cosmosDbQueryDispatcher.ExecuteQuery(new GetCourseTextByLearnAimRef { LearnAimRef = learnAimRef });
+                defaultCourseText = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseTextByLearnAimRef { LearnAimRef = learnAimRef });
             }
 
             AddCourseViewModel vm = new AddCourseViewModel

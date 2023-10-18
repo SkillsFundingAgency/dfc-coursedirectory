@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Testing.DataStore.CosmosDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -66,7 +65,6 @@ namespace Dfc.CourseDirectory.Testing
 
         protected MutableClock Clock => Fixture.DatabaseFixture.Clock;
 
-        protected Mock<CosmosDbQueryDispatcher> CosmosDbQueryDispatcher => Fixture.DatabaseFixture.CosmosDbQueryDispatcher;
 
         public DatabaseTestBaseFixture Fixture { get; }
 

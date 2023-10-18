@@ -152,34 +152,29 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     }
                 });
 
-            CosmosDbQueryDispatcher
-                .Setup(d => d.ExecuteQuery(It.Is<Core.DataStore.CosmosDb.Queries.GetProviderById>(q => q.ProviderId == providerId)))
-                .ReturnsAsync(new Core.DataStore.CosmosDb.Models.Provider()
+            SqlQueryDispatcher
+                .Setup(d => d.ExecuteQuery(It.Is<Core.DataStore.Sql.Queries.GetProviderById>(q => q.ProviderId == providerId)))
+                .ReturnsAsync(new Core.DataStore.Sql.Models.Provider()
                 {
-                    Id = providerId,
-                    UnitedKingdomProviderReferenceNumber = providerUkprn.ToString(),
+                    ProviderId = providerId,
+                    Ukprn = providerUkprn,
                     ProviderType = ProviderType.TLevels,
-                    ProviderContact = new[]
-                    {
-                        new Core.DataStore.CosmosDb.Models.ProviderContact()
-                        {
-                            ContactType = "P",  // Primary,
-                            ContactEmail = providerContactEmail
-                        }
-                    },
-                    ProviderAliases = Array.Empty<Core.DataStore.CosmosDb.Models.ProviderAlias>()
+                    ProviderName = providerName,
+                    EmployerSatisfaction = providerEmployerSatisfaction,
+                    LearnerSatisfaction = providerLearnerSatisfaction
+
                 });
 
-            CosmosDbQueryDispatcher
-                .Setup(d => d.ExecuteQuery(It.Is<Core.DataStore.CosmosDb.Queries.GetFeChoiceForProvider>(q => q.ProviderUkprn == providerUkprn)))
-                .ReturnsAsync(new Core.DataStore.CosmosDb.Models.FeChoice()
+            SqlQueryDispatcher
+                .Setup(d => d.ExecuteQuery(It.Is<Core.DataStore.Sql.Queries.GetProviderContactById>(q => q.ProviderId == providerId)))
+                .ReturnsAsync(new Core.DataStore.Sql.Models.ProviderContact()
                 {
-                    UKPRN = providerUkprn,
-                    Id = Guid.NewGuid(),
-                    EmployerSatisfaction = providerEmployerSatisfaction,
-                    LearnerSatisfaction = providerLearnerSatisfaction,
-                    CreatedDateTimeUtc = now
+                    ProviderId = providerId,
+                    Email = providerContactEmail,
+                    ContactType = "P"
                 });
+
+
 
             // Act
             var response = await HttpClient.GetAsync($"tleveldetail?tlevelid={tLevelId}");

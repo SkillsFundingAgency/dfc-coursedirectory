@@ -116,17 +116,8 @@
     "ProviderPortalSharedResourceGroupName": {
       "value": "dfc-dev-prov-rg"
     },
-    "CosmosAccountEndpoint": {
-      "value": "https://not-a-real-account.documents.azure.com/"
-    },
-    "CosmosAccountAccessKey": {
-      "value": "not-a-real-access-key"
-    },
     "RedisCacheName": {
       "value": "AnAzureCacheInstance"
-    },
-    "providerPortalCosmosDbConnectionString": {
-      "value": "https://not-a-real-account.documents.azure.com/"
     },
     "providerPortalApplicationInsights": {
       "value": "dfc-dev-prov-as-ai"

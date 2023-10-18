@@ -20,18 +20,6 @@
         "description": "Resource group the app service plan is in"
       }
     },
-    "cosmosAccountEndpoint": {
-      "type": "string",
-      "metadata": {
-        "description": "URL to the cosmos db account"
-      }
-    },
-    "cosmosAccountAccessKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Access key for the cosmos db account"
-      }
-    },
     "environmentName": {
       "type": "string",
       "metadata": {
@@ -127,14 +115,6 @@
               {
                 "name": "WEBSITE_RUN_FROM_PACKAGE",
                 "value": "1"
-              },
-              {
-                "name": "CosmosDbSettings__EndpointUri",
-                "value": "[parameters('cosmosAccountEndpoint')]"
-              },
-              {
-                "name": "CosmosDbSettings__PrimaryKey",
-                "value": "[parameters('cosmosAccountAccessKey')]"
               },
               {
                 "name": "AzureSearchUrl",

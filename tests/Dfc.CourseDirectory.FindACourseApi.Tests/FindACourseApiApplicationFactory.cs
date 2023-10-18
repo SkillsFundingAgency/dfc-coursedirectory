@@ -1,6 +1,5 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
@@ -21,7 +20,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
     public class FindACourseApiApplicationFactory : WebApplicationFactory<Startup>
     {
-        public Mock<ICosmosDbQueryDispatcher> CosmosDbQueryDispatcher { get; } = new Mock<ICosmosDbQueryDispatcher>();
 
         public Mock<ISearchClient<FindACourseOffering>> FindACourseOfferingSearchClient { get; } = new Mock<ISearchClient<FindACourseOffering>>();
 
@@ -40,7 +38,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
             .UseEnvironment("Testing")
             .ConfigureServices(services =>
             {
-                services.AddSingleton(CosmosDbQueryDispatcher.Object);
                 services.AddSingleton(FindACourseOfferingSearchClient.Object);
                 services.AddSingleton(LarsSearchClient.Object);
                 services.AddSingleton(RegionCache.Object);
@@ -49,7 +46,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests
 
         private void ResetMocks()
         {
-            CosmosDbQueryDispatcher.Reset();
             FindACourseOfferingSearchClient.Reset();
             LarsSearchClient.Reset();
             RegionCache.Reset();

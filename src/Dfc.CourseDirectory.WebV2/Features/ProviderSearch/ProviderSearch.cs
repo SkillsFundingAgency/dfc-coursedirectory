@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.WebV2.Security;
@@ -47,18 +47,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
         IRequestHandler<OnboardProviderCommand, OneOf<NotFound, Success>>
     {
         private readonly ISearchClient<SearchModels.Provider> _providerSearchClient;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
 
         public Handler(
             ISearchClient<SearchModels.Provider> providerSearchClient,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IClock clock)
         {
             _providerSearchClient = providerSearchClient;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
             _clock = clock;
         }
@@ -105,16 +105,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
 
         public async Task<OneOf<NotFound, Success>> Handle(OnboardProviderCommand request, CancellationToken cancellationToken)
         {
-            var result = await _cosmosDbQueryDispatcher.ExecuteQuery(new UpdateProviderOnboarded
+            var result = await _sqlQueryDispatcher.ExecuteQuery(new UpdateProviderOnboarded
             {
                 ProviderId = request.ProviderId,
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
-                UpdatedDateTime = _clock.UtcNow.ToLocalTime()
+                UpdatedOn = _clock.UtcNow.ToLocalTime()
             });
 
             return result.Match<OneOf<NotFound, Success>>(
                 notFound => notFound,
-                _ => new Success(),
                 success => success);
         }
     }

@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
@@ -20,12 +18,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
     public class Handler : IRequestHandler<Query, OneOf<NotFound, TLevelDetailViewModel>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
 
-        public Handler(ISqlQueryDispatcher sqlQueryDispatcher, ICosmosDbQueryDispatcher cosmosDbQueryDispatcher)
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
         }
 
         public async Task<OneOf<NotFound, TLevelDetailViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -37,26 +33,23 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                 return new NotFound();
             }
 
-            var getProvider = _cosmosDbQueryDispatcher.ExecuteQuery(
-                new Core.DataStore.CosmosDb.Queries.GetProviderById() { ProviderId = tLevel.ProviderId });
+           
 
             var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(
                 new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = tLevel.ProviderId });
 
+            var getSqlProviderContact = _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = tLevel.ProviderId });
+
             var getVenues = _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByIds() { VenueIds = tLevel.Locations.Select(l => l.VenueId) });
 
-            await Task.WhenAll(getProvider, getSqlProvider, getVenues);
+            await Task.WhenAll(getSqlProvider, getVenues, getSqlProviderContact);
 
-            var provider = await getProvider;
             var sqlProvider = await getSqlProvider;
             var venues = await getVenues;
 
-            var feChoice = await _cosmosDbQueryDispatcher.ExecuteQuery(
-                new GetFeChoiceForProvider() { ProviderUkprn = provider.Ukprn });
 
-            var providerContact = provider.ProviderContact
-                .SingleOrDefault(c => c.ContactType == "P");
+            var providerContact = await getSqlProviderContact;
 
             return new TLevelDetailViewModel()
             {
@@ -72,22 +65,22 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                 Provider = new ProviderViewModel()
                 {
                     ProviderName = sqlProvider.DisplayName,
-                    Ukprn = provider.UnitedKingdomProviderReferenceNumber,
+                    Ukprn = sqlProvider.Ukprn.ToString(),
                     AddressLine1 = HtmlEncode(
                         ViewModelFormatting.ConcatAddressLines(
-                            providerContact?.ContactAddress?.SAON?.Description,
-                            providerContact?.ContactAddress?.PAON?.Description,
-                            providerContact?.ContactAddress?.StreetDescription)),
-                    AddressLine2 = HtmlEncode(providerContact?.ContactAddress?.Locality),
-                    Town = HtmlEncode(providerContact?.ContactAddress?.PostTown ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(0)),
-                    Postcode = providerContact?.ContactAddress?.PostCode,
-                    County = HtmlEncode(providerContact?.ContactAddress?.County ?? providerContact?.ContactAddress?.Items?.ElementAtOrDefault(1)),
-                    Email = providerContact?.ContactEmail,
-                    Telephone = providerContact?.ContactTelephone1,
-                    Fax = providerContact?.ContactFax,
-                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.ContactWebsiteAddress),
-                    LearnerSatisfaction = feChoice?.LearnerSatisfaction,
-                    EmployerSatisfaction = feChoice?.EmployerSatisfaction
+                            providerContact?.AddressSaonDescription,
+                            providerContact?.AddressPaonDescription,
+                            providerContact?.AddressStreetDescription)),
+                    AddressLine2 = HtmlEncode(providerContact?.AddressLocality),
+                    Town = HtmlEncode(providerContact?.AddressPostTown),
+                    Postcode = providerContact?.AddressPostcode,
+                    County = HtmlEncode(providerContact?.AddressCounty),
+                    Email = providerContact?.Email,
+                    Telephone = providerContact?.Telephone1,
+                    Fax = providerContact?.Fax,
+                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress),
+                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
+                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction
                 },
                 WhoFor = HtmlEncode(tLevel.WhoFor),
                 EntryRequirements = HtmlEncode(tLevel.EntryRequirements),

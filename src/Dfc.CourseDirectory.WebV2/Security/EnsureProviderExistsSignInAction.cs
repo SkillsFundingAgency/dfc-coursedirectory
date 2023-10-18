@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
                 await _sqlQueryDispatcher.ExecuteQuery(
                     new Query()
                     {
-                        ProviderId = context.Provider.Id
+                        ProviderId = context.Provider.ProviderId
                     });
             }
         }

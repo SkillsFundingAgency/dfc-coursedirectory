@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Security
 
             if (signInContext.Provider != null)
             {
-                claims.Add(new Claim("ProviderId", signInContext.Provider.Id.ToString()));
+                claims.Add(new Claim("ProviderId", signInContext.Provider.ProviderId.ToString()));
                 claims.Add(new Claim("ProviderType", ((int)signInContext.Provider.ProviderType).ToString()));
                 claims.Add(new Claim("provider_status", signInContext.Provider.ProviderStatus));
                 claims.Add(new Claim("UKPRN", signInContext.Provider.Ukprn.ToString()));

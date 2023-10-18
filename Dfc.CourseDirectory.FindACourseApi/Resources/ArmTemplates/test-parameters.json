@@ -11,12 +11,6 @@
     "appServicePlanResourceGroup": {
       "value": "dfc-dev-prov-rg"
     },
-    "cosmosAccountEndpoint": {
-      "value": "https://not-a-real-account.documents.azure.com/"
-    },
-    "cosmosAccountAccessKey": {
-      "value": "not-a-real-access-key"
-    },
     "environmentName": {
       "value": "Development"
     },

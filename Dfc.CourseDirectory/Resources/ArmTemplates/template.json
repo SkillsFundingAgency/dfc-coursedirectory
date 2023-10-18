@@ -237,26 +237,11 @@
         "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
       }
     },
-    "CosmosAccountEndpoint": {
-      "type": "string",
-      "metadata": {
-        "description": "URL to the cosmos db account"
-      }
-    },
-    "CosmosAccountAccessKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Access key for the cosmos db account"
-      }
-    },
     "RedisCacheName": {
       "type": "string",
       "metadata": {
         "description": "The name of the project-wide shared redis cache instance"
       }
-    },
-    "providerPortalCosmosDbConnectionString": {
-      "type": "string"
     },
     "FindACourseUrl": {
       "type": "string",
@@ -552,14 +537,6 @@
                 "value": "[parameters('BulkUploadSecondsPerRecord')]"
               },
               {
-                "name": "CosmosDbSettings__EndpointUri",
-                "value": "[parameters('CosmosAccountEndpoint')]"
-              },
-              {
-                "name": "CosmosDbSettings__PrimaryKey",
-                "value": "[parameters('CosmosAccountAccessKey')]"
-              },
-              {
                 "name": "DataProtection__ContainerName",
                 "value": "data-protection-keys"
               },
@@ -668,18 +645,6 @@
               {
                 "name": "BlobStorageSettings__ConnectionString",
                 "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-              },
-              {
-                "name": "CosmosDbSettings__EndpointUri",
-                "value": "[parameters('CosmosAccountEndpoint')]"
-              },
-              {
-                "name": "CosmosDbSettings__PrimaryKey",
-                "value": "[parameters('CosmosAccountAccessKey')]"
-              },
-              {
-                "name": "CosmosDbSettings__ConnectionString",
-                "value": "[parameters('providerPortalCosmosDbConnectionString')]"
               },
               {
                 "name": "AzureSearchUrl",

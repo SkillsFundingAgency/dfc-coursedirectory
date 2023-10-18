@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Models;
-using Dfc.CourseDirectory.Core.DataStore.CosmosDb.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
@@ -21,21 +19,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         private const string UpdatedBy = nameof(UkrlpSyncHelper);
 
         private readonly IUkrlpService _ukrlpService;
-        private readonly ICosmosDbQueryDispatcher _cosmosDbQueryDispatcher;
-        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UkrlpSyncHelper(
             IUkrlpService ukrlpService,
-            ICosmosDbQueryDispatcher cosmosDbQueryDispatcher,
-            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
+            ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
             ILoggerFactory loggerFactory)
         {
             _ukrlpService = ukrlpService;
-            _cosmosDbQueryDispatcher = cosmosDbQueryDispatcher;
-            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
         }
@@ -48,45 +43,67 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             var createdCount = 0;
             var updatedCount = 0;
+            var notChanged = 0;
+            var failed = 0;
 
             foreach (var providerData in allProviders)
             {
-                _logger.LogDebug($"UKRLP Sync: processing provider {createdCount + updatedCount + 1} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                var result = await CreateOrUpdateProvider(providerData);
+                try
+                {
+                    var result = await CreateOrUpdateProvider(providerData);
 
-                if (result == CreateOrUpdateResult.Created)
-                {
-                    createdCount++;
+                    if (result == CreateOrUpdateResult.Created)
+                    {
+                        createdCount++;
+                    }
+                    else if (result == CreateOrUpdateResult.Updated)
+                    {
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        notChanged++;
+                    }
+
+                    _logger.LogInformation($"UKRLP Sync: {providerData.UnitedKingdomProviderReferenceNumber} - {result.ToString()}");
+
                 }
-                else  // result == CreateOrUpdateResult.Updated
+                catch (Exception e)
                 {
-                    updatedCount++;
+                    _logger.LogError($"UKRLP Sync: Failed to process provider UKPRN: {providerData.UnitedKingdomProviderReferenceNumber} - {e.Message}");
+                    failed++;
                 }
 
-                if ((createdCount + updatedCount) % 200 == 0)
-                {
-                    _logger.LogInformation(
-                        $"UKRLP Sync: processed provider {createdCount + updatedCount} of {allProviders.Count}, UKPRN: {providerData.UnitedKingdomProviderReferenceNumber}...");
-                }
             }
 
-            _logger.LogInformation("UKRLP Sync: Added {0} new providers and updated {1} providers.", createdCount, updatedCount);
+            _logger.LogInformation("UKRLP Sync: Added {0} new providers, updated {1} providers and {2} providers were up to date. {3} providers failed to sync", createdCount, updatedCount, notChanged, failed);
+
+            if (failed > 0)
+            {
+                throw new ApplicationException($"Failed to update {failed} providers");
+            }
+
         }
 
-        public Task SyncAllKnownProvidersData()
+        public async Task SyncAllKnownProvidersData()
         {
             const int chunkSize = 200;
+            bool stopLoop = false;
 
-            return _cosmosDbQueryDispatcher.ExecuteQuery(new ProcessAllProviders()
+            int min = 1, max = chunkSize;
+
+            while (!stopLoop)
             {
-                ProcessChunk = async providers =>
-                {
-                    foreach (var chunk in providers.Buffer(chunkSize))
-                    {
-                        await SyncProviderData(chunk.Select(p => p.Ukprn));
-                    }
-                }
-            });
+                var providers =  await _sqlQueryDispatcher.ExecuteQuery(new GetProviders() { Min = min, Max = max });
+
+                await SyncProviderData(providers.Select(p => p.Ukprn));
+
+                if(providers.Count < chunkSize)
+                    stopLoop = true;
+                
+                min = max + 1;
+                max = max + chunkSize;
+            }
         }
 
         public async Task SyncProviderData(int ukprn)
@@ -134,64 +151,54 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 .OrderByDescending(c => c.LastUpdated)
                 .FirstOrDefault();
 
-        private static ProviderAlias MapAlias(ProviderAliasesStructure alias) => new ProviderAlias()
-        {
-            Alias = alias.ProviderAlias
-        };
+        
 
-        private static ProviderContact MapContact(ProviderContactStructure contact) => new ProviderContact()
+        private static ProviderContact MapContact(ProviderContactStructure contact)
         {
-            ContactAddress = new ProviderContactAddress()
+            if (contact == null)
+                return new ProviderContact();
+            return new ProviderContact()
             {
-                SAON = new ProviderContactAddressSAON { Description = contact.ContactAddress.Address1 },
-                PAON = new ProviderContactAddressPAON { Description = contact.ContactAddress.Address2 },
-                StreetDescription = contact.ContactAddress.Address3,
-                Locality = contact.ContactAddress.Address4,
-                Items = new List<string>
-                {
-                    contact.ContactAddress.Town,
-                    contact.ContactAddress.County,
-                }.Where(s => s != null).ToList(),
-                PostTown = contact.ContactAddress.Town,
-                County = contact.ContactAddress.County,
-                PostCode = contact.ContactAddress.PostCode,
-            },
-            ContactEmail = contact.ContactEmail,
-            ContactFax = contact.ContactFax,
-            ContactPersonalDetails = new ProviderContactPersonalDetails()
-            {
-                PersonNameTitle = contact.ContactPersonalDetails.PersonNameTitle,
-                PersonGivenName = contact.ContactPersonalDetails.PersonGivenName,
-                PersonFamilyName = contact.ContactPersonalDetails.PersonFamilyName,
-            },
-            ContactTelephone1 = contact.ContactTelephone1,
-            ContactType = contact.ContactType,
-            ContactWebsiteAddress = contact.ContactWebsiteAddress,
-            LastUpdated = contact.LastUpdated
-        };
+                AddressSaonDescription = contact?.ContactAddress?.Address1,
+                AddressPaonDescription = contact?.ContactAddress?.Address2,
+                AddressStreetDescription = contact?.ContactAddress?.Address3,
+                AddressLocality = contact?.ContactAddress?.Address4,
+                AddressItems = contact?.ContactAddress?.Town + " " + contact?.ContactAddress?.County,
+                AddressPostTown = contact?.ContactAddress?.Town,
+                AddressCounty = contact?.ContactAddress?.County,
+                AddressPostcode = contact?.ContactAddress?.PostCode,
+                Email = contact?.ContactEmail,
+                Fax = contact?.ContactFax,
+                PersonalDetailsPersonNameTitle = contact?.ContactPersonalDetails?.PersonNameTitle?[0],
+                PersonalDetailsPersonNameGivenName = contact?.ContactPersonalDetails?.PersonGivenName?[0],
+                PersonalDetailsPersonNameFamilyName = contact?.ContactPersonalDetails?.PersonFamilyName,
+                Telephone1 = contact?.ContactTelephone1,
+                ContactType = contact?.ContactType,
+                WebsiteAddress = contact?.ContactWebsiteAddress
+            };
+        }
 
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
-
             var existingProvider = await GetProvider(ukprn);
+            
+            var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
 
             var contact = SelectContact(providerData.ProviderContact);
+            var ukrlpProviderContact = MapContact(contact);
 
-            var providerId = existingProvider?.Id ?? Guid.NewGuid();
 
             if (existingProvider == null)
             {
-                await _cosmosDbQueryDispatcher.ExecuteQuery(
+                _logger.LogInformation("Couldn't find provider for ukprn [{0}]. Attempting to create one", ukprn);
+                await _sqlQueryDispatcher.ExecuteQuery(
                     new CreateProviderFromUkrlpData()
                     {
                         Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        Aliases = providerData.ProviderAliases.Select(MapAlias),
                         DateUpdated = _clock.UtcNow,
                         ProviderId = providerId,
-                        Contacts = contact != null ?
-                            new List<ProviderContact>() { MapContact(contact) } :
-                            new List<ProviderContact>(),
+                        Contact = ukrlpProviderContact,
                         ProviderName = providerData.ProviderName,
                         ProviderStatus = providerData.ProviderStatus,
                         ProviderType = NewProviderProviderType,
@@ -204,41 +211,74 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
             else
             {
-                await _cosmosDbQueryDispatcher.ExecuteQuery(
-                    new UpdateProviderFromUkrlpData()
-                    {
-                        Alias = providerData.ProviderAliases.FirstOrDefault()?.ProviderAlias,
-                        Aliases = providerData.ProviderAliases.Select(MapAlias),
-                        DateUpdated = _clock.UtcNow,
-                        ProviderId = providerId,
-                        Contacts = contact != null ?
-                            new List<ProviderContact>() { MapContact(contact) } :
-                            new List<ProviderContact>(),
-                        ProviderName = providerData.ProviderName,
-                        ProviderStatus = providerData.ProviderStatus,
-                        UpdatedBy = UpdatedBy
-                    });
-                _logger.LogInformation("UKRLP Sync: Update {0} starting...", ukprn);
+                var existingProviderContact = await GetProviderContact(providerId);
+                
+
+                var updateProvider = CheckUpdateProvider(existingProvider,providerData);
+                var updateProviderContact = true;
+                if (existingProviderContact != null)
+                {
+                    updateProviderContact = CheckUpdateProviderContact(existingProviderContact, ukrlpProviderContact);
+                }
+                if (updateProvider || updateProviderContact)
+                {
+                        await _sqlQueryDispatcher.ExecuteQuery(
+                            new UpdateProviderFromUkrlpData()
+                            {
+                                Alias = providerData.ProviderAliases?.FirstOrDefault().ProviderAlias,
+                                DateUpdated = _clock.UtcNow,
+                                ProviderId = providerId,
+                                Contact = ukrlpProviderContact,
+                                ProviderName = providerData.ProviderName,
+                                ProviderStatus = providerData.ProviderStatus,
+                                UpdatedBy = UpdatedBy,
+                                UpdateProvider= updateProvider,
+                                UpdateProviderContact= updateProviderContact,
+                            });
+                    
+                }
+                else
+                {
+                    return CreateOrUpdateResult.Skipped;
+                }
 
                 var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
 
                 var deactivating = IsDeactivatedStatus(newStatusCode);
-                _logger.LogInformation("UKRLP Sync: ukprn {0} - oldStatusCode {1} - newStatusCode {2} - deactivating {3}", ukprn, oldStatusCode, newStatusCode, deactivating);
+                _logger.LogInformation("UKRLP Sync: ukprn [{0}] - oldStatusCode [{1}] - newStatusCode [{2}] - deactivating [{3}]", ukprn, oldStatusCode, newStatusCode, deactivating);
                 if (deactivating)
                 {
-                    _logger.LogInformation("UKRLP Sync: Update {0} starting deactivating is {1} ...", ukprn, deactivating);
-                    using (var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
-                    {
-                        await sqlDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
-                        await sqlDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
-                        await sqlDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
-                        await sqlDispatcher.Commit();
-                    }
+                    _logger.LogInformation("UKRLP Sync: Update [{0}] starting deactivating is [{1}] ...", ukprn, deactivating);
+                   
+                        await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
+                        await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
+                        await _sqlQueryDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
+                    
                 }
 
                 return CreateOrUpdateResult.Updated;
             }
+        }
+
+        private bool CheckUpdateProviderContact(ProviderContact existingProviderContact, ProviderContact ukrlpProviderContact)
+        {
+            if (existingProviderContact.IsEqual(ukrlpProviderContact))
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        private bool CheckUpdateProvider(Provider existingProvider, ProviderRecordStructure providerData)
+        {
+            if (existingProvider.Alias == providerData.ProviderAliases?.FirstOrDefault()?.ProviderAlias &&
+                    existingProvider.ProviderName == providerData?.ProviderName &&
+                    existingProvider.ProviderStatus == providerData?.ProviderStatus )
+            {
+                return false;
+            }
+            else { return true; }
         }
 
         private static bool IsDeactivatedStatus(string status) => status switch
@@ -258,8 +298,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         };
 
         private Task<Provider> GetProvider(int ukprn) =>
-           _cosmosDbQueryDispatcher.ExecuteQuery(new DataStore.CosmosDb.Queries.GetProviderByUkprn() { Ukprn = ukprn });
+           _sqlQueryDispatcher.ExecuteQuery(new GetProviderByUkprn() { Ukprn = ukprn });
 
-        private enum CreateOrUpdateResult { Created, Updated }
+        private Task<ProviderContact> GetProviderContact(Guid providerId) =>
+           _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById() { ProviderId = providerId });
+
+        private enum CreateOrUpdateResult { Created, Updated, Skipped }
     }
 }

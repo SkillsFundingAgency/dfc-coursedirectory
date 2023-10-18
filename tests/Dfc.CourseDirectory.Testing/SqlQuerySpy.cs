@@ -32,10 +32,10 @@ namespace Dfc.CourseDirectory.Testing
 
         public void Reset() => _dispatcherMock.Reset();
 
-        public void VerifyQuery<TQuery, TResult>(Predicate<TQuery> match)
+        public void VerifyQuery<TQuery, TResult>(Predicate<TQuery> match, Times? times = null)
             where TQuery : ISqlQuery<TResult>
         {
-            _dispatcherMock.Verify(d => d.ExecuteQuery(Match.Create(match)));
+            _dispatcherMock.Verify(d => d.ExecuteQuery(Match.Create(match)), times ?? Times.AtLeastOnce());
         }
     }
 
