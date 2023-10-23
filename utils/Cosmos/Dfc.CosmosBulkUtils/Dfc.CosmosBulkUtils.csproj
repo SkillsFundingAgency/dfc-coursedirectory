@@ -41,7 +41,13 @@
     <None Update="patch-unconsented-ethnicity-data .json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="patch-unconsented-llddhealth-data.json">
+    <None Update="patch-unconsented-learning-difficulty-or-disability-declaration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="patch-unconsented-secondary-learning-difficulty-or-disability.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="patch-unconsented-primary-learning-difficulty-or-disability.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="patch-provider-types-7-to-5.json">

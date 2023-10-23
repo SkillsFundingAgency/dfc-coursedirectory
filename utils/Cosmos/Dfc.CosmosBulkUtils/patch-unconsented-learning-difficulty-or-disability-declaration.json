@@ -1,0 +1,9 @@
+{
+  "FilterPredicate": "SELECT * FROM c WHERE c.ConsentToCollectLLDDHealth = false AND c.LearningDifficultyOrDisabilityDeclaration <> 9",
+  "Operations": [
+    {
+      "Field": "/LearningDifficultyOrDisabilityDeclaration",
+      "Value": 9
+    }
+  ]
+}
