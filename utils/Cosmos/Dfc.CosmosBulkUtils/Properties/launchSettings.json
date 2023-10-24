@@ -2,7 +2,7 @@
   "profiles": {
     "Dfc.CosmosBulkUtils": {
       "commandName": "Project",
-      "commandLineArgs": "delete -u https://dss-at-shared-cdb.documents.azure.com:443/ -k gN8fmksIp9YAz7a3GHARnMlr7EdA3MWg3vEVEHkIrWfqHhl9Mpxd651fwmgqfCEgmuFEaGDU3OJLNouL6zlbmQ== -c outcomes -d outcomes -f delete-outcome.json"
+      "commandLineArgs": "delete -u https://dss-at-shared-cdb.documents.azure.com:443/ -k gN8fmksIp9YAz7a3GHARnMlr7EdA3MWg3vEVEHkIrWfqHhl9Mpxd651fwmgqfCEgmuFEaGDU3OJLNouL6zlbmQ== -c outcomes -d outcomes -f delete-outcomes-at.json"
     }
   }
 }
