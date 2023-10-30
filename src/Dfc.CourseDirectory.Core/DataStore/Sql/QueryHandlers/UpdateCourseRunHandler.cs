@@ -55,6 +55,7 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @Update
 
 SELECT 0 AS Result";
 
+
             var paramz = new
             {
                 query.CourseRunId,

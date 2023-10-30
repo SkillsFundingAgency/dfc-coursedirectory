@@ -8,6 +8,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     public class UpdateCourseRun : ISqlQuery<OneOf<NotFound, Success>>
     {
+        
+        public Guid [] SelectedCourseRunid { get; set; }
+
         public Guid CourseRunId { get; set; }
         public string CourseName { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }

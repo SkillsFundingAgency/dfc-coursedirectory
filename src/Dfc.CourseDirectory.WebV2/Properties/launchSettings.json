@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Dfc.CourseDirectory.WebV2": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "jsWebView2Debugging": false
+    }
+  }
+}

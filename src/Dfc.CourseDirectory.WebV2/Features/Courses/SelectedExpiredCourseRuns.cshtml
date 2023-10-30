@@ -1,0 +1,77 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns.ViewModel
+
+@{
+    Layout = "_V2LayoutAdmin";
+    ViewContext.SetLayoutData(title: "Enter the start date for your course(s)");
+}
+
+@section BackLink {
+    <govuk-back-link asp-action="Update" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
+}
+
+
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="NewStartDate" />
+    <govuk-error-summary-item asp-for="SelectedCourses" />
+</govuk-error-summary>
+
+
+<form asp-action="UpdatedCourses" asp-all-route-data="@ProviderContext.RouteValues">
+    
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">
+            Enter the start date for your course(s)
+        </h1>
+
+        <div class="govuk-hint">For example, 12 11 2007</div>
+
+        <govuk-date-input asp-for="NewStartDate">
+            <govuk-date-input-label aria-hidden="True"></govuk-date-input-label>
+        </govuk-date-input>
+
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Course name</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Your reference</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                <th scope="col" class="govuk-table__header" style="width: 150px">Start date</th>
+            </tr>
+
+            <tbody class="govuk-table__body">
+            @if (Model.Rows.Count > 0)
+            {
+
+                foreach (var selectedExpiredCourse in Model.Rows)
+                {
+                    <tr class="govuk-table__row" type="row" name="selectedRows" data-testid="SelectedCourseRow" value=@selectedExpiredCourse.CourseId>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedCourseName">@selectedExpiredCourse.CourseName</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedProviderCourseRef">@selectedExpiredCourse.ProviderCourseRef</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedDeliveryMode">@selectedExpiredCourse.DeliveryMode.ToDescription()</td>
+                        <td class="govuk-table__cell" style="border:none" data-testid="SelectedStartDate">@selectedExpiredCourse.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <div class="input">
+                                <input name="selectedCourses" value=@selectedExpiredCourse.CourseId type="hidden" id="selected">
+                                <label for="selected"></label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+
+        <p class="govuk-body">
+            Your course(s) will be updated on Publish to the course directory and available to learners searching for
+            learning and training
+            opportunities on the National Career Service, Find a course.
+        </p>
+
+        <govuk-button type="Submit">Continue</govuk-button>
+        </div>
+    </div>
+</form>
+
+
