@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Validation;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
 {
