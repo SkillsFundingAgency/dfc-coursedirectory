@@ -2,16 +2,19 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Controllers
 {
     public class TLevelsController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<TLevelsController> _log;
 
-        public TLevelsController(IMediator mediator)
+        public TLevelsController(IMediator mediator, ILogger<TLevelsController> log)
         {
             _mediator = mediator;
+            _log = log;
         }
 
         [HttpGet("~/tleveldefinitions")]
@@ -21,7 +24,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTLevelDefinitions()
         {
-            return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
+           return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
         }
 
         [HttpGet("~/tlevels")]
@@ -41,11 +44,20 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> TLevelDetail([FromQuery] Features.TLevels.TLevelDetail.Query request)
         {
+            _log.LogInformation($"Start Getting T-Level Details for [{request.TLevelId}]");
+
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => NotFound(),
-                r => Ok(r));
+                _ => {
+                    _log.LogWarning($"Failed to get T-Level Details for [{request.TLevelId}]. Response Code [NOT FOUND]");
+                    return NotFound();
+                },
+                r => {
+                    _log.LogInformation($"Successfully retrieved T-Level Details for [{request.TLevelId}]. Response Code [OK]");
+                    return Ok(r);
+                }
+            );
         }
     }
 }
