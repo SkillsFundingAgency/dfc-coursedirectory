@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             }
 
             var geoFilterRequired = request.Distance.GetValueOrDefault(0) > 0 &&
-                (postcode != null || (request.Latitude.HasValue && request.Longitude.HasValue));
+                (postcode != null || (request.Latitude.HasValue && request.Longitude.HasValue)); 
 
             // lat/lng required if Distance filter is specified *or* sorting by Distance
             var getPostcodeCoords = (geoFilterRequired || request.SortBy == SearchSortBy.Distance) && !request.Latitude.HasValue;
@@ -168,7 +168,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 filters.Add(
                     $"(geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})') le {distanceInKm}" +
                     $" or {nameof(FindACourseOffering.National)} eq true" +
-                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq 2)");
+                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq 2" +
+                    $" or {nameof(FindACourseOffering.DeliveryMode)} eq 3)"); 
             }
 
             if (!string.IsNullOrWhiteSpace(request.Town))
@@ -225,7 +226,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 Size = size,
                 Skip = skip,
                 OrderBy = orderBy
-            };
+            };            
 
             var result = await _courseSearchClient.Search(query);
 
