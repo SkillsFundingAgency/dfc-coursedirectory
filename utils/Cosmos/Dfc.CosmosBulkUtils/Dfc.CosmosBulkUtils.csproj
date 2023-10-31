@@ -29,6 +29,15 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="delete-outcomes-pp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="delete-outcomes-test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="delete-outcomes-prd.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="patch-provider-types-2-to-0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -38,7 +47,7 @@
     <None Update="patch-provider-types-6-to-4.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="delete-outcomes-dev.json">
+    <None Update="delete-outcomes-at.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="patch-provider-types-7-to-5.json">
