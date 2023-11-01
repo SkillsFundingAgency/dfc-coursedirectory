@@ -21,6 +21,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
         [Name("PROVIDER_UKPRN")]
         public string ProviderUkprn { get; set; }
 
+        [Name("PROVIDER_NAME")]
+        public string ProviderName { get; set; }
+
         [Name("COURSE_ID")]
         public string CourseId { get; set; }
 
@@ -138,6 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                     yield return new Csv
                     {
                         ProviderUkprn = result.ProviderUkprn.ToString(),
+                        ProviderName = result.ProviderName,
                         CourseId = result.CourseId.ToString(),
                         CourseRunId = result.CourseRunId.ToString(),
                         CourseName = result.CourseName,
