@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -674,13 +675,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var addCourseSection1 = Session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
-            var courseFor = addCourseSection1.CourseFor;
-            var entryRequirements = addCourseSection1.EntryRequirements;
-            var whatWillLearn = addCourseSection1.WhatWillLearn;
-            var howYouWillLearn = addCourseSection1.HowYouWillLearn;
-            var whatYouNeed = addCourseSection1.WhatYouNeed;
-            var howAssessed = addCourseSection1.HowAssessed;
-            var whereNext = addCourseSection1.WhereNext;
+            var courseFor = ASCIICodeHelper.RemoveASCII(addCourseSection1.CourseFor);
+            var entryRequirements = ASCIICodeHelper.RemoveASCII(addCourseSection1.EntryRequirements);
+            var whatWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatWillLearn);
+            var howYouWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowYouWillLearn);
+            var whatYouNeed = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatYouNeed);
+            var howAssessed = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowAssessed);
+            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);
             var advancedLearnerLoan = addCourseSection1.AdvancedLearnerLoan;
             var adultEducationBudget = addCourseSection1.AdultEducationBudget;
 
@@ -742,7 +743,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         StartDate = specifiedStartDate,
                         CourseUrl = addCourseSection2.Url,
                         Cost = addCourseSection2.Cost,
-                        CostDescription = addCourseSection2.CostDescription ?? "",
+                        CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                         DurationUnit = addCourseSection2.DurationUnit.Value,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
@@ -765,7 +766,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StartDate = specifiedStartDate,
                     CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = addCourseSection2.CostDescription ?? "",
+                    CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
                 };
@@ -803,7 +804,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StartDate = specifiedStartDate,
                     CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = addCourseSection2.CostDescription ?? "",
+                    CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
                 };
@@ -1108,7 +1109,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
             }
-
             return viewModel;
         }
         #endregion
