@@ -29,4 +29,10 @@
     <ProjectReference Include="..\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="ViewComponents\Courses\CourseType\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewComponents\Courses\CourseType\" />
+  </ItemGroup>
 </Project>

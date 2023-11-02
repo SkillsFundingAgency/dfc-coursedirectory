@@ -80,7 +80,7 @@
                 {
                 CourseName = Model.CourseName,
                 LabelText = "Course name",
-                HintText = new HtmlString(@"The course name displayed on the National Career Service, <a href='" +@ViewBag.LiveServiceURl + "' class='govuk-link'  target='_blank'>Find a course</a>."),
+                HintText = new HtmlString(@"The course name displayed on the National Career Service, <a href='" + @ViewBag.LiveServiceURl + "' class='govuk-link'  target='_blank'>Find a course</a>."),
                 AriaDescribedBy = "Please enter the course name."
                 })
             </div>
@@ -95,11 +95,22 @@
                 })
             </div>
 
+            <div id="sectionCourseType">
+                @await Component.InvokeAsync(nameof(CourseType), new CourseTypeModel
+                {
+                DeliveryMode = Model.DeliveryMode,
+                LabelText = "Course type",
+                HintText = "Select one option.",
+                SecondHintText = "Select how you will deliver this course",
+                AriaDescribedBy = "Select how you will deliver this course"
+                })
+            </div>
+
             <div id="sectionDeliveryType">
                 @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
                 {
                 DeliveryMode = Model.DeliveryMode,
-                LabelText = "Course type",
+                LabelText = "Learning Method",
                 HintText = "Select one option.",
                 SecondHintText = "Select how you will deliver this course",
                 AriaDescribedBy = "Select how you will deliver this course"
