@@ -96,7 +96,7 @@
             </div>
 
             <div id="sectionCourseType">
-                @await Component.InvokeAsync(nameof(CourseType), new CourseTypeModel
+                @await Component.InvokeAsync(nameof(CourseTypeView), new CourseTypeModel
                 {
                 DeliveryMode = Model.DeliveryMode,
                 LabelText = "Course type",
