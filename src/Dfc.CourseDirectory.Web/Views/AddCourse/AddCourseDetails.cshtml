@@ -98,7 +98,7 @@
             <div id="sectionCourseType">
                 @await Component.InvokeAsync(nameof(CourseTypeView), new CourseTypeModel
                 {
-                DeliveryMode = Model.DeliveryMode,
+                CourseType = Model.CourseType,
                 LabelText = "Course type",
                 HintText = "Select one option.",
                 SecondHintText = "Select type of this course",
