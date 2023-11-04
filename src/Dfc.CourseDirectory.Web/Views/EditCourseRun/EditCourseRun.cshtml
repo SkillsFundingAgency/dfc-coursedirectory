@@ -6,6 +6,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
@@ -86,7 +87,7 @@
             </div>
 
              <div class="section" id="sectionCourseType">
-                @await Component.InvokeAsync(nameof(CourseTypeView), new CourseTypeModel
+                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType), new CourseTypeModel
                 {
                 CourseType = Model.CourseType,
                 LabelText = "Course type",

@@ -31,7 +31,8 @@ UPDATE Pttcd.CourseRuns SET
     StudyMode = @StudyMode,
     UpdatedBy = @UpdatedByUserId,
     UpdatedOn = @UpdatedOn,
-    DataIsHtmlEncoded = 0
+    DataIsHtmlEncoded = 0,
+    CourseType = @CourseType
 WHERE CourseRunId = @CourseRunId
 AND CourseRunStatus = {(int)CourseStatus.Live}
 
@@ -74,7 +75,8 @@ SELECT 0 AS Result";
                 query.AttendancePattern,
                 query.StudyMode,
                 UpdatedByUserId = query.UpdatedBy.UserId,
-                query.UpdatedOn
+                query.UpdatedOn,
+                query.CourseType
             };
 
             var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);

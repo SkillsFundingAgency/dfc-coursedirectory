@@ -16,18 +16,25 @@
         <div class="govuk-radios govuk-radios" val-required-message="Select Course Type" id="CourseTypeRadioButtons">
 
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.CourseType, CourseDeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.ClassroomBased })
-                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.ClassroomBased">@CourseDeliveryMode.ClassroomBased.ToDescription()</label>
+                @Html.RadioButtonFor(m => m.CourseType, CourseType.EssentialSkills, new { @class = "govuk-radios__input", id = CourseType.EssentialSkills })
+                <label class="govuk-label govuk-radios__label" for="@CourseType.EssentialSkills">@CourseType.EssentialSkills.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.CourseType, CourseDeliveryMode.Online, new { @class = "govuk-radios__input", id = CourseDeliveryMode.Online })
-                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.Online">@CourseDeliveryMode.Online.ToDescription()</label>
+                @Html.RadioButtonFor(m => m.CourseType, CourseType.TLevels, new { @class = "govuk-radios__input", id = CourseType.TLevels })
+                <label class="govuk-label govuk-radios__label" for="@CourseType.TLevels">@CourseType.TLevels.ToDescription()</label>
             </div>
             <div class="govuk-radios__item">
-                @Html.RadioButtonFor(m => m.CourseType, CourseDeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.WorkBased })
-                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.WorkBased">@CourseDeliveryMode.WorkBased.ToDescription()</label>
+                @Html.RadioButtonFor(m => m.CourseType, CourseType.HTQs, new { @class = "govuk-radios__input", id = CourseType.HTQs })
+                <label class="govuk-label govuk-radios__label" for="@CourseType.HTQs">@CourseType.HTQs.ToDescription()</label>
             </div>
-
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.CourseType, CourseType.FreeCourseForJobs, new { @class = "govuk-radios__input", id = CourseType.FreeCourseForJobs })
+                <label class="govuk-label govuk-radios__label" for="@CourseType.FreeCourseForJobs">@CourseType.FreeCourseForJobs.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.CourseType, CourseType.Multiply, new { @class = "govuk-radios__input", id = CourseType.Multiply })
+                <label class="govuk-label govuk-radios__label" for="@CourseType.Multiply">@CourseType.Multiply.ToDescription()</label>
+            </div>
         </div>
     </fieldset>
 </div>

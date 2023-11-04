@@ -289,7 +289,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         Mode = mode,
                         CourseId = courseId.Value,
                         CourseRunId = courseRunId,
-                        CourseName = courseRun?.CourseName,
+                        CourseName = courseRun?.CourseName,                        
                         Venues = courseRunVenues,
                         VenueId = courseRun.VenueId ?? (Guid?)null,
                         ChooseRegion = new ChooseRegionModel
@@ -315,7 +315,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         AttendanceMode = courseRun.AttendancePattern,
                         QualificationType = course.LearnAimRefTypeDesc,
                         NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                        CurrentCourseRunDate = courseRun.StartDate
+                        CurrentCourseRunDate = courseRun.StartDate,
+                        CourseType = courseRun.CourseType
                     };
 
                     vm.ValPastDateRef = DateTime.Now;
@@ -431,7 +432,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 FlexibleStartDate = flexibleStartDate,
                 StartDate = specifiedStartDate,
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
-                UpdatedOn = _clock.UtcNow
+                UpdatedOn = _clock.UtcNow,
+                CourseType = model.CourseType
             };
 
             updateCommand.National = null;

@@ -81,7 +81,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     National = row.National,
                     SubRegionIds = courseRunSubRegions.GetValueOrDefault(row.CourseRunId, Enumerable.Empty<string>()).ToArray(),
                     VenueName = row.VenueName,
-                    ProviderVenueRef = row.ProviderVenueRef
+                    ProviderVenueRef = row.ProviderVenueRef,
+                    CourseType = row.CourseType
                 };
 
                 // We have some bad data where fields are populated when they shouldn't be for the delivery mode. Fix it up here
@@ -154,6 +155,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string VenueName { get; set; }
             public string ProviderVenueRef { get; set; }
             public bool? DataIsHtmlEncoded { get; set; }
+            public CourseType? CourseType { get; set; }
         }
 
         private class CourseRunSubRegionResult

@@ -1,8 +1,6 @@
 ﻿using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
 {
@@ -45,6 +43,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public CourseStudyMode? StudyMode { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 
     public class CourseSummaryFilterItemModel

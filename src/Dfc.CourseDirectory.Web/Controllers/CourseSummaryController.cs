@@ -8,9 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +78,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 StudyMode = courseRun.StudyMode,
                 AttendancePattern = courseRun.AttendancePattern,
                 CreatedDate = courseRun.CreatedOn,
-
+                CourseType = courseRun.CourseType
             };
 
             //Determine newer edited date

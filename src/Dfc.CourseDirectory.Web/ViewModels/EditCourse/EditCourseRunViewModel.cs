@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendanceMode { get; set; }
         public Guid? CourseId { get; set; }
-        public Guid CourseRunId { get; set; }
+        public Guid CourseRunId { get; set; }        
         public string QualificationType { get; set; }
         public bool FlexibleStartDate { get; set; }
         public PublishMode Mode { get; set; }
@@ -40,5 +40,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public DateTime? CurrentCourseRunDate { get; set; }
         public DateTime ValPastDateRef { get; set; }
         public string ValPastDateMessage { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 }

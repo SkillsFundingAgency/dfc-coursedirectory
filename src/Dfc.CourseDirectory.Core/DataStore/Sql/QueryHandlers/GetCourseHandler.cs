@@ -46,6 +46,7 @@ SELECT
     cr.AttendancePattern,
     cr.[National],
     cr.DataIsHtmlEncoded,
+    cr.CourseType,
     v.VenueName,
     v.ProviderVenueRef
 FROM Pttcd.CourseRuns cr

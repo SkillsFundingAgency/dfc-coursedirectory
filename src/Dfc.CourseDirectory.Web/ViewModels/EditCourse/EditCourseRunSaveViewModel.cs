@@ -30,5 +30,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string QualificationType { get; set; }
         public bool FlexibleStartDate { get; set; }
         public PublishMode Mode { get; set; }
+        public CourseType CourseType { get; set; }
     }
 }
