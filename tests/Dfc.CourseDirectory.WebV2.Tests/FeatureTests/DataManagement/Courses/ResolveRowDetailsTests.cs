@@ -514,6 +514,125 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Fact]
+        public async Task Post_ValidRequestForBlendedLearningDeliveryMode_UpdatesRowCorrectly()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.DeliveryMode = "blended";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.BlendedLearning;
+                        record.StartDate = "01/02/2023";
+                        record.ResolvedStartDate = new DateTime(2023, 2, 1);
+                        record.FlexibleStartDate = "no";
+                        record.ResolvedFlexibleStartDate = false;
+                        record.Cost = string.Empty;
+                        record.CostDescription = "The cost";
+
+                        // Set fields that aren't allowed for Blended Learning so we can check they're cleared out correctly
+                        record.NationalDelivery = "yes";
+                        record.ResolvedNationalDelivery = true;
+                        record.SubRegions = "County Durham";
+                        record.ResolvedSubRegions = new[] { "E06000001" };
+
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            "COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED",
+                            "COURSERUN_SUBREGIONS_NOT_ALLOWED",
+                            "COURSERUN_VENUE_REQUIRED"
+                        };
+                    });
+                });
+
+            var rowNumber = courseUploadRows.First().RowNumber;
+
+            var courseName = "Course name";
+            var providerCourseRef = "REF";
+            var flexibleStartDate = "true";
+            var courseWebPage = "provider.com/course";
+            var cost = "30.00";
+            var duration = "3";
+            var durationUnit = "Days";
+            var studyMode = "flexible";
+            var attendancePattern = "evening";
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"/data-upload/courses/resolve/{rowNumber}/details?providerId={provider.ProviderId}&deliveryMode=BlendedLearning")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("CourseName", courseName)
+                    .Add("ProviderCourseRef", providerCourseRef)
+                    .Add("FlexibleStartDate", flexibleStartDate)
+                    .Add("CourseWebPage", courseWebPage)
+                    .Add("Cost", cost)
+                    .Add("Duration", duration)
+                    .Add("DurationUnit", durationUnit)
+                    .Add("StudyMode", studyMode)
+                    .Add("AttendancePattern", attendancePattern)
+                    .Add("VenueId", venue.VenueId)
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            var row = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new GetCourseUploadRowDetail()
+            {
+                CourseUploadId = courseUpload.CourseUploadId,
+                RowNumber = rowNumber
+            }));
+
+            using (new AssertionScope())
+            {
+                row.IsValid.Should().BeTrue();
+                row.Errors.Should().BeEmpty();
+                row.DeliveryMode.Should().BeEquivalentTo("blended");
+                row.ResolvedDeliveryMode.Should().Be(CourseDeliveryMode.BlendedLearning);
+                row.CourseName.Should().Be(courseName);
+                row.ProviderCourseRef.Should().Be(providerCourseRef);
+                row.StartDate.Should().BeNullOrEmpty();
+                row.ResolvedStartDate.Should().BeNull();
+                row.FlexibleStartDate.Should().BeEquivalentTo("yes");
+                row.ResolvedFlexibleStartDate.Should().BeTrue();
+                row.NationalDelivery.Should().BeNullOrEmpty();
+                row.ResolvedNationalDelivery.Should().BeNull();
+                row.SubRegions.Should().BeNullOrEmpty();
+                row.ResolvedSubRegionIds.Should().BeEmpty();
+                row.CourseWebPage.Should().Be(courseWebPage);
+                row.Cost.Should().Be(cost);
+                row.ResolvedCost.Should().Be(30.00m);
+                row.CostDescription.Should().BeNullOrEmpty();
+                row.Duration.Should().Be(duration);
+                row.ResolvedDuration.Should().Be(3);
+                row.DurationUnit.Should().BeEquivalentTo(durationUnit);
+                row.ResolvedDurationUnit.Should().Be(CourseDurationUnit.Days);
+                row.StudyMode.Should().BeEquivalentTo(studyMode);
+                row.ResolvedStudyMode.Should().Be(CourseStudyMode.Flexible);
+                row.AttendancePattern.Should().BeEquivalentTo(attendancePattern);
+                row.ResolvedAttendancePattern.Should().Be(CourseAttendancePattern.Evening);
+                row.VenueId.Should().Be(venue.VenueId);
+                row.VenueName.Should().Be(venue.VenueName);
+                row.ProviderVenueRef.Should().Be(venue.ProviderVenueRef);
+            }
+        }
+
+        [Fact]
         public async Task Post_ValidRequestForOnlineDeliveryMode_UpdatesRowCorrectly()
         {
             // Arrange
@@ -939,6 +1058,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 deliveryMode: "ClassroomBased",
                 specifyVenueId: false);
 
+            yield return CreateRecord(
+                expectedErrorInputId: "StudyMode",
+                expectedErrorCode: "COURSERUN_STUDY_MODE_REQUIRED",
+                deliveryMode: "BlendedLearning",
+                studyMode: null);
+
+            yield return CreateRecord(
+                expectedErrorInputId: "AttendancePattern",
+                expectedErrorCode: "COURSERUN_ATTENDANCE_PATTERN_REQUIRED",
+                deliveryMode: "BlendedLearning",
+                attendancePattern: null);
+
+            yield return CreateRecord(
+                expectedErrorInputId: "VenueId",
+                expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
+                deliveryMode: "BlendedLearning",
+                specifyVenueId: false);
+
             static object[] CreateRecord(
                     string expectedErrorInputId,
                     string expectedErrorCode,
@@ -976,7 +1113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     durationUnit,
                     studyMode,
                     attendancePattern,
-                    specifyVenueId ?? deliveryMode == "ClassroomBased",
+                    specifyVenueId ?? (deliveryMode == "ClassroomBased" || deliveryMode == "BlendedLearning"),
                     expectedErrorInputId,
                     expectedErrorCode
                 };

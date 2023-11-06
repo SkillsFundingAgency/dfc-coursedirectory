@@ -86,6 +86,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                         record.DeliveryMode = "classroom";
                         record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
                     });
+
+                    rowBuilder.AddRow(learnAimRef, record =>
+                    {
+                        record.CourseId = courseId;
+                        record.DeliveryMode = "blended";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.BlendedLearning;
+                    });
                 });
 
             var rowNumber = courseUploadRows.First().RowNumber;
