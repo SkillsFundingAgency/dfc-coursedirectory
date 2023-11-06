@@ -355,7 +355,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.DeliveryMode)
             {
                 case CourseDeliveryMode.ClassroomBased:
-
+                case CourseDeliveryMode.BlendedLearning:
                     if (model.SelectedVenues != null)
                     {
                         venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
@@ -467,6 +467,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (model.DeliveryMode)
             {
                 case CourseDeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.BlendedLearning:
                     venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
                         from modelSelectedVenue in model.SelectedVenues
                         where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
@@ -577,6 +578,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             switch (addCourseRun.DeliveryMode)
             {
                 case CourseDeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.BlendedLearning:
                     venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
                         from modelSelectedVenue in addCourseRun.SelectedVenues
                         where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
@@ -684,7 +686,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var advancedLearnerLoan = addCourseSection1.AdvancedLearnerLoan;
             var adultEducationBudget = addCourseSection1.AdultEducationBudget;
 
-            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased || addCourseSection2.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 if (addCourseSection2.SelectedVenues == null || addCourseSection2.SelectedVenues.Count() < 1)
                 {
@@ -725,7 +727,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 flexibleStartDate = true;
             }
 
-            if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased
+            if ((addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased || addCourseSection2.DeliveryMode == CourseDeliveryMode.BlendedLearning)
                 && addCourseSection2.SelectedVenues != null
                 && addCourseSection2.SelectedVenues.Any())
             {
@@ -737,7 +739,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         VenueId = venue,
                         CourseName = addCourseSection2.CourseName,
                         ProviderCourseId = addCourseSection2.CourseProviderReference ?? "",
-                        DeliveryMode = CourseDeliveryMode.ClassroomBased,
+                        DeliveryMode = addCourseSection2.DeliveryMode,
                         FlexibleStartDate = flexibleStartDate,
                         StartDate = specifiedStartDate,
                         CourseUrl = addCourseSection2.Url,

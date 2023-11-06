@@ -264,6 +264,7 @@
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                 case "ClassroomBased":
+                case "BlendedLearning":
                     {
                         $fullPartTimeRadioButtons.show();
                         $attendancePatternRadioButtons.show();
@@ -481,6 +482,7 @@
 
                 switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
                     case "ClassroomBased":
+                    case "BlendedLearning":
                         {
                             if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
                                 $radioStudyMode.govUkRadios("validState");
@@ -612,6 +614,7 @@
                 var $studyMode = $("#@StudyMode.FullTime");
                 switch (this.id) {
                     case "ClassroomBased":
+                    case "BlendedLearning":
                         {
                             $specifiedStartDate.prop("checked", true);
                             $flexibleStartDate.prop("checked", false);

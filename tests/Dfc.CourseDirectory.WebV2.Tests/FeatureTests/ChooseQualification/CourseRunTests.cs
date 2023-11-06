@@ -56,6 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
         [Theory]
         [InlineData(CourseDeliveryMode.ClassroomBased)]
+        [InlineData(CourseDeliveryMode.BlendedLearning)]
         [InlineData(CourseDeliveryMode.WorkBased)]
         [InlineData(CourseDeliveryMode.Online)]
         private async Task Post_InvalidCourseWebpage_ReturnsError(CourseDeliveryMode deliveryMode)

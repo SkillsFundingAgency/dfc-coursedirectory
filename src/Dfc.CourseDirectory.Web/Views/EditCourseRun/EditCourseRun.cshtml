@@ -271,6 +271,7 @@
             var $flexibleStartDate = $("#FlexibleStartDate");
 
             switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                case "BlendedLearning":
                 case "ClassroomBased":
                     {
                         $fullPartTimeRadioButtons.show();
@@ -767,6 +768,7 @@
                 var $flexibleStartDate = $("#FlexibleStartDate");
 
                 switch (this.id) {
+                    case "BlendedLearning":
                     case "ClassroomBased":
                         {
                             $specifiedStartDate.prop("checked", true);

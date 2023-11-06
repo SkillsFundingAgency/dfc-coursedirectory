@@ -28,7 +28,7 @@
                                 <li>@row.ProviderCourseRef</li>
                             }
 
-                            @if (row.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+                            @if (row.DeliveryMode == CourseDeliveryMode.ClassroomBased || row.DeliveryMode == CourseDeliveryMode.BlendedLearning)
                             {
                                 <li>@row.VenueName</li>
                             }

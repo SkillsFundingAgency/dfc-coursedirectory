@@ -14,7 +14,10 @@
             @Model.HintText
         </div>
         <div class="govuk-radios govuk-radios" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
-
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.BlendedLearning, new { @class = "govuk-radios__input", id = CourseDeliveryMode.BlendedLearning })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.BlendedLearning">@CourseDeliveryMode.BlendedLearning.ToDescription()</label>
+            </div>
             <div class="govuk-radios__item">
                 @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.ClassroomBased })
                 <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.ClassroomBased">@CourseDeliveryMode.ClassroomBased.ToDescription()</label>

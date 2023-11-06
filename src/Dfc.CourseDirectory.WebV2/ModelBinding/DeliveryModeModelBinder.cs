@@ -30,6 +30,9 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
 
             CourseDeliveryMode? deliveryMode = valueProviderResult.FirstValue.ToLowerInvariant() switch
             {
+                "blended" => CourseDeliveryMode.BlendedLearning,
+                "blendedlearning" => CourseDeliveryMode.BlendedLearning,
+                "blended learning" => CourseDeliveryMode.BlendedLearning,
                 "classroom" => CourseDeliveryMode.ClassroomBased,
                 "classroombased" => CourseDeliveryMode.ClassroomBased,
                 "classroom-based" => CourseDeliveryMode.ClassroomBased,
