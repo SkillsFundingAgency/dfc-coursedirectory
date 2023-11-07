@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("DeliveryModes").TextContent.Should().Be("classroom based and online");
+            doc.GetElementByTestId("DeliveryModes").TextContent.Should().Be("classroom based, online, work based and blended learning");
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("DeliveryModes").TextContent.Should().Be("classroom based, online and work based");
+            doc.GetElementByTestId("DeliveryModes").TextContent.Should().Be("classroom based, online, work based and blended learning");
         }
 
         [Fact]
