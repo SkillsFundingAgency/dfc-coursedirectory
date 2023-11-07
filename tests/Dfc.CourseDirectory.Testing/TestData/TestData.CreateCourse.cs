@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.Testing
                 string courseUrl = null,
                 decimal? cost = 60m,
                 string costDescription = null,
-                CourseDurationUnit durationUnit = CourseDurationUnit.Dasys,
+                CourseDurationUnit durationUnit = CourseDurationUnit.Days,
                 int durationValue = 3,
                 string providerCourseRef = null)
             {
