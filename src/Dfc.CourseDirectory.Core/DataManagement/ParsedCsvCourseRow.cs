@@ -128,6 +128,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower()?.Trim() switch
         {
+            "blended" => CourseDeliveryMode.BlendedLearning,
+            "blendedlearning" => CourseDeliveryMode.BlendedLearning,
+            "blended learning" => CourseDeliveryMode.BlendedLearning,
             "classroom based" => CourseDeliveryMode.ClassroomBased,
             "classroombased" => CourseDeliveryMode.ClassroomBased,
             "classroom" => CourseDeliveryMode.ClassroomBased,
