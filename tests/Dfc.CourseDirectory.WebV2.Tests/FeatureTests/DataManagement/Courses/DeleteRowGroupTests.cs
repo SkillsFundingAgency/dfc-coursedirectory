@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("DeliveryModes").TextContent.Should().Be("classroom based, online, and blended learning");
+            doc.GetElementByTestId("DeliveryModes").TextContent.Should().Be("classroom based, online and blended learning");
         }
 
         [Fact]
