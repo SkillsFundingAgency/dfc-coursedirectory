@@ -1059,18 +1059,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 specifyVenueId: false);
 
             yield return CreateRecord(
+                cost: "30.00",
+                duration: "3",
+                durationUnit: "Days",
                 expectedErrorInputId: "StudyMode",
                 expectedErrorCode: "COURSERUN_STUDY_MODE_REQUIRED",
                 deliveryMode: "BlendedLearning",
                 studyMode: null);
 
             yield return CreateRecord(
+                cost: "30.00",
+                duration: "3",
+                durationUnit: "Days",
                 expectedErrorInputId: "AttendancePattern",
                 expectedErrorCode: "COURSERUN_ATTENDANCE_PATTERN_REQUIRED",
                 deliveryMode: "BlendedLearning",
                 attendancePattern: null);
 
             yield return CreateRecord(
+                cost: "30.00",
+                duration: "3",
+                durationUnit: "Days",
                 expectedErrorInputId: "VenueId",
                 expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
                 deliveryMode: "BlendedLearning",
