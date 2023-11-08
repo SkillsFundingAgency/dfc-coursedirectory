@@ -298,6 +298,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Pttcd\Tables\CourseTypeCategory.sql" />
+    <None Include="Scripts\Script.CourseTypeCategory.PostDeploy.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
