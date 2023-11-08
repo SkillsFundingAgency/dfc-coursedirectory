@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Web.ViewModels;
 
@@ -33,5 +32,6 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public Guid CourseRunId { get; set; }
 
         public CourseMode CourseMode { get; set; }
+        public CourseType CourseType { get; set; }
     }
 }

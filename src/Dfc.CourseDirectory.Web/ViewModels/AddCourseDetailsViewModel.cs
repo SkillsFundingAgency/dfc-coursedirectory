@@ -62,5 +62,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels
 
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
+        public CourseType CourseType { get; set; }
     }
 }

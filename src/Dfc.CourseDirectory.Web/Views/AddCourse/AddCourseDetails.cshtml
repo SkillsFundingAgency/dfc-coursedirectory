@@ -20,6 +20,7 @@
 @using Dfc.CourseDirectory.Services.Models.Courses
 @using Dfc.CourseDirectory.Web.Views.Shared
 @using Microsoft.AspNetCore.Html
+@using Courses = Dfc.CourseDirectory.Web.ViewComponents.Courses;
 @{
     ViewData["Title"] = "Add course details";
     Layout = "_Layout_Your_Courses";
@@ -96,7 +97,7 @@
             </div>
 
             <div id="sectionCourseType">
-                @await Component.InvokeAsync(nameof(CourseTypeView), new CourseTypeModel
+                @await Component.InvokeAsync(nameof(Courses.CourseType), new Courses.CourseType.CourseTypeModel
                 {
                 CourseType = Model.CourseType,
                 LabelText = "Course type",

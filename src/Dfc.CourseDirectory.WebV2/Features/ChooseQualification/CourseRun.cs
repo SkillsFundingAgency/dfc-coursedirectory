@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 
     public class ViewModel : Command
@@ -116,6 +117,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             var validationResult = await validator.ValidateAsync(request);
             if (validationResult.IsValid)
             {
+
+                request.CourseType = await GetCourseType();
+
                 _flow.Update(s => s.SetCourseRun(request.CourseName,
                     request.ProviderCourseRef,
                     request.StartDate,
@@ -129,7 +133,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     request.DurationUnit,
                     request.StudyMode,
                     request.AttendancePattern,
-                    request.VenueId));
+                    request.VenueId,
+                    request.CourseType));
                 return new Success();
             }
             else
@@ -167,6 +172,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     request.SubRegionIds = null;
                 }
             }
+        }
+
+        private async Task<CourseType?> GetCourseType()
+        {
+            var larsCategories = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCategories() { LearnAimRef = _flow.State.LarsCode });
+
+            var courseTypeCategories = new Dictionary<string, CourseType> {
+                    { "39", CourseType.EssentialSkills },
+                    { "42", CourseType.EssentialSkills },
+                    { "55", CourseType.HTQs }
+                };
+
+            var larsCategory = larsCategories.FirstOrDefault()?.CategoryRef ?? string.Empty;
+
+            if (courseTypeCategories.ContainsKey(larsCategory))
+            {
+                return courseTypeCategories[larsCategory];
+            }
+
+            return null;
         }
 
         private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, Command row)

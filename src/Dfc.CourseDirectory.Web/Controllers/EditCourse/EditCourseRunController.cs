@@ -316,7 +316,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         QualificationType = course.LearnAimRefTypeDesc,
                         NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
                         CurrentCourseRunDate = courseRun.StartDate,
-                        CourseType = courseRun.CourseType
+                        CourseType = courseRun.CourseType.Value
                     };
 
                     vm.ValPastDateRef = DateTime.Now;

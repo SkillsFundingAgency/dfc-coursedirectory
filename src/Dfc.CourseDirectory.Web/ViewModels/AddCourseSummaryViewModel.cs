@@ -37,5 +37,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public IEnumerable<string> Venues;
         public IEnumerable<string> Regions;
         public IEnumerable<string> FundingOptions;
+
+        public string CourseType { get; set; }
     }
 }

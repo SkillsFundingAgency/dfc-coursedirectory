@@ -261,6 +261,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 viewModel.StudyMode = addCourseSection2Session.StudyMode;
                 viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
+                viewModel.CourseType = addCourseSection2Session.CourseType;
                 if (addCourseSection2Session.SelectedVenues != null) {
                     foreach (var selectedVenue in addCourseSection2Session.SelectedVenues) {
                         viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;

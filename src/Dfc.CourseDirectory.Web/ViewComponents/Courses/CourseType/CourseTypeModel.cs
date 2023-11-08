@@ -1,6 +1,4 @@
-﻿using Dfc.CourseDirectory.Core.Models;
-
-namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
+﻿namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
 {
     public class CourseTypeModel
     {        

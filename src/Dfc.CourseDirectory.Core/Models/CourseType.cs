@@ -6,12 +6,12 @@ namespace Dfc.CourseDirectory.Core.Models
     [Flags]
     public enum CourseType
     {
-        EssentialSkills = 0,
-        TLevels = 6,
-        HTQs = 55,
-        FreeCourseForJobs = 56,
-        SkillsBootcamps = 62,
-        Multiply = 63
+        EssentialSkills = 1,
+        TLevels = 2,
+        HTQs = 3,
+        FreeCourseForJobs = 4,
+        SkillsBootcamps = 5,
+        Multiply = 6
     }
 
     public static class CourseTypeExtensions

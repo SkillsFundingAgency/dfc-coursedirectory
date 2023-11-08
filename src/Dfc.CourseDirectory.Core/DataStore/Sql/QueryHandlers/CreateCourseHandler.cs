@@ -76,7 +76,8 @@ INSERT INTO Pttcd.CourseRuns (
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National],
+    CourseType
 )
 SELECT
     CourseRunId,
@@ -99,7 +100,8 @@ SELECT
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National],
+    CourseType
 FROM @CourseRuns
 
 INSERT INTO Pttcd.CourseRunSubRegions (CourseRunId, RegionId)
