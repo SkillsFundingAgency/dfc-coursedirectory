@@ -5,11 +5,13 @@ BEGIN
 	VALUES
 		('39',	0,	'Tech Levels 2017',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('42',	0,	'Digital Skills',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('40',	0,	'Local Flexibility',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('3',	0,	'All Class Code Categories',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('55', 	0,	'Higher Technical Qualification',	'NotSet',	'2015-08-01',	'2600-12-31'),
-		('6',	0,	'Tech Levels 2017',	'NotSet',	'2015-08-01',	'2600-12-31'),
-		('7',	0,	'Tech Levels 2017 - 2 Year Loan',	'NotSet',	'2015-08-01',	'2600-12-31'),
-		('8',	0,	'Tech Levels 2017 - 3 Year Loan',	'NotSet',	'2015-08-01',	'2600-12-31'),
-		('56',	0,	'Free Courses for Jobs – MCA and GLA only flexible delivery qualifications',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('45',	0,	'National Skills Fund Level 3 Free Courses for Jobs rate 1',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('46',	0,	'National Skills Fund Level 3 Free Courses for Jobs rate 2',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('48',	0,	'National Skills Fund Level 3 Free Courses for Jobs only',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('49',	0,	'National Skills Fund Level 3 Free Courses for Jobs - short qualification',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('63',	0,	'Multiply – Improving adult numeracy skills',	'NotSet',	'2015-08-01',	'2600-12-31')
 END	
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
