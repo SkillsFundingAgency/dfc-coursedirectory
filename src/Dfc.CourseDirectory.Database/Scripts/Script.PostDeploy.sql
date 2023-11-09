@@ -1,4 +1,22 @@
-﻿
+﻿--- This script is only for df-coursedirectoryinttest db to run unit tests in pipeline. [LARS].[Category] table will always be populated in dfc-coursedirectory db in all environments ---
+IF (NOT EXISTS (SELECT 1 FROM [LARS].[Category]))
+BEGIN
+    INSERT INTO LARS.Category ([CategoryRef], [ParentCategoryRef], [CategoryName], [Target], [EffectiveFrom], [EffectiveTo]) 
+	VALUES
+		('39',	0,	'Tech Levels 2017',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('42',	0,	'Digital Skills',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('55', 	0,	'Higher Technical Qualification',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('6',	0,	'Tech Levels 2017',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('7',	0,	'Tech Levels 2017 - 2 Year Loan',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('8',	0,	'Tech Levels 2017 - 3 Year Loan',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('56',	0,	'Free Courses for Jobs – MCA and GLA only flexible delivery qualifications',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('63',	0,	'Multiply – Improving adult numeracy skills',	'NotSet',	'2015-08-01',	'2600-12-31')
+END	
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+--- This is the script to insert mapping data between Lars Category and CourseType ---
 IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'CourseTypeCategory'))
 BEGIN
     Delete from Pttcd.CourseTypeCategory
@@ -8,12 +26,18 @@ INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef)
 VALUES
 	(1, '39'),
 	(1, '42'),
-	(2, '6'),
-	(2, '7'),
-	(2, '8'),
+	(1, '40'),
+	(2, '3'),
 	(3, '55'),
-	(4, '56'),
+	(4, '45'),
+	(4, '46'),
+	(4, '48'),
+	(4, '49'),
 	(5, '63');
+-------------------------------------------------------------------------------------
+
+
+
 
 
 DECLARE @Regions TABLE (
