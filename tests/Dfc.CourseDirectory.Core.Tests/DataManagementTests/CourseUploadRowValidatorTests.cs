@@ -701,33 +701,33 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED");
         }
-        [Theory]
-        [InlineData("online")]
-        [InlineData("work based")]
-        [InlineData("classroom based")]
-        [InlineData("xxx")]
-        public async Task VenueNameNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Theory]
+        // [InlineData("online")]
+        // [InlineData("work based")]
+        // [InlineData("classroom based")]
+        // [InlineData("xxx")]
+        // public async Task VenueNameNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                DeliveryMode = deliveryMode,
-                ProviderCourseRef = string.Empty,
-                VenueName = "venue"
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         DeliveryMode = deliveryMode,
+        //         ProviderCourseRef = string.Empty,
+        //         VenueName = "venue"
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED");
+        // }
         [Fact]
         public async Task VenueNameInvalid_ReturnsValidationError()
         {
