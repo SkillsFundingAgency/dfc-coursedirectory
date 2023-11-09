@@ -1,4 +1,10 @@
-﻿INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef) 
+﻿
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'CourseTypeCategory'))
+BEGIN
+    Delete from Pttcd.CourseTypeCategory
+END
+
+INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef) 
 VALUES
 	(1, '39'),
 	(1, '42'),
