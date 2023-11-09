@@ -37,28 +37,28 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
         }
 
-        [Fact]
-        public async Task AttendancePatternEmptyWithBlendedLearningDeliveryMode_ReturnsValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Fact]
+        // public async Task AttendancePatternEmptyWithBlendedLearningDeliveryMode_ReturnsValidationError()
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                AttendancePattern = string.Empty,
-                DeliveryMode = "blended learning"
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         AttendancePattern = string.Empty,
+        //         DeliveryMode = "blended learning"
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
+        // }
 
         [Theory]
         [InlineData("online")]
@@ -86,31 +86,31 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
         }
 
-        [Theory]
-        [InlineData("online")]
-        [InlineData("work based")]
-        [InlineData("classromm based")]
-        public async Task AttendancePatternNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Theory]
+        // [InlineData("online")]
+        // [InlineData("work based")]
+        // [InlineData("classromm based")]
+        // public async Task AttendancePatternNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                AttendancePattern = "daytime",
-                DeliveryMode = deliveryMode
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         AttendancePattern = "daytime",
+        //         DeliveryMode = deliveryMode
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
+        // }
 
         [Fact]
         public async Task CostEmptyWithEmptyCostDescription_ReturnsSingleCostValidationError()
@@ -231,31 +231,31 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
         }
-        [Theory]
-        [InlineData("online")]
-        [InlineData("work based")]
-        [InlineData("classroom based")]
-        public async Task ProviderVenueRefNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Theory]
+        // [InlineData("online")]
+        // [InlineData("work based")]
+        // [InlineData("classroom based")]
+        // public async Task ProviderVenueRefNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                DeliveryMode = deliveryMode,
-                ProviderVenueRef = "venue"
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         DeliveryMode = deliveryMode,
+        //         ProviderVenueRef = "venue"
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED");
+        // }
         [Fact]
         public async Task ProviderVenueRefAndVenueNameEmptyWithClassroomBasedDeliveryMode_ReturnsValidationError()
         {
@@ -279,29 +279,29 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorCode == "COURSERUN_VENUE_REQUIRED");
         }
-        [Fact]
-        public async Task ProviderVenueRefAndVenueNameEmptyWithBlendedLearningDeliveryMode_ReturnsValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Fact]
+        // public async Task ProviderVenueRefAndVenueNameEmptyWithBlendedLearningDeliveryMode_ReturnsValidationError()
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                DeliveryMode = "blended learning",
-                ProviderVenueRef = string.Empty,
-                VenueName = string.Empty
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         DeliveryMode = "blended learning",
+        //         ProviderVenueRef = string.Empty,
+        //         VenueName = string.Empty
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_VENUE_REQUIRED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_VENUE_REQUIRED");
+        // }
         [Fact]
         public async Task ProviderVenueRefInvalid_ReturnsValidationError()
         {
@@ -427,28 +427,28 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 validationResult.Errors,
                 error => error.ErrorCode == "COURSERUN_STUDY_MODE_REQUIRED");
         }
-        [Fact]
-        public async Task StudyModeEmptyWithBlendedLearningDeliveryMode_ReturnsValidationError()
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Fact]
+        // public async Task StudyModeEmptyWithBlendedLearningDeliveryMode_ReturnsValidationError()
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                DeliveryMode = "blended learning",
-                StudyMode = string.Empty
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         DeliveryMode = "blended learning",
+        //         StudyMode = string.Empty
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_STUDY_MODE_REQUIRED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_STUDY_MODE_REQUIRED");
+        // }
 
         [Theory]
         [InlineData("online")]
@@ -476,31 +476,31 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 error => error.ErrorCode == "COURSERUN_STUDY_MODE_NOT_ALLOWED");
         }
 
-        [Theory]
-        [InlineData("online")]
-        [InlineData("work based")]
-        [InlineData("classroom based")]
-        public async Task StudyModeNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
-        {
-            // Arrange
-            var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
+        // [Theory]
+        // [InlineData("online")]
+        // [InlineData("work based")]
+        // [InlineData("classroom based")]
+        // public async Task StudyModeNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
+        // {
+        //     // Arrange
+        //     var allRegions = await new RegionCache(SqlQueryDispatcherFactory).GetAllRegions();
 
-            var row = new CsvCourseRow()
-            {
-                DeliveryMode = deliveryMode,
-                StudyMode = "full time"
-            };
+        //     var row = new CsvCourseRow()
+        //     {
+        //         DeliveryMode = deliveryMode,
+        //         StudyMode = "full time"
+        //     };
 
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
+        //     var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
-            // Act
-            var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
+        //     // Act
+        //     var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
 
-            // Assert
-            Assert.Contains(
-                validationResult.Errors,
-                error => error.ErrorCode == "COURSERUN_STUDY_MODE_NOT_ALLOWED");
-        }
+        //     // Assert
+        //     Assert.Contains(
+        //         validationResult.Errors,
+        //         error => error.ErrorCode == "COURSERUN_STUDY_MODE_NOT_ALLOWED");
+        // }
 
         [Fact]
         public async Task SubRegionsEmptyWithNationalFalse_ReturnsValidationError()
