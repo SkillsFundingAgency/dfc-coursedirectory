@@ -30,6 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public CourseType? CourseType { get; set; }
 
 
         public void SetCourse(string larsCode, string courseName) {
@@ -73,7 +74,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         CourseDurationUnit? durationUnit,
         CourseStudyMode? studyMode,
         CourseAttendancePattern? attendancePattern,
-       Guid? venueId)
+        Guid? venueId,
+        CourseType? courseType)
         {
             CourseName = courseName;
             ProviderCourseRef = providerCourseRef;
@@ -89,6 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             AttendancePattern = attendancePattern;
             StudyMode = studyMode;
             VenueId = venueId;
+            CourseType = courseType;
         }
     }
 }

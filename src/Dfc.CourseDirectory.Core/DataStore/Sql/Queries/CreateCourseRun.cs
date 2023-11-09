@@ -27,5 +27,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public CourseStudyMode? StudyMode { get; set; }
         public UserInfo CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 }

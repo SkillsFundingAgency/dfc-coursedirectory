@@ -40,7 +40,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 int DurationValue,
                 CourseStudyMode? StudyMode,
                 CourseAttendancePattern? AttendancePattern,
-                bool? National)> rows)
+                bool? National,
+                CourseType? CourseType)> rows)
         {
             var table = new DataTable();
             table.Columns.Add("CourseRunId", typeof(Guid));
@@ -58,6 +59,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             table.Columns.Add("StudyMode", typeof(byte));
             table.Columns.Add("AttendancePattern", typeof(byte));
             table.Columns.Add("National", typeof(bool));
+            table.Columns.Add("CourseType", typeof(int));
 
             foreach (var row in rows)
             {
@@ -77,7 +79,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                     row.DurationValue,
                     row.StudyMode,
                     row.AttendancePattern,
-                    row.National
+                    row.National,
+                    row.CourseType
                 });
             }
 

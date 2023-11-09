@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 
     public class ViewModel : Command
@@ -116,6 +117,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             var validationResult = await validator.ValidateAsync(request);
             if (validationResult.IsValid)
             {
+                request.CourseType = await GetCourseType();
+
                 _flow.Update(s => s.SetCourseRun(request.CourseName,
                     request.ProviderCourseRef,
                     request.StartDate,
@@ -129,7 +132,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     request.DurationUnit,
                     request.StudyMode,
                     request.AttendancePattern,
-                    request.VenueId));
+                    request.VenueId,
+                    request.CourseType));
                 return new Success();
             }
             else
@@ -245,6 +249,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
                 }
             }
+        }
+
+        private async Task<CourseType?> GetCourseType()
+        {
+            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = _flow.State.LarsCode });
+
+            foreach (var larsCourseType in larsCourseTypes)
+            {
+                if (larsCourseType.CategoryRef == "40" && !larsCourseType.LearnAimRefTitle.Contains("ESOL"))
+                {
+                    larsCourseType.CourseType = null;
+                    continue;
+                }
+
+                if (larsCourseType.CategoryRef == "3" && !larsCourseType.LearnAimRefTitle.StartsWith("T Level"))
+                {
+                    larsCourseType.CourseType = null;
+                }
+            }
+            
+            var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
+
+            return distinctLarsCourseTypes.FirstOrDefault();
         }
     }
 }

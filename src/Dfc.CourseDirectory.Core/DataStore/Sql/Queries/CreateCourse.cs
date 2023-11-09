@@ -40,5 +40,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public Guid? VenueId { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public CourseStudyMode? StudyMode { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 }

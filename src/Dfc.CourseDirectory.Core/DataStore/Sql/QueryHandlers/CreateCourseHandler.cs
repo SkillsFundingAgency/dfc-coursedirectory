@@ -76,7 +76,8 @@ INSERT INTO Pttcd.CourseRuns (
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National],
+    CourseType
 )
 SELECT
     CourseRunId,
@@ -99,7 +100,8 @@ SELECT
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National],
+    CourseType
 FROM @CourseRuns
 
 INSERT INTO Pttcd.CourseRunSubRegions (CourseRunId, RegionId)
@@ -140,7 +142,8 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @Create
                     cr.DurationValue,
                     cr.StudyMode,
                     cr.AttendancePattern,
-                    cr.National))),
+                    cr.National,
+                    cr.CourseType))),
                 SubRegions = TvpHelper.CreateCourseRunSubRegionsTable(
                     from cr in query.CourseRuns
                     from subRegionId in cr.SubRegionIds ?? Array.Empty<string>()
