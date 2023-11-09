@@ -1,4 +1,16 @@
-﻿DECLARE @Regions TABLE (
+﻿INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef) 
+VALUES
+	(1, '39'),
+	(1, '42'),
+	(2, '6'),
+	(2, '7'),
+	(2, '8'),
+	(3, '55'),
+	(4, '56'),
+	(5, '63');
+
+
+DECLARE @Regions TABLE (
 	RegionId VARCHAR(12),
 	Name NVARCHAR(100),
 	ParentRegionId VARCHAR(12),
