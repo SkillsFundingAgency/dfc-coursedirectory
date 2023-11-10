@@ -23,5 +23,5 @@
 	[National] BIT,
 	[BulkUploadErrorCount] INT,
 	[DataIsHtmlEncoded] BIT CONSTRAINT [DF_CourseRuns_DataIsHtmlEncoded] DEFAULT (0), 
-    [CourseType] INT NULL
+    [CourseType] TINYINT NULL
 )
