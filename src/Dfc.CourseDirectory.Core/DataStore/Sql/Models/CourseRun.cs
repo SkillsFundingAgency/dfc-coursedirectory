@@ -26,7 +26,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public bool? National { get; set; }
         public IReadOnlyCollection<string> SubRegionIds { get; set; }
         public string VenueName { get; set; }
-        public string ProviderVenueRef { get; set; }
-        public CourseType? CourseType { get; set; }
+        public string ProviderVenueRef { get; set; }        
     }
 }

@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public IEnumerable<CreateCourseCourseRun> CourseRuns { get; set; }
         public UserInfo CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 
     public class CreateCourseCourseRun
@@ -39,7 +40,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public IEnumerable<string> SubRegionIds { get; set; }
         public Guid? VenueId { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
-        public CourseStudyMode? StudyMode { get; set; }
-        public CourseType? CourseType { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }        
     }
 }

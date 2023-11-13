@@ -14,6 +14,5 @@
 	[DurationValue] INT,
 	[StudyMode] TINYINT,
 	[AttendancePattern] TINYINT,
-	[National] BIT,
-	[CourseType] TINYINT NULL
+	[National] BIT	
 )

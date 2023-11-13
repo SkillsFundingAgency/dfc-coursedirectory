@@ -1,6 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -9,6 +12,7 @@ using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescription
 {
@@ -32,6 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
         public string WhatYouWillNeedToBring { get; set; }
         public string HowYouWillBeAssessed { get; set; }
         public string WhereNext { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 
     public class Handler :
@@ -39,10 +44,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
         IRequestHandler<Command, CommandResponse>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
-        public Handler(MptxInstanceContext<FlowModel> flow)
+        public Handler(MptxInstanceContext<FlowModel> flow, ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _flow = flow;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -91,6 +98,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 var vm = request.Adapt<ViewModel>();
                 return new ModelWithErrors<Command>(vm, validationResult);
             }
+            
+            request.CourseType = await GetCourseType();
 
             _flow.Update(s => s.SetCourseDescription(
                 request.WhoThisCourseIsFor,
@@ -99,7 +108,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 request.HowYouWillLearn,
                 request.WhatYouWillNeedToBring,
                 request.HowYouWillBeAssessed,
-                request.WhereNext));
+                request.WhereNext,
+                request.CourseType));
 
             return new Success();
         }
@@ -116,6 +126,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 RuleFor(c => c.HowYouWillBeAssessed).HowYouWillBeAssessed();
                 RuleFor(c => c.WhereNext).WhereNext();
             }
+        }
+
+        private async Task<CourseType?> GetCourseType()
+        {
+            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = _flow.State.LarsCode });
+
+            foreach (var larsCourseType in larsCourseTypes)
+            {
+                if (larsCourseType.CategoryRef == "40" && !larsCourseType.LearnAimRefTitle.Contains("ESOL"))
+                {
+                    larsCourseType.CourseType = null;
+                    continue;
+                }
+
+                if (larsCourseType.CategoryRef == "3" && !larsCourseType.LearnAimRefTitle.StartsWith("T Level"))
+                {
+                    larsCourseType.CourseType = null;
+                }
+            }
+
+            var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
+
+            return distinctLarsCourseTypes.FirstOrDefault();
         }
     }
 }
