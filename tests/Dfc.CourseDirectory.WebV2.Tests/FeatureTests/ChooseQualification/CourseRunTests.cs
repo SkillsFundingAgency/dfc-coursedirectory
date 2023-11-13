@@ -460,68 +460,68 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
         }
         #endregion
         // #region blended learning tests
-        // [Fact]
-        // private async Task Post_BlendedLearningCourseRunIsValid_ReturnsRedirectToCheckAndPublish()
-        // {
-        //     // Arrange
-        //     var provider = await TestData.CreateProvider();
-        //     var mpx = MptxManager.CreateInstance(new FlowModel());
-        //     await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
-        //     var user = await TestData.CreateUser(providerId: provider.ProviderId);
-        //     var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+        [Fact]
+        private async Task Post_BlendedLearningCourseRunIsValid_ReturnsRedirectToCheckAndPublish()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
-        //     await HttpClient.GetAsync(
-        //         $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+            await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
 
-        //     var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
-        //     {
-        //         Content = new FormUrlEncodedContentBuilder()
-        //             .Add("WhoThisCourseIsFor", "Some Details")
-        //             .Add("EntryRequirements", "")
-        //             .Add("WhatYouWillLearn", "")
-        //             .Add("HowYouWillLearn", "")
-        //             .Add("WhatYouWillNeedToBring", "")
-        //             .Add("HowYouWillBeAssessed", "")
-        //             .Add("WhereNext", "")
-        //             .ToContent()
-        //     };
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("WhoThisCourseIsFor", "Some Details")
+                    .Add("EntryRequirements", "")
+                    .Add("WhatYouWillLearn", "")
+                    .Add("HowYouWillLearn", "")
+                    .Add("WhatYouWillNeedToBring", "")
+                    .Add("HowYouWillBeAssessed", "")
+                    .Add("WhereNext", "")
+                    .ToContent()
+            };
 
-        //     await HttpClient.SendAsync(request);
-        //     var postDeliveryRequest = new HttpRequestMessage(HttpMethod.Post, $"/courses/add/delivery?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
-        //     {
-        //         Content = new FormUrlEncodedContentBuilder()
-        //             .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
-        //             .ToContent()
-        //     };
-        //     await HttpClient.SendAsync(postDeliveryRequest);
+            await HttpClient.SendAsync(request);
+            var postDeliveryRequest = new HttpRequestMessage(HttpMethod.Post, $"/courses/add/delivery?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                    .ToContent()
+            };
+            await HttpClient.SendAsync(postDeliveryRequest);
 
-        //     // Act
-        //     var postCourseRun = new HttpRequestMessage(HttpMethod.Post, $"/courses/add-courserun?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
-        //     {
-        //         Content = new FormUrlEncodedContentBuilder()
-        //         .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
-        //         .Add("CourseName", "Some Details")
-        //         .Add("ProviderCourseRef", "someEf")
-        //         .Add("StartDate", "")
-        //         .Add("FlexibleStartDate", "true")
-        //         .Add("NationalDelivery", "")
-        //         .Add("SubRegionIds", "")
-        //         .Add("CourseWebPage", "")
-        //         .Add("Cost", "1000")
-        //         .Add("CostDescription", "")
-        //         .Add("Duration", "12")
-        //         .Add("DurationUnit", CourseDurationUnit.Years)
-        //         .Add("StudyMode", CourseStudyMode.FullTime)
-        //         .Add("AttendancePattern", CourseAttendancePattern.Evening)
-        //         .Add("VenueId", venue.VenueId)
-        //         .ToContent()
-        //     };
-        //     var postCourseRunResponse = await HttpClient.SendAsync(postCourseRun);
+            // Act
+            var postCourseRun = new HttpRequestMessage(HttpMethod.Post, $"/courses/add-courserun?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                .Add("CourseName", "Some Details")
+                .Add("ProviderCourseRef", "someEf")
+                .Add("StartDate", "")
+                .Add("FlexibleStartDate", "true")
+                .Add("NationalDelivery", "")
+                .Add("SubRegionIds", "")
+                .Add("CourseWebPage", "")
+                .Add("Cost", "1000")
+                .Add("CostDescription", "")
+                .Add("Duration", "12")
+                .Add("DurationUnit", CourseDurationUnit.Years)
+                .Add("StudyMode", CourseStudyMode.FullTime)
+                .Add("AttendancePattern", CourseAttendancePattern.Evening)
+                .Add("VenueId", venue.VenueId)
+                .ToContent()
+            };
+            var postCourseRunResponse = await HttpClient.SendAsync(postCourseRun);
 
-        //     // Assert
-        //     postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
-        //     postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
-        // }
+            // Assert
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+        }
 
         // [Fact]
         // private async Task Post_BlendedLearningCourseRunWithNoVenue_ReturnsError()
