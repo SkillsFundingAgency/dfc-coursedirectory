@@ -223,13 +223,13 @@
 
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Course type
+                    Delivery mode
                 </dt>
                 <dd class="govuk-summary-list__value" style="word-break: break-word;">
                     @Model.DeliveryMode.ToDescription()
                 </dd>
                 <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    @editCourseRunChangeLink(("course type", "sectionDeliveryType"))
+                    @editCourseRunChangeLink(("delivery mode", "sectionDeliveryType"))
                 </dd>
             </div>
 
