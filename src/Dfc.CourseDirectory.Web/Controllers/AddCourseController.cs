@@ -725,6 +725,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 flexibleStartDate = true;
             }
 
+            var courseType = await GetCourseType(learnAimRef);
+
             if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased
                 && addCourseSection2.SelectedVenues != null
                 && addCourseSection2.SelectedVenues.Any())
@@ -746,7 +748,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DurationUnit = addCourseSection2.DurationUnit.Value,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
-                        AttendancePattern = addCourseSection2.AttendanceMode
+                        AttendancePattern = addCourseSection2.AttendanceMode,
+                        CourseType = courseType
                     };
 
                     courseRuns.Add(courseRun);
@@ -767,7 +770,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Cost = addCourseSection2.Cost,
                     CostDescription = addCourseSection2.CostDescription ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
-                    DurationValue = addCourseSection2.DurationLength
+                    DurationValue = addCourseSection2.DurationLength,
+                    CourseType = courseType
                 };
                 var availableRegions = new SelectRegionModel();
 
@@ -805,7 +809,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Cost = addCourseSection2.Cost,
                     CostDescription = addCourseSection2.CostDescription ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
-                    DurationValue = addCourseSection2.DurationLength
+                    DurationValue = addCourseSection2.DurationLength,
+                    CourseType = courseType
                 };
 
                 courseRuns.Add(courseRun);
@@ -938,6 +943,28 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return selectVenue;
         }
 
+        private async Task<CourseType?> GetCourseType(string learnAimRef)
+        {
+            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
+
+            foreach (var larsCourseType in larsCourseTypes)
+            {
+                if (larsCourseType.CategoryRef == "40" && !larsCourseType.LearnAimRefTitle.Contains("ESOL"))
+                {
+                    larsCourseType.CourseType = null;
+                    continue;
+                }
+
+                if (larsCourseType.CategoryRef == "3" && !larsCourseType.LearnAimRefTitle.StartsWith("T Level"))
+                {
+                    larsCourseType.CourseType = null;
+                }
+            }
+
+            var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
+
+            return distinctLarsCourseTypes.FirstOrDefault();
+        }
 
         internal void RemoveSessionVariables()
         {
