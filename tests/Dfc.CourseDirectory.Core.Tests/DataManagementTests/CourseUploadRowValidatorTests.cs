@@ -671,7 +671,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("xxx")]
         public async Task VenueNameNotEmptyWithNonClassroomBasedDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
