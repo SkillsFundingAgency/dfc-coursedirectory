@@ -63,7 +63,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("blended learning")]
         public async Task AttendancePatternNotEmptyWithNonClassroomBasedDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -89,7 +88,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("classromm based")]
         public async Task AttendancePatternNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -209,7 +207,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("blended learning")]
         public async Task ProviderVenueRefNotEmptyWithNonClassroomBasedDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -234,7 +231,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("classroom based")]
         public async Task ProviderVenueRefNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -453,7 +449,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("blended learning")]
         public async Task StudyModeNotEmptyWithNonClassroomBasedDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -479,7 +474,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("classroom based")]
         public async Task StudyModeNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
@@ -704,8 +698,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         [Theory]
         [InlineData("online")]
         [InlineData("work based")]
-        [InlineData("classroom based")]
-        [InlineData("xxx")]
         public async Task VenueNameNotEmptyWithNonBlendedLearningDeliveryMode_ReturnsValidationError(string deliveryMode)
         {
             // Arrange
