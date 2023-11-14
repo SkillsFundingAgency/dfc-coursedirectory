@@ -70,6 +70,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapDurationUnit(CourseDurationUnit? value) => value switch
         {
+            CourseDurationUnit.Minutes => "Minutes",
             CourseDurationUnit.Hours => "Hours",
             CourseDurationUnit.Days => "Days",
             CourseDurationUnit.Weeks => "Weeks",
@@ -147,6 +148,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower()?.Trim() switch
         {
+            "minutes" => CourseDurationUnit.Minutes,
             "hours" => CourseDurationUnit.Hours,
             "days" => CourseDurationUnit.Days,
             "weeks" => CourseDurationUnit.Weeks,

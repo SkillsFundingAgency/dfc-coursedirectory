@@ -6,6 +6,7 @@
         Weeks = 2,
         Months = 3,
         Years = 4,
-        Hours = 5
+        Hours = 5,
+        Minutes = 6
     }
 }
