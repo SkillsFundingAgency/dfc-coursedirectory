@@ -9,11 +9,11 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 {
     public static class RuleBuilderExtensions
     {
-        private static bool IsCRorBL(CourseDeliveryMode deliveryMode)
+        private static bool IsCRorBL(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning;
         }
-        private static bool IsValidDM(CourseDeliveryMode deliveryMode)
+        private static bool IsValidDM(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased && deliveryMode != CourseDeliveryMode.BlendedLearning;
         }
