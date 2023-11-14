@@ -531,7 +531,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                {
                    rowBuilder.AddRow(learnAimRef, record =>
                    {
-                       record.DeliveryMode = "blended";
+                       record.DeliveryMode = "Blended learning";
                        record.ResolvedDeliveryMode = CourseDeliveryMode.BlendedLearning;
                        record.StartDate = "01/02/2023";
                        record.ResolvedStartDate = new DateTime(2023, 2, 1);
@@ -602,7 +602,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
            {
                row.IsValid.Should().BeTrue();
                row.Errors.Should().BeEmpty();
-               row.DeliveryMode.Should().BeEquivalentTo("blended");
+               row.DeliveryMode.Should().BeEquivalentTo("Blended learning");
                row.ResolvedDeliveryMode.Should().Be(CourseDeliveryMode.BlendedLearning);
                row.CourseName.Should().Be(courseName);
                row.ProviderCourseRef.Should().Be(providerCourseRef);
