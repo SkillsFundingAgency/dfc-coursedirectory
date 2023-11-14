@@ -1122,7 +1122,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     durationUnit,
                     studyMode,
                     attendancePattern,
-                    specifyVenueId ?? (deliveryMode == "ClassroomBased" || deliveryMode == "BlendedLearning"),
+                    specifyVenueId ?? deliveryMode == "ClassroomBased",
                     expectedErrorInputId,
                     expectedErrorCode
                 };
