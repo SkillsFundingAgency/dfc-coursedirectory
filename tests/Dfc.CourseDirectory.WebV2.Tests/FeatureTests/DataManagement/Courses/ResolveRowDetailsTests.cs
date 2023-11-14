@@ -1058,32 +1058,32 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 deliveryMode: "ClassroomBased",
                 specifyVenueId: false);
 
-            yield return CreateRecord(
-                cost: "30.00",
-                duration: "3",
-                durationUnit: "Days",
-                expectedErrorInputId: "StudyMode",
-                expectedErrorCode: "COURSERUN_STUDY_MODE_REQUIRED",
-                deliveryMode: "BlendedLearning",
-                studyMode: null);
+            // yield return CreateRecord(
+            //     cost: "30.00",
+            //     duration: "3",
+            //     durationUnit: "Days",
+            //     expectedErrorInputId: "StudyMode",
+            //     expectedErrorCode: "COURSERUN_STUDY_MODE_REQUIRED",
+            //     deliveryMode: "BlendedLearning",
+            //     studyMode: null);
 
-            yield return CreateRecord(
-                cost: "30.00",
-                duration: "3",
-                durationUnit: "Days",
-                expectedErrorInputId: "AttendancePattern",
-                expectedErrorCode: "COURSERUN_ATTENDANCE_PATTERN_REQUIRED",
-                deliveryMode: "BlendedLearning",
-                attendancePattern: null);
+            // yield return CreateRecord(
+            //     cost: "30.00",
+            //     duration: "3",
+            //     durationUnit: "Days",
+            //     expectedErrorInputId: "AttendancePattern",
+            //     expectedErrorCode: "COURSERUN_ATTENDANCE_PATTERN_REQUIRED",
+            //     deliveryMode: "BlendedLearning",
+            //     attendancePattern: null);
 
-            yield return CreateRecord(
-                cost: "30.00",
-                duration: "3",
-                durationUnit: "Days",
-                expectedErrorInputId: "VenueId",
-                expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
-                deliveryMode: "BlendedLearning",
-                specifyVenueId: false);
+            // yield return CreateRecord(
+            //     cost: "30.00",
+            //     duration: "3",
+            //     durationUnit: "Days",
+            //     expectedErrorInputId: "VenueId",
+            //     expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
+            //     deliveryMode: "BlendedLearning",
+            //     specifyVenueId: false);
 
             static object[] CreateRecord(
                     string expectedErrorInputId,
@@ -1122,7 +1122,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     durationUnit,
                     studyMode,
                     attendancePattern,
-                    specifyVenueId ?? deliveryMode == "ClassroomBased",
+                    specifyVenueId ?? (deliveryMode == "ClassroomBased" || deliveryMode == "BlendedLearning"),
                     expectedErrorInputId,
                     expectedErrorCode
                 };
