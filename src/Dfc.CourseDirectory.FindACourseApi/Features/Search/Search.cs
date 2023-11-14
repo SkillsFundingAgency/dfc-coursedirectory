@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             {
                 // TODO Validate AttendancePatterns? Consider using enum instead of int
 
-                filters.Add($"({string.Join(" or ", request.AttendancePatterns.Select(ap => $"{nameof(FindACourseOffering.AttendancePattern)} eq {ap}"))} or {nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.ClassroomBased})");
+                filters.Add($"({string.Join(" or ", request.AttendancePatterns.Select(ap => $"{nameof(FindACourseOffering.AttendancePattern)} eq {ap}"))} or ({nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.ClassroomBased} and {nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.BlendedLearning}))");
             }
 
             if (request.QualificationLevels?.Any() ?? false)
@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (request.StudyModes?.Any() ?? false)
             {
-                filters.Add($"({string.Join(" or ", request.StudyModes.Select(sm => $"{nameof(FindACourseOffering.StudyMode)} eq {sm}"))} or {nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.ClassroomBased})");
+                filters.Add($"({string.Join(" or ", request.StudyModes.Select(sm => $"{nameof(FindACourseOffering.StudyMode)} eq {sm}"))} or ({nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.ClassroomBased} and {nameof(FindACourseOffering.DeliveryMode)} ne {(int)CourseDeliveryMode.BlendedLearning}))");
             }
 
             if (request.DeliveryModes?.Any() ?? false)
@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         UpdatedOn = i.Record.UpdatedOn,
                         VenueAddress = HtmlEncode(i.Record.VenueAddress),
                         VenueAttendancePattern = ((int?)i.Record.AttendancePattern)?.ToString(),
-                        VenueAttendancePatternDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ?
+                        VenueAttendancePatternDescription = (i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased || i.Record.DeliveryMode == CourseDeliveryMode.BlendedLearning) ?
                             i.Record.AttendancePattern?.ToDescription() :
                             null,
                         VenueLocation = i.Record.Position != null ?
@@ -287,7 +287,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                             null,
                         VenueName = HtmlEncode(i.Record.VenueName),
                         VenueStudyMode = ((int?)i.Record.StudyMode)?.ToString(),
-                        VenueStudyModeDescription = i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased ? 
+                        VenueStudyModeDescription = (i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased || i.Record.DeliveryMode == CourseDeliveryMode.BlendedLearning) ? 
                             i.Record.StudyMode?.ToDescription() :
                             null,
                         VenueTown = HtmlEncode(i.Record.VenueTown)

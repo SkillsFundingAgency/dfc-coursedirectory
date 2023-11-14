@@ -62,7 +62,7 @@
                 })
 
                 @{
-                    if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased)
+                    if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased || Model.DeliveryModeEnum == CourseDeliveryMode.BlendedLearning)
                     {
                         @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
                         {
@@ -120,7 +120,7 @@
                     Section = "sectionDuration"
                 })
 
-                @if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased)
+                @if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased || Model.DeliveryModeEnum == CourseDeliveryMode.BlendedLearning)
                 {
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                     {

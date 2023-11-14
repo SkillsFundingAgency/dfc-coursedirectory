@@ -35,6 +35,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Extensions
 
             switch (deliveryMode)
             {
+                case CourseDeliveryMode.BlendedLearning:
                 case CourseDeliveryMode.ClassroomBased:
                 case CourseDeliveryMode.Online:
                     return noDisplay;
@@ -55,6 +56,7 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.Extensions
                 case CourseDeliveryMode.WorkBased:
                 case CourseDeliveryMode.Online:
                     return noDisplay;
+                case CourseDeliveryMode.BlendedLearning:    
                 case CourseDeliveryMode.ClassroomBased:
                     return disp;
                 default:
