@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Core.Models
         EssentialSkills = 1,
         TLevels,
         HTQs,
-        FreeCourseForJobs,
+        FreeCoursesForJobs,
         Multiply
     }
 
@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 CourseType.EssentialSkills => "Essential Skills",
                 CourseType.TLevels => "T Levels",
                 CourseType.HTQs => "HTQs",
-                CourseType.FreeCourseForJobs => "Free Courses for Jobs",                
+                CourseType.FreeCoursesForJobs => "Free Courses for Jobs",                
                 CourseType.Multiply => "Multiply",
                 _ => throw new NotImplementedException($"Unknown value: '{courseType}'.")
             };

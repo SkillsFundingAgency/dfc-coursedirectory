@@ -3,7 +3,10 @@ IF (NOT EXISTS (SELECT 1 FROM [LARS].[Category]))
 BEGIN
     INSERT INTO LARS.Category ([CategoryRef], [ParentCategoryRef], [CategoryName], [Target], [EffectiveFrom], [EffectiveTo]) 
 	VALUES
-		('39',	0,	'Tech Levels 2017',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('24',	0,	'Class Code Category B: Non Regulated English, Maths, and ESOL Provision (SFA Formula Funded)',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('29',	0,	'Class Code Category G: Non Regulated English, Maths and ESOL Provision (not SFA Formula Funded)',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('37',	0,	'Legal Entitlement-Level 2',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('39',	0,	'Legal Entitlement-English and Maths',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('42',	0,	'Digital Skills',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('40',	0,	'Local Flexibility',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('3',	0,	'All Class Code Categories',	'NotSet',	'2015-08-01',	'2600-12-31'),
@@ -26,7 +29,10 @@ END
 
 INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef) 
 VALUES
-	(1, '39'),
+	(1, '24'),
+	(1, '29'),
+	(1, '37'),
+	(1, '39'),	
 	(1, '42'),
 	(1, '40'),
 	(2, '3'),

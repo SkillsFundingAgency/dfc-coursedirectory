@@ -187,7 +187,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host)+ "find-a-course/search";
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
             return View(vm);
         }
@@ -212,7 +212,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (Session.GetInt32("UKPRN") == null)
             {
-                return RedirectToAction("Index", "Home", new {errmsg = "Please select a Provider."});
+                return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
             int UKPRN = Session.GetInt32("UKPRN").Value;
 
@@ -225,7 +225,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesForProvider(),
-                ChooseRegion = new ChooseRegionModel {
+                ChooseRegion = new ChooseRegionModel
+                {
                     Regions = _courseService.GetRegions(),
                     National = null
 
@@ -261,20 +262,24 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 viewModel.StudyMode = addCourseSection2Session.StudyMode;
                 viewModel.AttendanceMode = addCourseSection2Session.AttendanceMode;
-                if (addCourseSection2Session.SelectedVenues != null) {
-                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues) {
+                if (addCourseSection2Session.SelectedVenues != null)
+                {
+                    foreach (var selectedVenue in addCourseSection2Session.SelectedVenues)
+                    {
                         viewModel.SelectVenue.VenueItems.First(x => x.Id == selectedVenue.ToString()).Checked = true;
                     }
                 }
 
-                if (addCourseSection2Session.SelectedRegions != null) {
-                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions) {
+                if (addCourseSection2Session.SelectedRegions != null)
+                {
+                    foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
+                    {
 
-                        foreach(var region in viewModel.ChooseRegion.Regions.RegionItems)
+                        foreach (var region in viewModel.ChooseRegion.Regions.RegionItems)
                         {
-                            foreach(var subregion in region.SubRegion)
+                            foreach (var subregion in region.SubRegion)
                             {
-                                if(subregion.Id == selectedRegion.ToString())
+                                if (subregion.Id == selectedRegion.ToString())
                                 {
                                     subregion.Checked = true;
                                 }
@@ -283,7 +288,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
                 }
 
-            } else {
+            }
+            else
+            {
                 viewModel.StudyMode = CourseStudyMode.FullTime;
                 viewModel.AttendanceMode = CourseAttendancePattern.Daytime;
                 viewModel.DurationUnit = CourseDurationUnit.Months;
@@ -305,7 +312,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         //public IActionResult AddNewVenue(Guid[] projectId)
         public IActionResult AddNewVenue(AddCourseRequestModel model)
         {
-           // var model = new AddCourseRequestModel();
+            // var model = new AddCourseRequestModel();
             // AddCourseRun - going to Summary
             //Session.SetObject(SessionAddCourseSection2, model);
             //Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
@@ -407,7 +414,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //return RedirectToAction("AddVenue", "Venues");
 
-            }
+        }
 
         [Authorize]
         [HttpGet]
@@ -468,15 +475,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 case CourseDeliveryMode.ClassroomBased:
                     venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                        from modelSelectedVenue in model.SelectedVenues
-                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                        select summaryVenueVenueItem.VenueName);
+                                    from modelSelectedVenue in model.SelectedVenues
+                                    where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                    select summaryVenueVenueItem.VenueName);
 
                     summaryViewModel.Venues = venues;
                     break;
                 case CourseDeliveryMode.WorkBased:
 
-                    if(model.National)
+                    if (model.National)
                     {
                         regions.Add("National");
                     }
@@ -578,14 +585,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 case CourseDeliveryMode.ClassroomBased:
                     venues.AddRange(from summaryVenueVenueItem in availableVenues.VenueItems
-                        from modelSelectedVenue in addCourseRun.SelectedVenues
-                        where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
-                        select summaryVenueVenueItem.VenueName);
+                                    from modelSelectedVenue in addCourseRun.SelectedVenues
+                                    where modelSelectedVenue.ToString() == summaryVenueVenueItem.Id
+                                    select summaryVenueVenueItem.VenueName);
 
 
                     break;
                 case CourseDeliveryMode.WorkBased:
-                    if(model.National)
+                    if (model.National)
                     {
                         regions.Add("National");
                     }
@@ -724,7 +731,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 flexibleStartDate = true;
             }
-            
+
             if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased
                 && addCourseSection2.SelectedVenues != null
                 && addCourseSection2.SelectedVenues.Any())
@@ -746,7 +753,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         DurationUnit = addCourseSection2.DurationUnit.Value,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
-                        AttendancePattern = addCourseSection2.AttendanceMode                        
+                        AttendancePattern = addCourseSection2.AttendanceMode
                     };
 
                     courseRuns.Add(courseRun);
@@ -767,7 +774,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Cost = addCourseSection2.Cost,
                     CostDescription = addCourseSection2.CostDescription ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
-                    DurationValue = addCourseSection2.DurationLength                    
+                    DurationValue = addCourseSection2.DurationLength
                 };
                 var availableRegions = new SelectRegionModel();
 
@@ -805,7 +812,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Cost = addCourseSection2.Cost,
                     CostDescription = addCourseSection2.CostDescription ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
-                    DurationValue = addCourseSection2.DurationLength                    
+                    DurationValue = addCourseSection2.DurationLength
                 };
 
                 courseRuns.Add(courseRun);
@@ -899,7 +906,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
-            string commonurl = "find-a-course/course-details?CourseId="+ publishedCourse.CourseId+"&r="+ publishedCourse.CourseRunId;
+            string commonurl = "find-a-course/course-details?CourseId=" + publishedCourse.CourseId + "&r=" + publishedCourse.CourseRunId;
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + commonurl;
 
             Session.Remove(SessionPublishedCourse);
@@ -947,7 +954,18 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             foreach (var larsCourseType in larsCourseTypes)
             {
-                if (larsCourseType.CategoryRef == "40" && !larsCourseType.LearnAimRefTitle.Contains("ESOL"))
+                if (larsCourseType.CategoryRef == "40" && 
+                    !(larsCourseType.LearnAimRefTitle.Contains("ESOL")
+                    || larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Language") 
+                    || larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Literature")))
+                {
+                    larsCourseType.CourseType = null;
+                    continue;
+                }
+
+                if (larsCourseType.CategoryRef == "37" && 
+                    !(larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Language")
+                    || larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Literature")))
                 {
                     larsCourseType.CourseType = null;
                     continue;
@@ -972,7 +990,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.Remove("LearnAimRefTitle");
             Session.Remove("LearnAimRefTypeDesc");
 
-          //  Session.Remove(SessionAddCourseSection1);
+            //  Session.Remove(SessionAddCourseSection1);
             Session.Remove(SessionAddCourseSection2);
             Session.Remove(SessionLastAddCoursePage);
         }
@@ -1120,8 +1138,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 {
                     foreach (var selectedRegion in addCourseSection2Session.SelectedRegions)
                     {
-                        viewModel.ChooseRegion.Regions.RegionItems.SelectMany(x=>x.SubRegion)
-                            .FirstOrDefault(sb=>sb.Id == selectedRegion).Checked = true;
+                        viewModel.ChooseRegion.Regions.RegionItems.SelectMany(x => x.SubRegion)
+                            .FirstOrDefault(sb => sb.Id == selectedRegion).Checked = true;
                     }
                 }
             }
