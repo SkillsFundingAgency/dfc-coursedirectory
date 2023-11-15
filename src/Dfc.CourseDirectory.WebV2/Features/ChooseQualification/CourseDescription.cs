@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -12,7 +11,7 @@ using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using System.Linq;
+using Dfc.CourseDirectory.Core.Services;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescription
 {
@@ -45,11 +44,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICourseTypeService _courseTypeService;
 
-        public Handler(MptxInstanceContext<FlowModel> flow, ISqlQueryDispatcher sqlQueryDispatcher)
+        public Handler(MptxInstanceContext<FlowModel> flow, ISqlQueryDispatcher sqlQueryDispatcher, ICourseTypeService courseTypeService)
         {
             _flow = flow;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _courseTypeService = courseTypeService;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -99,7 +100,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 return new ModelWithErrors<Command>(vm, validationResult);
             }
             
-            request.CourseType = await GetCourseType();
+            request.CourseType = await _courseTypeService.GetCourseType(_flow.State.LarsCode);
 
             _flow.Update(s => s.SetCourseDescription(
                 request.WhoThisCourseIsFor,
@@ -126,29 +127,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 RuleFor(c => c.HowYouWillBeAssessed).HowYouWillBeAssessed();
                 RuleFor(c => c.WhereNext).WhereNext();
             }
-        }
-
-        private async Task<CourseType?> GetCourseType()
-        {
-            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = _flow.State.LarsCode });
-
-            foreach (var larsCourseType in larsCourseTypes)
-            {
-                if (larsCourseType.CategoryRef == "40" && !larsCourseType.LearnAimRefTitle.Contains("ESOL"))
-                {
-                    larsCourseType.CourseType = null;
-                    continue;
-                }
-
-                if (larsCourseType.CategoryRef == "3" && !larsCourseType.LearnAimRefTitle.StartsWith("T Level"))
-                {
-                    larsCourseType.CourseType = null;
-                }
-            }
-
-            var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
-
-            return distinctLarsCourseTypes.FirstOrDefault();
         }
     }
 }

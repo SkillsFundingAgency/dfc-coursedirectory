@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
@@ -31,7 +30,6 @@ using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static GovUk.Frontend.AspNetCore.ComponentDefaults;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -43,6 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly ICourseTypeService _courseTypeService;
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
@@ -56,12 +55,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICourseService courseService,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider,
+            ICourseTypeService courseTypeService)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
             _providerContextProvider = providerContextProvider;
+            _courseTypeService = courseTypeService;
         }
 
         [Authorize]
@@ -76,8 +77,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.SetString("LearnAimRefTitle", learnAimRefTitle);
             Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
 
-            Core.DataStore.Sql.Models.Course course = null;
-            Core.DataStore.Sql.Models.CourseText defaultCourseText = null;
+            Course course = null;
+            CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
@@ -819,9 +820,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var courseId = Guid.NewGuid();
-            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
+            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);            
 
-            var courseType = await GetCourseType(learnAimRef);
+            var courseType = await _courseTypeService.GetCourseType(learnAimRef);
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
@@ -946,41 +947,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             return selectVenue;
-        }
-
-        private async Task<CourseType?> GetCourseType(string learnAimRef)
-        {
-            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
-
-            foreach (var larsCourseType in larsCourseTypes)
-            {
-                if (larsCourseType.CategoryRef == "40" && 
-                    !(larsCourseType.LearnAimRefTitle.Contains("ESOL")
-                    || larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Language") 
-                    || larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Literature")))
-                {
-                    larsCourseType.CourseType = null;
-                    continue;
-                }
-
-                if (larsCourseType.CategoryRef == "37" && 
-                    !(larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Language")
-                    || larsCourseType.LearnAimRefTitle.Contains("GCSE (9-1) in English Literature")))
-                {
-                    larsCourseType.CourseType = null;
-                    continue;
-                }
-
-                if (larsCourseType.CategoryRef == "3" && !larsCourseType.LearnAimRefTitle.StartsWith("T Level"))
-                {
-                    larsCourseType.CourseType = null;
-                }
-            }
-
-            var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
-
-            return distinctLarsCourseTypes.FirstOrDefault();
-        }
+        }        
 
         internal void RemoveSessionVariables()
         {

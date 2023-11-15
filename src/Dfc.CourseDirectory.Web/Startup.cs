@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -73,6 +74,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<IPaginationHelper, PaginationHelper>();
 
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseTypeService, CourseTypeService>();
 
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
