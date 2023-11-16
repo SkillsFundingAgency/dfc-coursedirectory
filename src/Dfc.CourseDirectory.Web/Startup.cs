@@ -211,63 +211,8 @@ namespace Dfc.CourseDirectory.Web
                 .DefaultSources(s => s.Self())
                 .ScriptSources(s => s
                     .Self()
+                    .UnsafeInline()
                     .CustomSources(
-                        //Home page
-                        "sha256-wd6zPqofWjb5TSs4XzK3yLqmM6aUHeduDqEKaDQSWoU=",
-                        "sha256-xY2DAB/H7eBQZT2luzwwjJh9xLZKg/fW/ETrbm3/4NM=",
-                        "sha256-1V3JOTXaBEUCkDaNHDHobJB7YGiySFvHg+nmsbHLVfA=",
-                        "sha256-l1eTVSK8DTnK8+yloud7wZUqFrI0atVo6VlC6PJvYaQ=",
-                        "sha256-D6hPuqCvWlkPnuH57KXYatEnpXvAE85f2XHQPy0d3fg=",
-                        //provider-search
-                        "sha256-0jU/CEHAhHwt+/mNkmey1Qza6wbRwHlUITi5Yb033II=",
-                        "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
-                        //Courses
-                        "sha256-RgdfcsyCABvzOyqKOFYzQZlxPad4TgV+Ll1GbmDf0T8=",
-                        "sha256-8ejSnu9XPMeRxkxdLe2apSbYS0kwdMFWQ4Je7f8OZ18=",
-                        //data-upload
-                        "sha256-8mM6pQH4tNl8njGuUbm8zDyM4gItu1D+byUinrcbKCk=",
-                        //ProviderCourses
-                        "sha256-fUgH5XnPX9RfHSGD/tc9BW56h7qGMQmbkF8ephN+O84=",
-                        "sha256-f265cqgVJGKF5FzP79WDAY7j3k5HwpnQyKvZq2YERz8=",
-                        "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
-                        "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=",
-                        //Courses - CopyCourseRun
-                        "sha256-2clrXW+/bEbufPlAwRVqvk/W2LGlkC/jej3qSUX+h4g=",
-                        "sha256-UREXRjOigNA7d4vVChFbfHyzl1+DWBUHCF4antGyqNU=",
-                        "sha256-DNnLQcF+8AYGGsdspJInJ7ZZrRJ6dV4o5FGq66/oLPE=",
-                        "sha256-bwiUuMVp/Stp46vAXZMeKQmhMI6tdZ1Yx4RSj7gvieM=",
-                        "sha256-vwoeBAEG9+ZzZi+NvCog0gCipVdqPSwIas2vbD+CNFU=",
-                        "sha256-PNdTPqwsL8wM1mVq8q9r67TxclTEEaFHiXshczqmu28=",
-                        "sha256-yiXTcuJK6mwrqILfFetO15Pcpq4DzPFdMBTc3gVtbpo=",
-                        "sha256-0HAFMtm1VzJDFQVbBhovhV/tae4xRJ8cfEu1koNDf3M=",
-                        //Courses delete
-                        "sha256-OYkOIzgZMarSeILfpnILAN3UBc497xQPKoluN3dLq/4=",
-                        //Courses - EditCourseRun
-                        "sha256-oIYTvhTO4ThyjBA5aSgReXOgPoQWR6lYxYDsbYgrlDQ=",
-                        //t-levels
-                        "sha256-RVouMPytFTnZo+SPrlAgypQidwPQt25rN2siNrPGPLg=",
-                        //Venues - delete
-                        "sha256-pBkIZd5tfDFCLPmEDcf2/Rr0dUVf3Wn2+PE+E7hFCu0=",
-                        //Dashboard
-                        "sha256-RXW8jc88WJcCqt1yHMMnDtB80ex0nt3h/Tg3iaZESM8=",
-                        //CourseSummary
-                        "sha256-vcmTH07Am5+kH5JEfaANVMFlwDp67o1clpuk26pVsoo=",
-                        //RegulatedQualification
-                        "sha256-wlhq0O7MI86vRqF5r0g82JnVyJtT0Sta+p+ThlaYJgA=",
-                        //UnregulatedCourses
-                        "sha256-bvwZCPRDhFUpa5Z9qFxBLFkCUvvRc6eFVEGukYQpgx4=",
-                        "sha256-LFsotuEqS5Hq/sNF1lWC3h0CvmFCCFKDw3szys+mzUo=",
-                        //Qualifications
-                        "sha256-b9m8owmLL4iYFsGHexbZ85GmGpFbePbN4Rnfz7szdg8=",
-                        //AddCourse
-                        "sha256-Is80Du2GGHMXEmGLdgEMpaLet3g5p2m3ZevQLiXqPOk=",
-                        "sha256-+Z+Ce/JiyDJZIo6lBN9TVKqcb5k/JSXvL3R1UA9MEL4=",
-                        "sha256-gE7druySJnXDZoFxKyjqkI4iKOW4thiekFRMMAYy2ZA=",
-                        "sha256-H7+/MNCK+0LbdYlNDCepR4I8LbtD/gCl+PsW1R0zEEk=",
-                        "sha256-/Z/1KxoV+yf+iFG3LokZo3pKocPTAEfUSQThQMCnfpI=",
-                        "sha256-jHHTximqvghRcS88/v8Nnob7jLblDDZMsGbMNaj9KXo=",
-                        "sha256-p1X5nmO0BfA3MtbueEN7S7tjVSIY2ALKIzojhEEUesk=",
-                        "sha256-G7zhXgoFlCB8ealB1LhGmIoeyreYYhwHgPbSTGoZEDg=", 
                         "https://cloud.tinymce.com",
                         "https://cdn.tiny.cloud",
                         "www.googletagmanager.com",
