@@ -214,6 +214,7 @@ namespace Dfc.CourseDirectory.Web
                     .UnsafeInline()
                     .CustomSources(
                         "https://cloud.tinymce.com",
+                        "https://sp.tinymce.com",
                         "https://cdn.tiny.cloud",
                         "www.googletagmanager.com",
                         "https://cdnjs.cloudflare.com/",
