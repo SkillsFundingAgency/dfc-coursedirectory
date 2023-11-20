@@ -114,7 +114,7 @@ SELECT
     WhatYouWillNeedToBring,
     HowYouWillBeAssessed,
     WhereNext,
-    0  -- DataIsHtmlEncoded,
+    0,  -- DataIsHtmlEncoded
     CourseType
 FROM CoursesCte
 WHERE GroupRowNumber = 1
