@@ -11,6 +11,7 @@ using CsvHelper.Configuration;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Services;
 
 namespace Dfc.CourseDirectory.Core.DataManagement
 {
@@ -26,19 +27,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
+        private readonly ICourseTypeService _courseTypeService;
 
         public FileUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             BlobServiceClient blobServiceClient,
             IClock clock,
             IRegionCache regionCache,
-            IBackgroundWorkScheduler backgroundWorkScheduler)
+            IBackgroundWorkScheduler backgroundWorkScheduler,
+            ICourseTypeService courseTypeService)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
             _clock = clock;
             _regionCache = regionCache;
             _backgroundWorkScheduler = backgroundWorkScheduler;
+            _courseTypeService = courseTypeService;
         }
 
         protected internal async Task<bool> FileIsEmpty(Stream stream)

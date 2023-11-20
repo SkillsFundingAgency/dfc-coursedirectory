@@ -864,6 +864,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row, providerVenues);
 
+                var courseType = await _courseTypeService.GetCourseType(parsedRow.LearnAimRef);
+
                 var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 
                 var rowValidationResult = validator.Validate(parsedRow);
@@ -912,7 +914,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ResolvedDurationUnit = parsedRow.ResolvedDurationUnit,
                     ResolvedStudyMode = parsedRow.ResolvedStudyMode,
                     ResolvedAttendancePattern = parsedRow.ResolvedAttendancePattern,
-                    ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray()
+                    ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
+                    CourseType = courseType
                 });
             }
 
