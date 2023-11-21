@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 return dispatcher;
             });
             services.AddScoped<SqlTransactionMarker>();
-            services.AddSingleton<ICourseTypeService, CourseTypeService>();
+            services.AddScoped<ICourseTypeService, CourseTypeService>();
 
             return services;
         }
