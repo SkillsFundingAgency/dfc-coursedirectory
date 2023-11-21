@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using Dfc.CourseDirectory.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql
@@ -31,6 +32,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                 return dispatcher;
             });
             services.AddScoped<SqlTransactionMarker>();
+            services.AddSingleton<ICourseTypeService, CourseTypeService>();
 
             return services;
         }
