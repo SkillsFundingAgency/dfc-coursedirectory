@@ -539,7 +539,14 @@
                 // url
                 var enteredUrl = $url.val();
                 var urlToValidate = "";
-                if ($url.val().indexOf("http") >= 0) {
+                if (!$.requiredValidate($url.val())) {
+                    $url.govUkInput("invalidState", $url.attr("val-required-message"));
+                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                } 
+                else if ($url.val().indexOf("http") >= 0) {
                     urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
                 }
                 else {
