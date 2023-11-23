@@ -127,6 +127,10 @@
               {
                 "name": "EnvironmentSettings__EnvironmentName",
                 "value": "[parameters('environmentName')]"
+              },
+              {
+                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                "value": "Information"
               }
             ]
           },

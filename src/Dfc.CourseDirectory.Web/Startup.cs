@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Caching.Distributed;
@@ -92,7 +91,7 @@ namespace Dfc.CourseDirectory.Web
                 .AddMvc(options =>
                 {
                     options.Filters.Add(new RedirectOnMissingUKPRNActionFilter());
-                })                
+                })
                 .AddSessionStateTempDataProvider();
 
 #if DEBUG
@@ -200,7 +199,7 @@ namespace Dfc.CourseDirectory.Web
             else
             {
                 app.UseCourseDirectoryErrorHandling();
-                app.UseHsts();
+                app.UseHsts(options => options.MaxAge(days: 365).IncludeSubdomains());
             }
 
             app.UseCommitSqlTransaction();
@@ -208,11 +207,61 @@ namespace Dfc.CourseDirectory.Web
             app.UseStaticFiles();
             app.UseSession();
 
+            app.UseCsp(options => options
+                .DefaultSources(s => s.Self())
+                .ScriptSources(s => s
+                    .Self()
+                    .UnsafeInline()
+                    .CustomSources(
+                        "https://cloud.tinymce.com",
+                        "https://sp.tinymce.com",
+                        "https://cdn.tiny.cloud",
+                        "www.googletagmanager.com",
+                        "https://cdnjs.cloudflare.com/",
+                        "https://www.google-analytics.com"))
+                .StyleSources(s => s
+                    .Self()
+                    .UnsafeInline()
+                    .CustomSources(
+                        "https://cdn.tiny.cloud/",
+                        "https://www.googletagmanager.com/",
+                        "https://tagmanager.google.com/",
+                        "https://fonts.googleapis.com/",
+                        "https://cloud.tinymce.com/",
+                        "https://cdnjs.cloudflare.com/"))
+                .FormActions(s => s
+                    .Self()
+                    )
+                .FontSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "data:",
+                        "https://fonts.googleapis.com/",
+                        "https://fonts.gstatic.com/",
+                        "https://cdn.tiny.cloud/"))
+                .ImageSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "*",
+                        "data:",
+                        "https://cdn.tiny.cloud/"))
+                .FrameAncestors(s => s.Self())
+                .FrameSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "https://optimize.google.com"))
+                .ConnectSources(s => s
+                    .Self()
+                    .CustomSources(
+                        "https://www.google-analytics.com",
+                        "https://region1.google-analytics.com"))
+                );
+
             //Preventing ClickJacking Attacks
             app.Use(async (context, next) =>
             {
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
-                context.Response.Headers["X-Content-Type-Options"] ="nosniff";
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
                 context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
                 context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
