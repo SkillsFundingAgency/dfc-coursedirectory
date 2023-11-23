@@ -50,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.Services
 
             var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
 
-            return distinctLarsCourseTypes.FirstOrDefault();
+            return distinctLarsCourseTypes.FirstOrDefault(l => l.HasValue);
         }
     }
 }
