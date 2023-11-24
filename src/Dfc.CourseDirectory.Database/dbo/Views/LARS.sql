@@ -11,3 +11,10 @@ FROM            LARS.LearningDelivery AS ld INNER JOIN
                          LARS.LearnAimRefType AS lt ON lt.LearnAimRefType = ld.LearnAimRefType INNER JOIN
                          LARS.SectorSubjectAreaTier1 AS SSA1 ON SSA1.SectorSubjectAreaTier1 = ld.SectorSubjectAreaTier1 INNER JOIN
                          LARS.SectorSubjectAreaTier2 AS SSA2 ON SSA2.SectorSubjectAreaTier2 = ld.SectorSubjectAreaTier2
+Where    ld.LearnAimRef in  
+(
+select LearnAimRef from lars.Validity where LastNewStartDate =''
+UNION ALL
+select LearnAimRef from lars.Validity where LearnAimRef not in (
+select LearnAimRef from lars.Validity where LastNewStartDate ='') group by LearnAimRef HAVING max(convert(varchar, LastNewStartDate ,105))>GETDATE()
+)
