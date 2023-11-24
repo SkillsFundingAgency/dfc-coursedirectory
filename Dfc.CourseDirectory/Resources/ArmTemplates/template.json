@@ -563,6 +563,10 @@
               {
                 "name": "FindACourse__Url",
                 "value": "[parameters('FindACourseUrl')]"
+              },
+              {
+                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                "value": "Information"
               }
             ]
           },

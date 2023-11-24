@@ -49,13 +49,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             var command = new Command()
             {
                 RowNumber = request.RowNumber,
-                WhoThisCourseIsFor = row.WhoThisCourseIsFor,
-                EntryRequirements = row.EntryRequirements,
-                WhatYouWillLearn = row.WhatYouWillLearn,
-                HowYouWillLearn = row.HowYouWillLearn,
-                WhatYouWillNeedToBring = row.WhatYouWillNeedToBring,
-                HowYouWillBeAssessed = row.HowYouWillBeAssessed,
-                WhereNext = row.WhereNext
+                WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(row.WhoThisCourseIsFor),
+                EntryRequirements = ASCIICodeHelper.RemoveASCII(row.EntryRequirements),
+                WhatYouWillLearn = ASCIICodeHelper.RemoveASCII(row.WhatYouWillLearn),
+                HowYouWillLearn = ASCIICodeHelper.RemoveASCII(row.HowYouWillLearn),
+                WhatYouWillNeedToBring = ASCIICodeHelper.RemoveASCII(row.WhatYouWillNeedToBring),
+                HowYouWillBeAssessed = ASCIICodeHelper.RemoveASCII(row.HowYouWillBeAssessed),
+                WhereNext = ASCIICodeHelper.RemoveASCII(row.WhereNext)
             };
 
             var validator = new CommandValidator();
@@ -93,13 +93,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 row.CourseId,
                 new CourseUploadRowGroupUpdate()
                 {
-                    WhoThisCourseIsFor = formattedRequest.WhoThisCourseIsFor,
-                    EntryRequirements = formattedRequest.EntryRequirements,
-                    WhatYouWillLearn = formattedRequest.WhatYouWillLearn,
-                    HowYouWillLearn = formattedRequest.HowYouWillLearn,
-                    WhatYouWillNeedToBring = formattedRequest.WhatYouWillNeedToBring,
-                    HowYouWillBeAssessed = formattedRequest.HowYouWillBeAssessed,
-                    WhereNext = formattedRequest.WhereNext
+                    WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(formattedRequest.WhoThisCourseIsFor),
+                    EntryRequirements = ASCIICodeHelper.RemoveASCII(formattedRequest.EntryRequirements),
+                    WhatYouWillLearn = ASCIICodeHelper.RemoveASCII(formattedRequest.WhatYouWillLearn),
+                    HowYouWillLearn = ASCIICodeHelper.RemoveASCII(formattedRequest.HowYouWillLearn),
+                    WhatYouWillNeedToBring = ASCIICodeHelper.RemoveASCII(formattedRequest.WhatYouWillNeedToBring),
+                    HowYouWillBeAssessed = ASCIICodeHelper.RemoveASCII(formattedRequest.HowYouWillBeAssessed),
+                    WhereNext = ASCIICodeHelper.RemoveASCII(formattedRequest.WhereNext)
                 });
         }
 
