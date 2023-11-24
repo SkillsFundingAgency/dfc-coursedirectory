@@ -345,6 +345,23 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
         }
 
+        [Fact]
+        public async Task GetCourseType_WhenLARSCategoryRefsAre3And24_ReturnsCourseTypeAsEssentialSkills()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0021221";
+            var expectedCourseType = CourseType.EssentialSkills;
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
+        }
+
         private void ArrangeObjects(string learnAimRef)
         {
             var larsCourseTypesList = new List<LarsCourseType>()
@@ -367,7 +384,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
                 { new LarsCourseType { LearnAimRef = "0021460", CategoryRef = "48", CourseType = CourseType.FreeCoursesForJobs, LearnAimRefTitle = "Title" }},
                 { new LarsCourseType { LearnAimRef = "0021461", CategoryRef = "49", CourseType = CourseType.FreeCoursesForJobs, LearnAimRefTitle = "Title" }},
                 { new LarsCourseType { LearnAimRef = "0021462", CategoryRef = "55", CourseType = CourseType.HTQs, LearnAimRefTitle = "Title" }},
-                { new LarsCourseType { LearnAimRef = "0021463", CategoryRef = "63", CourseType = CourseType.Multiply, LearnAimRefTitle = "Title" }}
+                { new LarsCourseType { LearnAimRef = "0021463", CategoryRef = "63", CourseType = CourseType.Multiply, LearnAimRefTitle = "Title" }},
+                { new LarsCourseType { LearnAimRef = "0021221", CategoryRef = "3", CourseType = CourseType.TLevels, LearnAimRefTitle = "Title Title Title" }},
+                { new LarsCourseType { LearnAimRef = "0021221", CategoryRef = "24", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }}
             };
 
             var larsCourseTypesReadOnlyList = new ReadOnlyCollection<LarsCourseType>(larsCourseTypesList.Where(l => l.LearnAimRef == learnAimRef).ToList());

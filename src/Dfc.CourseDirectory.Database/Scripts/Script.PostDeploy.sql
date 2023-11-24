@@ -15,6 +15,7 @@ BEGIN
 		('46',	0,	'National Skills Fund Level 3 Free Courses for Jobs rate 2',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('48',	0,	'National Skills Fund Level 3 Free Courses for Jobs only',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('49',	0,	'National Skills Fund Level 3 Free Courses for Jobs - short qualification',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('56',	0,	'Free Courses for Jobs – MCA and GLA only flexible delivery qualifications',	'NotSet',	'2015-08-01',	'2600-12-31'),
 		('63',	0,	'Multiply – Improving adult numeracy skills',	'NotSet',	'2015-08-01',	'2600-12-31')
 END	
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ VALUES
 	(4, '46'),
 	(4, '48'),
 	(4, '49'),
+	(4, '56'),
 	(5, '63');
 -------------------------------------------------------------------------------------
 
