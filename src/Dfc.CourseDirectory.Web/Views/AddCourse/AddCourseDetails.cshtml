@@ -524,21 +524,21 @@
                 // url
                 var enteredUrl = $url.val();
                 var urlToValidate = "";
+                
+                if (!$.requiredValidate($url.val()) && $url.val().indexOf("http") >= 0) {
+                    urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
+                }
+                else {
+                    urlToValidate = $url.val();
+                }
+                
                 if (!$.requiredValidate($url.val())) {
                     $url.govUkInput("invalidState", $url.attr("val-required-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } 
-                else if ($url.val().indexOf("http") >= 0) {
-                    urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
-                }
-                else {
-                    urlToValidate = $url.val();
-                }
-
-                if (!$.regexValidate({ regex: $url.attr("val-regex") }, urlToValidate)) {
+                } else if (!$.regexValidate({ regex: $url.attr("val-regex") }, urlToValidate)) {
                     $url.govUkInput("invalidState", $url.attr("val-regex-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
