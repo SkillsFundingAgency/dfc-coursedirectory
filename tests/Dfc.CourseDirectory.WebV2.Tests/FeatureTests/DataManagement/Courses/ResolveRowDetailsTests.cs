@@ -999,6 +999,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             //    deliveryMode: "WorkBased",
             //    nationalDelivery: "false",
             //    subRegionIds: null);
+            yield return CreateRecord(
+                expectedErrorInputId: "CourseWebPage",
+                expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_REQUIRED",
+                courseWebPage: "notarealwebsite");
 
             yield return CreateRecord(
                 expectedErrorInputId: "CourseWebPage",
@@ -1057,33 +1061,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
                 deliveryMode: "ClassroomBased",
                 specifyVenueId: false);
-
-            // yield return CreateRecord(
-            //     cost: "30.00",
-            //     duration: "3",
-            //     durationUnit: "Days",
-            //     expectedErrorInputId: "StudyMode",
-            //     expectedErrorCode: "COURSERUN_STUDY_MODE_REQUIRED",
-            //     deliveryMode: "BlendedLearning",
-            //     studyMode: null);
-
-            // yield return CreateRecord(
-            //     cost: "30.00",
-            //     duration: "3",
-            //     durationUnit: "Days",
-            //     expectedErrorInputId: "AttendancePattern",
-            //     expectedErrorCode: "COURSERUN_ATTENDANCE_PATTERN_REQUIRED",
-            //     deliveryMode: "BlendedLearning",
-            //     attendancePattern: null);
-
-            // yield return CreateRecord(
-            //     cost: "30.00",
-            //     duration: "3",
-            //     durationUnit: "Days",
-            //     expectedErrorInputId: "VenueId",
-            //     expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
-            //     deliveryMode: "BlendedLearning",
-            //     specifyVenueId: false);
 
             static object[] CreateRecord(
                     string expectedErrorInputId,

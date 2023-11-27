@@ -500,7 +500,14 @@ namespace Dfc.CourseDirectory.Core {
                 return ResourceManager.GetString("ERROR_COURSERUN_COURSE_NAME_REQUIRED", resourceCulture);
             }
         }
-        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a Course Web Page.
+        /// </summary>
+        public static string ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED", resourceCulture);
+            }
+        }
         /// <summary>
         ///   Looks up a localized string similar to Course webpage must be a real website.
         /// </summary>

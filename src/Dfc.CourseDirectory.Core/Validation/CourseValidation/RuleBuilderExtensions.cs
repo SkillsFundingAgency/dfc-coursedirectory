@@ -79,6 +79,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
                 .MaximumLength(Constants.CourseWebPageMaxLength)
                     .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH")
                 .Apply(Rules.Website)
