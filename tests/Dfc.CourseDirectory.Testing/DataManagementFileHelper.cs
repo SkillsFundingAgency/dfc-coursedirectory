@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.Testing
                     ProviderVenueRef = "",
                     NationalDelivery = "",
                     SubRegions = "",
-                    CourseWebPage = "",
+                    CourseWebPage = "provider.com/course",
                     Cost = "",
                     CostDescription = "Free",
                     Duration = "2",
