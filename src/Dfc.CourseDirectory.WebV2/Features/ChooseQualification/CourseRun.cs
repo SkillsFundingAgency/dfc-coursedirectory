@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
             void NormalizeViewModel()
             {
-                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased && request.DeliveryMode != CourseDeliveryMode.BlendedLearning)
                 {
                     vm.VenueId = null;
                     vm.StudyMode = null;
@@ -144,7 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
             {
                 // Some fields only apply under certain conditions; ensure we don't save fields that are not applicable
 
-                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased && request.DeliveryMode != CourseDeliveryMode.BlendedLearning)
                 {
                     request.VenueId = null;
                     request.StudyMode = null;
@@ -171,7 +171,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
         private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, Command row)
         {
-            var providerVenues = deliveryMode == CourseDeliveryMode.ClassroomBased ?
+            var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning) ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
                     .Select(v => new ViewModelProviderVenuesItem()
                     {

@@ -333,7 +333,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 vm.StudyMode = savedModel.StudyMode;
                 vm.RefererAbsolutePath = savedModel.RefererAbsolutePath;
 
-                if (savedModel.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+                if (savedModel.DeliveryMode == CourseDeliveryMode.ClassroomBased || savedModel.DeliveryMode == CourseDeliveryMode.BlendedLearning)
                 {
                     foreach (var venue in vm.Venues)
                     {
@@ -408,7 +408,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 StartDate = model.StartDateType == StartDateType.FlexibleStartDate
                     ? "Flexible"
                     : $"{model.Day}/{model.Month}/{model.Year}",
-                Venues = model.DeliveryMode == CourseDeliveryMode.ClassroomBased
+                Venues = (model.DeliveryMode == CourseDeliveryMode.ClassroomBased || model.DeliveryMode == CourseDeliveryMode.BlendedLearning )
                     ? (await GetVenuesForProvider()).VenueItems
                         .Where(v => v.Id == model.VenueId.ToString())
                         .Select(v => v.VenueName)
@@ -502,6 +502,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             switch (model.DeliveryMode)
             {
                 case CourseDeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.BlendedLearning:
                     createCommand.AttendancePattern = model.AttendanceMode;
                     createCommand.StudyMode = model.StudyMode;
 

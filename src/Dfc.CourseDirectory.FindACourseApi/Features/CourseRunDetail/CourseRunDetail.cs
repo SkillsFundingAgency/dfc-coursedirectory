@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             {
                 CourseRunId = courseRun.CourseRunId,
                 OfferingType = Core.Search.Models.FindACourseOfferingType.Course,
-                AttendancePattern = courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)courseRun.AttendancePattern : null,
+                AttendancePattern = (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased || courseRun.DeliveryMode == CourseDeliveryMode.BlendedLearning) ? (CourseAttendancePattern?)courseRun.AttendancePattern : null,
                 Cost = courseRun.Cost,
                 CostDescription = HtmlEncode(courseRun.CostDescription),
                 CourseName = HtmlEncode(courseRun.CourseName),
@@ -163,7 +163,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 AlternativeCourseRuns = alternativeCourseRuns.Select(c => new AlternativeCourseRunViewModel
                 {
                     CourseRunId = c.CourseRun.CourseRunId,
-                    AttendancePattern = c.CourseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased ? (CourseAttendancePattern?)c.CourseRun.AttendancePattern : null,
+                    AttendancePattern = (c.CourseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased || courseRun.DeliveryMode == CourseDeliveryMode.BlendedLearning) ? (CourseAttendancePattern?)c.CourseRun.AttendancePattern : null,
                     Cost = c.CourseRun.Cost,
                     CostDescription = HtmlEncode(c.CourseRun.CostDescription),
                     CourseName = HtmlEncode(c.CourseRun.CourseName),

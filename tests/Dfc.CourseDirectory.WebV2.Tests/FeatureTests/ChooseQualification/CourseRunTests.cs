@@ -56,6 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
         [Theory]
         [InlineData(CourseDeliveryMode.ClassroomBased)]
+        [InlineData(CourseDeliveryMode.BlendedLearning)]
         [InlineData(CourseDeliveryMode.WorkBased)]
         [InlineData(CourseDeliveryMode.Online)]
         private async Task Post_InvalidCourseWebpage_ReturnsError(CourseDeliveryMode deliveryMode)
@@ -168,7 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "true")
                 .Add("NationalDelivery", "")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "1000")
                 .Add("CostDescription", "")
                 .Add("Duration", "12")
@@ -232,7 +233,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "")
                 .Add("NationalDelivery", "")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "")
                 .Add("CostDescription", "")
                 .Add("Duration", "")
@@ -306,7 +307,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "true")
                 .Add("NationalDelivery", "")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "1000")
                 .Add("CostDescription", "")
                 .Add("Duration", "12")
@@ -366,7 +367,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "true")
                 .Add("NationalDelivery", "")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "1000")
                 .Add("CostDescription", "")
                 .Add("Duration", "12")
@@ -430,7 +431,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "")
                 .Add("NationalDelivery", "")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "")
                 .Add("CostDescription", "")
                 .Add("Duration", "")
@@ -458,7 +459,205 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             }
         }
         #endregion
+        #region blended learning tests
+        [Fact]
+        private async Task Post_BlendedLearningCourseRunIsValid_ReturnsRedirectToCheckAndPublish()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
 
+            await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("WhoThisCourseIsFor", "Some Details")
+                    .Add("EntryRequirements", "")
+                    .Add("WhatYouWillLearn", "")
+                    .Add("HowYouWillLearn", "")
+                    .Add("WhatYouWillNeedToBring", "")
+                    .Add("HowYouWillBeAssessed", "")
+                    .Add("WhereNext", "")
+                    .ToContent()
+            };
+
+            await HttpClient.SendAsync(request);
+            var postDeliveryRequest = new HttpRequestMessage(HttpMethod.Post, $"/courses/add/delivery?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                    .ToContent()
+            };
+            await HttpClient.SendAsync(postDeliveryRequest);
+
+            // Act
+            var postCourseRun = new HttpRequestMessage(HttpMethod.Post, $"/courses/add-courserun?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                .Add("CourseName", "Some Details")
+                .Add("ProviderCourseRef", "someEf")
+                .Add("StartDate", "")
+                .Add("FlexibleStartDate", "true")
+                .Add("NationalDelivery", "")
+                .Add("SubRegionIds", "")
+                .Add("CourseWebPage", "provider.com/course")
+                .Add("Cost", "1000")
+                .Add("CostDescription", "")
+                .Add("Duration", "12")
+                .Add("DurationUnit", CourseDurationUnit.Years)
+                .Add("StudyMode", CourseStudyMode.FullTime)
+                .Add("AttendancePattern", CourseAttendancePattern.Evening)
+                .Add("VenueId", venue.VenueId)
+                .ToContent()
+            };
+            var postCourseRunResponse = await HttpClient.SendAsync(postCourseRun);
+
+            // Assert
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            postCourseRunResponse.Headers.Location.Should().Be($"/courses/add/check-and-publish?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}");
+        }
+
+        [Fact]
+        private async Task Post_BlendedLearningCourseRunWithNoVenue_ReturnsError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+            await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("WhoThisCourseIsFor", "Some Details")
+                    .Add("EntryRequirements", "")
+                    .Add("WhatYouWillLearn", "")
+                    .Add("HowYouWillLearn", "")
+                    .Add("WhatYouWillNeedToBring", "")
+                    .Add("HowYouWillBeAssessed", "")
+                    .Add("WhereNext", "")
+                    .ToContent()
+            };
+
+            await HttpClient.SendAsync(request);
+            var postDeliveryRequest = new HttpRequestMessage(HttpMethod.Post, $"/courses/add/delivery?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                    .ToContent()
+            };
+            await HttpClient.SendAsync(postDeliveryRequest);
+
+            // Act
+            var postCourseRun = new HttpRequestMessage(HttpMethod.Post, $"/courses/add-courserun?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                .Add("CourseName", "Some Details")
+                .Add("ProviderCourseRef", "someEf")
+                .Add("StartDate", "")
+                .Add("FlexibleStartDate", "true")
+                .Add("NationalDelivery", "")
+                .Add("SubRegionIds", "")
+                .Add("CourseWebPage", "provider.com/course")
+                .Add("Cost", "1000")
+                .Add("CostDescription", "")
+                .Add("Duration", "12")
+                .Add("DurationUnit", CourseDurationUnit.Years)
+                .Add("StudyMode", CourseStudyMode.FullTime)
+                .Add("AttendancePattern", CourseAttendancePattern.Evening)
+                .Add("VenueId", "")
+                .ToContent()
+            };
+            var postCourseRunResponse = await HttpClient.SendAsync(postCourseRun);
+
+            // Assert
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var doc = await postCourseRunResponse.GetDocument();
+            doc.AssertHasError("VenueId", "Select a venue");
+        }
+
+        [Fact]
+        private async Task Post_BlendedLearningCourseRunWithNoDetails_ReturnsErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("WhoThisCourseIsFor", "Some Details")
+                    .Add("EntryRequirements", "")
+                    .Add("WhatYouWillLearn", "")
+                    .Add("HowYouWillLearn", "")
+                    .Add("WhatYouWillNeedToBring", "")
+                    .Add("HowYouWillBeAssessed", "")
+                    .Add("WhereNext", "")
+                    .ToContent()
+            };
+
+            await HttpClient.SendAsync(request);
+            var postDeliveryRequest = new HttpRequestMessage(HttpMethod.Post, $"/courses/add/delivery?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                    .ToContent()
+            };
+            await HttpClient.SendAsync(postDeliveryRequest);
+
+            // Act
+            var postCourseRun = new HttpRequestMessage(HttpMethod.Post, $"/courses/add-courserun?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                .Add("DeliveryMode", CourseDeliveryMode.BlendedLearning)
+                .Add("CourseName", "")
+                .Add("ProviderCourseRef", "")
+                .Add("StartDate", "")
+                .Add("FlexibleStartDate", "")
+                .Add("NationalDelivery", "")
+                .Add("SubRegionIds", "")
+                .Add("CourseWebPage", "provider.com/course")
+                .Add("Cost", "")
+                .Add("CostDescription", "")
+                .Add("Duration", "")
+                .Add("DurationUnit", "")
+                .Add("StudyMode", "")
+                .Add("AttendancePattern", "")
+                .Add("VenueId", "")
+                .ToContent()
+            };
+            var postCourseRunResponse = await HttpClient.SendAsync(postCourseRun);
+
+            // Assert
+            postCourseRunResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var doc = await postCourseRunResponse.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.AssertHasError("CourseName", "Enter a Course name");
+                doc.AssertHasError("FlexibleStartDate", "Enter start date");
+                doc.AssertHasError("Cost", "Enter a cost or cost description");
+                doc.AssertHasError("Duration", "Enter duration");
+                doc.AssertHasError("DurationUnit", "Enter a duration unit");
+                doc.AssertHasError("AttendancePattern", "Select an attendance pattern");
+                doc.AssertHasError("StudyMode", "Select course hours");
+                doc.AssertHasError("VenueId", "Select a venue");
+            }
+        }
+        #endregion
         #region work based tests
         [Fact]
         private async Task Post_WorkbasedCourseRunIsValid_ReturnsRedirectToCheckAndPublish()
@@ -504,7 +703,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "true")
                 .Add("NationalDelivery", "true")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "1000")
                 .Add("CostDescription", "")
                 .Add("Duration", "12")
@@ -565,7 +764,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "")
                 .Add("NationalDelivery", "")
                 .Add("SubRegionIds", "")
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "")
                 .Add("CostDescription", "")
                 .Add("Duration", "")
@@ -634,7 +833,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "true")
                 .Add("NationalDelivery", "false")
                 .Add("SubRegionIds", "") //Not supplying regions will return error
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "1000")
                 .Add("CostDescription", "")
                 .Add("Duration", "12")
@@ -694,7 +893,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 .Add("FlexibleStartDate", "true")
                 .Add("NationalDelivery", "false")
                 .Add("SubRegionIds", new string[] { "E06000015" })
-                .Add("CourseWebPage", "")
+                .Add("CourseWebPage", "provider.com/course")
                 .Add("Cost", "1000")
                 .Add("CostDescription", "")
                 .Add("Duration", "12")

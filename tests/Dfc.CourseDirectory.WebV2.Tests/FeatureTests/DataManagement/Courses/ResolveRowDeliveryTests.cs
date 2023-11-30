@@ -166,6 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Theory]
+        [InlineData(CourseDeliveryMode.BlendedLearning, "blended")]
         [InlineData(CourseDeliveryMode.ClassroomBased, "classroom")]
         [InlineData(CourseDeliveryMode.Online, "online")]
         [InlineData(CourseDeliveryMode.WorkBased, "work")]

@@ -231,6 +231,9 @@
   <data name="ERROR_COURSERUN_COURSE_NAME_REQUIRED" xml:space="preserve">
     <value>Enter a Course name</value>
   </data>
+  <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED" xml:space="preserve">
+    <value>Enter a Course Web Page Url</value>
+  </data>
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT" xml:space="preserve">
     <value>Course webpage must be a real website</value>
   </data>
