@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
 {
@@ -43,6 +44,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
         public string VenueEmail { get; set; }
         public string VenueWebsite { get; set; }
         public DateTime? UpdatedOn { get; set; }
-
+        public int? CourseType { get; set; }
     }
 }

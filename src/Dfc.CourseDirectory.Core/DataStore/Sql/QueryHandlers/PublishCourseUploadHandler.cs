@@ -71,6 +71,7 @@ JOIN @CourseIds x ON i.CourseId = x.Id
         WhatYouWillNeedToBring,
         HowYouWillBeAssessed,
         WhereNext,
+        CourseType,
         ROW_NUMBER() OVER (PARTITION BY CourseId ORDER BY RowNumber) AS GroupRowNumber
     FROM Pttcd.CourseUploadRows
     WHERE CourseUploadId = @CourseUploadId
@@ -93,7 +94,8 @@ INSERT INTO Pttcd.Courses (
     WhatYoullNeed,
     HowYoullBeAssessed,
     WhereNext,
-    DataIsHtmlEncoded
+    DataIsHtmlEncoded,
+    CourseType
 )
 SELECT
     CourseId,
@@ -112,7 +114,8 @@ SELECT
     WhatYouWillNeedToBring,
     HowYouWillBeAssessed,
     WhereNext,
-    0  -- DataIsHtmlEncoded
+    0,  -- DataIsHtmlEncoded
+    CourseType
 FROM CoursesCte
 WHERE GroupRowNumber = 1
 
