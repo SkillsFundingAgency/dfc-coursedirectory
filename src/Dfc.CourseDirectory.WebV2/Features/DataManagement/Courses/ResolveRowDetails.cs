@@ -193,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row)
         {
-            var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode != CourseDeliveryMode.BlendedLearning )?
+            var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning )?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
                     .Select(v => new ViewModelProviderVenuesItem()
                     {
