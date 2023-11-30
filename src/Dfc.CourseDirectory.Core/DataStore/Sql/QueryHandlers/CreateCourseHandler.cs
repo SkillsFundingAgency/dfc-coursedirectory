@@ -35,7 +35,8 @@ INSERT INTO Pttcd.Courses (
     HowYoullLearn,
     WhatYoullNeed,
     HowYoullBeAssessed,
-    WhereNext
+    WhereNext,
+    CourseType
 ) VALUES (
     @CourseId,
     {(int)CourseStatus.Live},
@@ -52,7 +53,8 @@ INSERT INTO Pttcd.Courses (
     @HowYoullLearn,
     @WhatYoullNeed,
     @HowYoullBeAssessed,
-    @WhereNext
+    @WhereNext,
+    @CourseType
 )
 
 INSERT INTO Pttcd.CourseRuns (
@@ -76,7 +78,7 @@ INSERT INTO Pttcd.CourseRuns (
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National]    
 )
 SELECT
     CourseRunId,
@@ -125,6 +127,7 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @Create
                 query.WhatYoullNeed,
                 query.HowYoullBeAssessed,
                 query.WhereNext,
+                query.CourseType,
                 CourseRuns = TvpHelper.CreateCourseRunsTable(query.CourseRuns.Select(cr => (
                     cr.CourseRunId,
                     cr.CourseName,
@@ -140,7 +143,8 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @Create
                     cr.DurationValue,
                     cr.StudyMode,
                     cr.AttendancePattern,
-                    cr.National))),
+                    cr.National
+                    ))),
                 SubRegions = TvpHelper.CreateCourseRunSubRegionsTable(
                     from cr in query.CourseRuns
                     from subRegionId in cr.SubRegionIds ?? Array.Empty<string>()

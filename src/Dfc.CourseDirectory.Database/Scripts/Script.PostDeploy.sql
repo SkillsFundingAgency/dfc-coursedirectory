@@ -1,4 +1,56 @@
-﻿DECLARE @Regions TABLE (
+﻿--- This script is only for df-coursedirectoryinttest db to run unit tests in pipeline. [LARS].[Category] table will always be populated in dfc-coursedirectory db in all environments ---
+IF (NOT EXISTS (SELECT 1 FROM [LARS].[Category]))
+BEGIN
+    INSERT INTO LARS.Category ([CategoryRef], [ParentCategoryRef], [CategoryName], [Target], [EffectiveFrom], [EffectiveTo]) 
+	VALUES
+		('24',	0,	'Class Code Category B: Non Regulated English, Maths, and ESOL Provision (SFA Formula Funded)',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('29',	0,	'Class Code Category G: Non Regulated English, Maths and ESOL Provision (not SFA Formula Funded)',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('37',	0,	'Legal Entitlement-Level 2',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('39',	0,	'Legal Entitlement-English and Maths',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('42',	0,	'Digital Skills',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('40',	0,	'Local Flexibility',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('3',	0,	'All Class Code Categories',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('55', 	0,	'Higher Technical Qualification',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('45',	0,	'National Skills Fund Level 3 Free Courses for Jobs rate 1',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('46',	0,	'National Skills Fund Level 3 Free Courses for Jobs rate 2',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('48',	0,	'National Skills Fund Level 3 Free Courses for Jobs only',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('49',	0,	'National Skills Fund Level 3 Free Courses for Jobs - short qualification',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('56',	0,	'Free Courses for Jobs – MCA and GLA only flexible delivery qualifications',	'NotSet',	'2015-08-01',	'2600-12-31'),
+		('63',	0,	'Multiply – Improving adult numeracy skills',	'NotSet',	'2015-08-01',	'2600-12-31')
+END	
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+--- This is the script to insert mapping data between Lars Category and CourseType ---
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'CourseTypeCategory'))
+BEGIN
+    Delete from Pttcd.CourseTypeCategory
+END
+
+INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef) 
+VALUES
+	(1, '24'),
+	(1, '29'),
+	(1, '37'),
+	(1, '39'),	
+	(1, '42'),
+	(1, '40'),
+	(2, '3'),
+	(3, '55'),
+	(4, '45'),
+	(4, '46'),
+	(4, '48'),
+	(4, '49'),
+	(4, '56'),
+	(5, '63');
+-------------------------------------------------------------------------------------
+
+
+
+
+
+DECLARE @Regions TABLE (
 	RegionId VARCHAR(12),
 	Name NVARCHAR(100),
 	ParentRegionId VARCHAR(12),

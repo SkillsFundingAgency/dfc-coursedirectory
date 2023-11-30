@@ -1,6 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -9,6 +11,7 @@ using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Dfc.CourseDirectory.Core.Services;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescription
 {
@@ -32,6 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
         public string WhatYouWillNeedToBring { get; set; }
         public string HowYouWillBeAssessed { get; set; }
         public string WhereNext { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 
     public class Handler :
@@ -39,10 +43,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
         IRequestHandler<Command, CommandResponse>
     {
         private readonly MptxInstanceContext<FlowModel> _flow;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly ICourseTypeService _courseTypeService;
 
-        public Handler(MptxInstanceContext<FlowModel> flow)
+        public Handler(MptxInstanceContext<FlowModel> flow, ISqlQueryDispatcher sqlQueryDispatcher, ICourseTypeService courseTypeService)
         {
             _flow = flow;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _courseTypeService = courseTypeService;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -91,6 +99,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 var vm = request.Adapt<ViewModel>();
                 return new ModelWithErrors<Command>(vm, validationResult);
             }
+            
+            request.CourseType = await _courseTypeService.GetCourseType(_flow.State.LarsCode);
 
             _flow.Update(s => s.SetCourseDescription(
                 request.WhoThisCourseIsFor,
@@ -99,7 +109,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 request.HowYouWillLearn,
                 request.WhatYouWillNeedToBring,
                 request.HowYouWillBeAssessed,
-                request.WhereNext));
+                request.WhereNext,
+                request.CourseType));
 
             return new Success();
         }

@@ -30,6 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public CourseType? CourseType { get; set; }
 
 
         public void SetCourse(string larsCode, string courseName) {
@@ -44,7 +45,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
           string howYouWillLearn,
           string whatYouWillNeedToBring,
           string howYouWillBeAssessed,
-          string whereNext)
+          string whereNext,
+          CourseType? courseType)
         {
             WhoThisCourseIsFor = whoThisCourseIsFor;
             EntryRequirements = entryRequirements;
@@ -53,6 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             WhatYouWillNeedToBring = whatYouWillNeedToBring;
             HowYouWillBeAssessed = howYouWillBeAssessed;
             WhereNext = whereNext;
+            CourseType = courseType;
         }
 
         public void SetDeliveryMode(CourseDeliveryMode? deliveryMode)
@@ -73,7 +76,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         CourseDurationUnit? durationUnit,
         CourseStudyMode? studyMode,
         CourseAttendancePattern? attendancePattern,
-       Guid? venueId)
+        Guid? venueId
+        )
         {
             CourseName = courseName;
             ProviderCourseRef = providerCourseRef;
@@ -88,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             DurationUnit = durationUnit;
             AttendancePattern = attendancePattern;
             StudyMode = studyMode;
-            VenueId = venueId;
+            VenueId = venueId;            
         }
     }
 }

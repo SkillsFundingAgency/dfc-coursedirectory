@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public CourseDurationUnit? DurationUnit { get; set; }
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
-        public Guid? VenueId { get; set; }
+        public Guid? VenueId { get; set; }        
     }
 
     public class ViewModel : Command
@@ -245,6 +245,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
                 }
             }
-        }
+        }        
     }
 }
