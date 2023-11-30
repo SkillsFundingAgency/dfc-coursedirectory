@@ -539,7 +539,7 @@
                 // url
                 var enteredUrl = $url.val();
                 var urlToValidate = "";
-                if (!$.requiredValidate($url.val()) && $url.val().indexOf("http") >= 0) {
+                if ($url.val().indexOf("http") >= 0) {
                     urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
                 }
                 else {
