@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             {
                 // Some fields only apply under certain conditions; ensure we don't save fields that are not applicable
 
-                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased && request.DeliveryMode != CourseDeliveryMode.BlendedLearning)
+                if (request.DeliveryMode != CourseDeliveryMode.ClassroomBased && request.DeliveryMode == CourseDeliveryMode.BlendedLearning)
                 {
                     request.VenueId = null;
                     request.StudyMode = null;
