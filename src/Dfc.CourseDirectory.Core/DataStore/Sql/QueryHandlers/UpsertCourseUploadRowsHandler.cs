@@ -64,7 +64,8 @@ WHEN NOT MATCHED THEN
         ResolvedDuration,
         ResolvedDurationUnit,
         ResolvedStudyMode,
-        ResolvedAttendancePattern
+        ResolvedAttendancePattern,
+        CourseType
     ) VALUES (
         @CourseUploadId,
         source.RowNumber,
@@ -108,7 +109,8 @@ WHEN NOT MATCHED THEN
         source.ResolvedDuration,
         source.ResolvedDurationUnit,
         source.ResolvedStudyMode,
-        source.ResolvedAttendancePattern
+        source.ResolvedAttendancePattern,
+        source.CourseType
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -151,7 +153,8 @@ WHEN MATCHED THEN UPDATE SET
     ResolvedDuration = source.ResolvedDuration,
     ResolvedDurationUnit = source.ResolvedDurationUnit,
     ResolvedStudyMode = source.ResolvedStudyMode,
-    ResolvedAttendancePattern = source.ResolvedAttendancePattern
+    ResolvedAttendancePattern = source.ResolvedAttendancePattern,
+    CourseType = source.CourseType
 ;
 
 MERGE Pttcd.CourseUploadRowSubRegions AS target
@@ -171,7 +174,7 @@ SELECT
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
     ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery, ResolvedCost,
-    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern
+    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, CourseType
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -238,6 +241,7 @@ ORDER BY RowNumber";
                 table.Columns.Add("ResolvedDurationUnit", typeof(byte));
                 table.Columns.Add("ResolvedStudyMode", typeof(byte));
                 table.Columns.Add("ResolvedAttendancePattern", typeof(byte));
+                table.Columns.Add("CourseType", typeof(int));
 
                 foreach (var record in query.Records)
                 {
@@ -282,7 +286,8 @@ ORDER BY RowNumber";
                         record.ResolvedDuration,
                         record.ResolvedDurationUnit,
                         record.ResolvedStudyMode,
-                        record.ResolvedAttendancePattern);
+                        record.ResolvedAttendancePattern,
+                        record.CourseType);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.CourseUploadRowTable");

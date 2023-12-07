@@ -40,7 +40,7 @@
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
                 Id = "DeliveryMode",
-                Title = "Course type",
+                Title = "Delivery mode",
                 Value = Model.DeliveryMode.ToDescription(),
                 Action = "Index",
                 Controller = "CopyCourseRun",
@@ -57,7 +57,7 @@
                 Section = "sectionStartDate"
             })
 
-            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
                 {
@@ -122,7 +122,7 @@
                 Section = "sectionDuration"
             })
 
-            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased|| Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {

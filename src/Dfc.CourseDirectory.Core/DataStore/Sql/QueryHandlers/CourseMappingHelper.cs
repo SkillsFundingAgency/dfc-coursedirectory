@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
                 // We have some bad data where fields are populated when they shouldn't be for the delivery mode. Fix it up here
 
-                if (courseRun.DeliveryMode != CourseDeliveryMode.ClassroomBased)
+                if (courseRun.DeliveryMode != CourseDeliveryMode.ClassroomBased && courseRun.DeliveryMode != CourseDeliveryMode.BlendedLearning)
                 {
                     courseRun.VenueId = null;
                     courseRun.VenueName = null;

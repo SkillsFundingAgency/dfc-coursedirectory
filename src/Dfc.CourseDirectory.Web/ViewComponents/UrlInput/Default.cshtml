@@ -1,4 +1,6 @@
-﻿@using System.Text.RegularExpressions
+﻿@using System.Net
+@using System.Text.RegularExpressions
+@using Dfc.CourseDirectory.Web.Validation
 @model Dfc.CourseDirectory.Web.ViewComponents.UrlInput.UrlInputModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -18,7 +20,8 @@
                 @Model.HintText
             </span>
         }
-        <input class="govuk-input" asp-for="@Model.Url" type="text" aria-describedby="@Model.Url"
+        <input class="govuk-input" asp-for="@Model.Url" type="text" aria-label="@Model.Url" value="@WebUtility.HtmlDecode(@Model.Url)"
+               val-required-message = "Enter Course Web Page Url"
                val-max-length="255"
                val-max-length-message="The maximum length of URL is 255 characters"
                val-regex="@regex"

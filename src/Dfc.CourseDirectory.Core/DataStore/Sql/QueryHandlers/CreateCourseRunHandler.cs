@@ -41,7 +41,7 @@ INSERT INTO Pttcd.CourseRuns (
     DurationValue,
     StudyMode,
     AttendancePattern,
-    [National]
+    [National]    
 )
 VALUES (
     @CourseRunId,
@@ -98,7 +98,7 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @Create
                 query.AttendancePattern,
                 query.StudyMode,
                 CreatedByUserId = query.CreatedBy.UserId,
-                query.CreatedOn,
+                query.CreatedOn                
             };
 
             var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);

@@ -380,7 +380,7 @@ namespace Dfc.CourseDirectory.Testing
                     providerVenueRef: "",
                     nationalDelivery: "",
                     subRegions: "",
-                    courseWebpage: "",
+                    courseWebpage: "provider.com/course",
                     cost: "",
                     costDescription: "Free",
                     duration: "2",

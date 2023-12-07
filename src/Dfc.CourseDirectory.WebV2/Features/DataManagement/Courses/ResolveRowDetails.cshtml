@@ -4,6 +4,7 @@
     var title = Model.DeliveryMode switch
     {
         CourseDeliveryMode.Online => "Online course details",
+        CourseDeliveryMode.BlendedLearning => "Blended learning course details",
         CourseDeliveryMode.ClassroomBased => "Classroom course details",
         CourseDeliveryMode.WorkBased => "Work based course details",
         _ => throw new NotSupportedException($"Unknown delivery mode: '{Model.DeliveryMode}'.")
@@ -36,7 +37,7 @@
 
             <p class="govuk-body-m">
                 Add information on how the
-                @(Model.DeliveryMode == CourseDeliveryMode.Online ? "online" : Model.DeliveryMode == CourseDeliveryMode.ClassroomBased ? "classroom" : "work based")
+                @(Model.DeliveryMode == CourseDeliveryMode.Online ? "online" : Model.DeliveryMode == CourseDeliveryMode.BlendedLearning ? "blended learning" : Model.DeliveryMode == CourseDeliveryMode.ClassroomBased ? "classroom" : "work based")
                 course will be delivered.
             </p>
 
@@ -73,7 +74,7 @@
                 </govuk-radios-item>
             </govuk-radios>
 
-            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 <govuk-select asp-for="VenueId">
                     <govuk-select-label class="govuk-label--m">Venue</govuk-select-label>
@@ -146,6 +147,7 @@
             <govuk-select asp-for="DurationUnit">
                 <govuk-select-label class="govuk-label--m">Duration unit</govuk-select-label>
                 <govuk-select-item value="">Select</govuk-select-item>
+                <govuk-select-item value="@CourseDurationUnit.Minutes">Minutes</govuk-select-item>
                 <govuk-select-item value="@CourseDurationUnit.Hours">Hours</govuk-select-item>
                 <govuk-select-item value="@CourseDurationUnit.Days">Days</govuk-select-item>
                 <govuk-select-item value="@CourseDurationUnit.Weeks">Weeks</govuk-select-item>
@@ -153,7 +155,7 @@
                 <govuk-select-item value="@CourseDurationUnit.Years">Years</govuk-select-item>
             </govuk-select>
 
-            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 <govuk-radios asp-for="StudyMode">
                     <govuk-radios-fieldset>

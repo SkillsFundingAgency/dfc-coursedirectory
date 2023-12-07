@@ -114,6 +114,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
 
         [Name("HOW_YOU_WILL_BE_ASSESSED")]
         public string HowYouWillBeAssessed { get; set; }
+
+        [Name("COURSE_TYPE")]
+        public int? CourseType { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -169,7 +172,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             LocationWebsite = result.VenueWebsite,
                             UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                             EntryRequirements = result.EntryRequirements,
-                            HowYouWillBeAssessed = result.HowYouWillBeAssessed
+                            HowYouWillBeAssessed = result.HowYouWillBeAssessed,
+                            CourseType = result.CourseType
                         };
                     }
                 }

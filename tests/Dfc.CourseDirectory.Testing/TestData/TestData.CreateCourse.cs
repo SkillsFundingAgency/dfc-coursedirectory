@@ -123,7 +123,42 @@ namespace Dfc.CourseDirectory.Testing
 
                 return this;
             }
+            public CreateCourseCourseRunBuilder WithBlendedLearningCourseRun(
+                Guid venueId,
+                CourseAttendancePattern attendancePattern = CourseAttendancePattern.Evening,
+                CourseStudyMode studyMode = CourseStudyMode.PartTime,
+                string courseName = "Education assessment in Maths",
+                bool? flexibleStartDate = null,
+                DateTime? startDate = null,
+                string courseUrl = null,
+                decimal? cost = 60m,
+                string costDescription = null,
+                CourseDurationUnit durationUnit = CourseDurationUnit.Days,
+                int durationValue = 3,
+                string providerCourseRef = null)
+            {
+                var courseRunId = Guid.NewGuid();
 
+                _courseRuns.Add(new CreateCourseCourseRun()
+                {
+                    CourseRunId = courseRunId,
+                    CourseName = courseName,
+                    DeliveryMode = CourseDeliveryMode.BlendedLearning,
+                    FlexibleStartDate = flexibleStartDate ?? !startDate.HasValue,
+                    StartDate = startDate,
+                    CourseUrl = courseUrl,
+                    Cost = cost,
+                    CostDescription = costDescription,
+                    DurationUnit = durationUnit,
+                    DurationValue = durationValue,
+                    VenueId = venueId,
+                    AttendancePattern = attendancePattern,
+                    StudyMode = studyMode,
+                    ProviderCourseId = providerCourseRef
+                });
+
+                return this;
+            }
             public CreateCourseCourseRunBuilder WithOnlineCourseRun(
                 string courseName = "Education assessment in Maths",
                 bool? flexibleStartDate = null,

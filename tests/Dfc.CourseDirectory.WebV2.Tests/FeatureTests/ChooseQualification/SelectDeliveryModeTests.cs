@@ -17,6 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
         }
 
         [Theory]
+        [InlineData(CourseDeliveryMode.BlendedLearning)]
         [InlineData(CourseDeliveryMode.ClassroomBased)]
         [InlineData(CourseDeliveryMode.WorkBased)]
         [InlineData(CourseDeliveryMode.Online)]
@@ -142,6 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
         {
             return deliveryMode switch
             {
+                CourseDeliveryMode.BlendedLearning => "blended",
                 CourseDeliveryMode.ClassroomBased => "classroom",
                 CourseDeliveryMode.Online => "online",
                 CourseDeliveryMode.WorkBased => "work",

@@ -42,5 +42,6 @@
 	[ResolvedDuration] INT,
 	[ResolvedDurationUnit] TINYINT,
 	[ResolvedStudyMode] TINYINT,
-	[ResolvedAttendancePattern] TINYINT
+	[ResolvedAttendancePattern] TINYINT, 
+    [CourseType] TINYINT NULL
 )

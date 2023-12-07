@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
@@ -166,6 +167,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
             services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
+            services.AddTransient<ICourseTypeService, CourseTypeService>();
 
             if (!environment.IsTesting())
             {
