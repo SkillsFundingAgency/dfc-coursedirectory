@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         public Guid ProviderId { get; set; }
         public ProviderType ProviderType { get; set; }
         public IReadOnlyList<Guid> SelectedProviderTLevelDefinitionIds { get; set; }
+        public NonLarsSubType NonLarsSubType { get; set; }
         public string AffectedTLevelIdsChecksum { get; set; }
         public bool? Confirm { get; set; }
     }
@@ -84,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
-            return CreateViewModel(provider.ProviderId, provider.ProviderType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
+            return CreateViewModel(provider.ProviderId, provider.ProviderType, provider.NonLarsSubType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -101,7 +102,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             if (!validationResult.IsValid)
             {
                 return new ModelWithErrors<ViewModel>(
-                    CreateViewModel(request.ProviderId, request.ProviderType, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
+                    CreateViewModel(request.ProviderId, request.ProviderType, request.NonLarsSubType, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
                     validationResult);
             }
 
@@ -147,6 +148,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             {
                 ProviderId = request.ProviderId,
                 ProviderType = request.ProviderType,
+                NonLarsSubType = request.NonLarsSubType,
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow.ToLocalTime()
             });
@@ -180,11 +182,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         private static ViewModel CreateViewModel(
             Guid providerId,
             ProviderType providerType,
+            NonLarsSubType nonLarsSubType,
             IEnumerable<SqlModels.TLevelDefinition> tLevelDefinitions,
             IEnumerable<Guid> providerTLevelDefinitions) => new ViewModel
             {
                 ProviderId = providerId,
                 ProviderType = providerType,
+                NonLarsSubType = nonLarsSubType,
                 ProviderTLevelDefinitions = tLevelDefinitions.Select(d => new ProviderTLevelDefinitionViewModel
                 {
                     TLevelDefinitionId = d.TLevelDefinitionId,

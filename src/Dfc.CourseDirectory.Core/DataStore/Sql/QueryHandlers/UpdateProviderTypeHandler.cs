@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"UPDATE [Pttcd].[Providers]
                          SET [ProviderType] = @ProviderType,
+                            [NonLarsSubType] = @NonLarsSubType,
                             [UpdatedOn] = @UpdatedOn,
                             [UpdatedBy] = @UpdatedBy
                         WHERE [ProviderId] = @ProviderId ";
@@ -26,6 +27,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var paramz = new
             {
                 query.ProviderType,
+                query.NonLarsSubType,
                 query.UpdatedOn,
                 UpdatedBy = query.UpdatedBy.UserId,
                 query.ProviderId

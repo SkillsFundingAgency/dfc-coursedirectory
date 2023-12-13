@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public int Ukprn { get; set; }
         public string ProviderName { get; set; }
         public ProviderType ProviderType { get; set; }
+        public NonLarsSubType NonLarsSubType { get; set; }
         public string Alias { get; set; }
         public ProviderDisplayNameSource DisplayNameSource { get; set; }
         public decimal? LearnerSatisfaction { get; set; }

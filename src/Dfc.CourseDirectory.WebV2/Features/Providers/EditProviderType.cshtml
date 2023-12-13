@@ -30,12 +30,21 @@
 
                             @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
                             {
-                                <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
-                                    @providerTLevelDefinition.Name
-                                </govuk-checkboxes-item>
+                            <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
+                                @providerTLevelDefinition.Name
+                            </govuk-checkboxes-item>
                             }
 
                         </govuk-checkboxes>
+                    </govuk-checkboxes-item-conditional>
+                </govuk-checkboxes-item>
+                <govuk-checkboxes-item value="@((int)ProviderType.NonLARS)" checked="@(Model.ProviderType.HasFlag(ProviderType.NonLARS))" input-data-testid="nonLars" onchange="SelectAllNonLARSDefinitionCheckboxes($(this));">
+                    @ProviderType.NonLARS.ToDescription()
+                    <govuk-checkboxes-item-conditional>
+                      
+                        <govuk-checkboxes-item value="@((int)NonLarsSubType.SkillsBootcamp)" checked="@(Model.NonLarsSubType.HasFlag(NonLarsSubType.SkillsBootcamp))">
+                            @NonLarsSubType.SkillsBootcamp.ToDescription()
+                        </govuk-checkboxes-item>
                     </govuk-checkboxes-item-conditional>
                 </govuk-checkboxes-item>
             </govuk-checkboxes>
@@ -57,6 +66,12 @@
         for (let i = 0; i < checkBoxesToCheck.length; i++) 
         {
           checkBoxesToCheck[i].checked = true;
+        }
+    }
+    function SelectAllNonLARSDefinitionCheckboxes(checkbox) {
+        var checkBoxesToCheck = $('#conditional-ProviderType-2').find('input[type="checkbox"]');
+        for (let i = 0; i < checkBoxesToCheck.length; i++) {
+            checkBoxesToCheck[i].checked = true;
         }
     }
 </script>

@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     {
         public Guid ProviderId { get; set; }
         public ProviderType ProviderType { get; set; }
+        public NonLarsSubType NonLarsSubType { get; set; }
         public UserInfo UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
     }

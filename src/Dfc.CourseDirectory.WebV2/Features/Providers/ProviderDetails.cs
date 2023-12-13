@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
         public string DisplayName { get; set; }
         public bool CanChangeDisplayName { get; set; }
         public ProviderType ProviderType { get; set; }
+        public NonLarsSubType NonLarsSubType { get; set; }
         public bool CanChangeProviderType { get; set; }
         public string MarketingInformation { get; set; }
         public bool ShowMarketingInformation { get; set; }
@@ -76,6 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                 DisplayName = sqlProvider.DisplayName,
                 CanChangeDisplayName = sqlProvider.HaveAlias && AuthorizationRules.CanUpdateProviderDisplayName(currentUser),
                 ProviderType = sqlProvider.ProviderType,
+                NonLarsSubType = sqlProvider.NonLarsSubType,
                 CanChangeProviderType = AuthorizationRules.CanUpdateProviderType(currentUser),
                 MarketingInformation = sqlProvider.MarketingInformation != null ?
                     Html.SanitizeHtml(sqlProvider.MarketingInformation) :
