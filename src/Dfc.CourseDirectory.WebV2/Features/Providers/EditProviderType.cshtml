@@ -18,6 +18,24 @@
                 <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
                     @ProviderType.FE.ToDescription()
                 </govuk-checkboxes-item>
+
+                <govuk-checkboxes-item value="@((int)ProviderType.NonLARS)" checked="@(Model.ProviderType.HasFlag(ProviderType.NonLARS))" input-data-testid="nonLars" onchange="SelectAllNonLARSDefinitionCheckboxes($(this));">
+                    @ProviderType.NonLARS.ToDescription()
+
+                    <govuk-checkboxes-item-conditional>
+                        <govuk-checkboxes asp-for="NonLarsSubType">
+                            <govuk-checkboxes-fieldset>
+                                <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+                                    What Non LARS Courses can this provider offer?
+                                </govuk-checkboxes-fieldset-legend>
+                            </govuk-checkboxes-fieldset>
+                            <govuk-checkboxes-item value="@((int)NonLarsSubType.SkillsBootcamp)" checked="@(Model.NonLarsSubType.HasFlag(NonLarsSubType.SkillsBootcamp))" input-data-testid="@((int)NonLarsSubType.SkillsBootcamp)">
+                                @NonLarsSubType.SkillsBootcamp.ToDescription()
+                            </govuk-checkboxes-item>
+                        </govuk-checkboxes>                        
+                    </govuk-checkboxes-item-conditional>
+                </govuk-checkboxes-item>
+
                 <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels" onchange="SelectAllTLevelDefinitionCheckboxes($(this));">
                     @ProviderType.TLevels.ToDescription()
                     <govuk-checkboxes-item-conditional>
@@ -38,15 +56,6 @@
                         </govuk-checkboxes>
                     </govuk-checkboxes-item-conditional>
                 </govuk-checkboxes-item>
-                <govuk-checkboxes-item value="@((int)ProviderType.NonLARS)" checked="@(Model.ProviderType.HasFlag(ProviderType.NonLARS))" input-data-testid="nonLars" onchange="SelectAllNonLARSDefinitionCheckboxes($(this));">
-                    @ProviderType.NonLARS.ToDescription()
-                    <govuk-checkboxes-item-conditional>
-                      
-                        <govuk-checkboxes-item value="@((int)NonLarsSubType.SkillsBootcamp)" checked="@(Model.NonLarsSubType.HasFlag(NonLarsSubType.SkillsBootcamp))">
-                            @NonLarsSubType.SkillsBootcamp.ToDescription()
-                        </govuk-checkboxes-item>
-                    </govuk-checkboxes-item-conditional>
-                </govuk-checkboxes-item>
             </govuk-checkboxes>
 
             <div class="govuk-button-group">
@@ -62,14 +71,14 @@
 <script>
     function SelectAllTLevelDefinitionCheckboxes(checkbox) 
     {
-        var checkBoxesToCheck = $('#conditional-ProviderType-1').find('input[type="checkbox"]');
+        var checkBoxesToCheck = $('#conditional-ProviderType-2').find('input[type="checkbox"]');
         for (let i = 0; i < checkBoxesToCheck.length; i++) 
         {
           checkBoxesToCheck[i].checked = true;
         }
     }
     function SelectAllNonLARSDefinitionCheckboxes(checkbox) {
-        var checkBoxesToCheck = $('#conditional-ProviderType-2').find('input[type="checkbox"]');
+        var checkBoxesToCheck = $('#conditional-ProviderType-1').find('input[type="checkbox"]');
         for (let i = 0; i < checkBoxesToCheck.length; i++) {
             checkBoxesToCheck[i].checked = true;
         }
