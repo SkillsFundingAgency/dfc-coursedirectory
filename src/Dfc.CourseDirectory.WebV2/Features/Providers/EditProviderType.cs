@@ -124,6 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                     {
                         ProviderId = request.ProviderId,
                         ProviderType = request.ProviderType,
+                        NonLarsSubType = request.NonLarsSubType,
                         SelectedProviderTLevelDefinitionIds = request.SelectedProviderTLevelDefinitionIds,
                         AffectedTLevelIdsChecksum = affectedTLevelsChecksum,
                         Confirm = null,
