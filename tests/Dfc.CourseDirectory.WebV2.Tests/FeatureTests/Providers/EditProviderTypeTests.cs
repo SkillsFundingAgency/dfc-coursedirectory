@@ -81,6 +81,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.FE, new[] { "fe" })]
         [InlineData(ProviderType.TLevels, new[] { "tLevels" })]
         [InlineData(ProviderType.FE | ProviderType.TLevels, new[] { "fe", "tLevels" })]
+        [InlineData(ProviderType.NonLARS | ProviderType.TLevels, new[] { "nonLars", "tLevels" })]
+        [InlineData(ProviderType.NonLARS | ProviderType.FE, new[] { "nonLars", "fe" })]
+        [InlineData(ProviderType.FE | ProviderType.NonLARS | ProviderType.TLevels, new[] {"fe", "nonLars", "tLevels" })]
 
         public async Task Get_ValidRequest_RendersExpectedOutput(
             ProviderType providerType,
@@ -103,6 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             AssertElementWithTestIdHasExpectedCheckedValue("fe");
             AssertElementWithTestIdHasExpectedCheckedValue("tLevels");
+            AssertElementWithTestIdHasExpectedCheckedValue("nonLars");
 
             void AssertElementWithTestIdHasExpectedCheckedValue(string testId)
             {
