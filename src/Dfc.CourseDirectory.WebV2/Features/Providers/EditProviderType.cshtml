@@ -23,15 +23,18 @@
                     @ProviderType.NonLARS.ToDescription()
 
                     <govuk-checkboxes-item-conditional>
-                        <govuk-checkboxes asp-for="NonLarsSubType">
+                        <govuk-checkboxes asp-for="@Model.SelectedNonLarsSubTypeIds">
                             <govuk-checkboxes-fieldset>
                                 <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
                                     What Non LARS Courses can this provider offer?
                                 </govuk-checkboxes-fieldset-legend>
                             </govuk-checkboxes-fieldset>
-                            <govuk-checkboxes-item value="@((int)NonLarsSubType.SkillsBootcamp)" checked="@(Model.NonLarsSubType.HasFlag(NonLarsSubType.SkillsBootcamp))" input-data-testid="@((int)NonLarsSubType.SkillsBootcamp)">
-                                @NonLarsSubType.SkillsBootcamp.ToDescription()
-                            </govuk-checkboxes-item>
+                            @foreach (var providerNonLars in Model.ProviderNonLarsSubTypes)
+                            {
+                                <govuk-checkboxes-item value="@providerNonLars.NonLarsSubTypeId" checked="@providerNonLars.Selected" input-data-testid="@($"nonLarsSubtype-{providerNonLars.NonLarsSubTypeId}")">
+                                    @providerNonLars.Name
+                                </govuk-checkboxes-item>
+                            }
                         </govuk-checkboxes>                        
                     </govuk-checkboxes-item-conditional>
                 </govuk-checkboxes-item>

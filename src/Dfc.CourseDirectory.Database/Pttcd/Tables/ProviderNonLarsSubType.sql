@@ -1,0 +1,5 @@
+﻿CREATE TABLE [dbo].[ProviderNonLarsSubType]
+(
+	[ProviderId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+    [NonLarsSubTypeId] UNIQUEIDENTIFIER NOT NULL
+)

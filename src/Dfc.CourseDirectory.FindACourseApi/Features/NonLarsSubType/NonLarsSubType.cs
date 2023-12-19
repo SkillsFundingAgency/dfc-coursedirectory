@@ -6,7 +6,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 
-namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDefinitions
+namespace Dfc.CourseDirectory.FindACourseApi.Features.NonLarsSubType
 {
     public class Query : IRequest<ViewModel>
     {
@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDefinitions
 
     public class ViewModel
     {
-        public IReadOnlyCollection<NonLarsSubTypeViewModel> TLevelDefinitions { get; set; }
+        public IReadOnlyCollection<NonLarsSubTypeViewModel> NonLarsSubTypes { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -28,16 +28,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDefinitions
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitions());
+            var nonLarsSubtypes = await _sqlQueryDispatcher.ExecuteQuery(new GetAllNonLarsSubTypes());
 
             return new ViewModel
             {
-                TLevelDefinitions = tLevelDefinitions.Select(t => new NonLarsSubTypeViewModel
+                NonLarsSubTypes = nonLarsSubtypes.Select(t => new NonLarsSubTypeViewModel
                 {
-                    TLevelDefinitionId = t.TLevelDefinitionId,
-                    FrameworkCode = t.FrameworkCode,
-                    ProgType = t.ProgType,
-                    QualificationLevel = t.QualificationLevel.ToString(),
+                    NonLarsSubTypeId = t.NonLarsSubTypeId,
                     Name = t.Name
                 }).ToArray()
             };

@@ -25,7 +25,11 @@
 
             <input type="hidden" name="@nameof(Model.ProviderType)" value="@((int)Model.ProviderType)" data-testid="provider-type" />
 
-            <input type="hidden" name="@nameof(Model.NonLarsSubType)" value="@((int)Model.NonLarsSubType)" data-testid="non-lars-subtype" />
+            @for (int i = 0; i < Model.SelectedNonLarsSubTypeIds?.Count; i++)
+            {
+                @Html.HiddenFor(m => m.SelectedNonLarsSubTypeIds[i], new Dictionary<string, object> { { "data-testid", "selected-provider-nonlars-subtype-id" } })
+                ;
+            }
 
             @for (int i = 0; i < Model.SelectedProviderTLevelDefinitionIds?.Count; i++)
             {

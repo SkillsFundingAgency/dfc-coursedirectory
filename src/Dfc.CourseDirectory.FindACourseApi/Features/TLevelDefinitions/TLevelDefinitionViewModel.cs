@@ -2,7 +2,7 @@
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDefinitions
 {
-    public class TLevelDefinitionViewModel
+    public class NonLarsSubTypeViewModel
     {
         public Guid TLevelDefinitionId { get; set; }
         public int FrameworkCode { get; set; }

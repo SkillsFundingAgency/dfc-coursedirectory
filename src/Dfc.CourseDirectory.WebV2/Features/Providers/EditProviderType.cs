@@ -15,6 +15,8 @@ using OneOf;
 using OneOf.Types;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using System.ComponentModel.DataAnnotations;
+using FluentValidation.Results;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 {
@@ -28,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         public Guid ProviderId { get; set; }
         public ProviderType ProviderType { get; set; }
         public IReadOnlyList<Guid> SelectedProviderTLevelDefinitionIds { get; set; }
-        public NonLarsSubType NonLarsSubType { get; set; }
+        public IReadOnlyList<Guid> SelectedNonLarsSubTypeIds { get; set; }
         public string AffectedTLevelIdsChecksum { get; set; }
         public bool? Confirm { get; set; }
     }
@@ -36,6 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
     public class ViewModel : Command
     {
         public IEnumerable<ProviderTLevelDefinitionViewModel> ProviderTLevelDefinitions { get; set; }
+        public IEnumerable<ProviderNonLarsSubTypeViewModel> ProviderNonLarsSubTypes { get; set; }
     }
 
     public class ConfirmViewModel : Command
@@ -80,12 +83,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 ProviderId = request.ProviderId
             });
 
-            var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitions());
+            var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitions());
             var providerTLevelDefinitions = provider.ProviderType.HasFlag(ProviderType.TLevels)
                 ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
-            return CreateViewModel(provider.ProviderId, provider.ProviderType, provider.NonLarsSubType, tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
+            var nonLarsSubTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetAllNonLarsSubTypes());
+            var providerSubTypes = provider.ProviderType.HasFlag(ProviderType.NonLARS)
+                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetNonLarsSubTypeForProvider { ProviderId = request.ProviderId })
+                : Enumerable.Empty<SqlModels.NonLarsSubType>();
+
+            return CreateViewModel(provider.ProviderId, provider.ProviderType, nonLarsSubTypes, providerSubTypes.Select(pd => pd.NonLarsSubTypeId), tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, ModelWithErrors<ConfirmViewModel>, ConfirmViewModel, Cancel, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -95,18 +103,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 return new Cancel();
             }
 
-            var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitions());
+            var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitions());
 
-            var validationResult = await new CommandValidator(tLevelDefinitions).ValidateAsync(request);
+            var nonLarsSubtypes = await _sqlQueryDispatcher.ExecuteQuery(new GetAllNonLarsSubTypes());
+
+            var validateTLevels = await new CommandValidator(tLevelDefinitions).ValidateAsync(request);
+
+            var validateSubtypes = await new CommandValidator(nonLarsSubtypes).ValidateAsync(request);
+
+            IList<ValidationFailure> failureList = validateTLevels.Errors;
+            foreach (var error in validateSubtypes.Errors)
+            {
+                failureList.Add(error);
+            }
+
+            FluentValidation.Results.ValidationResult validationResult = new FluentValidation.Results.ValidationResult(failureList);
 
             if (!validationResult.IsValid)
             {
                 return new ModelWithErrors<ViewModel>(
-                    CreateViewModel(request.ProviderId, request.ProviderType, request.NonLarsSubType, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
+                    CreateViewModel(request.ProviderId, request.ProviderType,nonLarsSubtypes, request.SelectedNonLarsSubTypeIds, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
                     validationResult);
             }
 
-            var tLevels = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelsForProvider { ProviderId = request.ProviderId });
+            var tLevels = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelsForProvider { ProviderId = request.ProviderId });
 
             var affectedTLevels = tLevels
                 .Where(t => !request.ProviderType.HasFlag(ProviderType.TLevels)
@@ -124,7 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                     {
                         ProviderId = request.ProviderId,
                         ProviderType = request.ProviderType,
-                        NonLarsSubType = request.NonLarsSubType,
+                        SelectedNonLarsSubTypeIds = request.SelectedNonLarsSubTypeIds,
                         SelectedProviderTLevelDefinitionIds = request.SelectedProviderTLevelDefinitionIds,
                         AffectedTLevelIdsChecksum = affectedTLevelsChecksum,
                         Confirm = null,
@@ -149,13 +169,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             {
                 ProviderId = request.ProviderId,
                 ProviderType = request.ProviderType,
-                NonLarsSubType = request.NonLarsSubType,
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow.ToLocalTime()
             });
 
             var (_, RemovedTLevelDefinitionIds) = await _sqlQueryDispatcher.ExecuteQuery(
-                new SqlQueries.SetProviderTLevelDefinitions
+                new SetProviderTLevelDefinitions
                 {
                     ProviderId = request.ProviderId,
                     TLevelDefinitionIds = request.ProviderType.HasFlag(ProviderType.TLevels)
@@ -165,7 +184,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
             if (RemovedTLevelDefinitionIds.Count != 0)
             {
-                await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.DeleteTLevelsForProviderWithTLevelDefinitions()
+                await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProviderWithTLevelDefinitions()
                 {
                     ProviderId = request.ProviderId,
                     TLevelDefinitionIds = RemovedTLevelDefinitionIds,
@@ -173,6 +192,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                     DeletedOn = _clock.UtcNow
                 });
             }
+
+            var (_, RemovedNonLarsSubTypeIds) = await _sqlQueryDispatcher.ExecuteQuery(
+               new SetProviderNonLarsSubTypes
+               {
+                   ProviderId = request.ProviderId,
+                   NonLarsSubTypeIds = request.ProviderType.HasFlag(ProviderType.NonLARS)
+                       ? request.SelectedNonLarsSubTypeIds ?? Enumerable.Empty<Guid>()
+                       : Enumerable.Empty<Guid>()
+               });
+
+            //if (RemovedNonLarsSubTypeIds.Count != 0)
+            //{
+            //    await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProviderWithTLevelDefinitions()
+            //    {
+            //        ProviderId = request.ProviderId,
+            //        TLevelDefinitionIds = RemovedTLevelDefinitionIds,
+            //        DeletedBy = _currentUserProvider.GetCurrentUser(),
+            //        DeletedOn = _clock.UtcNow
+            //    });
+            //}
 
             // Remove this provider from the cache - subsequent requests will re-fetch updated record
             await _providerInfoCache.Remove(request.ProviderId);
@@ -183,13 +222,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
         private static ViewModel CreateViewModel(
             Guid providerId,
             ProviderType providerType,
-            NonLarsSubType nonLarsSubType,
+            IEnumerable<SqlModels.NonLarsSubType> nonLarsSubType,
+            IEnumerable<Guid> providerSubTypes,
             IEnumerable<SqlModels.TLevelDefinition> tLevelDefinitions,
             IEnumerable<Guid> providerTLevelDefinitions) => new ViewModel
             {
                 ProviderId = providerId,
                 ProviderType = providerType,
-                NonLarsSubType = nonLarsSubType,
+                ProviderNonLarsSubTypes = nonLarsSubType.Select(n => new ProviderNonLarsSubTypeViewModel { 
+                    NonLarsSubTypeId = n.NonLarsSubTypeId,
+                    Name = n.Name,
+                    Selected = providerSubTypes?.Any(id => id == n.NonLarsSubTypeId) ?? false
+                }),
                 ProviderTLevelDefinitions = tLevelDefinitions.Select(d => new ProviderTLevelDefinitionViewModel
                 {
                     TLevelDefinitionId = d.TLevelDefinitionId,
@@ -216,6 +260,23 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                         RuleFor(c => c.SelectedProviderTLevelDefinitionIds)
                             .Must(ids => ids.All(id => tLevelDefinitions.Any(d => d.TLevelDefinitionId == id)))
                             .WithMessage("Select a valid T Level");
+                    });
+
+                });
+            }
+            public CommandValidator(IEnumerable<SqlModels.NonLarsSubType> nonLarsSubTypes)
+            {
+                When(c => c.ProviderType.HasFlag(ProviderType.NonLARS), () =>
+                {
+                    RuleFor(c => c.SelectedNonLarsSubTypeIds)
+                        .NotEmpty()
+                        .WithMessage("Select Non LARS Course this provider can offer");
+
+                    When(c => c.SelectedNonLarsSubTypeIds?.Any() ?? false, () =>
+                    {
+                        RuleFor(c => c.SelectedNonLarsSubTypeIds)
+                            .Must(ids => ids.All(id => nonLarsSubTypes.Any(d => d.NonLarsSubTypeId == id)))
+                            .WithMessage("Select a valid Non LARS Subtype");
                     });
 
                 });
