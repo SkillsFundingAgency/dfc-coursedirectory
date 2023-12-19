@@ -25,7 +25,7 @@ MERGE Pttcd.ProviderNonLarsSubType AS target
 USING (
     SELECT
         Id NonLarsSubTypeId
-    FROM @NonLarsSubTypes
+    FROM @NonLarsSubTypeIds
 ) AS source
 ON target.ProviderId = @ProviderId
 AND target.NonLarsSubTypeId = source.NonLarsSubTypeId
