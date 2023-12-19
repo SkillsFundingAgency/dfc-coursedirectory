@@ -16,6 +16,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 
         public DateTime UpdatedOn { get; set; }
 
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
     }
 }
