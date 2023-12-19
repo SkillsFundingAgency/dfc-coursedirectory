@@ -4,5 +4,5 @@
     [Name] NCHAR(10) NOT NULL, 
     [AddedOn] DATETIME NOT NULL, 
     [UpdatedOn] DATETIME NULL, 
-    [IsActive] BIT NOT NULL DEFAULT(0),
+    [IsActive] tinyint NOT NULL DEFAULT(0),
 )
