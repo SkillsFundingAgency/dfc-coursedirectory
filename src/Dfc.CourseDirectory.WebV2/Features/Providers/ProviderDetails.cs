@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.FindACourseApi.Features.NonLarsSubType;
+using Dfc.CourseDirectory.WebV2.Features.NonLarsSubType;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
