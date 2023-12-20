@@ -52,6 +52,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private const string SessionLastAddCoursePage = "LastAddCoursePage";
         private const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
         private const string SessionPublishedCourse = "PublishedCourse";
+        private const string SessionNonLarsCourse = "NonLarsCourse";
 
         public AddCourseController(
             ICourseService courseService,
@@ -73,12 +74,30 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             RemoveSessionVariables();
 
-            Session.SetString("LearnAimRef", learnAimRef);
-            Session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
-            Session.SetString("AwardOrgCode", awardOrgCode);
-            Session.SetString("LearnAimRefTitle", learnAimRefTitle);
-            Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
+            if (string.IsNullOrWhiteSpace(learnAimRef)
+                && string.IsNullOrWhiteSpace(notionalNVQLevelv2)
+                && string.IsNullOrWhiteSpace(awardOrgCode)
+                && string.IsNullOrWhiteSpace(learnAimRefTitle)
+                && string.IsNullOrWhiteSpace(learnAimRefTypeDesc))
+            {
+                Session.SetString(SessionNonLarsCourse, "true");
+            }
+            else
+            {
+                Session.SetString("LearnAimRef", learnAimRef);
+                Session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2);
+                Session.SetString("AwardOrgCode", awardOrgCode);
+                Session.SetString("LearnAimRefTitle", learnAimRefTitle);
+                Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
+            }
 
+            AddCourseViewModel vm = await GetCourseViewModel(learnAimRef, notionalNVQLevelv2, awardOrgCode, learnAimRefTitle, courseId);
+
+            return View(vm);
+        }        
+
+        private async Task<AddCourseViewModel> GetCourseViewModel(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, Guid? courseId)
+        {
             Course course = null;
             CourseText defaultCourseText = null;
 
@@ -88,12 +107,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(learnAimRef))
+                if (!string.IsNullOrWhiteSpace(learnAimRef))
                 {
-                    throw new ArgumentException($"{nameof(learnAimRef)} cannot be null or whitespace.", nameof(learnAimRef));
+                    defaultCourseText = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseTextByLearnAimRef { LearnAimRef = learnAimRef });
                 }
-
-                defaultCourseText = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseTextByLearnAimRef { LearnAimRef = learnAimRef });
             }
 
             AddCourseViewModel vm = new AddCourseViewModel
@@ -191,8 +208,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
-
-            return View(vm);
+            return vm;
         }
 
         [Authorize]
@@ -217,15 +233,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
+
             int UKPRN = Session.GetInt32("UKPRN").Value;
+            bool nonLarsCourse = IsCourseNonLars();
 
             var viewModel = new AddCourseDetailsViewModel
             {
-                LearnAimRef = Session.GetString("LearnAimRef"),
-                LearnAimRefTitle = Session.GetString("LearnAimRefTitle"),
-                AwardOrgCode = Session.GetString("AwardOrgCode"),
-                NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
-                CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
                 SelectVenue = await GetVenuesForProvider(),
                 ChooseRegion = new ChooseRegionModel
@@ -233,8 +246,23 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     Regions = _courseService.GetRegions(),
                     National = null
 
-                }
+                },
+                NonLarsCourse = nonLarsCourse
             };
+
+            if (nonLarsCourse)
+            {
+                viewModel.CourseType = CourseType.SkillsBootcamp;
+            }
+
+            if (!nonLarsCourse)
+            {
+                viewModel.LearnAimRef = Session.GetString("LearnAimRef");
+                viewModel.LearnAimRefTitle = Session.GetString("LearnAimRefTitle");
+                viewModel.AwardOrgCode = Session.GetString("AwardOrgCode");
+                viewModel.NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2");
+                viewModel.CourseName = Session.GetString("LearnAimRefTitle");
+            }
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
             Session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
@@ -310,6 +338,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(viewModel);
         }
 
+        private bool IsCourseNonLars()
+        {
+            var nonLarsCourseString = Session.GetString(SessionNonLarsCourse);
+            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
+        }
 
         [Authorize]
         //public IActionResult AddNewVenue(Guid[] projectId)
@@ -423,7 +456,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpGet]
         public IActionResult AddCourseRun()
         {
-
             return View();
         }
 
@@ -471,7 +503,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AttendanceTime = model.AttendanceMode.ToDescription(),
                 StartDate = model.StartDateType == "FlexibleStartDate"
                     ? "Flexible"
-                    : model.Day + "/" + model.Month + "/" + model.Year
+                    : model.Day + "/" + model.Month + "/" + model.Year,
+                CourseType = model.CourseType.ToDescription(),
+                NonLarsCourse = IsCourseNonLars()
             };
 
             switch (model.DeliveryMode)
@@ -543,7 +577,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             // load session1 / use model
 
             // load session2
-            var addCourseRun = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
+            var addCourseRun = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);            
 
             // cream scvm
             var summaryViewModel = new AddCourseSummaryViewModel()
@@ -574,8 +608,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 National = addCourseRun.National,
                 StartDate = addCourseRun.StartDateType == "FlexibleStartDate"
                     ? "Flexible"
-                    : addCourseRun.Day + "/" + addCourseRun.Month + "/" + addCourseRun.Year
-
+                    : addCourseRun.Day + "/" + addCourseRun.Month + "/" + addCourseRun.Year,
+                NonLarsCourse = IsCourseNonLars()
             };
 
             // venues and regions
@@ -657,35 +691,44 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken] //Harden for CSRF
         public async Task<IActionResult> AcceptAndPublish()
-        {
-            var learnAimRef = Session.GetString("LearnAimRef");
-            var notionalNvqLevelv2 = Session.GetString("NotionalNVQLevelv2");
-            var awardOrgCode = Session.GetString("AwardOrgCode");
-            var learnAimRefTitle = Session.GetString("LearnAimRefTitle");
-            var learnAimRefTypeDesc = Session.GetString("LearnAimRefTypeDesc");
+        {            
+            var learnAimRef = string.Empty;
+            var notionalNvqLevelv2 = string.Empty;
+            var awardOrgCode = string.Empty;
+            var learnAimRefTitle = string.Empty;
+            var learnAimRefTypeDesc = string.Empty;
 
-            var addCourseSection2 = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
-
-            // TODO - Add error message, if use this check
-            if (string.IsNullOrEmpty(learnAimRef) ||
-                string.IsNullOrEmpty(notionalNvqLevelv2) ||
-                string.IsNullOrEmpty(awardOrgCode) ||
-                string.IsNullOrEmpty(learnAimRefTitle) ||
-                string.IsNullOrEmpty(learnAimRefTypeDesc)
-            )
+            var nonLarsCourse = IsCourseNonLars();
+            if (!nonLarsCourse)
             {
-                return RedirectToAction("AddCourse",
-                    new
-                    {
-                        learnAimRef = learnAimRef,
-                        notionalNVQLevelv2 = notionalNvqLevelv2,
-                        awardOrgCode = awardOrgCode,
-                        learnAimRefTitle = learnAimRefTitle,
-                        errmsg = "Course data is missing."
-                    });
+                learnAimRef = Session.GetString("LearnAimRef");
+                notionalNvqLevelv2 = Session.GetString("NotionalNVQLevelv2");
+                awardOrgCode = Session.GetString("AwardOrgCode");
+                learnAimRefTitle = Session.GetString("LearnAimRefTitle");
+                learnAimRefTypeDesc = Session.GetString("LearnAimRefTypeDesc");
+
+                // TODO - Add error message, if use this check
+                if (string.IsNullOrEmpty(learnAimRef) ||
+                    string.IsNullOrEmpty(notionalNvqLevelv2) ||
+                    string.IsNullOrEmpty(awardOrgCode) ||
+                    string.IsNullOrEmpty(learnAimRefTitle) ||
+                    string.IsNullOrEmpty(learnAimRefTypeDesc)
+                )
+                {
+                    return RedirectToAction("AddCourse",
+                        new
+                        {
+                            learnAimRef = learnAimRef,
+                            notionalNVQLevelv2 = notionalNvqLevelv2,
+                            awardOrgCode = awardOrgCode,
+                            learnAimRefTitle = learnAimRefTitle,
+                            errmsg = "Course data is missing."
+                        });
+                }
             }
 
-            var addCourseSection1 = Session.GetObject<AddCourseSection1RequestModel>("AddCourseSection1");
+            var addCourseSection2 = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
+            var addCourseSection1 = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             var courseFor = ASCIICodeHelper.RemoveASCII(addCourseSection1.CourseFor);
             var entryRequirements = ASCIICodeHelper.RemoveASCII(addCourseSection1.EntryRequirements);
             var whatWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatWillLearn);
@@ -824,9 +867,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             var courseId = Guid.NewGuid();
-            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);            
+            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
-            var courseType = await _courseTypeService.GetCourseType(learnAimRef);
+            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef);
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
@@ -951,7 +994,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             return selectVenue;
-        }        
+        }
 
         internal void RemoveSessionVariables()
         {
@@ -959,11 +1002,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.Remove("NotionalNVQLevelv2");
             Session.Remove("AwardOrgCode");
             Session.Remove("LearnAimRefTitle");
-            Session.Remove("LearnAimRefTypeDesc");
-
-            //  Session.Remove(SessionAddCourseSection1);
+            Session.Remove("LearnAimRefTypeDesc");            
+            
             Session.Remove(SessionAddCourseSection2);
             Session.Remove(SessionLastAddCoursePage);
+            Session.Remove(SessionNonLarsCourse);
         }
 
         private AddCourseViewModel GetSection1ViewModel()
@@ -1057,16 +1100,34 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 return null;
             }
 
+            bool nonLarsCourse = IsCourseNonLars();
+
             var viewModel = new AddCourseDetailsViewModel
             {
-                LearnAimRef = Session.GetString("LearnAimRef"),
-                LearnAimRefTitle = Session.GetString("LearnAimRefTitle"),
-                AwardOrgCode = Session.GetString("AwardOrgCode"),
-                NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
-                CourseName = Session.GetString("LearnAimRefTitle"),
                 ProviderUKPRN = UKPRN,
-                ChooseRegion = new ChooseRegionModel()
+                SelectVenue = await GetVenuesForProvider(),
+                ChooseRegion = new ChooseRegionModel
+                {
+                    Regions = _courseService.GetRegions(),
+                    National = null
+
+                },
+                NonLarsCourse = nonLarsCourse
             };
+
+            if (nonLarsCourse)
+            {
+                viewModel.CourseType = CourseType.SkillsBootcamp;
+            }
+
+            if (!nonLarsCourse)
+            {
+                viewModel.LearnAimRef = Session.GetString("LearnAimRef");
+                viewModel.LearnAimRefTitle = Session.GetString("LearnAimRefTitle");
+                viewModel.AwardOrgCode = Session.GetString("AwardOrgCode");
+                viewModel.NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2");
+                viewModel.CourseName = Session.GetString("LearnAimRefTitle");
+            }            
 
             viewModel.SelectVenue = await GetVenuesForProvider();
             viewModel.ChooseRegion.Regions = _courseService.GetRegions();

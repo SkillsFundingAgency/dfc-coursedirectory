@@ -1,6 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Web.Extensions
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
@@ -92,8 +93,22 @@
                 LabelText = "Your reference",
                 HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
                 AriaDescribedBy = "Please enter the ID for this course"
+                })            
+            </div>
+
+            @if (Model.NonLarsCourse)
+            {
+                <div id="sectionCourseType">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType.CourseType), new CourseTypeModel
+                {
+                CourseType = Model.CourseType,
+                LabelText = "Course type",
+                HintText = "Select one option.",
+                SecondHintText = "Select what is the type of this course",
+                AriaDescribedBy = "Select what is the type of this course"
                 })
             </div>
+            }
 
             <div id="sectionDeliveryType">
                 @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel

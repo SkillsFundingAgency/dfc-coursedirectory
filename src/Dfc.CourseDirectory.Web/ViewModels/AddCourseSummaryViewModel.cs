@@ -22,6 +22,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string CourseLength { get; set; }
         public string AttendancePattern { get; set; }
         public string AttendanceTime { get; set; }
+        public string CourseType { get; set; }
 
         public bool National { get; set; }
 
@@ -33,6 +34,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string HowAssessed { get; set; }
         public string HowYouWillLearn { get; set; }
         public CourseDeliveryMode? DeliveryModeEnum { get; set; }
+        public bool NonLarsCourse { get; set; }
 
         public IEnumerable<string> Venues;
         public IEnumerable<string> Regions;

@@ -45,6 +45,16 @@
                     Section = "sectionCourseProviderReference"
                 })
 
+                @if (Model.NonLarsCourse)
+                {
+                    @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                    {
+                        Id="CourseType", Title = "Course type", Value = Model.CourseType,
+                        Action = "SummaryToAddCourseRun",
+                        Controller = "AddCourse",
+                        Section = "sectionCourseType"
+                    })
+                }
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
                     Id="DeliveryMode", Title = "Delivery mode", Value = Model.DeliveryMode,
@@ -104,14 +114,7 @@
                     Action = "SummaryToAddCourseRun",
                     Controller = "AddCourse",
                     Section = "sectionCost"
-                })
-                @*@await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-                {
-                    Id="AdvancedLearnerLoan", Title = "Advanced learner loan", Value = Model.AdvancedLearnerLoan,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionAdvancedLearnerLoan"
-                })*@
+                })               
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
                     Id="CourseLength", Title = "Duration", Value = Model.CourseLength,
@@ -191,12 +194,6 @@
                     Controller = "AddCourse",
                     Section = "sectionWhereNext"
                 })
-                @*@await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
-               {
-                   Id="FundtionOptions", Title="Funding options", Value = Model.FundingOptions,
-                   Action = "SummaryToAddCourse", Controller = "AddCourse", Section = "sectionFundingOptions"
-               })*@
-
 
             </dl>
             <h2 class="govuk-heading-m">Publish your course</h2>
