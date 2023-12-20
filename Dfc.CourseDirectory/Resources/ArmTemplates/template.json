@@ -285,7 +285,7 @@
             "value": "[parameters('workspaceName')]"
           },
           "workspaceResourceGroup": {
-            "type": "[parameters('workspaceResourceGroup')]"
+            "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }
@@ -615,7 +615,7 @@
             "value": "[parameters('workspaceName')]"
           },
           "workspaceResourceGroup": {
-            "type": "[parameters('workspaceResourceGroup')]"
+            "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }
