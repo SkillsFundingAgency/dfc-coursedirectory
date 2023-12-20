@@ -193,14 +193,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 });
             }
 
-            var (_, RemovedNonLarsSubTypeIds) = await _sqlQueryDispatcher.ExecuteQuery(
-               new SetProviderNonLarsSubTypes
-               {
-                   ProviderId = request.ProviderId,
-                   NonLarsSubTypeIds = request.ProviderType.HasFlag(ProviderType.NonLARS)
-                       ? request.SelectedNonLarsSubTypeIds ?? Enumerable.Empty<Guid>()
-                       : Enumerable.Empty<Guid>()
-               });
+            //var (_, RemovedNonLarsSubTypeIds) = await _sqlQueryDispatcher.ExecuteQuery(
+            //   new SetProviderNonLarsSubTypes
+            //   {
+            //       ProviderId = request.ProviderId,
+            //       NonLarsSubTypeIds = request.ProviderType.HasFlag(ProviderType.NonLARS)
+            //           ? request.SelectedNonLarsSubTypeIds ?? Enumerable.Empty<Guid>()
+            //           : Enumerable.Empty<Guid>()
+            //   });
 
             //if (RemovedNonLarsSubTypeIds.Count != 0)
             //{
