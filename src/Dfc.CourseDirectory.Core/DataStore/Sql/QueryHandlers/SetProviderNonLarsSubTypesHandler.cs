@@ -32,7 +32,7 @@ AND target.NonLarsSubTypeId = source.NonLarsSubTypeId
 WHEN NOT MATCHED THEN
     INSERT (
         ProviderId,
-        NonLarsSubTypesId
+        NonLarsSubTypeId
     ) VALUES (
         @ProviderId,
         source.NonLarsSubTypeId
