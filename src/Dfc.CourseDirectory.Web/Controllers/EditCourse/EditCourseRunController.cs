@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -47,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         private const string SessionVenues = "Venues";
         private const string SessionRegions = "Regions";
+        private const string SessionNonLarsCourse = "NonLarsCourse";
 
         public EditCourseRunController(
             ICourseService courseService,
@@ -274,7 +276,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             if (courseId.HasValue)
             {
-                var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+                var nonLarsCourse = IsCourseNonLars();
+                var course = await GetCourse(courseId, nonLarsCourse);
 
                 var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == courseRunId);
 
@@ -590,6 +593,29 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     .Transform(v => v == default ? (Guid?)null : v)
                     .VenueId(getDeliveryMode: c => c.DeliveryMode);
             }
+        }
+
+        private bool IsCourseNonLars()
+        {
+            var nonLarsCourseString = Session.GetString(SessionNonLarsCourse);
+            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
+        }
+
+        private async Task<Course> GetCourse(Guid? courseId, bool nonLarsCourse)
+        {
+            Course course = null;
+            if (courseId.HasValue)
+            {
+                if (nonLarsCourse)
+                {
+                    course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId.Value });
+                    return course;
+                }
+
+                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+            }
+
+            return course;
         }
     }
 }

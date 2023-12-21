@@ -23,9 +23,10 @@ using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
-    public class ProviderCoursesController : Controller
+    public class ProviderCoursesController : BaseController
     {
         private readonly ILogger<ProviderCoursesController> _logger;
+
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -35,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             ILogger<ProviderCoursesController> logger,
             ICourseService courseService,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider):base(sqlQueryDispatcher)
         {
             if (logger == null)
             {
@@ -100,9 +101,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         public async Task<IActionResult> Index(
             Guid? courseRunId,
             string notificationTitle,
-            string notificationMessage)
+            string notificationMessage,
+            bool nlc = false)
         {
-            Session.SetString("Option", "Courses");
+            Session.SetString("Option", "Courses");            
             int? UKPRN = Session.GetInt32("UKPRN");
 
             var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
@@ -112,10 +114,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId }))
-                .OrderBy(c => c.LearnAimRefTypeDesc)
-                .ThenBy(c => c.LearnAimRef)
-                .ToArray();
+            var nonLarsCourse = nlc;
+            if (nonLarsCourse)
+            {
+                Session.SetString("NonLarsCourse", "true");
+            }
+
+            var providerCourses = await GetProviderCourses(nonLarsCourse, providerId);
 
             var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
@@ -124,7 +129,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             var model = new ProviderCoursesViewModel()
             {
                 PendingCoursesCount = 0,
-                ProviderCourseRuns = new List<ProviderCourseRunViewModel>()
+                ProviderCourseRuns = new List<ProviderCourseRunViewModel>(),
+                NonLarsCourse = nonLarsCourse
             };
 
             List<ProviderCoursesFilterItemModel> levelFilterItems = new List<ProviderCoursesFilterItemModel>();
@@ -345,7 +351,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Venues = venueFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
             model.Regions = regionFilterItems;
-            
+
             //Setup backlink to go to the dashboard
             ViewBag.BackLinkController = "Home";
             ViewBag.BackLinkAction = "Index";
@@ -353,6 +359,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             return View(model);
         }
 
+        private async Task<Core.DataStore.Sql.Models.Course[]> GetProviderCourses(bool nonLarsCourse, Guid providerId)
+        {
+            Core.DataStore.Sql.Models.Course[] providerCourses;
+            if (nonLarsCourse)
+            {
+                providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider() { ProviderId = providerId }))
+                .ToArray();
+
+                return providerCourses;
+            }
+
+            providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId }))
+                    .OrderBy(c => c.LearnAimRefTypeDesc)
+                    .ThenBy(c => c.LearnAimRef)
+                    .ToArray();
+
+            return providerCourses;
+        }
 
         [Authorize]
         public IActionResult FilterCourses(ProviderCoursesRequestModel requestModel)
@@ -373,14 +397,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             List<ProviderCoursesFilterItemModel> deliveryModelFilterItems = new List<ProviderCoursesFilterItemModel>();
             List<ProviderCoursesFilterItemModel> venueFilterItems = new List<ProviderCoursesFilterItemModel>();
             List<ProviderCoursesFilterItemModel> regionFilterItems = new List<ProviderCoursesFilterItemModel>();
-            List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new List<ProviderCoursesFilterItemModel>();
+            List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new List<ProviderCoursesFilterItemModel>();            
 
             if (!string.IsNullOrEmpty(requestModel.Keyword))
             {
                 model.ProviderCourseRuns = model.ProviderCourseRuns
                     .Where(x => x.CourseName.ToLower().Contains(requestModel.Keyword.ToLower())
-                                || x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower())
-                                || x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower()))
+                                || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower()))
                                  || x.AttendancePattern.ToLower().Contains(requestModel.Keyword.ToLower())
                                   || x.DeliveryMode.ToLower().Contains(requestModel.Keyword.ToLower())
                                    || x.Venue.ToLower().Contains(requestModel.Keyword.ToLower())
@@ -518,6 +542,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.AttendancePattern = attendanceModeFilterItems;
 
             return ViewComponent(nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults), model);
-        }
+        }        
     }
 }

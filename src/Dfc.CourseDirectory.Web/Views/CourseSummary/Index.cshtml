@@ -63,82 +63,85 @@
         <p class="govuk-body">You can <a href="@ViewBag.LiveServiceURL" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
 
         <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    LARS/QAN
-                </dt>
-                <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                    @if (string.IsNullOrEmpty(Model.LearnAimRef))
-                    {
-                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                    }
-                    else
-                    {
-                        @Model.LearnAimRef
-                    }
-                </dd>
-                <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    &nbsp;
-                </dd>
-            </div>
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Qualification name
-                </dt>
-                <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                    @if (string.IsNullOrEmpty(Model.QualificationCourseTitle))
-                    {
-                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                    }
-                    else
-                    {
-                        @Model.QualificationCourseTitle
-                    }
-                </dd>
-                <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    &nbsp;
-                </dd>
-            </div>
+            @if (!Model.NonLarsCourse)
+            {                
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        LARS/QAN
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.LearnAimRef))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.LearnAimRef
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Qualification Level
-                </dt>
-                <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                    @if (string.IsNullOrEmpty(Model.NotionalNVQLevelv2))
-                    {
-                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                    }
-                    else
-                    {
-                        @Model.NotionalNVQLevelv2
-                    }
-                </dd>
-                <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    &nbsp;
-                </dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Qualification name
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.QualificationCourseTitle))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.QualificationCourseTitle
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Awarding organisation
-                </dt>
-                <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                    @if (string.IsNullOrEmpty(Model.AwardOrgCode))
-                    {
-                        <span class="govuk-visually-hidden">Data Unavailable</span>
-                    }
-                    else
-                    {
-                        @Model.AwardOrgCode
-                    }
-                </dd>
-                <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    &nbsp;
-                </dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Qualification Level
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.NotionalNVQLevelv2))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.NotionalNVQLevelv2
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
 
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Awarding organisation
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (string.IsNullOrEmpty(Model.AwardOrgCode))
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.AwardOrgCode
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+            }
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Created
@@ -221,6 +224,27 @@
                 </dd>
             </div>
 
+            @if (Model.NonLarsCourse)
+            {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Course type
+                </dt>
+                <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                    @if (!Model.CourseType.HasValue)
+                    {
+                        <span class="govuk-visually-hidden">Data Unavailable</span>
+                    }
+                    else
+                    {
+                        @Model.CourseType.Value.ToDescription()
+                    }
+                </dd>
+                <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                    &nbsp;
+                </dd>
+            </div>
+            }
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     Delivery mode
@@ -241,11 +265,11 @@
                     @{
                         if (Model.FlexibleStartDate == true)
                         {
-                            <text>Flexible</text>
+                                <text>Flexible</text>
                         }
                         else
                         {
-                            @Model.StartDate.Value.ToString("dd/MM/yyyy")
+                                @Model.StartDate.Value.ToString("dd/MM/yyyy")
                         }
                     }
                 </dd>

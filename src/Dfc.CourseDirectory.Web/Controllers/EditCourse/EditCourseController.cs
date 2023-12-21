@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.Models;
@@ -31,6 +32,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
+        private const string SessionNonLarsCourse = "NonLarsCourse";
 
         private ISession Session => HttpContext.Session;
 
@@ -58,7 +60,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
 
-            var result = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+            var nonLarsCourse = IsCourseNonLars();
+            var result = await GetCourse(courseId, nonLarsCourse);            
 
             if (result == null)
             {
@@ -226,6 +229,28 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 RuleFor(c => c.HowAssessed).HowYouWillBeAssessed();
                 RuleFor(c => c.WhereNext).WhereNext();
             }
+        }
+
+        private bool IsCourseNonLars()
+        {
+            var nonLarsCourseString = Session.GetString(SessionNonLarsCourse);
+            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
+        }
+        private async Task<Course> GetCourse(Guid? courseId, bool nonLarsCourse)
+        {
+            Course course = null;
+            if (courseId.HasValue)
+            {
+                if (nonLarsCourse)
+                {
+                    course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId.Value });
+                    return course;
+                }
+
+                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+            }
+
+            return course;
         }
     }
 }

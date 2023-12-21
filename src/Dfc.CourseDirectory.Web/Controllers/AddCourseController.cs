@@ -35,7 +35,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-    public class AddCourseController : Controller
+    public class AddCourseController : BaseController
     {
         private readonly ICourseService _courseService;
 
@@ -43,23 +43,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly ICourseTypeService _courseTypeService;
-
-        private const string SessionVenues = "Venues";
-        private const string SessionRegions = "Regions";
-        private const string SessionAddCourseSection1 = "AddCourseSection1";
-        private const string SessionAddCourseSection2 = "AddCourseSection2";
-        private const string SessionLastAddCoursePage = "LastAddCoursePage";
-        private const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
-        private const string SessionPublishedCourse = "PublishedCourse";
-        private const string SessionNonLarsCourse = "NonLarsCourse";
+        private readonly ICourseTypeService _courseTypeService;        
 
         public AddCourseController(
             ICourseService courseService,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider,
-            ICourseTypeService courseTypeService)
+            ICourseTypeService courseTypeService) : base(sqlQueryDispatcher)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _sqlQueryDispatcher = sqlQueryDispatcher;
@@ -74,11 +65,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             RemoveSessionVariables();
 
-            if (string.IsNullOrWhiteSpace(learnAimRef)
+            var nonLarsCourse = string.IsNullOrWhiteSpace(learnAimRef)
                 && string.IsNullOrWhiteSpace(notionalNVQLevelv2)
                 && string.IsNullOrWhiteSpace(awardOrgCode)
                 && string.IsNullOrWhiteSpace(learnAimRefTitle)
-                && string.IsNullOrWhiteSpace(learnAimRefTypeDesc))
+                && string.IsNullOrWhiteSpace(learnAimRefTypeDesc);
+
+            if (nonLarsCourse)
             {
                 Session.SetString(SessionNonLarsCourse, "true");
             }
@@ -91,19 +84,19 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc);
             }
 
-            AddCourseViewModel vm = await GetCourseViewModel(learnAimRef, notionalNVQLevelv2, awardOrgCode, learnAimRefTitle, courseId);
+            AddCourseViewModel vm = await GetCourseViewModel(learnAimRef, notionalNVQLevelv2, awardOrgCode, learnAimRefTitle, courseId, nonLarsCourse);
 
             return View(vm);
         }        
 
-        private async Task<AddCourseViewModel> GetCourseViewModel(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, Guid? courseId)
+        private async Task<AddCourseViewModel> GetCourseViewModel(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, Guid? courseId, bool nonLarsCourse = false)
         {
             Course course = null;
             CourseText defaultCourseText = null;
 
             if (courseId.HasValue)
             {
-                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+                course = await GetCourse(courseId, nonLarsCourse);
             }
             else
             {
@@ -336,12 +329,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
             return View(viewModel);
-        }
-
-        private bool IsCourseNonLars()
-        {
-            var nonLarsCourseString = Session.GetString(SessionNonLarsCourse);
-            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
         }
 
         [Authorize]
