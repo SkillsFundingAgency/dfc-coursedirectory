@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [Pttcd].[ProviderNonLarsSubType]
 (
-	[ProviderId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
+	[ProviderId] UNIQUEIDENTIFIER NOT NULL, 
     [NonLarsSubTypeId] UNIQUEIDENTIFIER NOT NULL
 )

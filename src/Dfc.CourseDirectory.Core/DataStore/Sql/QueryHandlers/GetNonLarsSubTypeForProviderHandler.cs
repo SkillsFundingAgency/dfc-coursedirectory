@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<IReadOnlyCollection<NonLarsSubType>> Execute(SqlTransaction transaction, GetNonLarsSubTypeForProvider query)
         {
             const string sql = @"
-                        SELECT      NonLarsSubTypeId, Name, AddedOn, UpdatedOn, IsActive
+                        SELECT      nst.NonLarsSubTypeId, Name, AddedOn, UpdatedOn, IsActive
                             FROM        [Pttcd].[NonLarsSubType] nst
                             INNER JOIN [Pttcd].[ProviderNonLarsSubType] pnst ON nst.NonLarsSubTypeId = pnst.NonLarsSubTypeId
                         WHERE       nst.IsActive = 1 and pnst.ProviderId = @ProviderId
