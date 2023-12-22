@@ -667,56 +667,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             }
         }
 
-        //[Theory]
-        //[InlineData(ProviderType.None)]
-        //[InlineData(ProviderType.FE)]
-        //public async Task Post_NonLarsAccessIsRemoved_ReturnsConfirmWithExpectedContent(ProviderType newProviderType)
-        //{
-        //    // Arrange
-        //    var nonLarsSubTypes = await TestData.CreateInitialNonLarsSubTypes();
-
-        //    var provider = await TestData.CreateProvider(
-        //        providerType: ProviderType.NonLARS,
-        //        nonLarsSubTypeIds: nonLarsSubTypes.Select(tld => tld.NonLarsSubTypeId).ToArray());
-
-        //    //var venueId = (await TestData.CreateVenue(provider.ProviderId, createdBy: User.ToUserInfo())).VenueId;
-
-        //    var providerNonLarsSubTypes = await Task.WhenAll(
-        //        TestData.CreateProviderNonLarsSubType(
-        //            provider.ProviderId,
-        //            nonLarsSubTypes.First().NonLarsSubTypeId),
-        //        TestData.CreateProviderNonLarsSubType(
-        //            provider.ProviderId,
-        //            nonLarsSubTypes.Skip(1).First().NonLarsSubTypeId)
-        //        );
-
-        //    var content = new FormUrlEncodedContentBuilder()
-        //        .Add(nameof(Command.ProviderType), (int)newProviderType)
-        //        .ToContent();
-
-        //    var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
-        //    {
-        //        Content = content
-        //    };
-
-        //    // Act
-        //    var response = await HttpClient.SendAsync(request);
-
-        //    // Assert
-        //    response.StatusCode.Should().Be(StatusCodes.Status200OK);
-
-        //    var doc = await response.GetDocument();
-
-        //    doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
-        //    doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
-            
-
-        //    foreach (var nonLarsSubType in providerNonLarsSubTypes)
-        //    {
-        //        (await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
-        //            new GetNonLarsSubType() { NonLarsSubTypeId = nonLarsSubType }))).Should().NotBeNull();
-        //    }
-        //}
         [Theory]
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.FE)]
