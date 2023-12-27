@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public string ProviderName { get; set; }
         public int Ukprn { get; set; }
         public bool ShowCourses { get; set; }
+        public bool ShowNonLars { get; set; }
         public bool ShowTLevels { get; set; }
         public int CourseRunCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
@@ -77,6 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 ProviderName = provider.ProviderName,
                 Ukprn = provider.Ukprn,
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
+                ShowNonLars = provider.ProviderType.HasFlag(ProviderType.NonLARS),
                 ShowTLevels = provider.ProviderType.HasFlag(ProviderType.TLevels),
                 CourseRunCount = dashboardCounts.CourseRunCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
