@@ -126,6 +126,12 @@
     },
     "FindACourseUrl": {
       "value": "__FindACourseUrl__"
+    },
+    "workspaceName": {
+        "value": "aTestLogAnalyticsAccount"
+    },
+    "workspaceResourceGroup": {
+        "value": "aResourceGroup"
     }
   }
 }
