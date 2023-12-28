@@ -69,6 +69,58 @@ namespace Dfc.CourseDirectory.Testing
             });
         }
 
+        public async Task<Course> CreateNonLarsCourse(
+            Guid providerId,
+            UserInfo createdBy,
+            string whoThisCourseIsFor = "The description -  Non LARS Course",
+            string entryRequirements = "To be eligible for ESFA government funding, you must be 19 or over. You must be a UK or EU citizen or have indefinite leave to remain in the UK. Learners will be ineligible if they have previously achieved a GCSE grade A* to C in the subject.",
+            string whatYoullLearn = "DIGITAL EMPLOYABILITY SKILLS",
+            string howYoullLearn = "Group coaching and 1-2-1 support through Tutor led learning, written assignments throughout courses, Independent Learning, access to comprehensive online and paper based learning resources.",
+            string whatYoullNeed = "Valid ID (driving licence, passport, birth certificate)",
+            string howYoullBeAssessed = "Paper based or online assessments",
+            string whereNext = "We will actively signpost and support you to achieve the next level of progression for all certificated aims.",
+            DateTime? createdUtc = null,
+            Action<CreateCourseCourseRunBuilder> configureCourseRuns = null)
+        {
+            var courseId = Guid.NewGuid();
+
+            var courseRunBuilder = new CreateCourseCourseRunBuilder();
+
+            configureCourseRuns ??= builder => builder.WithOnlineCourseRun();
+            configureCourseRuns.Invoke(courseRunBuilder);
+
+            if (courseRunBuilder.CourseRuns.Count == 0)
+            {
+                throw new ArgumentException("At least one CourseRun must be specified.", nameof(configureCourseRuns));
+            }
+
+            var courseRuns = courseRunBuilder.CourseRuns;
+
+            return await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                await dispatcher.ExecuteQuery(
+                    new CreateCourse()
+                    {
+                        CourseId = courseId,
+                        ProviderId = providerId,
+                        WhoThisCourseIsFor = whoThisCourseIsFor,
+                        EntryRequirements = entryRequirements,
+                        WhatYoullLearn = whatYoullLearn,
+                        HowYoullLearn = howYoullLearn,
+                        WhatYoullNeed = whatYoullNeed,
+                        HowYoullBeAssessed = howYoullBeAssessed,
+                        WhereNext = whereNext,
+                        CourseRuns = courseRuns,
+                        CreatedOn = createdUtc ?? _clock.UtcNow,
+                        CreatedBy = createdBy
+                    });
+
+                var course = await dispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
+
+                return course;
+            });
+        }
+
         public class CreateCourseCourseRunBuilder
         {
             private readonly List<CreateCourseCourseRun> _courseRuns = new List<CreateCourseCourseRun>();
