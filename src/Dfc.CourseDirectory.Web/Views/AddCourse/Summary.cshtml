@@ -52,7 +52,8 @@
                         Id="CourseType", Title = "Course type", Value = Model.CourseType,
                         Action = "SummaryToAddCourseRun",
                         Controller = "AddCourse",
-                        Section = "sectionCourseType"
+                        Section = "sectionCourseType",
+                        HideChangeLink = true
                     })
                 }
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel

@@ -33,7 +33,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 {
-    public class CopyCourseRunController : Controller
+    public class CopyCourseRunController : BaseController
     {
         private const string CopyCourseRunSaveViewModelSessionKey = "CopyCourseRunSaveViewModel";
         private const string CopyCourseRunPublishedCourseSessionKey = "CopyCourseRunPublishedCourse";
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache) : base(sqlQueryDispatcher)
         {
             if (logger == null)
             {
@@ -253,8 +253,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             {
                 return NotFound();
             }
-
-            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+                        
+            var course = await GetCourse(courseId.Value, IsCourseNonLars());
 
             if (course == null)
             {

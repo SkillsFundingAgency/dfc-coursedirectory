@@ -38,31 +38,33 @@ else
                 <h5><a class="govuk-link" id="ClearAllFilters" href="">Clear filters</a></h5>
             </div>
         }
-        <div class="govuk-form-group govuk-!-font-size-14">
-            <div class="accordion govuk-heading-s" role="button" tabindex="0">Level</div>
-            <div class="panel">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-visually-hidden" style="font-weight: 100">
-                        <h2 class="govuk-fieldset__heading">
-                            Select Level
-                        </h2>
+        @if (!Model.NonLarsCourse)
+        {
+            <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="accordion govuk-heading-s" role="button" tabindex="0">Level</div>
+                <div class="panel">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden" style="font-weight: 100">
+                            <h2 class="govuk-fieldset__heading">
+                                Select Level
+                            </h2>
 
-                    </legend>
+                        </legend>
 
-                    <div class="govuk-checkboxes govuk-checkboxes--small" id="LevelFilters">
-
-
-                        @foreach (var level in Model.Levels)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
-                                <label id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
-                                    @level.Text
-                                </label>
-                            </div>
+                        <div class="govuk-checkboxes govuk-checkboxes--small" id="LevelFilters">
 
 
-                        }
+                            @foreach (var level in Model.Levels)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
+                                    <label id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
+                                        @level.Text
+                                    </label>
+                                </div>
+
+
+                            }
 
 
                     </div>
@@ -70,7 +72,7 @@ else
             </div>
 
         </div>
-
+        }
         @if (Model.DeliveryModes.Any())
         {
             <div class="govuk-form-group govuk-!-font-size-14">

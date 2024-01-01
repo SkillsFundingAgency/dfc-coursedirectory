@@ -28,6 +28,9 @@ namespace Dfc.CourseDirectory.WebV2
                 var course = await _sqlQueryDispatcher.ExecuteQuery(
                     new GetCourse() { CourseId = courseId });
 
+                course ??= await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetNonLarsCourse() { CourseId = courseId });
+
                 if (course != null)
                 {
                     providerId = course.ProviderId;

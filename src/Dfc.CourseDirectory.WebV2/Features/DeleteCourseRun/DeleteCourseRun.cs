@@ -181,6 +181,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         {
             var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
 
+            course ??= await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId });
+
             if (course == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.Course, courseId);
