@@ -78,6 +78,24 @@ WHERE
 
 DROP TABLE #LearnAimRefCourseTypes
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----- Script below will insert Non LARS Provider SubTypes----------------------------
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'NonLarsSubType'))
+BEGIN
+    Delete from Pttcd.[NonLarsSubType]
+END
+
+INSERT INTO [Pttcd].[NonLarsSubType]
+           ([NonLarsSubTypeId]
+           ,[Name]
+           ,[AddedOn]
+           ,[IsActive])
+     VALUES
+           ('7BEEC516-77D6-4115-A3B4-401D929F15FB'
+           ,'Skills Bootcamp'
+           ,'2023-12-27 13:16:33.797'
+           ,1)
+
+--------------------------------------------------------------------------------------
 
 
 

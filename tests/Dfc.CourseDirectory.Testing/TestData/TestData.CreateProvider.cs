@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Testing
             string alias = "",
             ProviderDisplayNameSource displayNameSource = default,
             IReadOnlyCollection<Guid> tLevelDefinitionIds = null,
+            IReadOnlyCollection<Guid> nonLarsSubTypeIds = null,
             ProviderStatus status = ProviderStatus.Onboarded,
             ProviderContact contact = null,
             string marketingInformation = null)
@@ -30,6 +31,14 @@ namespace Dfc.CourseDirectory.Testing
                 throw new ArgumentException(
                     $"{nameof(tLevelDefinitionIds)} can only be specified for T Level providers.",
                     nameof(tLevelDefinitionIds));
+            }
+
+            if (!providerType.HasFlag(ProviderType.NonLARS) &&
+                (nonLarsSubTypeIds?.Count ?? 0) != 0)
+            {
+                throw new ArgumentException(
+                    $"{nameof(nonLarsSubTypeIds)} can only be specified for Non LARS providers.",
+                    nameof(nonLarsSubTypeIds));
             }
 
             var providerId = Guid.NewGuid();
@@ -83,6 +92,10 @@ namespace Dfc.CourseDirectory.Testing
                 await SetProviderTLevelDefinitions(providerId, tLevelDefinitionIds);
             }
 
+            if ((nonLarsSubTypeIds?.Count ?? 0) != 0)
+            {
+                await SetProviderNonLarsSubType(providerId, nonLarsSubTypeIds);
+            }
             return await WithSqlQueryDispatcher(
                 dispatcher => dispatcher.ExecuteQuery(new GetProviderById() { ProviderId = providerId }));
         }

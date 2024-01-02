@@ -20,8 +20,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public string ProviderName { get; set; }
         public int Ukprn { get; set; }
         public bool ShowCourses { get; set; }
+        public bool ShowNonLars { get; set; }
         public bool ShowTLevels { get; set; }
         public int CourseRunCount { get; set; }
+        public int NonLarsCourseCount { get; set; }
         public int PastStartDateCourseRunCount { get; set; }
         public int TLevelCount { get; set; }
         public int VenueCount { get; set; }
@@ -29,6 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
+        public int UnpublishedNonLarsCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
     }
 
@@ -77,8 +80,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 ProviderName = provider.ProviderName,
                 Ukprn = provider.Ukprn,
                 ShowCourses = provider.ProviderType.HasFlag(ProviderType.FE),
+                ShowNonLars = provider.ProviderType.HasFlag(ProviderType.NonLARS),
                 ShowTLevels = provider.ProviderType.HasFlag(ProviderType.TLevels),
                 CourseRunCount = dashboardCounts.CourseRunCount,
+                NonLarsCourseCount = dashboardCounts.NonLarsCourseCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
                 TLevelCount = dashboardCounts.TLevelCount,
                 VenueCount = dashboardCounts.VenueCount,
@@ -86,6 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = dashboardCounts.UnpublishedVenueCount,
                 UnpublishedCourseCount = dashboardCounts.UnpublishedCourseCount,
+                UnpublishedNonLarsCourseCount = dashboardCounts.UnpublishedNonLarsCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
             };
 

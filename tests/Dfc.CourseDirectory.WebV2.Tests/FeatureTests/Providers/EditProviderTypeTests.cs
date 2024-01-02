@@ -81,6 +81,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.FE, new[] { "fe" })]
         [InlineData(ProviderType.TLevels, new[] { "tLevels" })]
         [InlineData(ProviderType.FE | ProviderType.TLevels, new[] { "fe", "tLevels" })]
+        [InlineData(ProviderType.NonLARS | ProviderType.TLevels, new[] { "nonLars", "tLevels" })]
+        [InlineData(ProviderType.NonLARS | ProviderType.FE, new[] { "nonLars", "fe" })]
+        [InlineData(ProviderType.FE | ProviderType.NonLARS | ProviderType.TLevels, new[] {"fe", "nonLars", "tLevels" })]
 
         public async Task Get_ValidRequest_RendersExpectedOutput(
             ProviderType providerType,
@@ -88,8 +91,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerType: providerType);
-
-            var tLevelDefinitionIds = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateTLevelDefinition()));
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={provider.ProviderId}");
 
@@ -103,6 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             AssertElementWithTestIdHasExpectedCheckedValue("fe");
             AssertElementWithTestIdHasExpectedCheckedValue("tLevels");
+            AssertElementWithTestIdHasExpectedCheckedValue("nonLars");
 
             void AssertElementWithTestIdHasExpectedCheckedValue(string testId)
             {
@@ -156,6 +158,55 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             parsedExpectedSelectedTLevelDefinitionIds.All(id => IsChecked($"tLevelDefinition-{id}")).Should().BeTrue();
             parsedTLevelDefinitionIds.Except(parsedExpectedSelectedTLevelDefinitionIds).Any(id => IsChecked($"tLevelDefinition-{id}")).Should().BeFalse();
+
+            bool IsChecked(string testId)
+            {
+                var option = doc.GetElementByTestId(testId);
+                return option.GetAttribute("checked") == "checked";
+            }
+
+            Guid ToGuid(int value)
+            {
+                var bytes = new byte[16];
+                BitConverter.GetBytes(value).CopyTo(bytes, 0);
+                return new Guid(bytes);
+            }
+        }
+
+        [Theory]
+        [InlineData(ProviderType.FE, new int[0], new int[0], new int[0])]
+        [InlineData(ProviderType.FE, new[] { 1, 2 }, new int[0], new int[0])]
+        [InlineData(ProviderType.FE, new[] { 1, 2 }, new[] { 2 }, new int[0])]
+        [InlineData(ProviderType.NonLARS, new[] { 1, 2 }, new int[0], new int[0])]
+        [InlineData(ProviderType.NonLARS, new[] { 1, 2 }, new[] { 1 }, new[] { 1 })]
+        public async Task Get_ValidRequestWithSelectedNonLarsSubType_RendersExpectedOutput(
+            ProviderType providerType,
+            IEnumerable<int> nonLarsSubTypeIds,
+            IEnumerable<int> selectedNonLarsSubTypeIds,
+            IEnumerable<int> expectedSelectedNonLarsSubTypeIds)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: providerType);
+
+            var parsedNonLarsSubTypeIds = nonLarsSubTypeIds.Select(ToGuid).ToArray();
+            var parsedSelectedNonLarsSubTypeIds = selectedNonLarsSubTypeIds.Select(ToGuid).ToArray();
+            var parsedExpectedSelectedNonLarsSubTypeIds = expectedSelectedNonLarsSubTypeIds.Select(ToGuid).ToArray();
+
+            await Task.WhenAll(parsedNonLarsSubTypeIds.Select(id => TestData.CreateNonLarsSubType(nonLarsSubTypeId: id)));
+            await TestData.SetProviderNonLarsSubType(provider.ProviderId, parsedSelectedNonLarsSubTypeIds);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers/provider-type?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+
+            parsedExpectedSelectedNonLarsSubTypeIds.All(id => IsChecked($"nonLarsSubtype-{id}")).Should().BeTrue();
+            parsedNonLarsSubTypeIds.Except(parsedExpectedSelectedNonLarsSubTypeIds).Any(id => IsChecked($"nonLarsSubtype-{id}")).Should().BeFalse();
 
             bool IsChecked(string testId)
             {
@@ -308,6 +359,43 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         }
 
         [Theory]
+        [InlineData(ProviderType.NonLARS)]
+        [InlineData(ProviderType.FE | ProviderType.NonLARS)]
+        public async Task Post_WithNonLarsAndSelectedNonLarsSubTypes_UpdatesProviderTypeAndSelectedNonLarsSubTypeAndRedirects(ProviderType providerType)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
+
+            var nonLarsSubTypeIds = (await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => TestData.CreateNonLarsSubType())))
+                .OrderBy(_ => Guid.NewGuid())
+                .ToArray();
+
+            var contentBuilder = new FormUrlEncodedContentBuilder()
+                .Add(nameof(Command.ProviderType), (int)providerType);
+
+            foreach (var nonLarsSubTypeId in nonLarsSubTypeIds)
+            {
+                contentBuilder.Add(nameof(Command.SelectedNonLarsSubTypeIds), nonLarsSubTypeId);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
+            {
+                Content = contentBuilder.ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
+
+
+            SqlQuerySpy.VerifyQuery<SetProviderNonLarsSubTypes, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
+                query.ProviderId == provider.ProviderId
+                && query.NonLarsSubTypeIds.SequenceEqual(nonLarsSubTypeIds));
+        }
+        [Theory]
         [InlineData(ProviderType.TLevels)]
         [InlineData(ProviderType.FE | ProviderType.TLevels)]
         public async Task Post_WithTLevelsAndNoSelectedTLevelDefinitions_DoesNotUpdateProviderTypeOrSelectedTLevelDefinitionsAndReturnsViewWithErrorMessage(ProviderType providerType)
@@ -335,6 +423,33 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             doc.AssertHasError(nameof(Command.SelectedProviderTLevelDefinitionIds), "Select the T Levels this provider can offer");
         }
 
+        [Theory]
+        [InlineData(ProviderType.NonLARS)]
+        [InlineData(ProviderType.FE | ProviderType.NonLARS)]
+        public async Task Post_WithNonLARSAndNoSelectedNonLarsSubTypes_DoesNotUpdateProviderTypeOrSelectedNonLarsSubTypesAndReturnsViewWithErrorMessage(ProviderType providerType)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
+
+            await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => TestData.CreateNonLarsSubType()));
+
+            var contentBuilder = new FormUrlEncodedContentBuilder()
+                .Add(nameof(Command.ProviderType), (int)providerType);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
+            {
+                Content = contentBuilder.ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError(nameof(Command.SelectedNonLarsSubTypeIds), "Select Non LARS Course this provider can offer");
+        }
         [Fact]
         public async Task Post_WithTLevelsProviderAndInvalidTLevelDefinitionId_DoesNotUpdateProviderTypeOrSelectedTLevelDefinitionsAndReturnsViewWithErrorMessage()
         {
@@ -372,6 +487,42 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 q.ProviderId == provider.ProviderId && q.ProviderType == ProviderType.TLevels, Times.Never());
         }
 
+        [Fact]
+        public async Task Post_WithNonLarsProviderAndInvalidNonLarsSubTypeId_DoesNotUpdateProviderTypeOrSelectedNonLarsSubTypeAndReturnsViewWithErrorMessage()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.None);
+
+            var nonLarsSubTypes = await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateNonLarsSubType()));
+            var selectedNonLarsSubTypes = nonLarsSubTypes.OrderBy(_ => Guid.NewGuid()).Take(2).ToArray();
+
+            var contentBuilder = new FormUrlEncodedContentBuilder()
+                .Add(nameof(Command.ProviderType), (int)ProviderType.NonLARS);
+
+            foreach (var nonLarsSubTypeId in selectedNonLarsSubTypes)
+            {
+                contentBuilder.Add(nameof(Command.SelectedNonLarsSubTypeIds), nonLarsSubTypeId);
+            }
+
+            contentBuilder.Add(nameof(Command.SelectedNonLarsSubTypeIds), Guid.NewGuid());
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
+            {
+                Content = contentBuilder.ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError(nameof(Command.SelectedNonLarsSubTypeIds), "Select a valid Non LARS Subtype");
+
+            SqlQuerySpy.VerifyQuery<UpdateProviderType, OneOf<NotFound, Success>>(q =>
+                q.ProviderId == provider.ProviderId && q.ProviderType == ProviderType.NonLARS, Times.Never());
+        }
         [Theory]
         [InlineData(ProviderType.None)]
         [InlineData(ProviderType.FE)]
@@ -411,6 +562,47 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
                 query.ProviderId == provider.ProviderId
                 && query.TLevelDefinitionIds.SequenceEqual(Enumerable.Empty<Guid>()));
         }
+
+        [Theory]
+        [InlineData(ProviderType.None)]
+        [InlineData(ProviderType.FE)]
+        public async Task Post_WithNonLarsProviderWithSelectedNonLarsSubTyps_UpdatesProviderTypeAndRemovesSelectedNonLarsSubTypesAndRedirects(ProviderType newProviderType)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.NonLARS);
+
+            var NonLarsSubTypeIds = (await Task.WhenAll(Enumerable.Range(0, 3).Select(_ => TestData.CreateNonLarsSubType())))
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(2)
+                .ToArray();
+
+            await TestData.SetProviderNonLarsSubType(provider.ProviderId, NonLarsSubTypeIds);
+
+            var contentBuilder = new FormUrlEncodedContentBuilder()
+                .Add(nameof(Command.ProviderType), (int)newProviderType);
+
+            foreach (var NonLarsSubTypeId in NonLarsSubTypeIds)
+            {
+                contentBuilder.Add(nameof(Command.SelectedNonLarsSubTypeIds), NonLarsSubTypeId);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"providers/provider-type?providerId={provider.ProviderId}")
+            {
+                Content = contentBuilder.ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
+
+            SqlQuerySpy.VerifyQuery<SetProviderNonLarsSubTypes, (IReadOnlyCollection<Guid>, IReadOnlyCollection<Guid>)>(query =>
+                query.ProviderId == provider.ProviderId
+                && query.NonLarsSubTypeIds.SequenceEqual(Enumerable.Empty<Guid>()));
+        }
+
 
         [Theory]
         [InlineData(ProviderType.None)]

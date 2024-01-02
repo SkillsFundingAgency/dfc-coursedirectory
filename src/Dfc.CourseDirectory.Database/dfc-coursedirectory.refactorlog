@@ -14,4 +14,39 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[LearnAimRef]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="20089b3d-24e5-4649-8b21-231faabca468" ChangeDateTime="12/18/2023 16:10:23">
+    <Property Name="ElementName" Value="[dbo].[NonLarsSubType].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[NonLarsSubType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="NonLarsSubTypeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="6d8ad855-f276-4488-b0b8-842d57f2c851" ChangeDateTime="12/18/2023 16:10:46">
+    <Property Name="ElementName" Value="[dbo].[NonLarsSubType].[N]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[NonLarsSubType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2f4aa2de-47e5-4e3d-ba4a-36b7d500d194" ChangeDateTime="12/18/2023 16:11:41">
+    <Property Name="ElementName" Value="[dbo].[NonLarsSubType].[Status]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[NonLarsSubType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Active" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="12f61935-f35e-4160-bf3b-5d7d7458b92d" ChangeDateTime="12/18/2023 16:12:28">
+    <Property Name="ElementName" Value="[dbo].[ProviderNonLarsSubType].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProviderNonLarsSubType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProviderId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="842b4fd7-7849-4d77-993d-b986f8e9eedf" ChangeDateTime="12/18/2023 16:15:56">
+    <Property Name="ElementName" Value="[dbo].[NonLarsSubType].[Active]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[NonLarsSubType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsActive" />
+  </Operation>
 </Operations>
