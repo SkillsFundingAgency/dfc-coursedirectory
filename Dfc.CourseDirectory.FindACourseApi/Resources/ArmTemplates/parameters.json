@@ -28,6 +28,12 @@
     },
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"
+    },
+    "workspaceName": {
+        "value": "__sharedLogAnalyticsWorkspace__"
+    },
+    "workspaceResourceGroup": {
+        "value": "__sharedLogAnalyticsResourceGroup__"
     }
   }
 }
