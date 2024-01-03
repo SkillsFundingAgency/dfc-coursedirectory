@@ -58,7 +58,7 @@
                 <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseRunCount</p>
                 @if (Model.UnpublishedCourseCount > 0)
                 {
-                    <h2 class="govuk-heading-s govuk-!-margin-top-5">Unpublished courses</h2>
+                    <h2 class="govuk-body-s govuk-!-margin-top-5">Unpublished courses</h2>
                     <p class="pttcd-provider-dashboard__card__number" data-testid="unpublished-course-count">@Model.UnpublishedCourseCount</p>
                 }
             </div>
@@ -156,7 +156,7 @@
                 <p class="pttcd-provider-dashboard__card__number" data-testid="nonlars-count">@Model.NonLarsCourseCount</p>
                 @if (Model.UnpublishedNonLarsCourseCount > 0)
                 {
-                    <h2 class="govuk-heading-s govuk-!-margin-top-5">Unpublished courses</h2>
+                    <h2 class="govuk-body-s govuk-!-margin-top-5">Unpublished courses</h2>
                     <p class="pttcd-provider-dashboard__card__number" data-testid="unpublished-nonlars-count">@Model.UnpublishedNonLarsCourseCount</p>
                 }
             </div>
@@ -219,7 +219,7 @@
                                 }
                             </li>
                             <li>
-                                <a asp-action="Formatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                <a asp-action="NonLarsFormatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Course file format requirements
                                 </a>
                             </li>

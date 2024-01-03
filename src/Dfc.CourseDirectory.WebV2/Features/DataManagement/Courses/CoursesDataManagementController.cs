@@ -276,6 +276,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             return View(); 
         }
 
+        [HttpGet("nonlarsformatting")]
+        public IActionResult NonLarsFormatting()
+        {
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
+            return View();
+        }
         [HttpGet("download-errors")]
         public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
             new DownloadErrors.Query(),
