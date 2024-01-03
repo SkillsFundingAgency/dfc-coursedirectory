@@ -124,6 +124,12 @@
     },
     "FindACourseUrl": {
       "value": "https://not-a-real-env.nationalcareersservice.org.uk/find-a-course"
+    },
+    "workspaceName": {
+        "value": "aTestLogAnalyticsAccount"
+    },
+    "workspaceResourceGroup": {
+        "value": "aResourceGroup"
     }
   }
 }
