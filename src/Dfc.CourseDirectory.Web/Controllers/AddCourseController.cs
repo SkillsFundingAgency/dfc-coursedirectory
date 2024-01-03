@@ -556,11 +556,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
         [ValidateAntiForgeryToken] //Harden for CSRF
         public async Task<IActionResult> AcceptAndPublish()
         {
-            var learnAimRef = string.Empty;
+            string learnAimRef = null;
             var notionalNvqLevelv2 = string.Empty;
             var awardOrgCode = string.Empty;
-            var learnAimRefTitle = string.Empty;
-            var learnAimRefTypeDesc = string.Empty;
+            var learnAimRefTitle = string.Empty;            
 
             var nonLarsCourse = IsCourseNonLars();
             if (!nonLarsCourse)
@@ -568,16 +567,14 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 learnAimRef = Session.GetString("LearnAimRef");
                 notionalNvqLevelv2 = Session.GetString("NotionalNVQLevelv2");
                 awardOrgCode = Session.GetString("AwardOrgCode");
-                learnAimRefTitle = Session.GetString("LearnAimRefTitle");
-                learnAimRefTypeDesc = Session.GetString("LearnAimRefTypeDesc");
+                learnAimRefTitle = Session.GetString("LearnAimRefTitle");                
 
                 // TODO - Add error message, if use this check
                 if (string.IsNullOrEmpty(learnAimRef) ||
                     string.IsNullOrEmpty(notionalNvqLevelv2) ||
                     string.IsNullOrEmpty(awardOrgCode) ||
-                    string.IsNullOrEmpty(learnAimRefTitle) ||
-                    string.IsNullOrEmpty(learnAimRefTypeDesc)
-                )
+                    string.IsNullOrEmpty(learnAimRefTitle)
+                    )
                 {
                     return RedirectToAction("AddCourse",
                         new
@@ -599,9 +596,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var howYouWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowYouWillLearn);
             var whatYouNeed = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatYouNeed);
             var howAssessed = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowAssessed);
-            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);
-            var advancedLearnerLoan = addCourseSection1.AdvancedLearnerLoan;
-            var adultEducationBudget = addCourseSection1.AdultEducationBudget;
+            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);            
 
             if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased || addCourseSection2.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
@@ -687,8 +682,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
-                };
-                var availableRegions = new SelectRegionModel();
+                };                
 
                 if (addCourseSection2.National == false)
                 {

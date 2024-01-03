@@ -7,6 +7,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
@@ -37,20 +38,40 @@
     }
 }
 
-<div class="govuk-grid-row govuk-!-margin-bottom-5">
-    <div class="govuk-grid-column-full">
+@if (Model.NonLarsCourse)
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-5">
+        <div class="govuk-grid-column-full">
 
-        <pttcd-notification title="Qualification details">
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li><span class="govuk-!-font-weight-bold">LARS/QAN:</span> @Model.LearnAimRef</li>
-                <li><span class="govuk-!-font-weight-bold">Qualification name:</span> @Model.LearnAimRefTitle</li>
-                <li><span class="govuk-!-font-weight-bold">Qualification level:</span> @Model.NotionalNVQLevelv2</li>
-                <li><span class="govuk-!-font-weight-bold">Awarding organisation:</span> @Model.AwardOrgCode</li>
-            </ul>
-        </pttcd-notification>
+            <pttcd-notification title="Qualification details">
+                <ul class="govuk-list govuk-!-margin-bottom-0">
+                    <li><span class="govuk-!-font-weight-bold">Course type:</span> @Model.CourseType.ToDescription()</li>
+                    <li><span class="govuk-!-font-weight-bold">Sector:</span></li>
+                    <li><span class="govuk-!-font-weight-bold">Education level:</span></li>
+                    <li><span class="govuk-!-font-weight-bold">Awarding body:</span></li>
+                </ul>
+            </pttcd-notification>
 
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-5">
+        <div class="govuk-grid-column-full">
+
+            <pttcd-notification title="Qualification details">
+                <ul class="govuk-list govuk-!-margin-bottom-0">
+                    <li><span class="govuk-!-font-weight-bold">LARS/QAN:</span> @Model.LearnAimRef</li>
+                    <li><span class="govuk-!-font-weight-bold">Qualification name:</span> @Model.LearnAimRefTitle</li>
+                    <li><span class="govuk-!-font-weight-bold">Qualification level:</span> @Model.NotionalNVQLevelv2</li>
+                    <li><span class="govuk-!-font-weight-bold">Awarding organisation:</span> @Model.AwardOrgCode</li>
+                </ul>
+            </pttcd-notification>
+
+        </div>
+    </div>
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -98,7 +119,7 @@
                 HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
                 AriaDescribedBy = "Please enter your reference for this course"
                 })
-            </div>
+            </div>            
 
             <div class="section" id="sectionDeliveryType">
                 @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel

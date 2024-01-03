@@ -170,22 +170,13 @@
                 </div>
                 <div class="pttcd-provider-dashboard__card__actions">
                     <ul class="govuk-list pttcd-list--small">
-                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
-                        {
-                            <li>
-                                <a asp-controller="ChooseQualification" asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li>
-                                <a asp-controller="RegulatedQualification" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
-                            </li>
-                        }
+                        <li>
+                            <a asp-controller="AddCourse" asp-action="AddCourse" class="govuk-link">Add a course</a>
+                        </li>
                         @if (Model.NonLarsCourseCount > 0)
                         {
                             <li>
-                                <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="nonlars-view-edit-link">View and edit courses</a>
+                                <a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="true" class="govuk-link" data-testid="nonlars-view-edit-link">View and edit courses</a>
                             </li>
                         }
                     </ul>
@@ -205,34 +196,46 @@
                             @if (Model.UnpublishedNonLarsCourseCount > 0)
                             {
                                 <li>
-                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
+                                    @*<a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>*@
+                                    <a href="#" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
                                 </li>
                             }
                             <li>
                                 @if (Model.CourseUploadInProgress)
                                 {
-                                    <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
+                                    @*<a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>*@
+                                    <a href="#" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
                                 }
                                 else
                                 {
-                                    <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="nonlars-upload-new-link" class="govuk-link">Upload new course data</a>
+                                    @*<a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="nonlars-upload-new-link" class="govuk-link">Upload new course data</a>*@
+                                    <a href="#" data-testid="nonlars-upload-new-link" class="govuk-link">Upload new course data</a>
                                 }
                             </li>
                             <li>
-                                <a asp-action="Formatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                @*<a asp-action="Formatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Course file format requirements
+                                </a>*@
+                                <a href="#" class="govuk-link">
                                     Course file format requirements
                                 </a>
                             </li>
                             @if (Model.CourseRunCount > 0)
                             {
                                 <li>
-                                    <a asp-action="Download" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadNonLars">
+                                    @*<a asp-action="Download" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadNonLars">
+                                        Download your published course data (CSV)
+                                    </a>*@
+                                    <a href="#" class="govuk-link" data-testid="DownloadNonLars">
                                         Download your published course data (CSV)
                                     </a>
                                 </li>
                             }
                             <li>
-                                <a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                @*<a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Download course data template (CSV)
+                                </a>*@
+                                <a href="#" class="govuk-link">
                                     Download course data template (CSV)
                                 </a>
                             </li>

@@ -38,5 +38,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string NotionalNVQLevelv2 { get; set; }
         public PublishMode PublishMode { get; set; }
         public string RefererAbsolutePath { get; set; }
+        public CourseType? CourseType { get; set; }
+        public bool NonLarsCourse { get; set; }
     }
 }

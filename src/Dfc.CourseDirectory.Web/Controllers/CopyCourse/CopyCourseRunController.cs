@@ -310,7 +310,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 QualificationType = course.LearnAimRefTypeDesc,
                 NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
                 PublishMode = PublishMode.Summary,
-                RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath
+                RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath,
+                CourseType = course.CourseType,
+                NonLarsCourse = IsCourseNonLars()
             };
 
             if (savedModel != null)
@@ -429,7 +431,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 CostDescription = model.CostDescription,
                 CourseLength = $"{model.DurationLength} {model.DurationUnit}",
                 AttendancePattern = model.AttendanceMode,
-                StudyMode = model.StudyMode
+                StudyMode = model.StudyMode,                
+                NonLarsCourse = IsCourseNonLars()
             };
 
             return View(summaryViewModel);
@@ -473,6 +476,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             if (model.National == true)
             {
                 model.SelectedRegions = null;
+            }
+
+            if (model.DeliveryMode == CourseDeliveryMode.Online || model.DeliveryMode == CourseDeliveryMode.WorkBased)
+            {
+                model.VenueId = Guid.Empty;
             }
 
             var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);

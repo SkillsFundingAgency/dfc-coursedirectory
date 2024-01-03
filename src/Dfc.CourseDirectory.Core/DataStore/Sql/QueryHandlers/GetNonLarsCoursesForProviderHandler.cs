@@ -18,7 +18,7 @@ SELECT
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded
 FROM Pttcd.Courses c
-WHERE c.ProviderId = 'F6F783EA-8F3C-4CE4-A664-6CAB41F0AC94' 
+WHERE c.ProviderId = @ProviderId 
 AND (LearnAimRef IS NULL OR LearnAimRef = '')
 AND c.CourseStatus <> {(int)CourseStatus.Archived}
 
@@ -49,7 +49,7 @@ SELECT
 FROM Pttcd.Courses c
 JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
 LEFT JOIN Pttcd.Venues v on v.VenueId = cr.VenueId
-WHERE c.ProviderId = 'F6F783EA-8F3C-4CE4-A664-6CAB41F0AC94'
+WHERE c.ProviderId = @ProviderId
 AND (LearnAimRef IS NULL OR LearnAimRef = '')
 AND cr.CourseRunStatus = {(int)CourseStatus.Live}
 
@@ -57,7 +57,7 @@ SELECT crsr.CourseRunId, crsr.RegionId
 FROM Pttcd.CourseRunSubRegions crsr
 JOIN Pttcd.CourseRuns cr ON crsr.CourseRunId = cr.CourseRunId
 JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
-WHERE c.ProviderId = 'F6F783EA-8F3C-4CE4-A664-6CAB41F0AC94'
+WHERE c.ProviderId = @ProviderId
 AND (c.LearnAimRef IS NULL OR c.LearnAimRef = '')
 AND cr.CourseRunStatus = {(int)CourseStatus.Live}
 ";

@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public CourseMode CourseMode { get; set; }
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-        public CourseType CourseType { get; set; }
+        public CourseType? CourseType { get; set; }
         public bool NonLarsCourse { get; set; }
     }
 }
