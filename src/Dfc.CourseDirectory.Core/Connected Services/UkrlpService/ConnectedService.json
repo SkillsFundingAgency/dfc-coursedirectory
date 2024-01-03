@@ -6,7 +6,7 @@
   },
   "ExtendedData": {
     "inputs": [
-      "http://webservices.ukrlp.co.uk/UkrlpProviderQueryWS6/ProviderQueryServiceV6?wsdl"
+      "https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6?wsdl"
     ],
     "collectionTypes": [
       "System.Array",
