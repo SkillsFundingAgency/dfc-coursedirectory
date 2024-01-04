@@ -126,6 +126,12 @@
     },
     "FindACourseUrl": {
       "value": "__FindACourseUrl__"
+    },
+    "workspaceName": {
+        "value": "__sharedLogAnalyticsWorkspace__"
+    },
+    "workspaceResourceGroup": {
+        "value": "__sharedLogAnalyticsResourceGroup__"
     }
   }
 }
