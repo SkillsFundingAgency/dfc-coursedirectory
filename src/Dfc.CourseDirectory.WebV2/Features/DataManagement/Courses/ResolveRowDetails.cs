@@ -27,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
+        public CourseType? CourseType { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public int RowNumber { get; set; }
         public string CourseName { get; set; }
@@ -145,6 +146,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 row.RowNumber,
                 new CourseUploadRowUpdate()
                 {
+                    CourseType = request.CourseType,
                     DeliveryMode = request.DeliveryMode,
                     CourseName = request.CourseName,
                     ProviderCourseRef = request.ProviderCourseRef,

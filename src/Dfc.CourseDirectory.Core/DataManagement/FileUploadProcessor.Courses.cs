@@ -479,7 +479,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<SaveCourseFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy)
+        public async Task<SaveCourseFileResult> SaveCourseFile(Guid providerId,bool isNonLars, Stream stream, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
@@ -499,12 +499,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 return SaveCourseFileResult.InvalidHeader(missingHeaders);
             }
 
-            var (missingLars, invalidLars, expiredLars) = await ValidateLearnAimRefs(stream);
-            if (missingLars.Length > 0 || invalidLars.Length > 0 || expiredLars.Length > 0)
+            if(!isNonLars)
             {
-                return SaveCourseFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
-            }
+                var (missingLars, invalidLars, expiredLars) = await ValidateLearnAimRefs(stream);
 
+                if (missingLars.Length > 0 || invalidLars.Length > 0 || expiredLars.Length > 0)
+                {
+                    return SaveCourseFileResult.InvalidLars(missingLars, invalidLars, expiredLars);
+                }
+            }
+            
             var courseUploadId = Guid.NewGuid();
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))

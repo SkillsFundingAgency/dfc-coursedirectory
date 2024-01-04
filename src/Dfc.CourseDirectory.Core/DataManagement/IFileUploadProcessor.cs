@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
         Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy);
-        Task<SaveCourseFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
+        Task<SaveCourseFileResult> SaveCourseFile(Guid providerId,bool isNonLars, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update);
         Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update);
 

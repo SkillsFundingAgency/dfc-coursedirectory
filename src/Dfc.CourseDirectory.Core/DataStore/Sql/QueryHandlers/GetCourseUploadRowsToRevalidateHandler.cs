@@ -28,7 +28,7 @@ SELECT
     cur.LearnAimRef, cur.WhoThisCourseIsFor, cur.EntryRequirements, cur.WhatYouWillLearn, cur.HowYouWillLearn, cur.WhatYouWillNeedToBring,
     cur.HowYouWillBeAssessed, cur.WhereNext, cur.CourseName, cur.ProviderCourseRef, cur.DeliveryMode, cur.StartDate, cur.FlexibleStartDate,
     cur.VenueName, cur.ProviderVenueRef, cur.NationalDelivery, cur.SubRegions, cur.CourseWebpage, cur.Cost, cur.CostDescription,
-    cur.Duration, cur.DurationUnit, cur.StudyMode, cur.AttendancePattern, cur.VenueId
+    cur.Duration, cur.DurationUnit, cur.StudyMode, cur.AttendancePattern, cur.VenueId, cur.CourseType
 FROM Pttcd.CourseUploadRows cur
 LEFT JOIN Pttcd.Venues v ON cur.VenueId = v.VenueId
 WHERE cur.CourseUploadId = @CourseUploadId

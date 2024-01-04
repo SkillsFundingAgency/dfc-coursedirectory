@@ -50,10 +50,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string StudyMode { get; set; }
         public string AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public string CourseType { get; set; }
     }
 
     public class CourseUploadRowDetail : CourseUploadRow
     {
+        public CourseType? ResolvedCourseType { get; set; }
         public CourseDeliveryMode? ResolvedDeliveryMode { get; set; }
         public DateTime? ResolvedStartDate { get; set; }
         public bool? ResolvedFlexibleStartDate { get; set; }

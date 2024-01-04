@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.WebV2.Mvc;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
@@ -17,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
     [Route("data-upload/courses")]
     [RequireFeatureFlag(FeatureFlags.CoursesDataManagement)]
     [RequireProviderContext]
-    [RestrictProviderTypes(ProviderType.FE)]
+    [RestrictProviderTypes(ProviderType.FE | ProviderType.NonLARS)]
     public class CoursesDataManagementController : Controller
     {
         private readonly IMediator _mediator;
@@ -32,6 +33,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("")]
         public async Task<IActionResult> Index() =>
             await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
+
+        [HttpGet("nonlars")]
+        public async Task<IActionResult> NonLars() =>
+            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("UploadNonLars", vm));
 
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(Upload.Command command)
@@ -58,6 +63,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                             ModelState.AddModelError(nameof(command.File), "The file contains errors and could not be uploaded");
                         }
 
+                        return this.ViewFromErrors(errors);
+                    },
+                    success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpPost("uploadnonlars")]
+        public async Task<IActionResult> UploadNonLars(Upload.Command command)
+        {
+            var file = Request.Form.Files?.GetFile(nameof(command.File));
+
+            return await _mediator.SendAndMapResponse(
+                new Upload.Command()
+                {
+                    File = file,
+                    IsNonLars = true
+                },
+                response => response.Match<IActionResult>(
+                    errors =>
+                    {
+                        ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
                     success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));

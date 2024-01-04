@@ -20,7 +20,7 @@ SELECT
     LearnAimRef, WhoThisCourseIsFor, EntryRequirements, WhatYouWillLearn, HowYouWillLearn, WhatYouWillNeedToBring,
     HowYouWillBeAssessed, WhereNext, CourseName, ProviderCourseRef, DeliveryMode, StartDate, FlexibleStartDate,
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
-    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
+    Duration, DurationUnit, StudyMode, AttendancePattern, VenueId, CourseType,
     ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery,
     ResolvedCost, ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern
 FROM Pttcd.CourseUploadRows

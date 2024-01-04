@@ -6,6 +6,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public class CourseUploadRowUpdate
     {
+        public CourseType? CourseType { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
