@@ -125,6 +125,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (nonLarsCourse)
             {
                 viewModel.CourseType = CourseType.SkillsBootcamp;
+                viewModel.EducationLevel = EducationLevel.EntryLevel;
             }
 
             if (!nonLarsCourse)
@@ -369,6 +370,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ? "Flexible"
                     : model.Day + "/" + model.Month + "/" + model.Year,
                 CourseType = model.CourseType.ToDescription(),
+                EducationLevel = model.EducationLevel.ToDescription(),
+                AwardingBody = model.AwardingBody,
                 NonLarsCourse = IsCourseNonLars()
             };
 
@@ -1085,11 +1088,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NonLarsCourse = nonLarsCourse
             };
 
-            if (nonLarsCourse)
-            {
-                viewModel.CourseType = CourseType.SkillsBootcamp;
-            }
-
             if (!nonLarsCourse)
             {
                 viewModel.LearnAimRef = Session.GetString("LearnAimRef");
@@ -1109,6 +1107,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 viewModel.CourseName = addCourseSection2Session.CourseName;
                 viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
+                viewModel.CourseType = nonLarsCourse ? addCourseSection2Session.CourseType : default(CourseType?);
+                viewModel.EducationLevel = nonLarsCourse ? addCourseSection2Session.EducationLevel : default(EducationLevel?);
+                viewModel.AwardingBody = nonLarsCourse ? addCourseSection2Session.AwardingBody : null;
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
 
                 if (!string.IsNullOrEmpty(addCourseSection2Session.StartDateType))
@@ -1152,6 +1153,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.AttendanceMode = CourseAttendancePattern.Daytime;
                 viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
+                viewModel.CourseType = CourseType.SkillsBootcamp;
+                viewModel.EducationLevel = EducationLevel.EntryLevel;
             }
             return viewModel;
         }

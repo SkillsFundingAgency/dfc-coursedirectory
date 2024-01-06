@@ -13,133 +13,150 @@
     Layout = "_Layout_Your_Courses";
 
     ViewData.SetLayoutModel(new LayoutModel
-    {
-        BackLink = false,
-    });
+            {
+                BackLink = false,
+            });
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">Check and publish your course</h1>
-
-        <h2 class="govuk-heading-l">
-            @Model.LearnAimRef Level @Model.NotionalNVQLevelv2 @Model.LearnAimRefTitle
-        </h2>
-
+        @if (!Model.NonLarsCourse)
+        {
+            <h2 class="govuk-heading-l">
+                @Model.LearnAimRef Level @Model.NotionalNVQLevelv2 @Model.LearnAimRefTitle
+            </h2>
+        }
         <h3 class="govuk-heading-m">Course details</h3>
 
         <form asp-controller="AddCourse" asp-action="AcceptAndPublish" id="addCourseSummaryPage">
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id = "CourseName", Title = "Course name", Value = Model.CourseName,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionCourseName"
+                Id = "CourseName", Title = "Course name", Value = Model.CourseName,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionCourseName"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id = "CourseId", Title = "Your reference", Value = Model.CourseId,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionCourseProviderReference"
+                Id = "CourseId", Title = "Your reference", Value = Model.CourseId,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionCourseProviderReference"
                 })
 
                 @if (Model.NonLarsCourse)
                 {
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-                    {
-                        Id="CourseType", Title = "Course type", Value = Model.CourseType,
-                        Action = "SummaryToAddCourseRun",
-                        Controller = "AddCourse",
-                        Section = "sectionCourseType",
-                        HideChangeLink = true
-                    })
+                {
+                Id="CourseType", Title = "Course type", Value = Model.CourseType,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionCourseType",
+                HideChangeLink = true
+                })
+
+                    @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
+                Id="EducationLevel", Title = "Education level", Value = Model.EducationLevel,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionEducationLevel"
+                })
+
+                    @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
+                Id="AwardingBody", Title = "Awarding body", Value = Model.AwardingBody,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionAwardingBody"
+                })
                 }
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="DeliveryMode", Title = "Delivery mode", Value = Model.DeliveryMode,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionDeliveryType"
+                Id="DeliveryMode", Title = "Delivery mode", Value = Model.DeliveryMode,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionDeliveryType"
                 })
 
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="StartDate", Title = "Start date", Value = Model.StartDate,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionStartDate"
+                Id="StartDate", Title = "Start date", Value = Model.StartDate,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionStartDate"
                 })
 
                 @{
                     if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased || Model.DeliveryModeEnum == CourseDeliveryMode.BlendedLearning)
                     {
                         @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
-                        {
-                            Id = "Venues", Title = "Venue", Value = Model.Venues,
-                            Action = "SummaryToAddCourseRun",
-                            Controller = "AddCourse",
-                            Section = "VenueItemsCheckboxList"
-                        })
+                {
+                Id = "Venues", Title = "Venue", Value = Model.Venues,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "VenueItemsCheckboxList"
+                })
                     }
                     if (Model.DeliveryModeEnum == CourseDeliveryMode.WorkBased)
                     {
                         @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
-                        {
-                            Id = "Regions", Title = "Regions", Value = Model.Regions,
-                            Action = "SummaryToAddCourseRun",
-                            Controller = "AddCourse",
-                            Section = "RegionItemsCheckboxList"
-                        })
+                {
+                Id = "Regions", Title = "Regions", Value = Model.Regions,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "RegionItemsCheckboxList"
+                })
                     }
                 }
 
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="Url", Title = "Course webpage", Value = Model.Url,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionUrl"
+                Id="Url", Title = "Course webpage", Value = Model.Url,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionUrl"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="Cost", Title = "Cost", Value = string.IsNullOrWhiteSpace(Model.Cost) ? Model.Cost : "£" + Model.Cost,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionCost"
+                Id="Cost", Title = "Cost", Value = string.IsNullOrWhiteSpace(Model.Cost) ? Model.Cost : "£" + Model.Cost,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionCost"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="CostDesc", Title = "Cost description", Value = Model.CostDescription,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionCost"
-                })               
+                Id="CostDesc", Title = "Cost description", Value = Model.CostDescription,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionCost"
+                })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="CourseLength", Title = "Duration", Value = Model.CourseLength,
-                    Action = "SummaryToAddCourseRun",
-                    Controller = "AddCourse",
-                    Section = "sectionDuration"
+                Id="CourseLength", Title = "Duration", Value = Model.CourseLength,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionDuration"
                 })
 
                 @if (Model.DeliveryModeEnum == CourseDeliveryMode.ClassroomBased || Model.DeliveryModeEnum == CourseDeliveryMode.BlendedLearning)
                 {
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-                    {
-                        Id = "AttendancePattern", Title = "Course hours", Value = Model.AttendancePattern,
-                        Action = "SummaryToAddCourseRun",
-                        Controller = "AddCourse",
-                        Section = "FullPartTimeRadioButtons"
-                    })
+                {
+                Id = "AttendancePattern", Title = "Course hours", Value = Model.AttendancePattern,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "FullPartTimeRadioButtons"
+                })
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-                    {
-                        Id = "AttendanceTime", Title = "Attendance pattern", Value = Model.AttendanceTime,
-                        Action = "SummaryToAddCourseRun",
-                        Controller = "AddCourse",
-                        Section = "AttendancePatternRadioButtons"
-                    })
+                {
+                Id = "AttendanceTime", Title = "Attendance pattern", Value = Model.AttendanceTime,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "AttendancePatternRadioButtons"
+                })
                 }
             </dl>
 
@@ -148,52 +165,52 @@
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="WhoCourseFor", Title = "Who this course is for", Value = Model.WhoIsThisCourseFor,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionCourseFor"
+                Id="WhoCourseFor", Title = "Who this course is for", Value = Model.WhoIsThisCourseFor,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionCourseFor"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="EntryRequirements", Title = "Entry requirements", Value = Model.EntryRequirements,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionEntryRequirements"
+                Id="EntryRequirements", Title = "Entry requirements", Value = Model.EntryRequirements,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionEntryRequirements"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="WhatWillLearn", Title = "What you'll learn", Value = Model.WhatYouWillLearn,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionWhatWillLearn"
+                Id="WhatWillLearn", Title = "What you'll learn", Value = Model.WhatYouWillLearn,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionWhatWillLearn"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="HowWillLearn", Title = "How you'll learn", Value = Model.HowYouWillLearn,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionHowYouWillLearn"
+                Id="HowWillLearn", Title = "How you'll learn", Value = Model.HowYouWillLearn,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionHowYouWillLearn"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="WhatYouNeedBring", Title = "What you'll need to bring", Value = Model.WhatYouWillNeedToBring,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionWhatYouNeed"
+                Id="WhatYouNeedBring", Title = "What you'll need to bring", Value = Model.WhatYouWillNeedToBring,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionWhatYouNeed"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="HowAssessed", Title = "How you'll be assessed", Value = Model.HowAssessed,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionHowAssessed"
+                Id="HowAssessed", Title = "How you'll be assessed", Value = Model.HowAssessed,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionHowAssessed"
                 })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
-                    Id="WhereNext", Title = "What you can do next", Value = Model.WhereNext,
-                    Action = "SummaryToAddCourse",
-                    Controller = "AddCourse",
-                    Section = "sectionWhereNext"
+                Id="WhereNext", Title = "What you can do next", Value = Model.WhereNext,
+                Action = "SummaryToAddCourse",
+                Controller = "AddCourse",
+                Section = "sectionWhereNext"
                 })
 
             </dl>

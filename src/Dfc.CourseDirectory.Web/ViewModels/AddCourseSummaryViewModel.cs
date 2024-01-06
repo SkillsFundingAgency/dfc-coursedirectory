@@ -23,6 +23,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public string AttendancePattern { get; set; }
         public string AttendanceTime { get; set; }
         public string CourseType { get; set; }
+        public string EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
 
         public bool National { get; set; }
 
