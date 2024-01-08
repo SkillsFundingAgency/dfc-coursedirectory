@@ -298,6 +298,7 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="Pttcd\Tables\CourseTypeCategory.sql" />
+    <Build Include="Pttcd\Indexes\nci_msft_CourseRuns_2BDFCF873B79949BC549A101C9BE3AC4.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
