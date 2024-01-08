@@ -508,6 +508,13 @@
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
                 }
+                if (isClassroomBased && !$.requiredValidate($selectedVenue.val()) && $radioDeliveryMode.find("input[type='radio']:checked").val() == "BlendedLearning") {
+                    $selectedVenue.govUkSelect("invalidState", $selectedVenue.attr("val-required-message"));
+                    var selectedVenueErrorHashLinks = $selectedVenue.govUkSelect("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", selectedVenueErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                }
 
                 // regions
                 $regions.govUkCheckboxes("validState");
