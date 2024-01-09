@@ -125,7 +125,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             if (nonLarsCourse)
             {
                 viewModel.CourseType = CourseType.SkillsBootcamp;
-                viewModel.EducationLevel = EducationLevel.EntryLevel;
+                viewModel.Sector = Sector.BusinessAndAdministration;
+                viewModel.EducationLevel = EducationLevel.EntryLevel;                
             }
 
             if (!nonLarsCourse)
@@ -370,6 +371,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ? "Flexible"
                     : model.Day + "/" + model.Month + "/" + model.Year,
                 CourseType = model.CourseType.ToDescription(),
+                Sector = model.Sector.ToDescription(),
                 EducationLevel = model.EducationLevel.ToDescription(),
                 AwardingBody = model.AwardingBody,
                 NonLarsCourse = IsCourseNonLars()
@@ -599,7 +601,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var howYouWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowYouWillLearn);
             var whatYouNeed = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatYouNeed);
             var howAssessed = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowAssessed);
-            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);            
+            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);
 
             if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased || addCourseSection2.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
@@ -730,7 +732,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var courseId = Guid.NewGuid();
             var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
-            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef);
+            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef);            
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
@@ -747,7 +749,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseRuns = courseRuns,
                 CreatedOn = DateTime.UtcNow,
                 CreatedBy = _currentUserProvider.GetCurrentUser(),
-                CourseType = courseType
+                CourseType = courseType,
+                Sector = addCourseSection2.Sector,
+                EducationLevel = addCourseSection2.EducationLevel,
+                AwardingBody = addCourseSection2.AwardingBody
             });
 
             RemoveSessionVariables();
@@ -1108,6 +1113,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.CourseName = addCourseSection2Session.CourseName;
                 viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
                 viewModel.CourseType = nonLarsCourse ? addCourseSection2Session.CourseType : default(CourseType?);
+                viewModel.Sector = nonLarsCourse ? addCourseSection2Session.Sector : default(Sector?);
                 viewModel.EducationLevel = nonLarsCourse ? addCourseSection2Session.EducationLevel : default(EducationLevel?);
                 viewModel.AwardingBody = nonLarsCourse ? addCourseSection2Session.AwardingBody : null;
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
@@ -1154,6 +1160,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
                 viewModel.CourseType = CourseType.SkillsBootcamp;
+                viewModel.Sector = Sector.BusinessAndAdministration;
                 viewModel.EducationLevel = EducationLevel.EntryLevel;
             }
             return viewModel;

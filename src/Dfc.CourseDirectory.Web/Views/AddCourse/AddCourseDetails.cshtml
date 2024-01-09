@@ -2,6 +2,7 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AwardingBody
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
@@ -101,6 +102,17 @@
                     HintText = "Select one option.",
                     SecondHintText = "Select what is the type of this course",
                     AriaDescribedBy = "Select what is the type of this course"
+                    })
+                </div>
+
+                <div id="sectionSector">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector.Sector), new SectorModel
+                    {
+                    Sector = Model.Sector,
+                    LabelText = "Sector",
+                    HintText = "Select one option.",
+                    SecondHintText = "Select Sector",
+                    AriaDescribedBy = "Select Sector"
                     })
                 </div>
 

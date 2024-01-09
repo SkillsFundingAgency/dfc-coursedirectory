@@ -1,8 +1,6 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 
@@ -45,6 +43,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
         public CourseType? CourseType { get; set; }
+        public Sector? Sector { get; set; }
         public EducationLevel? EducationLevel { get; set; }
         public string AwardingBody { get; set; }
         public bool NonLarsCourse { get; set; }

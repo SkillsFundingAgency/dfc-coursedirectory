@@ -36,7 +36,10 @@ INSERT INTO Pttcd.Courses (
     WhatYoullNeed,
     HowYoullBeAssessed,
     WhereNext,
-    CourseType
+    CourseType,
+    Sector,
+    EducationLevel,
+    AwardingBody
 ) VALUES (
     @CourseId,
     {(int)CourseStatus.Live},
@@ -54,7 +57,10 @@ INSERT INTO Pttcd.Courses (
     @WhatYoullNeed,
     @HowYoullBeAssessed,
     @WhereNext,
-    @CourseType
+    @CourseType,
+    @Sector,
+    @EducationLevel,
+    @AwardingBody
 )
 
 INSERT INTO Pttcd.CourseRuns (
@@ -128,6 +134,9 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds = @CourseRunIds, @Now = @Create
                 query.HowYoullBeAssessed,
                 query.WhereNext,
                 query.CourseType,
+                query.Sector,
+                query.EducationLevel,
+                query.AwardingBody,
                 CourseRuns = TvpHelper.CreateCourseRunsTable(query.CourseRuns.Select(cr => (
                     cr.CourseRunId,
                     cr.CourseName,

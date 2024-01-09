@@ -59,6 +59,14 @@
 
                     @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
                 {
+                Id="Sector", Title = "Sector", Value = Model.Sector,
+                Action = "SummaryToAddCourseRun",
+                Controller = "AddCourse",
+                Section = "sectionSector"
+                })
+
+                    @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+                {
                 Id="EducationLevel", Title = "Education level", Value = Model.EducationLevel,
                 Action = "SummaryToAddCourseRun",
                 Controller = "AddCourse",
