@@ -2,6 +2,9 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AwardingBody
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
@@ -49,13 +52,6 @@
     }
 }
 
-@*@await Component.InvokeAsync(nameof(Notification), new NotificationModel
-{
-    NotificationTitle = "",
-    NotificationMessage = @Model.LearnAimRefTitle + "<br>" + "Level: " + @Model.NotionalNVQLevelv2 + "<br> Awarding organisation: " + @Model.AwardOrgCode + "<br> LARS / QAN: " + @Model.LearnAimRef,
-    ClassType = "info-summary"
-})*@
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">
@@ -93,21 +89,53 @@
                 LabelText = "Your reference",
                 HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
                 AriaDescribedBy = "Please enter the ID for this course"
-                })            
+                })
             </div>
 
             @if (Model.NonLarsCourse)
             {
                 <div id="sectionCourseType">
                     @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType.CourseType), new CourseTypeModel
-                {
-                CourseType = Model.CourseType,
-                LabelText = "Course type",
-                HintText = "Select one option.",
-                SecondHintText = "Select what is the type of this course",
-                AriaDescribedBy = "Select what is the type of this course"
-                })
-            </div>
+                    {
+                    CourseType = Model.CourseType,
+                    LabelText = "Course type",
+                    HintText = "Select one option.",
+                    SecondHintText = "Select what is the type of this course",
+                    AriaDescribedBy = "Select what is the type of this course"
+                    })
+                </div>
+
+                <div id="sectionSector">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector.Sector), new SectorModel
+                    {
+                    Sector = Model.Sector,
+                    LabelText = "Sector",
+                    HintText = "Select one option.",
+                    SecondHintText = "Select Sector",
+                    AriaDescribedBy = "Select Sector"
+                    })
+                </div>
+
+                <div id="sectionEducationLevel">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel.EducationLevel), new EducationLevelModel
+                    {
+                    EducationLevel = Model.EducationLevel,
+                    LabelText = "Education level",
+                    HintText = "Select one option.",
+                    SecondHintText = "Select what is the education level",
+                    AriaDescribedBy = "Select what is the education level"
+                    })
+                </div>
+
+                <div id="sectionAwardingBody">
+                    @await Component.InvokeAsync(nameof(AwardingBody), new AwardingBodyModel
+                    {
+                    AwardingBody = Model.AwardingBody,
+                    LabelText = "Awarding body",
+                    HintText = "",
+                    AriaDescribedBy = "Please enter the awarding body"
+                    })
+                </div>
             }
 
             <div id="sectionDeliveryType">
@@ -539,14 +567,14 @@
                 // url
                 var enteredUrl = $url.val();
                 var urlToValidate = "";
-                
+
                 if ($url.val().indexOf("http") >= 0) {
                     urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
                 }
                 else {
                     urlToValidate = $url.val();
                 }
-                
+
                 if (!$.requiredValidate($url.val())) {
                     $url.govUkInput("invalidState", $url.attr("val-required-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
