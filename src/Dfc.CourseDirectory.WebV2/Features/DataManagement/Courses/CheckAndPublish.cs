@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser());
+            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser(),false);
 
             if (publishResult.Status == PublishResultStatus.Success)
             {

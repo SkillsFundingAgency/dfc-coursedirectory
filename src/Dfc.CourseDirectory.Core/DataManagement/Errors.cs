@@ -112,6 +112,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "COURSERUN_VENUE_NAME_NOT_ALLOWED":
                 case "COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF":
                     return "Venue name";
+                case "COURSE_COURSE_TYPE_REQUIRED":
+                    return "Course type";
             }
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));

@@ -46,7 +46,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             return await _mediator.SendAndMapResponse(
                 new Upload.Command()
                 {
-                    File = file
+                    File = file,
+                    IsNonLars = false
                 },
                 response => response.Match<IActionResult>(
                     errors =>
@@ -228,8 +229,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("download")]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
-            new Download.Query(),
+            new Download.Query() { IsNonLars = false},
             result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
+
+        [HttpGet("downloadnonlars")]
+        public async Task<IActionResult> DownloadNonLars() => await _mediator.SendAndMapResponse(
+           new Download.Query() { IsNonLars = true },
+           result => new CsvResult<CsvNonLarsCourseRow>(result.FileName, result.NonLarsRows));
 
         [HttpGet("resolve/{rowNumber}/course/delete/")]
         public async Task<IActionResult> DeleteRowGroup([FromRoute] int rowNumber) =>

@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Functions
             [BlobTrigger("%DataUploadsContainerName%/%CourseUploadsFolderName%/{courseUploadId}.csv")] Stream file,
             Guid courseUploadId)
         {
-            return _fileUploadProcessor.ProcessCourseFile(courseUploadId, file);
+            return _fileUploadProcessor.ProcessCourseFile(courseUploadId, file, false);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT
     c.CourseId, c.CreatedOn, c.UpdatedOn, c.ProviderId, c.ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
-    c.WhereNext, c.DataIsHtmlEncoded
+    c.WhereNext, c.DataIsHtmlEncoded, c.CourseType
 FROM Pttcd.Courses c
 WHERE c.ProviderId = @ProviderId 
 AND (LearnAimRef IS NULL OR LearnAimRef = '')

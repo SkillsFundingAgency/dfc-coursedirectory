@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var provider = await TestData.CreateProvider();
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
-            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1,false);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
-            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1);
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef, rowCount: 1,false);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -339,7 +339,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var provider = await TestData.CreateProvider();
             var learnAimRef = (await TestData.CreateLearningDelivery(learnAimRef: "01234567")).LearnAimRef;
 
-            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef.TrimStart('0'), rowCount: 1);
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(learnAimRef.TrimStart('0'), rowCount: 1,false);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act

@@ -55,7 +55,17 @@
                     A reference that will help you identify this course in your internal systems. This will not be visible to learners.
                 </govuk-input-hint>
             </govuk-input>
-
+            <govuk-radios asp-for="CourseType">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        Course type
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-hint>
+                    Select one option.
+                </govuk-radios-hint>
+                <govuk-radios-item value="@CourseType.SkillsBootcamp">Skills Bootcamp</govuk-radios-item>
+            </govuk-radios>
             <govuk-radios asp-for="FlexibleStartDate">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>
