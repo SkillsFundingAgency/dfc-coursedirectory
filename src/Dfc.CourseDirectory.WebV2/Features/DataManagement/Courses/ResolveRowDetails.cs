@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
     {
         public int RowNumber { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
@@ -44,6 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class ViewModel : Command
@@ -84,12 +86,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public async Task<ModelWithErrors<ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
             var row = await GetRow(request.RowNumber);
-            var vm = await CreateViewModel(request.DeliveryMode, row);
+            var vm = await CreateViewModel(request.DeliveryMode, row, request.IsNonLars);
             NormalizeViewModel();
 
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validator = new CommandValidator(_clock, allRegions);
+            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars);
             var validationResult = await validator.ValidateAsync(vm);
 
             return new ModelWithErrors<ViewModel>(vm, validationResult);
@@ -131,12 +133,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validator = new CommandValidator(_clock, allRegions);
+            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
-                var vm = await CreateViewModel(request.DeliveryMode, row);
+                var vm = await CreateViewModel(request.DeliveryMode, row, request.IsNonLars);
                 request.Adapt(vm);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
@@ -193,7 +195,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             }
         }
 
-        private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row)
+        private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row, bool isNonLars = false)
         {
             var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning )?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
@@ -206,7 +208,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     .ToArray() :
                 null;
 
-            return new ViewModel()
+            var vm = new ViewModel()
             {
                 DeliveryMode = deliveryMode,
                 RowNumber = row.RowNumber,
@@ -226,6 +228,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 VenueId = row.VenueId,
                 ProviderVenues = providerVenues
             };
+            if (isNonLars)
+            { 
+                vm.CourseType = row.ResolvedCourseType; 
+            }
+            return vm;
         }
 
         private async Task<CourseUploadRowDetail> GetRow(int rowNumber)
@@ -248,8 +255,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions)
+            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, bool isNonLars)
             {
+                if (isNonLars)
+                {
+                    RuleFor(c => c.CourseType).CourseType();
+                }
+                
                 RuleFor(c => c.CourseName).CourseName();
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);

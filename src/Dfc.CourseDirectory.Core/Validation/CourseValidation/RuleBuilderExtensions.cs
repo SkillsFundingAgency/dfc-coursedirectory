@@ -86,6 +86,12 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .Apply(Rules.Website)
                     .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
         }
+        public static void CourseType<T>(this IRuleBuilderInitial<T, CourseType?> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_COURSE_TYPE_REQUIRED");
+        }
 
         public static void DeliveryMode<T>(this IRuleBuilderInitial<T, CourseDeliveryMode?> field)
         {

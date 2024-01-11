@@ -195,7 +195,13 @@ namespace Dfc.CourseDirectory.Testing
                 _records.Add(record);
                 return this;
             }
-
+            public CourseUploadRowBuilder AddNonLarsRow( Action<UpsertCourseUploadRowsRecord> configureRecord)
+            {
+                var record = CreateValidNonLarsRecord();
+                configureRecord(record);
+                _records.Add(record);
+                return this;
+            }
             public CourseUploadRowBuilder AddRow(
                 Guid courseId,
                 Guid courseRunId,
@@ -223,6 +229,7 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                string courseType,
                 Guid? venueId,
                 IEnumerable<string> errors = null)
             {
@@ -253,6 +260,7 @@ namespace Dfc.CourseDirectory.Testing
                     durationUnit,
                     studyMode,
                     attendancePattern,
+                    courseType,
                     venueId,
                     errors);
 
@@ -307,6 +315,7 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                string courseType,
                 Guid? venueId,
                 IEnumerable<string> errors = null)
             {
@@ -344,6 +353,7 @@ namespace Dfc.CourseDirectory.Testing
                     DurationUnit = durationUnit,
                     StudyMode = studyMode,
                     AttendancePattern = attendancePattern,
+                    CourseType = courseType,
                     VenueId = venueId,
                     ResolvedDeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(deliveryMode),
                     ResolvedStartDate = ParsedCsvCourseRow.ResolveStartDate(startDate),
@@ -354,7 +364,8 @@ namespace Dfc.CourseDirectory.Testing
                     ResolvedDurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(durationUnit),
                     ResolvedStudyMode = ParsedCsvCourseRow.ResolveStudyMode(studyMode),
                     ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern),
-                    ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id)
+                    ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id),
+                    ResolvedCourseType = ParsedCsvNonLarsCourseRow.ResolveCourseType(courseType),
                 };
             }
 
@@ -387,6 +398,39 @@ namespace Dfc.CourseDirectory.Testing
                     durationUnit: "years",
                     studyMode: "",
                     attendancePattern: "",
+                    courseType: "",
+                    venueId: null);
+            }
+            private UpsertCourseUploadRowsRecord CreateValidNonLarsRecord()
+            {
+                return CreateRecord(
+                    courseId: Guid.NewGuid(),
+                    courseRunId: Guid.NewGuid(),
+                    learnAimRef: "",
+                    whoThisCourseIsFor: "Who this course is for",
+                    entryRequirements: "",
+                    whatYouWillLearn: "",
+                    howYouWillLearn: "",
+                    whatYouWillNeedToBring: "",
+                    howYouWillBeAssessed: "",
+                    whereNext: "",
+                    courseName: "Course name",
+                    providerCourseRef: "",
+                    deliveryMode: "Online",
+                    startDate: "",
+                    flexibleStartDate: "yes",
+                    venueName: "",
+                    providerVenueRef: "",
+                    nationalDelivery: "",
+                    subRegions: "",
+                    courseWebpage: "provider.com/course",
+                    cost: "",
+                    costDescription: "Free",
+                    duration: "2",
+                    durationUnit: "years",
+                    studyMode: "",
+                    attendancePattern: "",
+                    courseType: "Skills Bootcamp",
                     venueId: null);
             }
         }

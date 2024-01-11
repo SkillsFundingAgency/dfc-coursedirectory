@@ -41,5 +41,6 @@
 	[ResolvedDurationUnit] TINYINT,
 	[ResolvedStudyMode] TINYINT,
 	[ResolvedAttendancePattern] TINYINT,
-	[CourseType] TINYINT NULL
+	[CourseType] NVARCHAR(MAX) NULL,
+	[ResolvedCourseType] TINYINT NULL
 )
