@@ -181,10 +181,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
                         Url = cr.CourseWebsite,
-                        National = national
-
-
-
+                        National = national,
+                        CourseType = course.CourseType.ToDescription(),
+                        Sector = course.Sector.ToDescription(),
+                        EducationLevel = course.EducationLevel.ToDescription(),
+                        AwardingBody = course.AwardingBody
                     };
                     //If National
                     if (national)

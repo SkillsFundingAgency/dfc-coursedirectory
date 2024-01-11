@@ -254,7 +254,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 return NotFound();
             }
                         
-            var course = await GetCourse(courseId.Value, IsCourseNonLars());
+            var course = await GetCourse(courseId.Value);
 
             if (course == null)
             {
@@ -312,6 +312,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 PublishMode = PublishMode.Summary,
                 RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath,
                 CourseType = course.CourseType,
+                Sector = course.Sector,
+                EducationLevel = course.EducationLevel,
+                AwardingBody = course.AwardingBody,
                 NonLarsCourse = IsCourseNonLars()
             };
 

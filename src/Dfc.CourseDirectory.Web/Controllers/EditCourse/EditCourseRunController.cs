@@ -35,7 +35,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
-    public class EditCourseRunController : Controller
+    public class EditCourseRunController : BaseController
     {
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -44,11 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly IRegionCache _regionCache;
-
-        private const string SessionVenues = "Venues";
-        private const string SessionRegions = "Regions";
-        private const string SessionNonLarsCourse = "NonLarsCourse";
+        private readonly IRegionCache _regionCache;        
 
         public EditCourseRunController(
             ICourseService courseService,
@@ -56,7 +52,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache): base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -318,7 +314,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         AttendanceMode = courseRun.AttendancePattern,
                         QualificationType = course.LearnAimRefTypeDesc,
                         NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                        CurrentCourseRunDate = courseRun.StartDate
+                        CurrentCourseRunDate = courseRun.StartDate,
+                        NonLarsCourse = nonLarsCourse,
+                        CourseType = course.CourseType,
+                        Sector = course.Sector,
+                        EducationLevel = course.EducationLevel,
+                        AwardingBody = course.AwardingBody
                     };
 
                     vm.ValPastDateRef = DateTime.Now;
@@ -353,9 +354,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                 }
                             }
                         }
-
-                        
-
                     }
 
                     if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
@@ -419,6 +417,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 return BadRequest();
             }
+
+            var course = await GetCourse(courseId);
+            var updateCourseResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
+            {
+                CourseId = courseId,
+                WhoThisCourseIsFor = course.CourseDescription,
+                EntryRequirements = course.EntryRequirements,
+                WhatYoullLearn = course.WhatYoullLearn,
+                HowYoullLearn = course.HowYoullLearn,
+                WhatYoullNeed = course.WhatYoullNeed,
+                HowYoullBeAssessed = course.HowYoullBeAssessed,
+                WhereNext = course.WhereNext,
+                UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                UpdatedOn = _clock.UtcNow,
+                CourseType = course.CourseType,
+                Sector = model.Sector,
+                EducationLevel = model.EducationLevel,
+                AwardingBody = model.AwardingBody
+            });
 
             var updateCommand = new UpdateCourseRun()
             {
@@ -593,29 +610,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     .Transform(v => v == default ? (Guid?)null : v)
                     .VenueId(getDeliveryMode: c => c.DeliveryMode);
             }
-        }
-
-        private bool IsCourseNonLars()
-        {
-            var nonLarsCourseString = Session.GetString(SessionNonLarsCourse);
-            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
-        }
-
-        private async Task<Course> GetCourse(Guid? courseId, bool nonLarsCourse)
-        {
-            Course course = null;
-            if (courseId.HasValue)
-            {
-                if (nonLarsCourse)
-                {
-                    course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId.Value });
-                    return course;
-                }
-
-                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
-            }
-
-            return course;
-        }
+        }        
     }
 }
