@@ -33,19 +33,26 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
         }
 
-        protected async Task<Course> GetCourse(Guid? courseId, bool nonLarsCourse)
-        {
-            Course course = null;
-            if (courseId.HasValue)
-            {
-                if (nonLarsCourse)
-                {
-                    course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId.Value });
-                    return course;
-                }
+        protected async Task<Course> GetCourse(Guid? courseId) 
+        { 
+            return await GetCourse(courseId, IsCourseNonLars());
+        }
 
-                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+        protected async Task<Course> GetCourse(Guid? courseId, bool nonLarsCourse)
+        {            
+            if (!courseId.HasValue)
+            {
+                return null;
             }
+
+            Course course;
+            if (nonLarsCourse)
+            {
+                course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId.Value });
+                return course;
+            }
+
+            course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
 
             return course;
         }

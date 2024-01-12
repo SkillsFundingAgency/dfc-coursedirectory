@@ -4,10 +4,14 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AwardingBody
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel
+@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 @using Dfc.CourseDirectory.Web.ViewComponents.Extensions
@@ -84,6 +88,52 @@
                 AriaDescribedBy = "Please enter your reference for this course"
                 })
             </div>
+
+            @if (Model.NonLarsCourse)
+            {
+                <div id="sectionCourseType">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType.CourseType), new CourseTypeModel
+                {
+                CourseType = Model.CourseType,
+                LabelText = "Course type",
+                HintText = "Select one option.",
+                SecondHintText = "Select what is the type of this course",
+                AriaDescribedBy = "Select what is the type of this course"
+                })
+                </div>
+
+                <div id="sectionSector">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector.Sector), new SectorModel
+                {
+                Sector = Model.Sector,
+                LabelText = "Sector",
+                HintText = "Select one option.",
+                SecondHintText = "Select Sector",
+                AriaDescribedBy = "Select Sector"
+                })
+                </div>
+
+                <div id="sectionEducationLevel">
+                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel.EducationLevel), new EducationLevelModel
+                {
+                EducationLevel = Model.EducationLevel,
+                LabelText = "Education level",
+                HintText = "Select one option.",
+                SecondHintText = "Select what is the education level",
+                AriaDescribedBy = "Select what is the education level"
+                })
+                </div>
+
+                <div id="sectionAwardingBody">
+                    @await Component.InvokeAsync(nameof(AwardingBody), new AwardingBodyModel
+                {
+                AwardingBody = Model.AwardingBody,
+                LabelText = "Awarding body",
+                HintText = "",
+                AriaDescribedBy = "Please enter the awarding body"
+                })
+                </div>
+            }
 
             <div class="section" id="sectionDeliveryType">
                 @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel

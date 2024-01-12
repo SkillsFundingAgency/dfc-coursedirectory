@@ -27,19 +27,18 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
-    public class EditCourseController : Controller
+    public class EditCourseController : BaseController
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IClock _clock;
-        private const string SessionNonLarsCourse = "NonLarsCourse";
+        private readonly IClock _clock;        
 
         private ISession Session => HttpContext.Session;
 
         public EditCourseController(
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
-            IClock clock)
+            IClock clock) : base(sqlQueryDispatcher)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider;
@@ -59,9 +58,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
-
-            var nonLarsCourse = IsCourseNonLars();
-            var result = await GetCourse(courseId, nonLarsCourse);            
+                        
+            var result = await GetCourse(courseId);            
 
             if (result == null)
             {
@@ -166,7 +164,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CourseName = model.CourseName
             };
 
-            var courseId = model.CourseId.Value;
+            var courseId = model.CourseId.Value;                        
+            var course = await GetCourse(courseId);
 
             var validationResult = new EditCourseSaveViewModelValidator().Validate(formattedModel);
             if (!validationResult.IsValid)
@@ -185,7 +184,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 HowYoullBeAssessed = ASCIICodeHelper.RemoveASCII(model.HowAssessed),
                 WhereNext = ASCIICodeHelper.RemoveASCII(model.WhereNext),
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
-                UpdatedOn = _clock.UtcNow
+                UpdatedOn = _clock.UtcNow,
+                CourseType = course.CourseType,
+                Sector = course.Sector,
+                EducationLevel = course.EducationLevel,
+                AwardingBody = course.AwardingBody
             });
 
             if (!(updateResult.Value is Success))
@@ -193,7 +196,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 return BadRequest();
             }
 
-            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
+            course = await GetCourse(courseId);
 
             switch (model.Mode)
             {
@@ -229,28 +232,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 RuleFor(c => c.HowAssessed).HowYouWillBeAssessed();
                 RuleFor(c => c.WhereNext).WhereNext();
             }
-        }
-
-        private bool IsCourseNonLars()
-        {
-            var nonLarsCourseString = Session.GetString(SessionNonLarsCourse);
-            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
-        }
-        private async Task<Course> GetCourse(Guid? courseId, bool nonLarsCourse)
-        {
-            Course course = null;
-            if (courseId.HasValue)
-            {
-                if (nonLarsCourse)
-                {
-                    course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId.Value });
-                    return course;
-                }
-
-                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
-            }
-
-            return course;
-        }
+        }        
     }
 }

@@ -43,12 +43,12 @@
     <div class="govuk-grid-row govuk-!-margin-bottom-5">
         <div class="govuk-grid-column-full">
 
-            <pttcd-notification title="Qualification details">
+            <pttcd-notification title="Course details">
                 <ul class="govuk-list govuk-!-margin-bottom-0">
                     <li><span class="govuk-!-font-weight-bold">Course type:</span> @Model.CourseType.ToDescription()</li>
-                    <li><span class="govuk-!-font-weight-bold">Sector:</span></li>
-                    <li><span class="govuk-!-font-weight-bold">Education level:</span></li>
-                    <li><span class="govuk-!-font-weight-bold">Awarding body:</span></li>
+                    <li><span class="govuk-!-font-weight-bold">Sector:</span> @Model.Sector.ToDescription()</li>
+                    <li><span class="govuk-!-font-weight-bold">Education level:</span> @Model.EducationLevel.ToDescription()</li>
+                    <li><span class="govuk-!-font-weight-bold">Awarding body:</span> @Model.AwardingBody</li>
                 </ul>
             </pttcd-notification>
 

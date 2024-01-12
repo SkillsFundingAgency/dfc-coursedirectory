@@ -218,7 +218,12 @@ else
                                 <span>LARS/QAN:@courseRun.LearnAimRef</span>
                             </small>
                         }
-
+                        @if (!string.IsNullOrEmpty(courseRun.CourseType))
+                        {
+                            <small>
+                                <span>@courseRun.CourseType</span>
+                            </small>
+                        }                        
                     </h3>
                 </div>
 

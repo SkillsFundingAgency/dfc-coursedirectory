@@ -83,7 +83,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AttendancePattern = courseRun.AttendancePattern,
                 CreatedDate = courseRun.CreatedOn,
                 NonLarsCourse = nonLarsCourse,
-                CourseType = course.CourseType
+                CourseType = course.CourseType,
+                Sector = course.Sector,
+                EducationLevel = course.EducationLevel,
+                AwardingBody = course.AwardingBody
             };
 
             //Determine newer edited date
