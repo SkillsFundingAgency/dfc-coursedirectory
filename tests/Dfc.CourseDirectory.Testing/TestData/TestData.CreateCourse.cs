@@ -110,12 +110,13 @@ namespace Dfc.CourseDirectory.Testing
                         WhatYoullNeed = whatYoullNeed,
                         HowYoullBeAssessed = howYoullBeAssessed,
                         WhereNext = whereNext,
+                        CourseType = CourseType.SkillsBootcamp,
                         CourseRuns = courseRuns,
                         CreatedOn = createdUtc ?? _clock.UtcNow,
                         CreatedBy = createdBy
                     });
 
-                var course = await dispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
+                var course = await dispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId });
 
                 return course;
             });

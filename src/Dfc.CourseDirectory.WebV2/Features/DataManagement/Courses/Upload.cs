@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
     public class Command : IRequest<OneOf<UploadFailedResult, Success>>
     {
         public IFormFile File { get; set; }
-        public bool IsNonLars { get; set; } = false;
+        public bool IsNonLars { get; set; }
     }
 
     public class UploadFailedResult : ModelWithErrors<ViewModel>

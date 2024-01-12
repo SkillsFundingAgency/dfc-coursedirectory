@@ -17,7 +17,8 @@ namespace Dfc.CourseDirectory.Testing
             Guid providerId,
             UserInfo createdBy,
             UploadStatus uploadStatus,
-            Action<CourseUploadRowBuilder> configureRows = null)
+            Action<CourseUploadRowBuilder> configureRows = null,
+            bool isNonLars = false)
         {
             var createdOn = _clock.UtcNow;
 
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Testing
                 processingCompletedOn,
                 publishedOn,
                 abandonedOn,
+                isNonLars,
                 isValid,
                 configureRows);
 
@@ -57,6 +59,7 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? processingCompletedOn = null,
             DateTime? publishedOn = null,
             DateTime? abandonedOn = null,
+            bool isNonLars = false,
             bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
@@ -77,7 +80,8 @@ namespace Dfc.CourseDirectory.Testing
                     CourseUploadId = courseUploadId,
                     ProviderId = providerId,
                     CreatedBy = createdBy,
-                    CreatedOn = createdOn.Value
+                    CreatedOn = createdOn.Value,
+                    IsNonLars = isNonLars
                 });
 
                 if (processingStartedOn.HasValue)

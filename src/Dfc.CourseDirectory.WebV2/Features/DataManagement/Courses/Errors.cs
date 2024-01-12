@@ -17,6 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 {
     public class Query : IRequest<OneOf<UploadHasNoErrors, ViewModel>>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public struct UploadHasNoErrors { }

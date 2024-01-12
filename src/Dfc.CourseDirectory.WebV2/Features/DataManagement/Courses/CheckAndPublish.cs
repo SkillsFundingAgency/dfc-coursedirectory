@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 {
     public class Query : IRequest<OneOf<UploadHasErrors, ViewModel>>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public struct UploadHasErrors { }
@@ -26,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, PublishResult>>
     {
         public bool Confirm { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class ViewModel : Command
@@ -75,7 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId());
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId(),request.IsNonLars);
 
             if (uploadStatus == UploadStatus.ProcessedWithErrors)
             {
@@ -91,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
             if (!request.Confirm)
             {
-                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId);
+                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId,request.IsNonLars);
 
                 var vm = await CreateViewModel(uploadRows);
                 var validationResult = new ValidationResult(new[]
@@ -101,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser(),false);
+            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser(),request.IsNonLars);
 
             if (publishResult.Status == PublishResultStatus.Success)
             {

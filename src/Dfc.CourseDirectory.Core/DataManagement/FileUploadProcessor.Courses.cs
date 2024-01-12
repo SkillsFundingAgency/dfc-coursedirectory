@@ -210,7 +210,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId)
+        public async Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -236,7 +236,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, false);
+                var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, isNonLars);
 
                 var (rows, _) = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
                 {
@@ -533,15 +533,22 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 return SaveCourseFileResult.InvalidFile();
             }
-
-            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvCourseRow>(stream);
-            if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+            
+            if(isNonLars)
             {
-                return SaveCourseFileResult.InvalidHeader(missingHeaders);
+                var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvNonLarsCourseRow>(stream);
+                if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+                {
+                    return SaveCourseFileResult.InvalidHeader(missingHeaders);
+                }
             }
-
-            if(!isNonLars)
+            else
             {
+                var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvCourseRow>(stream);
+                if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+                {
+                    return SaveCourseFileResult.InvalidHeader(missingHeaders);
+                }
                 var (missingLars, invalidLars, expiredLars) = await ValidateLearnAimRefs(stream);
 
                 if (missingLars.Length > 0 || invalidLars.Length > 0 || expiredLars.Length > 0)
@@ -689,7 +696,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return uploadStatus;
         }
 
-        public async Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update)
+        public async Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update, bool isNonLars)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
 
@@ -720,8 +727,46 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRowGroup, courseId);
             }
+            if(isNonLars)
+            {
+                var updatedRows = new NonLarsCourseDataUploadRowInfoCollection(
+               rows.Select(r =>
+                   new NonLarsCourseDataUploadRowInfo(
+                       new CsvNonLarsCourseRow()
+                       {
+                           AttendancePattern = r.AttendancePattern,
+                           Cost = r.Cost,
+                           CostDescription = r.CostDescription,
+                           CourseName = r.CourseName,
+                           CourseWebPage = r.CourseWebPage,
+                           DeliveryMode = r.DeliveryMode,
+                           Duration = r.Duration,
+                           DurationUnit = r.DurationUnit,
+                           EntryRequirements = RemoveASCII(update.EntryRequirements),
+                           FlexibleStartDate = r.FlexibleStartDate,
+                           HowYouWillBeAssessed = RemoveASCII(update.HowYouWillBeAssessed),
+                           HowYouWillLearn = RemoveASCII(update.HowYouWillLearn),
+                           CourseType = r.CourseType,
+                           NationalDelivery = r.NationalDelivery,
+                           ProviderCourseRef = r.ProviderCourseRef,
+                           ProviderVenueRef = r.ProviderVenueRef,
+                           StartDate = r.StartDate,
+                           StudyMode = r.StudyMode,
+                           SubRegions = r.SubRegions,
+                           VenueName = r.VenueName,
+                           WhatYouWillLearn = RemoveASCII(update.WhatYouWillLearn),
+                           WhatYouWillNeedToBring = RemoveASCII(update.WhatYouWillNeedToBring),
+                           WhereNext = RemoveASCII(update.WhereNext),
+                           WhoThisCourseIsFor = RemoveASCII(update.WhoThisCourseIsFor)
+                       },
+                       r.RowNumber,
+                       courseId)));
 
-            var updatedRows = new CourseDataUploadRowInfoCollection(
+                await ValidateNonLarsCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+            }
+            else
+            {
+                var updatedRows = new CourseDataUploadRowInfoCollection(
                 rows.Select(r =>
                     new CourseDataUploadRowInfo(
                         new CsvCourseRow()
@@ -754,12 +799,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         r.RowNumber,
                         courseId)));
 
-            await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+                await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+
+
+            }
 
             // Other rows not covered by this group may require revalidation;
             // ensure revalidation is done if required so that `uploadStatus` is accurate
-            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId,false);
-
+            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, isNonLars);
             await dispatcher.Commit();
 
             return uploadStatus;

@@ -11,6 +11,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.InProgress
 {
     public class Query : IRequest<OneOf<NotFound, UploadStatus>>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, OneOf<NotFound, UploadStatus>>
@@ -32,7 +33,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.InProgress
 
             var courseUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
             {
-                ProviderId = providerId
+                ProviderId = providerId,
+                IsNonLars = request.IsNonLars,
             });
 
             if (courseUpload == null)
