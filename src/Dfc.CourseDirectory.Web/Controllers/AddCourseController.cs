@@ -755,14 +755,15 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 AwardingBody = addCourseSection2.AwardingBody
             });
 
-            RemoveSessionVariables();
-
             Session.SetObject(SessionPublishedCourse, new PublishedCourseViewModel
             {
                 CourseId = courseId,
                 CourseRunId = courseRuns[0].CourseRunId,
-                CourseName = courseRuns[0].CourseName
+                CourseName = courseRuns[0].CourseName,
+                NonLarsCourse = IsCourseNonLars()
             });
+
+            RemoveSessionVariables();            
 
             return RedirectToAction("Published");
         }
@@ -829,7 +830,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 CourseId = publishedCourse.CourseId,
                 CourseRunId = publishedCourse.CourseRunId,
-                CourseName = publishedCourse.CourseName
+                CourseName = publishedCourse.CourseName,
+                NonLarsCourse = publishedCourse.NonLarsCourse
             });
         }
 

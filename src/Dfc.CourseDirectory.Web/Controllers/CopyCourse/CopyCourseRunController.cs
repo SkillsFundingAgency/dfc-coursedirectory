@@ -559,7 +559,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             {
                 CourseId = createCommand.CourseId,
                 CourseRunId = createCommand.CourseRunId,
-                CourseName = createCommand.CourseName
+                CourseName = createCommand.CourseName,
+                NonLarsCourse = IsCourseNonLars()
             });
 
             _session.Remove("NewAddedVenue");

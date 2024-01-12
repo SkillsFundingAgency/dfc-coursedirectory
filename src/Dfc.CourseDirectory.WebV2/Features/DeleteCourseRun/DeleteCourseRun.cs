@@ -64,6 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         public Guid ProviderId { get; set; }
         public string CourseName { get; set; }
         public bool HasOtherCourseRuns { get; set; }
+        public bool NonLarsCourse { get; set; }
     }
 
     public class Handler :
