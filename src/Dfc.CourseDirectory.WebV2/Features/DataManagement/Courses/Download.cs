@@ -52,6 +52,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
 
             if (request.IsNonLars)
             {
+                fileName = FileNameHelper.SanitizeFileName(
+                    $"{providerContext.ProviderInfo.ProviderName}_non_lars_courses_{_clock.UtcNow:yyyyMMddHHmm}.csv");
                 var nonLarscourses = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider()
                 {
                     ProviderId = providerContext.ProviderInfo.ProviderId

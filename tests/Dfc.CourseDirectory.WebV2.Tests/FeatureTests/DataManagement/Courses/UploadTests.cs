@@ -130,6 +130,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Fact]
+        public async Task Post_ValidNonLarsCoursesFile_CreatesRecordAndRedirectsToInProgress()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            //var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(string.Empty,rowCount: 1,true);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/uploadnonlars?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+            response.Headers.Location.Should().Be($"/data-upload/courses/in-progress?providerId={provider.ProviderId}");
+
+            SqlQuerySpy.VerifyQuery<CreateCourseUpload, Success>(q =>
+                q.CreatedBy.UserId == User.UserId &&
+                q.CreatedOn == Clock.UtcNow &&
+                q.ProviderId == provider.ProviderId);
+        }
+
+        [Fact]
         public async Task Post_ValidCoursesFile_AbandonsExistingUnpublishedUpload()
         {
             // Arrange
@@ -142,7 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
-            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
+            var response = await HttpClient.PostAsync($"/data-upload/courses/uploadnonlars?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             response.EnsureNonErrorStatusCode();
@@ -151,7 +174,27 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = oldUpload.CourseUploadId }));
             oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
         }
+        [Fact]
+        public async Task Post_ValidNonLarsCoursesFile_AbandonsExistingUnpublishedUpload()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(providerType: ProviderType.FE | ProviderType.NonLARS);
+            
+            var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
 
+            var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(string.Empty, rowCount: 1, true);
+            var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
+
+            // Act
+            var response = await HttpClient.PostAsync($"/data-upload/courses/uploadnonlars?providerId={provider.ProviderId}", requestContent);
+
+            // Assert
+            response.EnsureNonErrorStatusCode();
+
+            oldUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = oldUpload.CourseUploadId }));
+            oldUpload.UploadStatus.Should().Be(UploadStatus.Abandoned);
+        }
         [Fact]
         public async Task Post_MissingFile_RendersError()
         {

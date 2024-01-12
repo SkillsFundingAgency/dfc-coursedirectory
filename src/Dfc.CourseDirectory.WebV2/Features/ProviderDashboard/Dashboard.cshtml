@@ -196,20 +196,18 @@
                             @if (Model.UnpublishedNonLarsCourseCount > 0)
                             {
                                 <li>
-                                    @*<a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>*@
-                                    <a href="#" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
+                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
+                                    
                                 </li>
                             }
                             <li>
-                                @if (Model.CourseUploadInProgress)
+                                @if (Model.NonLarsCourseUploadInProgress)
                                 {
-                                    @*<a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>*@
-                                    <a href="#" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
+                                    <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
                                 }
                                 else
                                 {
                                     <a asp-controller="CoursesDataManagement" asp-action="NonLars" asp-all-route-data="@ProviderContext.RouteValues" data-testid="nonlars-upload-new-link" class="govuk-link">Upload new course data</a>
-                                    @* <a href="#" data-testid="nonlars-upload-new-link" class="govuk-link">Upload new course data</a> *@
                                 }
                             </li>
                             <li>
@@ -220,21 +218,16 @@
                             @if (Model.CourseRunCount > 0)
                             {
                                 <li>
-                                    @*<a asp-action="Download" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadNonLars">
-                                        Download your published course data (CSV)
-                                    </a>*@
-                                    <a href="#" class="govuk-link" data-testid="DownloadNonLars">
+                                    <a asp-action="DownloadNonLars" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadNonLars">
                                         Download your published course data (CSV)
                                     </a>
                                 </li>
                             }
                             <li>
-                                @*<a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
-                                    Download course data template (CSV)
-                                </a>*@
-                                <a href="#" class="govuk-link">
+                                <a asp-controller="CoursesDataManagement" asp-action="TemplateNonLars" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Download course data template (CSV)
                                 </a>
+                                
                             </li>
                         </ul>
                     </div>

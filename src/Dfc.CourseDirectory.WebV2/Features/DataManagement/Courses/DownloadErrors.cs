@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DownloadErro
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerContext.ProviderInfo.ProviderId);
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerContext.ProviderInfo.ProviderId,false);
 
             if (uploadStatus != UploadStatus.ProcessedWithErrors)
             {
