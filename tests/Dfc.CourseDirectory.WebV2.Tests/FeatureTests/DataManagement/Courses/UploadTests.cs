@@ -165,7 +165,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
-            var response = await HttpClient.PostAsync($"/data-upload/courses/uploadnonlars?providerId={provider.ProviderId}", requestContent);
+            var response = await HttpClient.PostAsync($"/data-upload/courses/upload?providerId={provider.ProviderId}", requestContent);
 
             // Assert
             response.EnsureNonErrorStatusCode();
