@@ -9,5 +9,5 @@
 	[ProcessingCompletedOn] DATETIME,
 	[PublishedOn] DATETIME,
 	[AbandonedOn] DATETIME,
-	[IsNonLars] BIT NOT NULL
+	[IsNonLars] BIT NULL
 )
