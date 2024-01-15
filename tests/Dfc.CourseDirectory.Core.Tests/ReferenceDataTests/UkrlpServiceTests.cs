@@ -49,9 +49,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             await server.StartAsync();
             
-            // Required due to build server cert config
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
             var ukrlpWcfClientBuilder = new TestUkrlpWcfClientFactory
             {
                 Endpoint = $"{host}/{endpoint}"
@@ -62,9 +59,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             // Act
             var returnedProviderData = (await ukrlpService.GetProviderData(new[] { 10040271 })).Values.SingleOrDefault();
-
-            // Required due to build server cert config
-            ServicePointManager.ServerCertificateValidationCallback = null;
 
             // Assert
             returnedProviderData.Should().NotBeNull();
