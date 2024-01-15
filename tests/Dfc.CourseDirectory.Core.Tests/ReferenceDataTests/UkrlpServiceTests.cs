@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -47,16 +48,23 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 .Build();
 
             await server.StartAsync();
+            
+            // Required due to build server cert config
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
             var ukrlpWcfClientBuilder = new TestUkrlpWcfClientFactory
             {
                 Endpoint = $"{host}/{endpoint}"
             };
 
+
             var ukrlpService = new ReferenceData.Ukrlp.UkrlpService(ukrlpWcfClientBuilder, NullLogger<ReferenceData.Ukrlp.UkrlpService>.Instance);
 
             // Act
             var returnedProviderData = (await ukrlpService.GetProviderData(new[] { 10040271 })).Values.SingleOrDefault();
+
+            // Required due to build server cert config
+            ServicePointManager.ServerCertificateValidationCallback = null;
 
             // Assert
             returnedProviderData.Should().NotBeNull();
