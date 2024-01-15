@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 port = 49178;
             }
 
-            var host = $"http://localhost:{port}";
+            var host = $"https://localhost:{port}";
             var endpoint = "UkrlpProviderQueryWS6/ProviderQueryServiceV6";
 
             using var server = WebHost.CreateDefaultBuilder()
