@@ -215,9 +215,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 }));
 
         [HttpGet("delete")]
-        public async Task<IActionResult> DeleteUpload() =>
+        public async Task<IActionResult> DeleteUpload(bool isNonLars) =>
             await _mediator.SendAndMapResponse(
-                new DeleteUpload.Query(),
+                new DeleteUpload.Query() { IsNonLars = isNonLars},
                 command => View(command));
 
         [HttpPost("delete")]
@@ -345,9 +345,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     success => (command.WhatNext switch
                     {
-                        ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
-                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
-                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
+                        ErrorsWhatNext.UploadNewFile => command.IsNonLars ? RedirectToAction(nameof(NonLars)) : RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload),command.IsNonLars),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList), command.IsNonLars),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
