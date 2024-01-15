@@ -198,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should().Be(
-                $"/data-upload/courses/resolve/{rowNumber}/details?isNonLars=False*deliveryMode={expectedRedirectLocationDeliveryQueryParam}&providerId={provider.ProviderId}");
+                $"/data-upload/courses/resolve/{rowNumber}/details?isNonLars=False&deliveryMode={expectedRedirectLocationDeliveryQueryParam}&providerId={provider.ProviderId}");
         }
     }
 }
