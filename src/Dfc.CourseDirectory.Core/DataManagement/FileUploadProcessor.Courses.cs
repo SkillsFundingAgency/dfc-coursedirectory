@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-        public async Task DeleteCourseUploadForProvider(Guid providerId)
+        public async Task DeleteCourseUploadForProvider(Guid providerId, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -32,7 +32,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -249,7 +250,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId)
+        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -257,7 +258,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -275,7 +277,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, false);
+                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, isNonLars);
 
                 var (errorRows, _) = await dispatcher.ExecuteQuery(new GetCourseUploadRows()
                 {
