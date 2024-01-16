@@ -1,16 +1,13 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
-using Dfc.CourseDirectory.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
-using Dfc.CourseDirectory.Web.ViewModels;
 using System;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Bogus;
