@@ -476,6 +476,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     System.Globalization.CultureInfo.InvariantCulture);
             }
 
+            if (model.DeliveryMode != CourseDeliveryMode.WorkBased)
+            {
+                model.National = null;
+            }
+
             if (model.National == true)
             {
                 model.SelectedRegions = null;
