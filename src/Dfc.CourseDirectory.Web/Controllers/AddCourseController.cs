@@ -120,14 +120,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
                 },
                 NonLarsCourse = nonLarsCourse
-            };
-
-            if (nonLarsCourse)
-            {
-                viewModel.CourseType = CourseType.SkillsBootcamp;
-                viewModel.Sector = Sector.BusinessAndAdministration;
-                viewModel.EducationLevel = EducationLevel.EntryLevel;                
-            }
+            };            
 
             if (!nonLarsCourse)
             {
@@ -193,6 +186,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     }
                 }
 
+                if (nonLarsCourse)
+                {
+                    viewModel.CourseType = addCourseSection2Session.CourseType;
+                    viewModel.Sector = addCourseSection2Session.Sector;
+                    viewModel.EducationLevel = addCourseSection2Session.EducationLevel;
+                    viewModel.AwardingBody = addCourseSection2Session.AwardingBody;
+                }
             }
             else
             {
@@ -201,6 +201,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.DurationUnit = CourseDurationUnit.Months;
                 viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
+
+                if (nonLarsCourse)
+                {
+                    viewModel.CourseType = CourseType.SkillsBootcamp;
+                    viewModel.Sector = Sector.BusinessAndAdministration;
+                    viewModel.EducationLevel = EducationLevel.EntryLevel;
+                }
             }
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);

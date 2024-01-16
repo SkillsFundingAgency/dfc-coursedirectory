@@ -68,6 +68,7 @@
             @Html.HiddenFor(x => x.NotionalNVQLevelv2)
             @Html.HiddenFor(x => x.AwardOrgCode)
             @Html.HiddenFor(x => x.LearnAimRef)
+            @Html.HiddenFor(x => x.NonLarsCourse)
 
             <div class="section" id="sectionCourseName">
                 @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
@@ -295,6 +296,10 @@
             var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
             var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
             var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
+            var $radioCourseType = $("#CourseTypeRadioButtons").govUkRadios();
+            var $radioSector = $("#SectorRadioButtons").govUkRadios();
+            var $radioEducationLevel = $("#EducationLevelRadioButtons").govUkRadios();
+            var $awardingBody = $("#@nameof(Model.AwardingBody)").govUkInput();
             var $startDate = $("#start_date").govUkDateInput();
             var $selectedVenue = $("#@nameof(Model.VenueId)").govUkSelect();
             var $regions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
@@ -314,6 +319,7 @@
             var isClassroomBased = true;
             var isOnline = false;
             var isWorkBased = false;
+            var $nonLarsCourse = $("#@nameof(Model.NonLarsCourse)").govUkInput();
 
 
 
@@ -415,6 +421,10 @@
                 $courseName.govUkInput("validState");
                 $courseProviderReference.govUkInput("validState");
                 $radioDeliveryMode.govUkRadios("validState");
+                $radioCourseType.govUkRadios("validState");
+                $radioSector.govUkRadios("validState");
+                $radioEducationLevel.govUkRadios("validState");
+                $awardingBody.govUkInput("validState");
                 $startDate.govUkDateInput("validState");
                 $duration.govUkDurationInput("validState");
                 $selectedVenue.govUkSelect("validState");
@@ -423,20 +433,7 @@
                 $cost.govUkInput("validState");
                 $costDescription.govUkTextarea("validState");
                 $studyMode.govUkRadios("validState");
-                $attendance.govUkRadios("validState");
-
-                //if ($.requiredValidate($radioDeliveryMode.find("input[type=radio]:checked").val())) {
-                //    $radioDeliveryMode.govUkRadios("validState");
-                //    $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioDeliveryMode[0].id);
-                //    $errorSummary.govUkErrorSummary("hideIfEmpty");
-                //    validStates.push(true);
-                //} else {
-                //    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
-                //    var radioDeliveryModeErrorHashLinks = $radioDeliveryMode.govUkRadios("getErrorHashLinks");
-                //    $errorSummary.govUkErrorSummary("add", radioDeliveryModeErrorHashLinks);
-                //    $errorSummary.govUkErrorSummary("show");
-                //    validStates.push(false);
-                //}
+                $attendance.govUkRadios("validState");                
 
                 // course name
                 if (!$.requiredValidate($courseName.val())) {
@@ -505,6 +502,79 @@
                     $errorSummary.govUkErrorSummary("show");
 
                     validStates.push(false);
+                }
+
+                var isCourseNonLars = $nonLarsCourse.val().toLowerCase();
+                if (isCourseNonLars == "true") {
+                    // course type
+                    if ($.requiredValidate($radioCourseType.find("input[type='radio']:checked").val())) {
+                        $radioCourseType.govUkRadios("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioCourseType[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $radioCourseType.govUkRadios("invalidState", $radioCourseType.attr("val-required-message"));
+                        var courseTypeErrorHashLinks = $radioCourseType.govUkRadios("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", courseTypeErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+
+                    // sector
+                    if ($.requiredValidate($radioSector.find("input[type='radio']:checked").val())) {
+                        $radioSector.govUkRadios("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioSector[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $radioSector.govUkRadios("invalidState", $radioSector.attr("val-required-message"));
+                        var sectorErrorHashLinks = $radioSector.govUkRadios("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", sectorErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+
+                    // education level
+                    if ($.requiredValidate($radioEducationLevel.find("input[type='radio']:checked").val())) {
+                        $radioEducationLevel.govUkRadios("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $radioEducationLevel[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    } else {
+                        $radioEducationLevel.govUkRadios("invalidState", $radioEducationLevel.attr("val-required-message"));
+                        var educationLevelErrorHashLinks = $radioEducationLevel.govUkRadios("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", educationLevelErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    }
+
+                    // awarding body
+                    if (!$.requiredValidate($awardingBody.val())) {
+                        $awardingBody.govUkInput("invalidState", $awardingBody.attr("val-required-message"));
+                        var awardingBodyErrorHashLinks = $awardingBody.govUkInput("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", awardingBodyErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    } else if (
+                        !$.regexValidate({ regex: $awardingBody.attr("val-regex") }, $awardingBody.val())) {
+                        $awardingBody.govUkInput("invalidState", $awardingBody.attr("val-regex-message"));
+                        var awardingBodyErrorHashLinks = $awardingBody.govUkInput("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", awardingBodyErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    } else if (
+                        !$.maxLengthValidate({ max: $awardingBody.attr("val-max-length") }, $awardingBody.val())) {
+                        $awardingBody.govUkInput("invalidState", $awardingBody.attr("val-max-length-message"));
+                        var awardingBodyErrorHashLinks = $awardingBody.govUkInput("getErrorHashLinks");
+                        $errorSummary.govUkErrorSummary("add", awardingBodyErrorHashLinks);
+                        $errorSummary.govUkErrorSummary("show");
+                        validStates.push(false);
+                    } else {
+                        $awardingBody.govUkInput("validState");
+                        $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $awardingBody[0].id);
+                        $errorSummary.govUkErrorSummary("hideIfEmpty")
+                        validStates.push(true);
+                    }
                 }
 
                 // start date
