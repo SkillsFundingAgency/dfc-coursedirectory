@@ -721,7 +721,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: user,
-                UploadStatus.ProcessedWithErrors);
+                UploadStatus.ProcessedWithErrors,null,true);
 
             var fileUploadProcessor = new FileUploadProcessor(
                 SqlQueryDispatcherFactory,
@@ -815,7 +815,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                         record.ProviderVenueRef = venue.ProviderVenueRef;
                         record.VenueId = venue.VenueId;
                     });
-                });
+                },true);
 
             // Delete the venue linked to the row in the upload, triggering revalidation
             // (which should fail since the venue has gone away)

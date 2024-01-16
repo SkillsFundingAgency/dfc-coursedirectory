@@ -219,7 +219,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -291,17 +292,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId)
+        public IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId, bool isNonLars)
         {
-            return GetCourseUploadId().ToObservable()
+            return GetCourseUploadId(isNonLars).ToObservable()
                 .SelectMany(courseUploadId => GetCourseUploadStatusUpdates(courseUploadId))
                 .DistinctUntilChanged()
                 .TakeUntil(status => status.IsTerminal());
 
-            async Task<Guid> GetCourseUploadId()
+            async Task<Guid> GetCourseUploadId(bool isNonLars)
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider() { ProviderId = providerId });
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider() { ProviderId = providerId, IsNonLars = true });
 
                 if (courseUpload == null)
                 {
@@ -446,7 +447,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)

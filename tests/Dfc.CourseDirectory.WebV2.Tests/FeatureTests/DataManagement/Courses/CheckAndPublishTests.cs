@@ -43,6 +43,31 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData(UploadStatus.Created)]
+        [InlineData(UploadStatus.Processing)]
+        [InlineData(UploadStatus.Published)]
+        [InlineData(UploadStatus.Abandoned)]
+        public async Task Get_ProviderHasNoNonLarsCourseUploadAtProcessedStatus_ReturnsError(UploadStatus? uploadStatus)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            if (uploadStatus.HasValue)
+            {
+                await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value,null,true);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}&isnonlars=true");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
         [Fact]
         public async Task Get_CourseUploadHasErrors_RedirectsToErrors()
         {
@@ -64,6 +89,29 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.Headers.Location.OriginalString.Should()
                 .Be($"/data-upload/courses/errors?providerId={provider.ProviderId}");
         }
+
+        [Fact]
+        public async Task Get_NonLarsCourseUploadHasErrors_RedirectsToErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (venueUpload, _) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,null,true);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}&isnonlars=true");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should()
+                .Be($"/data-upload/courses/errors?providerId={provider.ProviderId}");
+        }
+
 
         [Fact]
         public async Task Get_ValidRequest_RendersExpectedOutput()
@@ -94,6 +142,34 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             }
         }
 
+        [Fact]
+        public async Task Get_ValidNonLarsRequest_RendersExpectedOutput()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder => rowBuilder.AddValidNonLarsRows(3),true);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}&isnonlars=true");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("RowCount").TextContent.Should().Be("3");
+            }
+        }
+
+
         [Theory]
         [InlineData(null)]
         [InlineData(UploadStatus.Created)]
@@ -114,6 +190,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Confirm", "true")
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(UploadStatus.Created)]
+        [InlineData(UploadStatus.Processing)]
+        [InlineData(UploadStatus.Published)]
+        [InlineData(UploadStatus.Abandoned)]
+        public async Task Post_ProviderHasNoNonLarsCourseUploadAtProcessedStatus_ReturnsError(UploadStatus? uploadStatus)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            if (uploadStatus.HasValue)
+            {
+                await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value,null,true);
+            }
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("Confirm", "true")
+                    .Add("IsNonLars", "true")
                     .ToContent()
             };
 
@@ -152,6 +259,34 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Fact]
+        public async Task Post_NotConfirmed_NonLars_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedSuccessfully,null,true);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("IsNonLars", "true")
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("Confirm", "Confirm you want to publish these courses");
+        }
+
+        [Fact]
         public async Task Post_ValidRequest_PublishesRowsAndRedirects()
         {
             // Arrange
@@ -169,6 +304,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Confirm", "true")
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString
+                .Should().Be($"/data-upload/courses/success?providerId={provider.ProviderId}");
+
+            courseUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUpload.CourseUploadId }));
+            courseUpload.UploadStatus.Should().Be(UploadStatus.Published);
+            courseUpload.PublishedOn.Should().Be(Clock.UtcNow);
+
+            var journeyInstance = GetJourneyInstance<PublishJourneyModel>(
+                "PublishCourseUpload",
+                keys => keys.With("providerId", provider.ProviderId));
+            journeyInstance.State.CoursesPublished.Should().Be(3);
+        }
+        [Fact]
+        public async Task Post_ValidRequest_PublishesNonLarsRowsAndRedirects()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder => rowBuilder.AddValidNonLarsRows(3),true);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("Confirm", "true")
+                    .Add("IsNonLars", "true")
                     .ToContent()
             };
 

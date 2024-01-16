@@ -43,7 +43,7 @@
         }
 
         var queryParams = new URLSearchParams(window.location.search);
-        const url = '/data-upload/courses/hub?providerId=' + queryParams.get('providerId');
+        const url = '/data-upload/courses/hub?providerId=' + queryParams.get('providerId') + "&isnonlars=" + queryParams.get('isNonLars');
 
         const connection = new signalR.HubConnectionBuilder()
             .withUrl(url)

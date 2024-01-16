@@ -290,6 +290,23 @@ namespace Dfc.CourseDirectory.Testing
                 return this;
             }
 
+            public CourseUploadRowBuilder AddValidNonLarsRow()
+            {
+                var record = CreateValidNonLarsRecord();
+                _records.Add(record);
+                return this;
+            }
+
+            public CourseUploadRowBuilder AddValidNonLarsRows( int count)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    AddValidNonLarsRow();
+                }
+
+                return this;
+            }
+
             internal IReadOnlyCollection<UpsertCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
 
             private UpsertCourseUploadRowsRecord CreateRecord(
