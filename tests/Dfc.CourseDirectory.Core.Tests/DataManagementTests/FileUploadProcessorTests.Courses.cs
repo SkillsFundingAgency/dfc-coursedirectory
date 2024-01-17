@@ -501,7 +501,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
 
             var uploadRows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 3).ToArray();
             var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(uploadRows);
@@ -581,7 +581,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
            
             var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(
                 // Empty record will always yield errors
