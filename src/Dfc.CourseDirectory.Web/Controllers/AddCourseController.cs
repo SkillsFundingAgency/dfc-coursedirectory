@@ -440,7 +440,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View("Summary", summaryViewModel);
         }
 
-
         // Summary - can go to AddCourse, AddCourseRun or Edit screen
         [Authorize]
         [HttpPost]
