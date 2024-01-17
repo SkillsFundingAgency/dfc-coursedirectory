@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId, bool isNonLars);
         Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId, bool isNonLars);
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId, bool isNonLars);
-        Task ProcessCourseFile(Guid courseUploadId, Stream stream, bool isNonLars);
+        Task ProcessCourseFile(Guid courseUploadId, Stream stream);
         Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy, bool IsNonLars);
         Task<SaveCourseFileResult> SaveCourseFile(Guid providerId,bool isNonLars, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update);

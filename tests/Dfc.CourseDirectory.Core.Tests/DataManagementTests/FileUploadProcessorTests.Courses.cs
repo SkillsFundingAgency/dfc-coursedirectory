@@ -469,7 +469,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream,false);
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream );
 
             // Assert
             courseUpload = await WithSqlQueryDispatcher(
@@ -507,7 +507,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(uploadRows);
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream,true);
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
             courseUpload = await WithSqlQueryDispatcher(
@@ -549,7 +549,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 });
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream, false);
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
             courseUpload = await WithSqlQueryDispatcher(
@@ -590,7 +590,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 });
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream, true);
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
             courseUpload = await WithSqlQueryDispatcher(
@@ -631,7 +631,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream,false);
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
             var rows = await WithSqlQueryDispatcher(async dispatcher =>
@@ -671,7 +671,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream, false);
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
             var rows = await WithSqlQueryDispatcher(async dispatcher =>

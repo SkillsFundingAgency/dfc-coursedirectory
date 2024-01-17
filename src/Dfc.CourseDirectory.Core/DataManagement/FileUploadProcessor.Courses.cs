@@ -302,7 +302,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             async Task<Guid> GetCourseUploadId(bool isNonLars)
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
-                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider() { ProviderId = providerId, IsNonLars = true });
+                var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider() { ProviderId = providerId, IsNonLars = isNonLars });
 
                 if (courseUpload == null)
                 {
@@ -313,10 +313,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task ProcessCourseFile(Guid courseUploadId, Stream stream, bool isNonLars)
+        public async Task ProcessCourseFile(Guid courseUploadId, Stream stream)
         {
+            bool isNonLars = false;
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
+                var uploadedCourse = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
+                isNonLars = uploadedCourse.IsNonLars;
+
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetCourseUploadProcessing()
                 {
                     CourseUploadId = courseUploadId,
