@@ -40,5 +40,7 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public string AwardOrgAimRef { get; set; }
 
         public DateTime? OperationalEndDate { get; set; }
+
+        public bool IsExpired { get; set; }
     }
 }

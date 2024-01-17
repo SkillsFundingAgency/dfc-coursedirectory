@@ -145,7 +145,16 @@
         "filterable": false,
         "sortable": false,
         "facetable": false
-      }
+      }, 
+	  {
+		"name": "IsExpired",
+		"type": "Edm.Boolean",
+		"searchable": false,
+		"filterable": true,
+		"retrievable": true,
+		"sortable": true,
+		"facetable": true
+	}
     ]
   },
   {

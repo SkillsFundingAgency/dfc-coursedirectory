@@ -120,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                     PageNumber = request.PageNumber,
                     NotionalNVQLevelv2Filters = request.NotionalNVQLevelv2,
                     AwardOrgCodeFilters = request.AwardingOrganisation,
-                    //AwardOrgAimRefFilters = request.AwardOrgAimRefFilter,
+                    ExcludeExpired = true
                 }));
 
             var unfilteredResult = results[0];

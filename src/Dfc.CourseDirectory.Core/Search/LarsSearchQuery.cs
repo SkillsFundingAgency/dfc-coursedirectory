@@ -32,6 +32,8 @@ namespace Dfc.CourseDirectory.Core.Search
 
         public int? PageNumber { get; set; }
 
+        public bool ExcludeExpired { get; set; } = false;
+
         public (string SearchText, SearchOptions Options) GenerateSearchQuery()
         {
             var searchTerms = SearchText.TransformSegments(s => s
@@ -69,6 +71,10 @@ namespace Dfc.CourseDirectory.Core.Search
                 builder.WithSkip(PageSize * (PageNumber - 1));
             }
 
+            if (ExcludeExpired)
+            {
+                builder.WithFilters($"{nameof(Lars.IsExpired)} eq 0 ");
+            }
             return builder.Build();
         }
     }
