@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
                         return this.ViewFromErrors(errors);
                     },
-                    success => RedirectToAction(nameof(InProgress),false).WithProviderContext(_providerContextProvider.GetProviderContext())));
+                    success => RedirectToAction(nameof(InProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
         [HttpPost("uploadnonlars")]
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    success => RedirectToAction(nameof(InProgress), true).WithProviderContext(_providerContextProvider.GetProviderContext())));
+                    success => RedirectToAction(nameof(NonLarsInProgress)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
         [HttpGet("resolve")]
@@ -201,19 +201,32 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("in-progress")]
-        public async Task<IActionResult> InProgress(bool isNonLars) => await _mediator.SendAndMapResponse(
-            new InProgress.Query() { IsNonLars = isNonLars},
+        public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query() { IsNonLars = false},
             result => result.Match(
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish),isNonLars)
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish),false)
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors), isNonLars)
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors), false)
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
 
+        [HttpGet("nonlars-in-progress")]
+        public async Task<IActionResult> NonLarsInProgress() => await _mediator.SendAndMapResponse(
+            new InProgress.Query() { IsNonLars = true },
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish), true)
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors), true)
+                        .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    _ => View(status)
+                }));
         [HttpGet("delete")]
         public async Task<IActionResult> DeleteUpload(bool isNonLars) =>
             await _mediator.SendAndMapResponse(

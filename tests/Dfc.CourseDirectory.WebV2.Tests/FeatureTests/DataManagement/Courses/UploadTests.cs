@@ -144,7 +144,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Redirect);
-            response.Headers.Location.Should().Be($"/data-upload/courses/in-progress?providerId={provider.ProviderId}");
+            response.Headers.Location.Should().Be($"/data-upload/courses/nonlars-in-progress?providerId={provider.ProviderId}");
 
             SqlQuerySpy.VerifyQuery<CreateCourseUpload, Success>(q =>
                 q.CreatedBy.UserId == User.UserId &&

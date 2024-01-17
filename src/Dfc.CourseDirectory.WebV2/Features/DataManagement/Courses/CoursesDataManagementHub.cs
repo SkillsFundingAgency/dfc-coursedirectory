@@ -24,11 +24,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             _fileUploadProcessor = fileUploadProcessor;
         }
 
-        public ChannelReader<UploadStatus> StatusUpdates(bool isNonLars,CancellationToken cancellationToken)
+        public ChannelReader<UploadStatus> StatusUpdates(CancellationToken cancellationToken)
         {
             var channel = Channel.CreateUnbounded<UploadStatus>();
 
-            var obs = _fileUploadProcessor.GetCourseUploadStatusUpdatesForProvider(_providerContextProvider.GetProviderId(),isNonLars)
+            var obs = _fileUploadProcessor.GetCourseUploadStatusUpdatesForProvider(_providerContextProvider.GetProviderId(),false)
+                    .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.Processing);
+
+            var subscription = obs.Subscribe(
+                v => channel.Writer.WriteAsync(v),
+                onCompleted: () => channel.Writer.Complete());
+
+            cancellationToken.Register(() => subscription.Dispose());
+
+            return channel.Reader;
+        }
+        public ChannelReader<UploadStatus> NonLarsStatusUpdates(CancellationToken cancellationToken)
+        {
+            var channel = Channel.CreateUnbounded<UploadStatus>();
+
+            var obs = _fileUploadProcessor.GetCourseUploadStatusUpdatesForProvider(_providerContextProvider.GetProviderId(), true)
                     .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.Processing);
 
             var subscription = obs.Subscribe(
