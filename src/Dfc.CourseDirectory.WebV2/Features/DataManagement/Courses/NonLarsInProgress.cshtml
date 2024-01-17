@@ -53,7 +53,7 @@
             connection.start().then(function () {
                 connection.stream('NonLarsStatusUpdates').subscribe({
                     next: function (status) {
-                        const message = status == 0 ? 'Uploading file' : 'Processing data';
+                    const message = status == 0 ? 'Uploading Non LARS file' : 'Processing Non LARS data';
                         $('#StatusMessage').text(message);
                     },
                     complete: function () {
