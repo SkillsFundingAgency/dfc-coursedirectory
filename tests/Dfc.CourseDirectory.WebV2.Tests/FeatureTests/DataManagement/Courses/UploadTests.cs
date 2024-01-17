@@ -180,7 +180,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Arrange
             var provider = await TestData.CreateProvider(providerType: ProviderType.FE | ProviderType.NonLARS);
             
-            var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
+            var (oldUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully,null,true);
 
             var csvStream = DataManagementFileHelper.CreateCourseUploadCsvStream(string.Empty, rowCount: 1, true);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
