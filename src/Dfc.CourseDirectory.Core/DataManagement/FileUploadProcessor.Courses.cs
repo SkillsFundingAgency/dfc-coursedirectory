@@ -571,7 +571,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var existingUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (existingUpload != null && existingUpload.UploadStatus.IsUnprocessed())
@@ -594,7 +595,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     CourseUploadId = courseUploadId,
                     CreatedBy = uploadedBy,
                     CreatedOn = _clock.UtcNow,
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 await dispatcher.Transaction.CommitAsync();
