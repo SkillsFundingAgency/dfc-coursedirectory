@@ -107,8 +107,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Theory]
-        [InlineData(UploadStatus.Created, "Uploading file")]
-        [InlineData(UploadStatus.Processing, "Processing data")]
+        [InlineData(UploadStatus.Created, "Uploading Non LARS file")]
+        [InlineData(UploadStatus.Processing, "Processing Non LARS data")]
         public async Task Get_NonLarsUploadProcessingIsIncomplete_ReturnsLoadingView(
             UploadStatus uploadStatus,
             string expectedMessage)
@@ -118,7 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus,null,true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/in-progress?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-in-progress?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
-            doc.GetElementsByClassName("h1").SingleOrDefault()?.TextContent.Should().Be("Uploading your course data");
+            doc.GetElementsByClassName("h1").SingleOrDefault()?.TextContent.Should().Be("Uploading your Non LARS course data");
             doc.GetElementById("StatusMessage").TextContent.Trim().Should().Be(expectedMessage);
         }
 
@@ -141,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), processedStatus, null, true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/in-progress?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-in-progress?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
