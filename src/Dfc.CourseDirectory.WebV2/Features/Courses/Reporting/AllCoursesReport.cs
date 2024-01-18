@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -116,6 +115,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
 
         [Name("HOW_YOU_WILL_BE_ASSESSED")]
         public string HowYouWillBeAssessed { get; set; }
+
+        [Name("COURSE_TYPE")]
+        public int? CourseType { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -172,7 +174,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         LocationWebsite = result.VenueWebsite,
                         UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                         EntryRequirements = result.EntryRequirements,
-                        HowYouWillBeAssessed = result.HowYouWillBeAssessed
+                        HowYouWillBeAssessed = result.HowYouWillBeAssessed,
+                        CourseType = result.CourseType
                     };
                 }
             }

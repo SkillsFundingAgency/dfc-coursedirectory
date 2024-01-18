@@ -33,7 +33,7 @@ FROM Pttcd.CourseUploadRows cur
 LEFT JOIN Pttcd.Venues v ON cur.VenueId = v.VenueId
 WHERE cur.CourseUploadId = @CourseUploadId
 AND cur.CourseUploadRowStatus = {(int)UploadRowStatus.Default}
-AND cur.ResolvedDeliveryMode = {(int)CourseDeliveryMode.ClassroomBased}
+AND (cur.ResolvedDeliveryMode = {(int)CourseDeliveryMode.ClassroomBased} or cur.ResolvedDeliveryMode = {(int)CourseDeliveryMode.BlendedLearning})
 AND (
     -- Matched venue has been updated or deleted since we last validated row
     (cur.VenueId IS NOT NULL AND ISNULL(v.UpdatedOn, v.CreatedOn) > cur.LastValidated)

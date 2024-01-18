@@ -248,6 +248,12 @@
       "metadata": {
         "description": "The URL for FindACourse for specific environment"
       }
+    },
+    "workspaceName": {
+        "type": "string"
+    },
+    "workspaceResourceGroup": {
+        "type": "string"
     }
   },
   "variables": {
@@ -274,6 +280,12 @@
           },
           "attachedService": {
             "value": "[variables('appServiceName')]"
+          },
+          "workspaceName": {
+            "value": "[parameters('workspaceName')]"
+          },
+          "workspaceResourceGroup": {
+            "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }
@@ -563,6 +575,10 @@
               {
                 "name": "FindACourse__Url",
                 "value": "[parameters('FindACourseUrl')]"
+              },
+              {
+                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                "value": "Information"
               }
             ]
           },
@@ -594,6 +610,12 @@
           },
           "attachedService": {
             "value": ""
+          },
+          "workspaceName": {
+            "value": "[parameters('workspaceName')]"
+          },
+          "workspaceResourceGroup": {
+            "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }

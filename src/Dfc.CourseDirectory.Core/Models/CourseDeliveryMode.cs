@@ -6,7 +6,8 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         ClassroomBased = 1,
         Online = 2,
-        WorkBased = 3
+        WorkBased = 3,
+        BlendedLearning = 4
     }
 
     public static class CourseDeliveryModeExtensions
@@ -17,6 +18,7 @@ namespace Dfc.CourseDirectory.Core.Models
             CourseDeliveryMode.ClassroomBased => "Classroom based",
             CourseDeliveryMode.Online => "Online",
             CourseDeliveryMode.WorkBased => "Work based",
+            CourseDeliveryMode.BlendedLearning => "Blended learning",
             _ => throw new NotSupportedException($"Unknown delivery mode: '{deliveryMode}'.")
         };
     }

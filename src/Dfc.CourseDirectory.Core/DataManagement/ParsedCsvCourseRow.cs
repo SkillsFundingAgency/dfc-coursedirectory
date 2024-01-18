@@ -58,6 +58,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapDeliveryMode(CourseDeliveryMode? value) => value switch
         {
+            CourseDeliveryMode.BlendedLearning => "Blended learning",
             CourseDeliveryMode.ClassroomBased => "Classroom",
             CourseDeliveryMode.Online => "Online",
             CourseDeliveryMode.WorkBased => "Work based",
@@ -69,6 +70,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapDurationUnit(CourseDurationUnit? value) => value switch
         {
+            CourseDurationUnit.Minutes => "Minutes",
             CourseDurationUnit.Hours => "Hours",
             CourseDurationUnit.Days => "Days",
             CourseDurationUnit.Weeks => "Weeks",
@@ -128,6 +130,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static CourseDeliveryMode? ResolveDeliveryMode(string value) => value?.ToLower()?.Trim() switch
         {
+            "blended" => CourseDeliveryMode.BlendedLearning,
+            "blendedlearning" => CourseDeliveryMode.BlendedLearning,
+            "blended learning" => CourseDeliveryMode.BlendedLearning,
             "classroom based" => CourseDeliveryMode.ClassroomBased,
             "classroombased" => CourseDeliveryMode.ClassroomBased,
             "classroom" => CourseDeliveryMode.ClassroomBased,
@@ -143,6 +148,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static CourseDurationUnit? ResolveDurationUnit(string value) => value?.ToLower()?.Trim() switch
         {
+            "minutes" => CourseDurationUnit.Minutes,
             "hours" => CourseDurationUnit.Hours,
             "days" => CourseDurationUnit.Days,
             "weeks" => CourseDurationUnit.Weeks,

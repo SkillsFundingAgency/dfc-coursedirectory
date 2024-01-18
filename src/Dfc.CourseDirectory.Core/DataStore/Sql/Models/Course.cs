@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 {
@@ -23,5 +24,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string AwardOrgCode { get; set; }
         public string NotionalNVQLevelv2 { get; set; }
         public string LearnAimRefTitle { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 }

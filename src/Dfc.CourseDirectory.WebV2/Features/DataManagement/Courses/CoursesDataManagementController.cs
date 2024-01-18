@@ -93,6 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                         rowNumber = rowNumber,
                         deliveryMode = command.DeliveryMode switch
                         {
+                            CourseDeliveryMode.BlendedLearning => "blended",
                             CourseDeliveryMode.ClassroomBased => "classroom",
                             CourseDeliveryMode.Online => "online",
                             CourseDeliveryMode.WorkBased => "work",

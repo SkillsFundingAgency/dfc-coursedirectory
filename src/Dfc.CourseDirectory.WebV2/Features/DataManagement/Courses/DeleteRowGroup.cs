@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
     {
         private static readonly CourseDeliveryMode[] _allDeliveryModes = new[]
         {
+            CourseDeliveryMode.BlendedLearning,
             CourseDeliveryMode.ClassroomBased,
             CourseDeliveryMode.Online,
             CourseDeliveryMode.WorkBased

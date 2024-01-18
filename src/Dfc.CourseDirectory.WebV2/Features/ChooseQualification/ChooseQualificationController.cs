@@ -122,6 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                     {
                         deliveryMode = command.DeliveryMode switch
                         {
+                            CourseDeliveryMode.BlendedLearning => "blended",
                             CourseDeliveryMode.ClassroomBased => "classroom",
                             CourseDeliveryMode.Online => "online",
                             CourseDeliveryMode.WorkBased => "work",

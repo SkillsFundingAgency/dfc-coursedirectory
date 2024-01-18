@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             };
 
             vm.ValPastDateRef = DateTime.Now;
-            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+            vm.ValPastDateMessage = "Start Date cannot be earlier than todayâ€™s date";
 
             vm.CourseName = cachedData.CourseName;
             vm.AttendanceMode = cachedData.AttendanceMode;
@@ -319,7 +319,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     };
 
                     vm.ValPastDateRef = DateTime.Now;
-                    vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+                    vm.ValPastDateMessage = "Start Date cannot be earlier than todayâ€™s date";
 
                     if ((courseRun.SubRegionIds?.Count ?? 0) == 0) return View("EditCourseRun", vm);
 
@@ -423,7 +423,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 DurationUnit = model.DurationUnit,
                 DeliveryMode = model.DeliveryMode,
                 Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
-                CostDescription = model.CostDescription ?? "",
+                CostDescription = ASCIICodeHelper.RemoveASCII(model.CostDescription) ?? "",
                 CourseName = model.CourseName,
                 CourseUrl = model.Url,
                 DurationValue = Convert.ToInt32(model.DurationLength),
@@ -437,6 +437,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             updateCommand.National = null;
             switch (model.DeliveryMode)
             {
+                case CourseDeliveryMode.BlendedLearning:
                 case CourseDeliveryMode.ClassroomBased:
                     updateCommand.National = null;
                     updateCommand.SubRegionIds = null;
