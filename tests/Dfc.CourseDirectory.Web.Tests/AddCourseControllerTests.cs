@@ -15,6 +15,12 @@ using System;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Bogus;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Web.RequestModels;
+using Newtonsoft.Json;
+using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.Web.Tests
 {
@@ -26,6 +32,10 @@ namespace Dfc.CourseDirectory.Web.Tests
         private const string SessionAwardOrgCode = "AwardOrgCode";
         private const string SessionLearnAimRefTitle = "LearnAimRefTitle";
         private const string SessionLearnAimRefTypeDesc = "LearnAimRefTypeDesc";
+        private const string SessionAddCourseSection2 = "AddCourseSection2";
+        private const string SessionAddCourseSection1 = "AddCourseSection1";
+        protected const string SessionVenues = "Venues";
+        protected const string SessionRegions = "Regions";
         private readonly Mock<ICourseService> _mockCourseService;
         private readonly Mock<ISession> _mockSession;
         private readonly Mock<ISqlQueryDispatcher> _mockSqlQueryDispatcher;
@@ -43,6 +53,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockCourseTypeService = new Mock<ICourseTypeService>();
         }
 
+        #region Tests for AddCourse action method
         [Fact]
         public async Task AddCourse_WhenLearnAimRefHasValueAndCourseIdIsNull_ReturnsViewModelWithEmptyCourseDataAndSetsLarsSessionObjects()
         {
@@ -185,7 +196,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             Assert.NotNull(viewModel);
 
             _mockSession.Verify(p => p.Set(SessionNonLarsCourse, Encoding.UTF8.GetBytes("true")), Times.Once);
-        }
+        }       
 
         [Fact]
         public async Task AddCourse_WhenLearnAimRefIsNullOrEmptyAndCourseIdHasValue_ReturnsViewModelWithCourseDataAndSetsNonLarsSessionObject()
@@ -223,6 +234,399 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockSession.Verify(p => p.Set(SessionNonLarsCourse, Encoding.UTF8.GetBytes("true")), Times.Once);
             _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetNonLarsCourse>()), Times.Once); 
         }
+        #endregion
+
+        #region Tests for AddCourseDetails action method
+        [Fact]
+        public async Task AddCourseDetails_WhenUkprnIsNull_RedirectsToHomePageWithErrorMessage()
+        {
+            // Arrange
+            var addCourseController = GetController();            
+
+            // Act
+            var result = await addCourseController.AddCourseDetails(null) as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("Home", result.ControllerName);
+            Assert.Equal("Index", result.ActionName);
+            Assert.Equal("Please select a Provider.", result.RouteValues["errmsg"]);
+        }
+
+        [Fact]
+        public async Task AddCourseDetails_WhenSessionAddCourseSection2IsNullAndCourseIsLars_ReturnsViewModelWithDefaultValues()
+        {
+            // Arrange
+            var addCourseController = GetController();
+            var ukprn = Encoding.UTF8.GetBytes("123456");
+            var sessionUkprn = "UKPRN";
+
+            _mockSession.Setup(m => m.TryGetValue(sessionUkprn, out ukprn)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            var learnAimRefValue = Encoding.UTF8.GetBytes("6152348");
+            _mockSession.Setup(m => m.TryGetValue(SessionLearnAimRef, out learnAimRefValue)).Returns(true);
+
+            var venues = new Faker<Venue>().Generate(2);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>())).ReturnsAsync(venues);
+
+            // Act
+            var viewResult = await addCourseController.AddCourseDetails(null) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(viewResult);
+
+            var viewModel = viewResult.Model as AddCourseDetailsViewModel;
+            Assert.NotNull(viewModel);
+
+            Assert.NotNull(viewModel.LearnAimRef);
+            Assert.Null(viewModel.CourseType);
+            Assert.Null(viewModel.Sector);
+            Assert.Null(viewModel.EducationLevel);            
+
+            _mockSession.Verify(m => m.TryGetValue(sessionUkprn, out ukprn), Times.AtLeastOnce);
+            _mockProviderContextProvider.Verify(m => m.GetProviderContext(true), Times.AtLeastOnce);
+            _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>()), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public async Task AddCourseDetails_WhenSessionAddCourseSection2IsNullAndCourseIsNonLars_ReturnsViewModelWithDefaultValues()
+        {
+            // Arrange
+            var addCourseController = GetController();
+            var ukprn = Encoding.UTF8.GetBytes("123456");
+            var sessionUkprn = "UKPRN";
+
+            _mockSession.Setup(m => m.TryGetValue(sessionUkprn, out ukprn)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            var venues = new Faker<Venue>().Generate(2);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>())).ReturnsAsync(venues);
+
+            var trueValue = Encoding.UTF8.GetBytes("true");
+            _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValue)).Returns(true);
+
+            // Act
+            var viewResult = await addCourseController.AddCourseDetails(null) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(viewResult);
+
+            var viewModel = viewResult.Model as AddCourseDetailsViewModel;
+            Assert.NotNull(viewModel);
+
+            Assert.Equal(CourseType.SkillsBootcamp, viewModel.CourseType);
+            Assert.Equal(Sector.BusinessAndAdministration, viewModel.Sector);
+            Assert.Equal(EducationLevel.EntryLevel, viewModel.EducationLevel);
+            Assert.Null(viewModel.LearnAimRef);
+
+            _mockSession.Verify(m => m.TryGetValue(sessionUkprn, out ukprn), Times.AtLeastOnce);
+            _mockProviderContextProvider.Verify(m => m.GetProviderContext(true), Times.AtLeastOnce);
+            _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>()), Times.AtLeastOnce);
+            _mockSession.Verify(m => m.TryGetValue(SessionNonLarsCourse, out trueValue), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public async Task AddCourseDetails_WhenSessionAddCourseSection2IsNotNullAndCourseIsLars_ReturnsViewModelWithDefaultValues()
+        {
+            // Arrange
+            var addCourseController = GetController();
+            var ukprn = Encoding.UTF8.GetBytes("123456");
+            var sessionUkprn = "UKPRN";
+
+            _mockSession.Setup(m => m.TryGetValue(sessionUkprn, out ukprn)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            var learnAimRefValue = Encoding.UTF8.GetBytes("6152348");
+            _mockSession.Setup(m => m.TryGetValue(SessionLearnAimRef, out learnAimRefValue)).Returns(true);
+
+            var model = new Faker<AddCourseRequestModel>()
+                .RuleFor(c => c.CourseId, f => Guid.NewGuid())
+                .RuleFor(c => c.CourseRunId, f => Guid.NewGuid())
+                .RuleFor(c => c.CourseName, f => f.Lorem.Sentence())
+                .RuleFor(c => c.CourseProviderReference, f => f.Lorem.Word())
+                .RuleFor(c => c.DeliveryMode, f => CourseDeliveryMode.ClassroomBased)
+                .RuleFor(c => c.Cost, f => 20)
+                .Generate();
+
+            var modelValue = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out modelValue)).Returns(true);
+
+            var venues = new Faker<Venue>().Generate(2);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>())).ReturnsAsync(venues);
+
+            // Act
+            var viewResult = await addCourseController.AddCourseDetails(null) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(viewResult);
+
+            var viewModel = viewResult.Model as AddCourseDetailsViewModel;
+            Assert.NotNull(viewModel);
+
+            Assert.NotNull(viewModel.LearnAimRef);
+            Assert.Null(viewModel.CourseType);
+            Assert.Null(viewModel.Sector);
+            Assert.Null(viewModel.EducationLevel);
+
+            _mockSession.Verify(m => m.TryGetValue(sessionUkprn, out ukprn), Times.AtLeastOnce);
+            _mockProviderContextProvider.Verify(m => m.GetProviderContext(true), Times.AtLeastOnce);
+            _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>()), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public async Task AddCourseDetails_WhenSessionAddCourseSection2IsNotNullAndCourseIsNonLars_ReturnsViewModelWithDefaultValues()
+        {
+            // Arrange
+            var addCourseController = GetController();
+            var ukprn = Encoding.UTF8.GetBytes("123456");
+            var sessionUkprn = "UKPRN";
+
+            _mockSession.Setup(m => m.TryGetValue(sessionUkprn, out ukprn)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            var venues = new Faker<Venue>().Generate(2);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>())).ReturnsAsync(venues);
+
+            var trueValue = Encoding.UTF8.GetBytes("true");
+            _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValue)).Returns(true);
+
+            var model = GetAddCourseRequestModel();
+            model.SelectedVenues = new Guid[] { Guid.Empty };
+
+            var modelValue = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out modelValue)).Returns(true);
+
+            // Act
+            var viewResult = await addCourseController.AddCourseDetails(null) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(viewResult);
+
+            var viewModel = viewResult.Model as AddCourseDetailsViewModel;
+            Assert.NotNull(viewModel);
+
+            Assert.Equal(CourseType.SkillsBootcamp, viewModel.CourseType);
+            Assert.Equal(Sector.TransportAndLogistics, viewModel.Sector);
+            Assert.Equal(EducationLevel.Two, viewModel.EducationLevel);
+            Assert.Null(viewModel.LearnAimRef);
+
+            _mockSession.Verify(m => m.TryGetValue(sessionUkprn, out ukprn), Times.AtLeastOnce);
+            _mockProviderContextProvider.Verify(m => m.GetProviderContext(true), Times.AtLeastOnce);
+            _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>()), Times.AtLeastOnce);
+            _mockSession.Verify(m => m.TryGetValue(SessionNonLarsCourse, out trueValue), Times.AtLeastOnce);
+        }
+        #endregion
+
+        #region Tests for AddCourseRun action method
+        [Fact]
+        public void AddCourseRun_WhenCalled_SetsSessionAddCourseSection2ModelObjectAndReturnsAddCourseSummaryViewModel()
+        {
+            // Arrange
+            var controller = GetController();
+
+            var model = GetAddCourseRequestModel();
+            var section1RequestModel = GetAddCourseSection1RequestModel();
+            var venueModel = GetSelectVenueModel();
+            var regionModel = new SelectRegionModel();
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.Set(SessionAddCourseSection2, section2ModelBytes));
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1RequestModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var venueModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(venueModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);            
+
+            var regionModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(regionModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionRegions, out regionModelBytes)).Returns(true);
+
+            // Act
+            var result = controller.AddCourseRun(model) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            var viewModel = result.Model as AddCourseSummaryViewModel;
+            Assert.NotNull(viewModel);
+
+            _mockSession.Verify(m => m.Set(SessionAddCourseSection2, It.IsAny<byte[]>()), Times.AtLeastOnce);
+        }
+
+        [Fact]
+        public void AddCourseRun_WhenDeliveryModeIsClassroomBased_ReturnsViewModelWithAtleast1Venue()
+        {
+            // Arrange
+            var controller = GetController();
+
+            var venueId = Guid.NewGuid();
+            var model = GetAddCourseRequestModel();
+            model.SelectedVenues = new Guid[] { venueId };
+
+            var section1RequestModel = GetAddCourseSection1RequestModel();
+
+            var venueModel = GetSelectVenueModel();
+            venueModel.VenueItems[0].Id = venueId.ToString();
+
+            var regionModel = new SelectRegionModel();
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.Set(SessionAddCourseSection2, section2ModelBytes));
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1RequestModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var venueModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(venueModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);
+
+            var regionModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(regionModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionRegions, out regionModelBytes)).Returns(true);
+
+            // Act
+            var result = controller.AddCourseRun(model) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            var viewModel = result.Model as AddCourseSummaryViewModel;
+            Assert.NotNull(viewModel);
+
+            Assert.True(viewModel.Venues.Any());
+            Assert.Null(viewModel.Regions);
+        }
+
+        [Fact]
+        public void AddCourseRun_WhenDeliveryModeIsOnline_ReturnsViewModelWithNoVenueAndRegions()
+        {
+            // Arrange
+            var controller = GetController();
+            
+            var model = GetAddCourseRequestModel();
+            model.DeliveryMode = CourseDeliveryMode.Online;
+
+            var section1RequestModel = GetAddCourseSection1RequestModel();
+            var venueModel = GetSelectVenueModel();
+            var regionModel = new SelectRegionModel();
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.Set(SessionAddCourseSection2, section2ModelBytes));
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1RequestModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var venueModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(venueModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);
+
+            var regionModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(regionModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionRegions, out regionModelBytes)).Returns(true);
+
+            // Act
+            var result = controller.AddCourseRun(model) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            var viewModel = result.Model as AddCourseSummaryViewModel;
+            Assert.NotNull(viewModel);
+
+            Assert.Null(viewModel.Venues);
+            Assert.Null(viewModel.Regions);
+        }
+
+        [Fact]
+        public void AddCourseRun_WhenDeliveryModeIsWorkBasedAndNationalPropertyIsTrue_ReturnsViewModelWithOnly1RegionAndItIsNational()
+        {
+            // Arrange
+            var controller = GetController();
+            
+            var model = GetAddCourseRequestModel();
+            model.DeliveryMode = CourseDeliveryMode.WorkBased;
+            model.National = true;
+
+            var section1RequestModel = GetAddCourseSection1RequestModel();
+            var venueModel = GetSelectVenueModel();
+            var regionModel = new SelectRegionModel();
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.Set(SessionAddCourseSection2, section2ModelBytes));
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1RequestModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var venueModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(venueModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);
+
+            var regionModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(regionModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionRegions, out regionModelBytes)).Returns(true);
+
+            // Act
+            var result = controller.AddCourseRun(model) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            var viewModel = result.Model as AddCourseSummaryViewModel;
+            Assert.NotNull(viewModel);            
+            
+            var foundNationalRegion = viewModel.Regions.FirstOrDefault(v => v.Equals("National")) != null;
+            Assert.True(foundNationalRegion);
+        }
+
+        [Fact]
+        public void AddCourseRun_WhenDeliveryModeIsWorkBasedAndRegionsAreSelected_ReturnsViewModelWithSelectedRegions()
+        {
+            // Arrange
+            var controller = GetController();
+                        
+            var model = GetAddCourseRequestModel();
+            model.DeliveryMode = CourseDeliveryMode.WorkBased;
+            model.SelectedRegions = new string[] { "E12000001", "E08000023" };
+
+            var section1RequestModel = GetAddCourseSection1RequestModel();
+            var venueModel = GetSelectVenueModel();
+            var regionModel = new SelectRegionModel();
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
+            _mockSession.Setup(m => m.Set(SessionAddCourseSection2, section2ModelBytes));
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1RequestModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var venueModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(venueModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);
+
+            var regionModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(regionModel));
+            _mockSession.Setup(m => m.TryGetValue(SessionRegions, out regionModelBytes)).Returns(true);
+
+            // Act
+            var result = controller.AddCourseRun(model) as ViewResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            var viewModel = result.Model as AddCourseSummaryViewModel;
+            Assert.NotNull(viewModel);
+
+            var regions = viewModel.Regions.ToList();
+            Assert.Equal(2, regions.Count);
+            Assert.Equal("South Tyneside", regions[0]);
+            Assert.Equal("North East", regions[1]);
+        }
+        #endregion
 
         private AddCourseController GetController()
         {
@@ -236,5 +640,49 @@ namespace Dfc.CourseDirectory.Web.Tests
             addCourseController.ControllerContext.HttpContext = new DefaultHttpContext { Session = _mockSession.Object };
             return addCourseController;
         }
+
+        private AddCourseRequestModel GetAddCourseRequestModel()
+        {
+            return new Faker<AddCourseRequestModel>()
+                            .RuleFor(c => c.CourseId, f => Guid.NewGuid())
+                            .RuleFor(c => c.CourseRunId, f => Guid.NewGuid())
+                            .RuleFor(c => c.CourseName, f => f.Lorem.Sentence())
+                            .RuleFor(c => c.CourseProviderReference, f => f.Lorem.Word())
+                            .RuleFor(c => c.DeliveryMode, f => CourseDeliveryMode.ClassroomBased)
+                            .RuleFor(c => c.Cost, f => 20)
+                            .RuleFor(c => c.CourseType, f => CourseType.SkillsBootcamp)
+                            .RuleFor(c => c.Sector, f => Sector.TransportAndLogistics)
+                            .RuleFor(c => c.EducationLevel, f => EducationLevel.Two)
+                            .RuleFor(c => c.SelectedVenues, f => new Guid[] { Guid.NewGuid() })
+                            .Generate();
+        }
+
+        private AddCourseSection1RequestModel GetAddCourseSection1RequestModel()
+        {
+            return new Faker<AddCourseSection1RequestModel>()
+                            .RuleFor(c => c.CourseId, f => Guid.NewGuid())
+                            .RuleFor(c => c.CourseRunId, f => Guid.NewGuid())
+                            .RuleFor(c => c.CourseFor, f => f.Lorem.Sentence())
+                            .RuleFor(c => c.EntryRequirements, f => f.Lorem.Paragraph())
+                            .RuleFor(c => c.HowAssessed, f => f.Lorem.Paragraph())
+                            .RuleFor(c => c.HowYouWillLearn, f => f.Lorem.Paragraph())
+                            .RuleFor(c => c.WhatWillLearn, f => f.Lorem.Paragraph())
+                            .RuleFor(c => c.WhatYouNeed, f => f.Lorem.Paragraph())
+                            .RuleFor(c => c.WhereNext, f => f.Lorem.Paragraph())
+                            .RuleFor(c => c.LearnAimRef, f => f.Random.AlphaNumeric(8))
+                            .RuleFor(c => c.LearnAimRefTitle, f => f.Lorem.Sentence())
+                            .RuleFor(c => c.AwardOrgCode, f => f.Random.AlphaNumeric(8))
+                            .Generate();
+        }
+
+        private SelectVenueModel GetSelectVenueModel()
+        {
+            return new Faker<SelectVenueModel>()
+                            .RuleFor(c => c.VenueItems, f => new Faker<VenueItemModel>()
+                                                        .RuleFor(v => v.Id, f => f.Random.Number(1, 20).ToString())
+                                                        .RuleFor(v => v.VenueName, f => f.Address.City())                            
+                                                        .Generate(4))                            
+                            .Generate();
+        }        
     }
 }
