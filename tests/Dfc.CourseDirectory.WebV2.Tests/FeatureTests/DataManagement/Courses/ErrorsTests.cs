@@ -389,7 +389,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
         [Theory]
         [InlineData("UploadNewFile", "/data-upload/courses/nonlars?providerId={0}")]
-        [InlineData("DeleteUpload", "/data-upload/courses/delete?providerId={0}")]
+        [InlineData("NonLarsDeleteUpload", "/data-upload/courses/nonlars-delete?providerId={0}")]
         public async Task Post_ValidRequest_OnNonLarsCourseUpload_ReturnsRedirect(string selectedOption, string expectedLocation)
         {
             // Arrange
@@ -414,7 +414,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     });
                 }, true);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}&isnonlars=true")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhatNext", selectedOption)

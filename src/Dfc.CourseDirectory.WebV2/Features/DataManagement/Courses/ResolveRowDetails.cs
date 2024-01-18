@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<ModelWithErrors<ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var row = await GetRow(request.RowNumber);
+            var row = await GetRow(request.RowNumber,request.IsNonLars);
             var vm = await CreateViewModel(request.DeliveryMode, row, request.IsNonLars);
             NormalizeViewModel();
 
@@ -127,7 +127,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var row = await GetRow(request.RowNumber);
+            var row = await GetRow(request.RowNumber, request.IsNonLars);
 
             NormalizeCommand();
 
@@ -235,11 +235,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             return vm;
         }
 
-        private async Task<CourseUploadRowDetail> GetRow(int rowNumber)
+        private async Task<CourseUploadRowDetail> GetRow(int rowNumber, bool isNonLars)
         {
             var providerId = _providerContextProvider.GetProviderId();
 
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars);
             if (row == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);

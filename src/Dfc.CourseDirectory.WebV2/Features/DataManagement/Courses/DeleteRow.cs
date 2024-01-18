@@ -17,12 +17,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
     public class Query : IRequest<ViewModel>
     {
         public int RowNumber { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
         public bool Confirm { get; set; }
         public int RowNumber { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class ViewModel : Command
@@ -53,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber);
+        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber, request.IsNonLars);
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -63,15 +65,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
-                return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
+                return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber, request.IsNonLars), validationResult);
             }
 
             return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber);
         }
 
-        private async Task<ViewModel> CreateViewModel(int rowNumber)
+        private async Task<ViewModel> CreateViewModel(int rowNumber, bool isNonLars)
         {
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(_providerContextProvider.GetProviderId(), rowNumber);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(_providerContextProvider.GetProviderId(), rowNumber,isNonLars);
 
             if (row == null)
             {

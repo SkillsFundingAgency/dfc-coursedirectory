@@ -15,7 +15,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="ResolveRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
+        <form asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
             <govuk-error-summary>
                 <govuk-error-summary-item asp-for="CourseName" />
                 <govuk-error-summary-item asp-for="ProviderCourseRef" />
@@ -55,7 +55,17 @@
                     A reference that will help you identify this course in your internal systems. This will not be visible to learners.
                 </govuk-input-hint>
             </govuk-input>
-            
+            <govuk-radios asp-for="CourseType">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        Course type
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-hint>
+                    Select one option.
+                </govuk-radios-hint>
+                <govuk-radios-item value="@CourseType.SkillsBootcamp">Skills Bootcamp</govuk-radios-item>
+            </govuk-radios>
             <govuk-radios asp-for="FlexibleStartDate">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>
@@ -189,7 +199,7 @@
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" class="cd-cancel-btn">Resolve errors</govuk-button>
-                <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
+                <a asp-action="NonLarsResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
             </div>
 
         </form>

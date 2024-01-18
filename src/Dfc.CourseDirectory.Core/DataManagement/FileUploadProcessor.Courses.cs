@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber)
+        public async Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -139,7 +139,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -157,7 +158,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
 
                 // If the world around us has changed (courses added etc.) then we might need to revalidate
-                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, false);
+                await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, isNonLars);
 
                 var row = await dispatcher.ExecuteQuery(new GetCourseUploadRowDetail()
                 {

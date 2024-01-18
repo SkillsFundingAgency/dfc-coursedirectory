@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,null,true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-check-publish?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 UploadStatus.ProcessedSuccessfully,
                 rowBuilder => rowBuilder.AddValidNonLarsRows(3),true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-check-publish?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -269,10 +269,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedSuccessfully,null,true);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/nonlars-check-publish?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
-                    .Add("IsNonLars", "true")
                     .ToContent()
             };
 
@@ -337,11 +336,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 UploadStatus.ProcessedSuccessfully,
                 rowBuilder => rowBuilder.AddValidNonLarsRows(3),true);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/check-publish?providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/nonlars-check-publish?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("Confirm", "true")
-                    .Add("IsNonLars", "true")
                     .ToContent()
             };
 

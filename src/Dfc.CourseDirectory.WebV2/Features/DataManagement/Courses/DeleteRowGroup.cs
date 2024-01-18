@@ -17,10 +17,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
     public class Query : IRequest<ViewModel>
     {
         public int RowNumber { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
+        public bool IsNonLars { get; set; }
         public int RowNumber { get; set; }
         public bool Confirm { get; set; }
     }
@@ -59,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber);
+        public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel(request.RowNumber, request.IsNonLars);
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -69,11 +71,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to delete the course")
                 });
-                return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber), validationResult);
+                return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber, request.IsNonLars), validationResult);
             }
 
             var providerId = _providerContextProvider.GetProviderId();
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, request.RowNumber);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, request.RowNumber,request.IsNonLars);
 
             if (row == null)
             {
@@ -83,35 +85,37 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             return await _fileUploadProcessor.DeleteCourseUploadRowGroupForProvider(providerId, row.CourseId);
         }
 
-        private async Task<ViewModel> CreateViewModel(int rowNumber)
+        private async Task<ViewModel> CreateViewModel(int rowNumber, bool isNonLars)
         {
             var providerId = _providerContextProvider.GetProviderId();
 
-            var rootRow = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber);
-
-            if (rootRow == null)
-            {
-                throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
-            }
-
+            var rootRow = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars) 
+                            ?? throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
             var rowGroup = await _fileUploadProcessor.GetCourseUploadRowGroupForProvider(providerId, rootRow.CourseId);
+
             var deliveryModes = DeduceDeliveryModes();
 
             var groupErrors = rowGroup.First().Errors
                 .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.Course)
                 .ToArray();
-
-            var learnAimRef = rowGroup.Select(r => r.LearnAimRef).Distinct().Single();
-            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = new[] { learnAimRef } }))[learnAimRef];
-
-            return new ViewModel()
+            
+            var rowViewModel = new ViewModel()
             {
                 DeliveryModes = deliveryModes,
-                LearnAimRef = learnAimRef,
-                LearnAimRefTitle = learningDelivery.LearnAimRefTitle,
                 RowNumber = rowNumber,
                 GroupErrorFields = groupErrors.Select(e => Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)).Distinct().ToArray()
             };
+
+            if (!isNonLars)
+            {
+                var learnAimRef = rowGroup.Select(r => r.LearnAimRef).Distinct().Single();
+                var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = new[] { learnAimRef } }))[learnAimRef];
+
+                rowViewModel.LearnAimRef = learnAimRef;
+                rowViewModel.LearnAimRefTitle = learningDelivery.LearnAimRefTitle;
+            }     
+            
+            return rowViewModel;
 
             IReadOnlyCollection<CourseDeliveryMode> DeduceDeliveryModes()
             {

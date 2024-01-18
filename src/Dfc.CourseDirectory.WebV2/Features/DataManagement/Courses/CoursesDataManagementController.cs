@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Features.ChooseQualification;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Dac.Model;
 using OneOf.Types;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
@@ -90,24 +92,47 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpGet("resolve")]
-        public async Task<IActionResult> ResolveList(bool isNonLars) =>
+        public async Task<IActionResult> ResolveList() =>
             await _mediator.SendAndMapResponse(
-                new ResolveList.Query() { IsNonLars = isNonLars },
+                new ResolveList.Query() { IsNonLars = false },
                 result => result.Match<IActionResult>(
-                    noErrors => RedirectToAction(nameof(CheckAndPublish), isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    noErrors => RedirectToAction(nameof(CheckAndPublish), false).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    vm => View(vm)));
+
+        [HttpGet("nonlars-resolve")]
+        public async Task<IActionResult> NonLarsResolveList() =>
+            await _mediator.SendAndMapResponse(
+                new ResolveList.Query() { IsNonLars = true },
+                result => result.Match<IActionResult>(
+                    noErrors => RedirectToAction(nameof(NonLarsCheckAndPublish), true).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpGet("resolve/{rowNumber}/delivery")]
-        public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query) =>
-            await _mediator.SendAndMapResponse(
+        public async Task<IActionResult> ResolveRowDeliveryMode(ResolveRowDeliveryMode.Query query)
+        {
+            query.IsNonLars = false;
+            return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
                     notFound => NotFound(),
                     command => View(command)));
+        }
+
+        [HttpGet("nonlars-resolve/{rowNumber}/delivery")]
+        public async Task<IActionResult> ResolveNonLarsRowDeliveryMode(ResolveRowDeliveryMode.Query query)
+        {
+            query.IsNonLars = true;
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    command => View(command)));
+        }
 
         [HttpPost("resolve/{rowNumber}/delivery")]
-        public async Task<IActionResult> ResolveRowDeliveryMode([FromRoute] int rowNumber, [FromRoute] bool isNonLars, ResolveRowDeliveryMode.Command command)
+        public async Task<IActionResult> ResolveRowDeliveryMode([FromRoute] int rowNumber, ResolveRowDeliveryMode.Command command)
         {
+            command.IsNonLars = false;
             command.RowNumber = rowNumber;
             return await _mediator.SendAndMapResponse(
                 command,
@@ -117,7 +142,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     success => RedirectToAction(nameof(ResolveRowDetails), new
                     {
                         rowNumber,
-                        isNonLars,
+                        deliveryMode = command.DeliveryMode switch
+                        {
+                            CourseDeliveryMode.BlendedLearning => "blended",
+                            CourseDeliveryMode.ClassroomBased => "classroom",
+                            CourseDeliveryMode.Online => "online",
+                            CourseDeliveryMode.WorkBased => "work",
+                            _ => throw new NotSupportedException($"Unknown delivery mode: '{command.DeliveryMode}'.")
+                        }
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpPost("nonlars-resolve/{rowNumber}/delivery")]
+        public async Task<IActionResult> ResolveNonLarsRowDeliveryMode([FromRoute] int rowNumber,ResolveRowDeliveryMode.Command command)
+        {
+            command.IsNonLars = true;
+            command.RowNumber = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    notFound => NotFound(),
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(ResolveNonLarsRowDetails), new
+                    {
+                        rowNumber,
                         deliveryMode = command.DeliveryMode switch
                         {
                             CourseDeliveryMode.BlendedLearning => "blended",
@@ -159,14 +207,35 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [RequireValidModelState]
         public async Task<IActionResult> ResolveRowDetails(
             [FromRoute] int rowNumber,
-            [FromRoute] bool isNonLars,
             [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode)
         {
             var query = new ResolveRowDetails.Query()
             {
                 DeliveryMode = deliveryMode,
                 RowNumber = rowNumber,
-                IsNonLars = isNonLars
+                IsNonLars = false
+            };
+
+            //Generate Live service URL accordingly based on current host
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+
+            return await _mediator.SendAndMapResponse(
+                query,
+                errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+        }
+
+        [HttpGet("nonlars-resolve/{rowNumber}/details")]
+        [RequireValidModelState]
+        public async Task<IActionResult> ResolveNonLarsRowDetails(
+            [FromRoute] int rowNumber,
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode)
+        {
+            var query = new ResolveRowDetails.Query()
+            {
+                DeliveryMode = deliveryMode,
+                RowNumber = rowNumber,
+                IsNonLars = true
             };
 
             //Generate Live service URL accordingly based on current host
@@ -182,12 +251,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [RequireValidModelState(forKey: "deliveryMode")]
         public async Task<IActionResult> ResolveRowDetails(
             [FromRoute] int rowNumber,
-            [FromRoute] bool isNonLars,
             [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode,
             ResolveRowDetails.Command command)
         {
             command.RowNumber = rowNumber;
             command.DeliveryMode = deliveryMode;
+            command.IsNonLars = false;
 
             return await _mediator.SendAndMapResponse(
                 command,
@@ -195,8 +264,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     uploadStatus => (uploadStatus switch
                     {
-                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish), isNonLars),
-                        _ => RedirectToAction(nameof(ResolveList),isNonLars)
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(ResolveList))
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpPost("nonlars-resolve/{rowNumber}/details")]
+        [RequireValidModelState(forKey: "deliveryMode")]
+        public async Task<IActionResult> ResolveNonLarsRowDetails(
+            [FromRoute] int rowNumber,
+            [ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode,
+            ResolveRowDetails.Command command)
+        {
+            command.RowNumber = rowNumber;
+            command.DeliveryMode = deliveryMode;
+            command.IsNonLars = true;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(NonLarsCheckAndPublish)),
+                        _ => RedirectToAction(nameof(NonLarsResolveList))
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 
@@ -207,7 +298,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish),false)
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
@@ -221,25 +312,44 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish), true)
+                    UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(NonLarsCheckAndPublish))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(NonLarsErrors))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
         [HttpGet("delete")]
-        public async Task<IActionResult> DeleteUpload(bool isNonLars) =>
+        public async Task<IActionResult> DeleteUpload() =>
             await _mediator.SendAndMapResponse(
-                new DeleteUpload.Query() { IsNonLars = isNonLars},
+                new DeleteUpload.Query() { IsNonLars = false},
                 command => View(command));
 
+        [HttpGet("nonlars-delete")]
+        public async Task<IActionResult> NonLarsDeleteUpload() =>
+           await _mediator.SendAndMapResponse(
+               new DeleteUpload.Query() { IsNonLars = true },
+               command => View(command));
+
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
-            await _mediator.SendAndMapResponse(
+        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command)
+        {
+            command.IsNonLars = false;
+            return await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+        [HttpPost("nonlars-delete")]
+        public async Task<IActionResult> NonLarsDeleteUpload(DeleteUpload.Command command)
+        {
+            command.IsNonLars = true;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => RedirectToAction(nameof(DeleteUploadSuccess)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
 
         [HttpGet("resolve/delete/success")]
         public IActionResult DeleteUploadSuccess() => View();
@@ -256,11 +366,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("resolve/{rowNumber}/course/delete/")]
         public async Task<IActionResult> DeleteRowGroup([FromRoute] int rowNumber) =>
-            await _mediator.SendAndMapResponse(new DeleteRowGroup.Query() { RowNumber = rowNumber }, vm => View(vm));
+            await _mediator.SendAndMapResponse(new DeleteRowGroup.Query() { RowNumber = rowNumber, IsNonLars = false }, vm => View(vm));
 
         [HttpPost("resolve/{rowNumber}/course/delete/")]
-        public async Task<IActionResult> DeleteRowGroup([FromRoute] int rowNumber, [FromRoute] bool isNonLars, DeleteRowGroup.Command command)
+        public async Task<IActionResult> DeleteRowGroup([FromRoute] int rowNumber, DeleteRowGroup.Command command)
         {
+            command.IsNonLars = false;
             command.RowNumber = rowNumber;
             return await _mediator.SendAndMapResponse(
                 command,
@@ -268,38 +379,86 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     status => status switch
                     {
-                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish), isNonLars)
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish))
                             .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        _ => RedirectToAction(nameof(ResolveList), isNonLars)
+                        _ => RedirectToAction(nameof(ResolveList))
+                            .WithProviderContext(_providerContextProvider.GetProviderContext())
+                    }));
+        }
+
+        [HttpGet("nonlars-resolve/{rowNumber}/course/delete/")]
+        public async Task<IActionResult> DeleteNonLarsRowGroup([FromRoute] int rowNumber) =>
+            await _mediator.SendAndMapResponse(new DeleteRowGroup.Query() { RowNumber = rowNumber, IsNonLars = true }, vm => View(vm));
+
+        [HttpPost("nonlars-resolve/{rowNumber}/course/delete/")]
+        public async Task<IActionResult> DeleteNonLarsRowGroup([FromRoute] int rowNumber,DeleteRowGroup.Command command)
+        {
+            command.IsNonLars = true;
+            command.RowNumber = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    status => status switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(NonLarsCheckAndPublish))
+                            .WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => RedirectToAction(nameof(NonLarsResolveList))
                             .WithProviderContext(_providerContextProvider.GetProviderContext())
                     }));
         }
 
         [HttpGet("check-publish")]
-        public async Task<IActionResult> CheckAndPublish(bool isNonLars)
+        public async Task<IActionResult> CheckAndPublish()
         {
-            var query = new CheckAndPublish.Query() { IsNonLars = isNonLars};
+            var query = new CheckAndPublish.Query() { IsNonLars = false};
 
             return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
-                    hasErrors => isNonLars ? RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
-                                             RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    hasErrors => RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    command => View(command)));
+        }
+
+        [HttpGet("nonlars-check-publish")]
+        public async Task<IActionResult> NonLarsCheckAndPublish()
+        {
+            var query = new CheckAndPublish.Query() { IsNonLars = true };
+
+            return await _mediator.SendAndMapResponse(
+                query,
+                result => result.Match<IActionResult>(
+                    hasErrors => RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     command => View(command)));
         }
 
         [HttpPost("check-publish")]
         [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
-        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
-            await _mediator.SendAndMapResponse(
+        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command)
+        {
+            command.IsNonLars = false;
+            return await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
                         RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
-                        command.IsNonLars ? RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext()) 
-                                        : RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+                        RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
 
+        [HttpPost("nonlars-check-publish")]
+        [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
+        public async Task<IActionResult> NonLarsCheckAndPublish(CheckAndPublish.Command command)
+        {
+            command.IsNonLars = true;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
+                        RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                        RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
         [HttpGet("success")]
         [RequireJourneyInstance]
         [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
@@ -354,7 +513,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
            await _mediator.SendAndMapResponse(
                new Errors.Query() { IsNonLars = true },
                result => result.Match<IActionResult>(
-                   noErrors => RedirectToAction(nameof(CheckAndPublish), true).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                   noErrors => RedirectToAction(nameof(NonLarsCheckAndPublish), true).WithProviderContext(_providerContextProvider.GetProviderContext()),
                    vm => View(vm)));
 
         [HttpPost("nonlars-errors")]
@@ -367,9 +526,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     success => (command.WhatNext switch
                     {
-                        ErrorsWhatNext.UploadNewFile => command.IsNonLars ? RedirectToAction(nameof(NonLars)) : RedirectToAction(nameof(Index)),
-                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload), command.IsNonLars),
-                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList), command.IsNonLars),
+                        ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(NonLars)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(NonLarsDeleteUpload)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(NonLarsResolveList)),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
@@ -389,9 +548,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     success => (command.WhatNext switch
                     {
-                        ErrorsWhatNext.UploadNewFile => command.IsNonLars ? RedirectToAction(nameof(NonLars)) : RedirectToAction(nameof(Index)),
-                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload),command.IsNonLars),
-                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList), command.IsNonLars),
+                        ErrorsWhatNext.UploadNewFile => RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload)),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList)),
                         _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
@@ -402,8 +561,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 vm => View(vm));
 
         [HttpPost("resolve/{rowNumber}/details/delete")]
-        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, [FromRoute] bool isNonLars, DeleteRow.Command command)
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber,  DeleteRow.Command command)
         {
+            command.IsNonLars = false;
             command.RowNumber = rowNumber;
             return await _mediator.SendAndMapResponse(
                 command,
@@ -411,8 +571,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     uploadStatus => uploadStatus switch
                     {
-                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish), isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext()),
-                        _ => RedirectToAction(nameof(ResolveList), isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext())
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => RedirectToAction(nameof(ResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext())
+                    }));
+        }
+
+        [HttpGet("nonlars-resolve/{rowNumber}/details/delete")]
+        public async Task<IActionResult> DeleteNonLarsRow(DeleteRow.Query request) =>
+            await _mediator.SendAndMapResponse(
+                request,
+                vm => View(vm));
+
+        [HttpPost("nonlars-resolve/{rowNumber}/details/delete")]
+        public async Task<IActionResult> DeleteNonLarsRow([FromRoute] int rowNumber, DeleteRow.Command command)
+        {
+            command.IsNonLars = true;
+            command.RowNumber = rowNumber;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(NonLarsCheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                        _ => RedirectToAction(nameof(NonLarsResolveList)).WithProviderContext(_providerContextProvider.GetProviderContext())
                     }));
         }
     }

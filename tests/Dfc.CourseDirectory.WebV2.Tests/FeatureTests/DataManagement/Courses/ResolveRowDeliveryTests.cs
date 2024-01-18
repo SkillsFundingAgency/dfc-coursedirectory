@@ -180,11 +180,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
-                UploadStatus.ProcessedWithErrors);
+                UploadStatus.ProcessedWithErrors,null,true);
 
             var rowNumber = courseUploadRows.First().RowNumber;
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/resolve/{rowNumber}/delivery?providerId={provider.ProviderId}")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/nonlars-resolve/{rowNumber}/delivery?providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("DeliveryMode", deliveryMode)
@@ -198,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.Found);
 
             response.Headers.Location.OriginalString.Should().Be(
-                $"/data-upload/courses/resolve/{rowNumber}/details?isNonLars=False&deliveryMode={expectedRedirectLocationDeliveryQueryParam}&providerId={provider.ProviderId}");
+                $"/data-upload/courses/nonlars-resolve/{rowNumber}/details?deliveryMode={expectedRedirectLocationDeliveryQueryParam}&providerId={provider.ProviderId}");
         }
     }
 }
