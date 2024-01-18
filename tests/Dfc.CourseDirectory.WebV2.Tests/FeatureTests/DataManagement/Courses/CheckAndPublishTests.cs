@@ -109,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should()
-                .Be($"/data-upload/courses/errors?providerId={provider.ProviderId}");
+                .Be($"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
         }
 
 

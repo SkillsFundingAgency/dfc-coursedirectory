@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
         [Theory]
         [InlineData(UploadStatus.ProcessedSuccessfully, "check-publish")]
-        [InlineData(UploadStatus.ProcessedWithErrors, "errors")]
+        [InlineData(UploadStatus.ProcessedWithErrors, "nonlars-errors")]
         public async Task Get_NonLarsUploadProcessingIsCompleted_Redirects(UploadStatus processedStatus, string expectedRedirectPath)
         {
             // Arrange

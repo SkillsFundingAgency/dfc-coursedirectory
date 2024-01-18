@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 {
                     UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish),false)
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors), false)
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 {
                     UploadStatus.ProcessedSuccessfully => (IActionResult)RedirectToAction(nameof(CheckAndPublish), true)
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
-                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(Errors), true)
+                    UploadStatus.ProcessedWithErrors => RedirectToAction(nameof(NonLarsErrors))
                         .WithProviderContext(_providerContextProvider.GetProviderContext()),
                     _ => View(status)
                 }));
@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     status => status switch
                     {
-                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish),false)
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish), isNonLars)
                             .WithProviderContext(_providerContextProvider.GetProviderContext()),
                         _ => RedirectToAction(nameof(ResolveList), isNonLars)
                             .WithProviderContext(_providerContextProvider.GetProviderContext())
@@ -283,7 +283,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
-                    hasErrors => RedirectToAction(nameof(Errors),isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    hasErrors => isNonLars ? RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                                             RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     command => View(command)));
         }
 
@@ -296,7 +297,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
                         RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
-                        RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
+                        command.IsNonLars ? RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext()) 
+                                        : RedirectToAction(nameof(Errors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
 
         [HttpGet("success")]
         [RequireJourneyInstance]
@@ -338,10 +340,39 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             return View();
         }
         [HttpGet("download-errors")]
-        public async Task<IActionResult> DownloadErrors(bool isNonLars) => await _mediator.SendAndMapResponse(
-            new DownloadErrors.Query(),
+        public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
+            new DownloadErrors.Query() { IsNonLars = false},
             result => new CsvResult<CsvCourseRowWithErrors>(result.FileName, result.Rows));
 
+        [HttpGet("download-nonlars-errors")]
+        public async Task<IActionResult> DownloadNonLarsErrors() => await _mediator.SendAndMapResponse(
+           new DownloadErrors.Query() { IsNonLars = true },
+           result => new CsvResult<CsvNonLarsCourseRowWithErrors>(result.FileName, result.NonLarsRows));
+
+        [HttpGet("nonlars-errors")]
+        public async Task<IActionResult> NonLarsErrors() =>
+           await _mediator.SendAndMapResponse(
+               new Errors.Query() { IsNonLars = true },
+               result => result.Match<IActionResult>(
+                   noErrors => RedirectToAction(nameof(CheckAndPublish), true).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                   vm => View(vm)));
+
+        [HttpPost("nonlars-errors")]
+        public async Task<IActionResult> NonLarsErrors(Errors.Command command)
+        {
+            command.IsNonLars = true;
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    success => (command.WhatNext switch
+                    {
+                        ErrorsWhatNext.UploadNewFile => command.IsNonLars ? RedirectToAction(nameof(NonLars)) : RedirectToAction(nameof(Index)),
+                        ErrorsWhatNext.DeleteUpload => RedirectToAction(nameof(DeleteUpload), command.IsNonLars),
+                        ErrorsWhatNext.ResolveOnScreen => RedirectToAction(nameof(ResolveList), command.IsNonLars),
+                        _ => throw new NotSupportedException($"Unknown value: '{command.WhatNext}'.")
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
         [HttpGet("errors")]
         public async Task<IActionResult> Errors(bool isNonLars) =>
             await _mediator.SendAndMapResponse(
