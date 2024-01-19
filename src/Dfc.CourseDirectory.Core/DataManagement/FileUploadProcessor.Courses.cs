@@ -61,7 +61,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber)
+        public async Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -69,7 +69,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -96,7 +97,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId)
+        public async Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -104,7 +105,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -172,7 +174,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId)
+        public async Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, bool isNonLars)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -180,7 +182,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerId
+                    ProviderId = providerId,
+                    IsNonLars = isNonLars
                 });
 
                 if (courseUpload == null)
@@ -716,7 +719,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
             {
-                ProviderId = providerId
+                ProviderId = providerId,
+                IsNonLars = isNonLars
             });
 
             if (courseUpload == null)

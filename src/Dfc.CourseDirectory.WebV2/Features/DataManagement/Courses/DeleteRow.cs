@@ -68,7 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber, request.IsNonLars), validationResult);
             }
 
-            return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber);
+            return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber,request.IsNonLars);
         }
 
         private async Task<ViewModel> CreateViewModel(int rowNumber, bool isNonLars)

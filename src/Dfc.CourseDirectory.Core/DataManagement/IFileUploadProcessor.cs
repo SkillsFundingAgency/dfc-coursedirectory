@@ -13,10 +13,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     {
         // Courses
         Task DeleteCourseUploadForProvider(Guid providerId, bool isNonLars);
-        Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber);
-        Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
+        Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber, bool isNonLars);
+        Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, bool isNonLars);
         Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber, bool isNonLars);
-        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
+        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, bool isNonLars);
         Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId, bool isNonLars);
         Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId, bool isNonLars);
         IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId, bool isNonLars);

@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, request.RowNumber);
             }
 
-            return await _fileUploadProcessor.DeleteCourseUploadRowGroupForProvider(providerId, row.CourseId);
+            return await _fileUploadProcessor.DeleteCourseUploadRowGroupForProvider(providerId, row.CourseId,request.IsNonLars);
         }
 
         private async Task<ViewModel> CreateViewModel(int rowNumber, bool isNonLars)
@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
 
             var rootRow = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars) 
                             ?? throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
-            var rowGroup = await _fileUploadProcessor.GetCourseUploadRowGroupForProvider(providerId, rootRow.CourseId);
+            var rowGroup = await _fileUploadProcessor.GetCourseUploadRowGroupForProvider(providerId, rootRow.CourseId,isNonLars);
 
             var deliveryModes = DeduceDeliveryModes();
 
