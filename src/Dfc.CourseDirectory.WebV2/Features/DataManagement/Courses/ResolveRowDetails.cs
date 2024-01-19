@@ -146,6 +146,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             return await _fileUploadProcessor.UpdateCourseUploadRowForProvider(
                 _providerContextProvider.GetProviderId(),
                 row.RowNumber,
+                request.IsNonLars,
                 new CourseUploadRowUpdate()
                 {
                     CourseType = request.CourseType,

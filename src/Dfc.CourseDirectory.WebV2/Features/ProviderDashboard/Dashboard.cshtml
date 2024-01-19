@@ -196,14 +196,14 @@
                             @if (Model.UnpublishedNonLarsCourseCount > 0)
                             {
                                 <li>
-                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
+                                    <a asp-controller="CoursesDataManagement" asp-action="NonLarsCheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
                                     
                                 </li>
                             }
                             <li>
                                 @if (Model.NonLarsCourseUploadInProgress)
                                 {
-                                    <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
+                                    <a asp-controller="CoursesDataManagement" asp-action="NonLarsInProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
                                 }
                                 else
                                 {

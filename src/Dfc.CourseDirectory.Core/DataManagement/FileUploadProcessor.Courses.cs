@@ -624,7 +624,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update)
+        public async Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, bool isNonLars, CourseUploadRowUpdate update)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
 
@@ -632,7 +632,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var courseUpload = await dispatcher.ExecuteQuery(new GetLatestUnpublishedCourseUploadForProvider()
             {
-                ProviderId = providerId
+                ProviderId = providerId,
+                IsNonLars = isNonLars
             });
 
             if (courseUpload == null)

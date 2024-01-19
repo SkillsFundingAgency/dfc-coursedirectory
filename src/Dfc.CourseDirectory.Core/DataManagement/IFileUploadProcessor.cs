@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
         Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy, bool IsNonLars);
         Task<SaveCourseFileResult> SaveCourseFile(Guid providerId,bool isNonLars, Stream stream, UserInfo uploadedBy);
-        Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update);
+        Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, bool isNonLars, CourseUploadRowUpdate update);
         Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update, bool isNonLars);
 
         // Venues
