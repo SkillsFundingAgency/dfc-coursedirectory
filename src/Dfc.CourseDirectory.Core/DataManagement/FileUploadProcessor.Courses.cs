@@ -666,45 +666,84 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 (await dispatcher.ExecuteQuery(new GetVenue() { VenueId = update.VenueId.Value })) :
                 null;
             Debug.Assert(!update.VenueId.HasValue || venue != null);
+            if(isNonLars)
+            {
+                var updatedRows = new NonLarsCourseDataUploadRowInfoCollection(
+               new NonLarsCourseDataUploadRowInfo(
+                   new CsvNonLarsCourseRow()
+                   {
+                       AttendancePattern = ParsedCsvNonLarsCourseRow.MapAttendancePattern(update.AttendancePattern),
+                       Cost = ParsedCsvNonLarsCourseRow.MapCost(update.Cost),
+                       CostDescription = RemoveASCII(update.CostDescription),
+                       CourseName = update.CourseName,
+                       CourseWebPage = update.CourseWebPage,
+                       DeliveryMode = ParsedCsvNonLarsCourseRow.MapDeliveryMode(update.DeliveryMode),
+                       Duration = ParsedCsvNonLarsCourseRow.MapDuration(update.Duration),
+                       DurationUnit = ParsedCsvNonLarsCourseRow.MapDurationUnit(update.DurationUnit),
+                       EntryRequirements = RemoveASCII(row.EntryRequirements),
+                       FlexibleStartDate = ParsedCsvNonLarsCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
+                       HowYouWillBeAssessed = RemoveASCII(row.HowYouWillBeAssessed),
+                       HowYouWillLearn = RemoveASCII(row.HowYouWillLearn),
+                       NationalDelivery = ParsedCsvNonLarsCourseRow.MapNationalDelivery(update.NationalDelivery),
+                       ProviderCourseRef = update.ProviderCourseRef,
+                       ProviderVenueRef = venue?.ProviderVenueRef,
+                       StartDate = ParsedCsvNonLarsCourseRow.MapStartDate(update.StartDate),
+                       StudyMode = ParsedCsvNonLarsCourseRow.MapStudyMode(update.StudyMode),
+                       SubRegions = ParsedCsvNonLarsCourseRow.MapSubRegions(update.SubRegionIds, allRegions),
+                       VenueName = venue?.VenueName,
+                       WhatYouWillLearn = RemoveASCII(row.WhatYouWillLearn),
+                       WhatYouWillNeedToBring = RemoveASCII(row.WhatYouWillNeedToBring),
+                       WhereNext = RemoveASCII(row.WhereNext),
+                       WhoThisCourseIsFor = RemoveASCII(row.WhoThisCourseIsFor)
+                   },
+                   row.RowNumber,
+                   row.CourseId,
+                   venue?.VenueId));
 
-            var updatedRows = new CourseDataUploadRowInfoCollection(
-                new CourseDataUploadRowInfo(
-                    new CsvCourseRow()
-                    {
-                        AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(update.AttendancePattern),
-                        Cost = ParsedCsvCourseRow.MapCost(update.Cost),
-                        CostDescription = RemoveASCII(update.CostDescription),
-                        CourseName = update.CourseName,
-                        CourseWebPage = update.CourseWebPage,
-                        DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(update.DeliveryMode),
-                        Duration = ParsedCsvCourseRow.MapDuration(update.Duration),
-                        DurationUnit = ParsedCsvCourseRow.MapDurationUnit(update.DurationUnit),
-                        EntryRequirements = RemoveASCII(row.EntryRequirements),
-                        FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
-                        HowYouWillBeAssessed = RemoveASCII(row.HowYouWillBeAssessed),
-                        HowYouWillLearn = RemoveASCII(row.HowYouWillLearn),
-                        LearnAimRef = row.LearnAimRef,
-                        NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(update.NationalDelivery),
-                        ProviderCourseRef = update.ProviderCourseRef,
-                        ProviderVenueRef = venue?.ProviderVenueRef,
-                        StartDate = ParsedCsvCourseRow.MapStartDate(update.StartDate),
-                        StudyMode = ParsedCsvCourseRow.MapStudyMode(update.StudyMode),
-                        SubRegions = ParsedCsvCourseRow.MapSubRegions(update.SubRegionIds, allRegions),
-                        VenueName = venue?.VenueName,
-                        WhatYouWillLearn = RemoveASCII(row.WhatYouWillLearn),
-                        WhatYouWillNeedToBring = RemoveASCII(row.WhatYouWillNeedToBring),
-                        WhereNext = RemoveASCII(row.WhereNext),
-                        WhoThisCourseIsFor = RemoveASCII(row.WhoThisCourseIsFor)
-                    },
-                    row.RowNumber,
-                    row.CourseId,
-                    venue?.VenueId));
+                await ValidateNonLarsCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
 
-            await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+            }
+            else
+            {
+                var updatedRows = new CourseDataUploadRowInfoCollection(
+               new CourseDataUploadRowInfo(
+                   new CsvCourseRow()
+                   {
+                       AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(update.AttendancePattern),
+                       Cost = ParsedCsvCourseRow.MapCost(update.Cost),
+                       CostDescription = RemoveASCII(update.CostDescription),
+                       CourseName = update.CourseName,
+                       CourseWebPage = update.CourseWebPage,
+                       DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(update.DeliveryMode),
+                       Duration = ParsedCsvCourseRow.MapDuration(update.Duration),
+                       DurationUnit = ParsedCsvCourseRow.MapDurationUnit(update.DurationUnit),
+                       EntryRequirements = RemoveASCII(row.EntryRequirements),
+                       FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
+                       HowYouWillBeAssessed = RemoveASCII(row.HowYouWillBeAssessed),
+                       HowYouWillLearn = RemoveASCII(row.HowYouWillLearn),
+                       LearnAimRef = row.LearnAimRef,
+                       NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(update.NationalDelivery),
+                       ProviderCourseRef = update.ProviderCourseRef,
+                       ProviderVenueRef = venue?.ProviderVenueRef,
+                       StartDate = ParsedCsvCourseRow.MapStartDate(update.StartDate),
+                       StudyMode = ParsedCsvCourseRow.MapStudyMode(update.StudyMode),
+                       SubRegions = ParsedCsvCourseRow.MapSubRegions(update.SubRegionIds, allRegions),
+                       VenueName = venue?.VenueName,
+                       WhatYouWillLearn = RemoveASCII(row.WhatYouWillLearn),
+                       WhatYouWillNeedToBring = RemoveASCII(row.WhatYouWillNeedToBring),
+                       WhereNext = RemoveASCII(row.WhereNext),
+                       WhoThisCourseIsFor = RemoveASCII(row.WhoThisCourseIsFor)
+                   },
+                   row.RowNumber,
+                   row.CourseId,
+                   venue?.VenueId));
+
+                await ValidateCourseUploadRows(dispatcher, courseUpload.CourseUploadId, courseUpload.ProviderId, updatedRows);
+            }
 
             // Other rows not covered by this group may require revalidation;
             // ensure revalidation is done if required so that `uploadStatus` is accurate
-            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, false);
+            var uploadStatus = await RevalidateCourseUploadIfRequired(dispatcher, courseUpload.CourseUploadId, isNonLars);
 
             await dispatcher.Commit();
 
