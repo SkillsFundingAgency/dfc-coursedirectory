@@ -109,7 +109,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                     SearchText = request.SearchTerm,
                     CertificationEndDateFilter = DateTimeOffset.UtcNow,
                     Facets = new[] { nameof(Lars.AwardOrgCode), nameof(Lars.NotionalNVQLevelv2) },
-                    PageSize = 0
+                    PageSize = 0,
+                    ExcludeExpired = true
                 }),
                 _searchClient.Search(new LarsSearchQuery
                 {

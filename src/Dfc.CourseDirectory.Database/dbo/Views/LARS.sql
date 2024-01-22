@@ -12,8 +12,8 @@ select LearnAimRef from lars.Validity where LastNewStartDate =''
 UNION ALL
 select LearnAimRef from lars.Validity where LearnAimRef not in (
 select LearnAimRef from lars.Validity where LastNewStartDate ='') group by LearnAimRef HAVING max(convert(varchar, LastNewStartDate ,105))>GETDATE()
-) Then 0
-Else 1
+) Then 'false'
+Else 'true'
 End as IsExpired
 FROM            LARS.LearningDelivery AS ld INNER JOIN
                          LARS.AwardOrgCode AS ac ON ac.AwardOrgCode = ld.AwardOrgCode INNER JOIN

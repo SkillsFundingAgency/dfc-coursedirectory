@@ -73,8 +73,13 @@ namespace Dfc.CourseDirectory.Core.Search
 
             if (ExcludeExpired)
             {
-                builder.WithFilters($"{nameof(Lars.IsExpired)} eq 0 ");
+                builder.WithFilters($"{nameof(Lars.IsExpired)} eq false ");
             }
+            else
+            {
+                builder.WithFilters($"{nameof(Lars.IsExpired)} eq true ");
+            }
+
             return builder.Build();
         }
     }
