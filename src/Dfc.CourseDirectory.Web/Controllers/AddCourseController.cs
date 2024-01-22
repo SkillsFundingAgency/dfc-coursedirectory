@@ -34,7 +34,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class AddCourseController : BaseController
-    {
+    {        
         private readonly ICourseService _courseService;
         private ISession Session => HttpContext.Session;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -70,11 +70,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
             else
             {
-                Session.SetString("LearnAimRef", learnAimRef);
-                Session.SetString("NotionalNVQLevelv2", notionalNVQLevelv2 ?? string.Empty);
-                Session.SetString("AwardOrgCode", awardOrgCode ?? string.Empty);
-                Session.SetString("LearnAimRefTitle", learnAimRefTitle ?? string.Empty);
-                Session.SetString("LearnAimRefTypeDesc", learnAimRefTypeDesc ?? string.Empty);
+                Session.SetString(SessionLearnAimRef, learnAimRef);
+                Session.SetString(SessionNotionalNvqLevelV2, notionalNVQLevelv2 ?? string.Empty);
+                Session.SetString(SessionAwardOrgCode, awardOrgCode ?? string.Empty);
+                Session.SetString(SessionLearnAimRefTitle, learnAimRefTitle ?? string.Empty);
+                Session.SetString(SessionLearnAimRefTypeDesc, learnAimRefTypeDesc ?? string.Empty);
                 Session.SetString(SessionNonLarsCourse, "false");
             }
 
@@ -124,11 +124,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (!nonLarsCourse)
             {
-                viewModel.LearnAimRef = Session.GetString("LearnAimRef");
-                viewModel.LearnAimRefTitle = Session.GetString("LearnAimRefTitle");
-                viewModel.AwardOrgCode = Session.GetString("AwardOrgCode");
-                viewModel.NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2");
-                viewModel.CourseName = Session.GetString("LearnAimRefTitle");
+                viewModel.LearnAimRef = Session.GetString(SessionLearnAimRef);
+                viewModel.LearnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);
+                viewModel.AwardOrgCode = Session.GetString(SessionAwardOrgCode);
+                viewModel.NotionalNVQLevelv2 = Session.GetString(SessionNotionalNvqLevelV2);
+                viewModel.CourseName = Session.GetString(SessionLearnAimRefTitle);
             }
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
@@ -575,10 +575,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var nonLarsCourse = IsCourseNonLars();
             if (!nonLarsCourse)
             {
-                learnAimRef = Session.GetString("LearnAimRef");
-                notionalNvqLevelv2 = Session.GetString("NotionalNVQLevelv2");
-                awardOrgCode = Session.GetString("AwardOrgCode");
-                learnAimRefTitle = Session.GetString("LearnAimRefTitle");                
+                learnAimRef = Session.GetString(SessionLearnAimRef);
+                notionalNvqLevelv2 = Session.GetString(SessionNotionalNvqLevelV2);
+                awardOrgCode = Session.GetString(SessionAwardOrgCode);
+                learnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);                
 
                 // TODO - Add error message, if use this check
                 if (string.IsNullOrEmpty(learnAimRef) ||
@@ -706,9 +706,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 else
                 {
                     courseRun.National = true;
-                    //removed due to COUR-1552
-                    //courseRun.Regions = availableRegions.RegionItems.Select(x => (string)x.Id).ToList();
-
                 }
 
                 courseRuns.Add(courseRun);
@@ -872,11 +869,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         internal void RemoveSessionVariables()
         {
-            Session.Remove("LearnAimRef");
-            Session.Remove("NotionalNVQLevelv2");
-            Session.Remove("AwardOrgCode");
-            Session.Remove("LearnAimRefTitle");
-            Session.Remove("LearnAimRefTypeDesc");
+            Session.Remove(SessionLearnAimRef);
+            Session.Remove(SessionNotionalNvqLevelV2);
+            Session.Remove(SessionAwardOrgCode);
+            Session.Remove(SessionLearnAimRefTitle);
+            Session.Remove(SessionLearnAimRefTypeDesc);
 
             Session.Remove(SessionAddCourseSection2);
             Session.Remove(SessionLastAddCoursePage);
@@ -1001,10 +998,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var courseViewModel = new AddCourseViewModel()
             {
-                AwardOrgCode = Session.GetString("AwardOrgCode"),
-                LearnAimRef = Session.GetString("LearnAimRef"),
-                LearnAimRefTitle = Session.GetString("LearnAimRefTitle"),
-                NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2"),
+                AwardOrgCode = Session.GetString(SessionAwardOrgCode),
+                LearnAimRef = Session.GetString(SessionLearnAimRef),
+                LearnAimRefTitle = Session.GetString(SessionLearnAimRefTitle),
+                NotionalNVQLevelv2 = Session.GetString(SessionNotionalNvqLevelV2),
                 CourseFor = new CourseForModel
                 {
                     LabelText = "Who this course is for",
@@ -1103,11 +1100,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (!nonLarsCourse)
             {
-                viewModel.LearnAimRef = Session.GetString("LearnAimRef");
-                viewModel.LearnAimRefTitle = Session.GetString("LearnAimRefTitle");
-                viewModel.AwardOrgCode = Session.GetString("AwardOrgCode");
-                viewModel.NotionalNVQLevelv2 = Session.GetString("NotionalNVQLevelv2");
-                viewModel.CourseName = Session.GetString("LearnAimRefTitle");
+                viewModel.LearnAimRef = Session.GetString(SessionLearnAimRef);
+                viewModel.LearnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);
+                viewModel.AwardOrgCode = Session.GetString(SessionAwardOrgCode);
+                viewModel.NotionalNVQLevelv2 = Session.GetString(SessionNotionalNvqLevelV2);
+                viewModel.CourseName = Session.GetString(SessionLearnAimRefTitle);
             }
 
             viewModel.SelectVenue = await GetVenuesForProvider();

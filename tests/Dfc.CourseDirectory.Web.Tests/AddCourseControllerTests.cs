@@ -404,7 +404,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var trueValue = Encoding.UTF8.GetBytes("true");
             _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValue)).Returns(true);
 
-            var model = GetAddCourseRequestModel();
+            var model = GetAddCourseSection2RequestModel();
             model.SelectedVenues = new Guid[] { Guid.Empty };
 
             var modelValue = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model));
@@ -438,7 +438,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             // Arrange
             var controller = GetController();
 
-            var model = GetAddCourseRequestModel();
+            var model = GetAddCourseSection2RequestModel();
             var section1RequestModel = GetAddCourseSection1RequestModel();
             var venueModel = GetSelectVenueModel();
             var regionModel = new SelectRegionModel();
@@ -474,7 +474,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var controller = GetController();
 
             var venueId = Guid.NewGuid();
-            var model = GetAddCourseRequestModel();
+            var model = GetAddCourseSection2RequestModel();
             model.SelectedVenues = new Guid[] { venueId };
 
             var section1RequestModel = GetAddCourseSection1RequestModel();
@@ -515,7 +515,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             // Arrange
             var controller = GetController();
             
-            var model = GetAddCourseRequestModel();
+            var model = GetAddCourseSection2RequestModel();
             model.DeliveryMode = CourseDeliveryMode.Online;
 
             var section1RequestModel = GetAddCourseSection1RequestModel();
@@ -553,7 +553,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             // Arrange
             var controller = GetController();
             
-            var model = GetAddCourseRequestModel();
+            var model = GetAddCourseSection2RequestModel();
             model.DeliveryMode = CourseDeliveryMode.WorkBased;
             model.National = true;
 
@@ -592,7 +592,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             // Arrange
             var controller = GetController();
                         
-            var model = GetAddCourseRequestModel();
+            var model = GetAddCourseSection2RequestModel();
             model.DeliveryMode = CourseDeliveryMode.WorkBased;
             model.SelectedRegions = new string[] { "E12000001", "E08000023" };
 
@@ -628,6 +628,201 @@ namespace Dfc.CourseDirectory.Web.Tests
         }
         #endregion
 
+        #region Tests for AcceptAndPublish action method
+        [Fact]
+        public async Task AcceptAndPublish_WhenCourseIsLarsAndLarsDataIsMissing_RedirectsToAddCourseActionWithErrorMessage()
+        {
+            // Arrange
+            var controller = GetController();
+
+            // Act
+            var result = await controller.AcceptAndPublish() as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("AddCourse", result.ActionName);
+            Assert.Equal("Course data is missing.", result.RouteValues["errmsg"]);
+        }
+
+        [Fact]
+        public async Task AcceptAndPublish_WhenCourseIsLarsAndLarsDataIsFound_SavesDataAndRedirectsToPublishedAction()
+        {
+            // Arrange
+            var controller = GetController();
+
+            var learnAimRef = "6101137";
+            var section1Model = GetAddCourseSection1RequestModel();
+            var section2Model = GetAddCourseSection2RequestModel();            
+            
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section2Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);
+
+            var learnAimRefBytes = Encoding.UTF8.GetBytes(learnAimRef);
+            _mockSession.Setup(m => m.TryGetValue(SessionLearnAimRef, out learnAimRefBytes)).Returns(true);
+
+            var notionalLevelBytes = Encoding.UTF8.GetBytes("level2");
+            _mockSession.Setup(m => m.TryGetValue(SessionNotionalNvqLevelV2, out notionalLevelBytes)).Returns(true);
+
+            var awardingBodyBytes = Encoding.UTF8.GetBytes("Awarding Body");
+            _mockSession.Setup(m => m.TryGetValue(SessionAwardOrgCode, out awardingBodyBytes)).Returns(true);
+
+            var learnAimRefTitleBytes = Encoding.UTF8.GetBytes("Learn Aim Ref Title");
+            _mockSession.Setup(m => m.TryGetValue(SessionLearnAimRefTitle, out learnAimRefTitleBytes)).Returns(true);
+
+            _mockCourseTypeService.Setup(m => m.GetCourseType(learnAimRef)).ReturnsAsync(CourseType.EssentialSkills);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            // Act
+            var result = await controller.AcceptAndPublish() as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("Published", result.ActionName);
+        }
+
+        [Fact]
+        public async Task AcceptAndPublish_WhenCourseIsNonLars_SavesDataAndRedirectsToPublishedAction()
+        {
+            // Arrange
+            var controller = GetController();
+                        
+            var section1Model = GetAddCourseSection1RequestModel();
+            var section2Model = GetAddCourseSection2RequestModel();
+            section2Model.StartDateType = "SpecifiedStartDate";
+            section2Model.Day = DateTime.Now.AddDays(30).Day.ToString();
+            section2Model.Month = DateTime.Now.AddDays(30).Month.ToString();
+            section2Model.Year = DateTime.Now.AddDays(30).Year.ToString();
+            
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section2Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);            
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            var trueValueBytes = Encoding.UTF8.GetBytes("true");
+            _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValueBytes)).Returns(true);
+
+            // Act
+            var result = await controller.AcceptAndPublish() as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("Published", result.ActionName);
+        }
+
+        [Fact]
+        public async Task AcceptAndPublish_WhenDeliveryModeIsOnline_SavesDataAndRedirectsToPublishedAction()
+        {
+            // Arrange
+            var controller = GetController();
+
+            var section1Model = GetAddCourseSection1RequestModel();
+            var section2Model = GetAddCourseSection2RequestModel();
+            section2Model.DeliveryMode = CourseDeliveryMode.Online;
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section2Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
+
+            var trueValueBytes = Encoding.UTF8.GetBytes("true");
+            _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValueBytes)).Returns(true);
+
+            // Act
+            var result = await controller.AcceptAndPublish() as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("Published", result.ActionName);
+        }
+
+        [Fact]
+        public async Task AcceptAndPublish_WhenDeliveryModeIsWorkBasedAndNationalIsTrue_SavesDataAndRedirectsToPublishedAction()
+        {
+            // Arrange
+            var controller = GetController();
+
+            var section1Model = GetAddCourseSection1RequestModel();
+            var section2Model = GetAddCourseSection2RequestModel();
+            section2Model.DeliveryMode = CourseDeliveryMode.WorkBased;
+            section2Model.National = true;
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section2Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);            
+
+            var trueValueBytes = Encoding.UTF8.GetBytes("true");
+            _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValueBytes)).Returns(true);
+
+            // Act
+            var result = await controller.AcceptAndPublish() as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("Published", result.ActionName);
+        }
+
+        [Fact]
+        public async Task AcceptAndPublish_WhenDeliveryModeIsWorkBasedAndNationalIsFalse_SavesDataAndRedirectsToPublishedAction()
+        {
+            // Arrange
+            var controller = GetController();
+
+            var section1Model = GetAddCourseSection1RequestModel();
+            var section2Model = GetAddCourseSection2RequestModel();
+            section2Model.DeliveryMode = CourseDeliveryMode.WorkBased;
+            section2Model.SelectedRegions = new string[] { "E12000001", "E08000023" };
+
+            var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
+
+            var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section2Model));
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);
+
+            var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
+            var providerContext = new ProviderContext(providerInfo);
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);            
+
+            var trueValueBytes = Encoding.UTF8.GetBytes("true");
+            _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValueBytes)).Returns(true);
+
+            // Act
+            var result = await controller.AcceptAndPublish() as RedirectToActionResult;
+
+            // Assert            
+            Assert.NotNull(result);
+
+            Assert.Equal("Published", result.ActionName);
+        }
+
+        #endregion
+
         private AddCourseController GetController()
         {
             var addCourseController = new AddCourseController(
@@ -641,7 +836,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             return addCourseController;
         }
 
-        private AddCourseRequestModel GetAddCourseRequestModel()
+        private AddCourseRequestModel GetAddCourseSection2RequestModel()
         {
             return new Faker<AddCourseRequestModel>()
                             .RuleFor(c => c.CourseId, f => Guid.NewGuid())
@@ -654,6 +849,9 @@ namespace Dfc.CourseDirectory.Web.Tests
                             .RuleFor(c => c.Sector, f => Sector.TransportAndLogistics)
                             .RuleFor(c => c.EducationLevel, f => EducationLevel.Two)
                             .RuleFor(c => c.SelectedVenues, f => new Guid[] { Guid.NewGuid() })
+                            .RuleFor(c => c.StartDateType, f => "FlexibleStartDate")
+                            .RuleFor(c => c.DurationUnit, f => CourseDurationUnit.Hours)
+                            .RuleFor(c => c.DurationLength, f => 2)
                             .Generate();
         }
 

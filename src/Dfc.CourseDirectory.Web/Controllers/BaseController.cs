@@ -21,6 +21,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
         protected const string SessionSummaryPageLoadedAtLeastOnce = "SummaryLoadedAtLeastOnce";
         protected const string SessionPublishedCourse = "PublishedCourse";
         protected const string SessionNonLarsCourse = "NonLarsCourse";
+        protected const string SessionLearnAimRef = "LearnAimRef";
+        protected const string SessionLearnAimRefTitle = "LearnAimRefTitle";
+        protected const string SessionAwardOrgCode = "AwardOrgCode";
+        protected const string SessionNotionalNvqLevelV2 = "NotionalNVQLevelv2";
+        protected const string SessionLearnAimRefTypeDesc = "LearnAimRefTypeDesc";
 
         public BaseController(ISqlQueryDispatcher sqlQueryDispatcher)
         {
