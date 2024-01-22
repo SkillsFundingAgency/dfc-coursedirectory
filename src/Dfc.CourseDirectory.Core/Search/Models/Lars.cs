@@ -44,3 +44,4 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public bool IsExpired { get; set; }
     }
 }
+
