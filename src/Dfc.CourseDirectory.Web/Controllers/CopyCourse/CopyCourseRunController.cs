@@ -476,20 +476,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            if (model.DeliveryMode != CourseDeliveryMode.WorkBased)
-            {
-                model.National = null;
-            }
-
-            if (model.National == true)
-            {
-                model.SelectedRegions = null;
-            }
-
-            if (model.DeliveryMode == CourseDeliveryMode.Online || model.DeliveryMode == CourseDeliveryMode.WorkBased)
-            {
-                model.VenueId = Guid.Empty;
-            }
+            RefineModelDataForADeliveryMode(model);
 
             var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
             if (!validationResult.IsValid)
@@ -573,6 +560,29 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _session.Remove(CopyCourseRunSaveViewModelSessionKey);
 
             return RedirectToAction("Published");
+        }
+
+        private static void RefineModelDataForADeliveryMode(CopyCourseRunSaveViewModel model)
+        {
+            switch (model.DeliveryMode)
+            {
+                case CourseDeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.BlendedLearning:                   
+                    model.SelectedRegions = null;
+                    model.National = null;
+                    break;
+                case CourseDeliveryMode.WorkBased:
+                    model.VenueId = Guid.Empty;
+                    model.AttendanceMode = null;
+                    model.StudyMode = null;                    
+                    break;
+                case CourseDeliveryMode.Online:
+                    model.SelectedRegions = null;
+                    model.VenueId = Guid.Empty;
+                    model.AttendanceMode = null;
+                    model.StudyMode = null;
+                    break;
+            }
         }
 
         [HttpGet]
