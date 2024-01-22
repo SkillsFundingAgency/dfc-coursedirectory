@@ -13,177 +13,184 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<OneOf<NotFound, PublishCourseUploadResult>> Execute(SqlTransaction transaction, PublishCourseUpload query)
         {
+            var condition = " AND (LearnAimRef is not null AND LearnAimRef != '')";
+            if(query.IsNonLars)
+            {
+                condition = " AND (LearnAimRef is null or LearnAimRef = '') ";
+            }
+
             var sql = $@"
-UPDATE Pttcd.CourseUploads
-SET UploadStatus = {(int)UploadStatus.Published}, PublishedOn = @PublishedOn
-WHERE CourseUploadId = @CourseUploadId
+                UPDATE Pttcd.CourseUploads
+                SET UploadStatus = {(int)UploadStatus.Published}, PublishedOn = @PublishedOn
+                WHERE CourseUploadId = @CourseUploadId
 
-IF @@ROWCOUNT = 0
-BEGIN
-    SELECT 0 AS Status
-    RETURN
-END
+                IF @@ROWCOUNT = 0
+                BEGIN
+                    SELECT 0 AS Status
+                    RETURN
+                END
 
-DECLARE @ProviderUkprn INT,
-        @ProviderId UNIQUEIDENTIFIER
+                DECLARE @ProviderUkprn INT,
+                        @ProviderId UNIQUEIDENTIFIER
 
-SELECT @ProviderUkprn = Ukprn, @ProviderId = p.ProviderId FROM Pttcd.Providers p
-JOIN Pttcd.CourseUploads cu ON p.ProviderId = cu.ProviderId
-WHERE cu.CourseUploadId = @CourseUploadId
-
-
--- Archive all existing courses
-
-DECLARE @CourseIds Pttcd.GuidIdTable
-
-INSERT INTO @CourseIds
-SELECT CourseId FROM Pttcd.Courses
-WHERE ProviderUkprn = @ProviderUkprn
-AND (CourseStatus & (~ {(int)CourseStatus.Archived})) <> 0
-
-UPDATE Pttcd.Courses
-SET CourseStatus = {(int)CourseStatus.Archived}
-FROM Pttcd.Courses c
-JOIN @CourseIds x ON c.CourseId = x.Id
-
-UPDATE Pttcd.CourseRuns 
-SET CourseRunStatus = {(int)CourseStatus.Archived}
-FROM Pttcd.CourseRuns cr
-JOIN @CourseIds x ON cr.CourseId = x.Id
-WHERE cr.CourseRunStatus <> {(int)CourseStatus.Archived}
-
-UPDATE Pttcd.FindACourseIndex
-SET Live = 0
-FROM Pttcd.FindACourseIndex i
-JOIN @CourseIds x ON i.CourseId = x.Id
+                SELECT @ProviderUkprn = Ukprn, @ProviderId = p.ProviderId FROM Pttcd.Providers p
+                JOIN Pttcd.CourseUploads cu ON p.ProviderId = cu.ProviderId
+                WHERE cu.CourseUploadId = @CourseUploadId
 
 
--- Create new courses from the Course Upload's rows
+                -- Archive all existing courses
 
-;WITH CoursesCte AS (
-    SELECT
-        CourseId,
-        LearnAimRef,
-        WhoThisCourseIsFor,
-        EntryRequirements,
-        WhatYouWillLearn,
-        HowYouWillLearn,
-        WhatYouWillNeedToBring,
-        HowYouWillBeAssessed,
-        WhereNext,
-        ResolvedCourseType,
-        ROW_NUMBER() OVER (PARTITION BY CourseId ORDER BY RowNumber) AS GroupRowNumber
-    FROM Pttcd.CourseUploadRows
-    WHERE CourseUploadId = @CourseUploadId
-    AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
-)
-INSERT INTO Pttcd.Courses (
-    CourseId,
-    CourseStatus,
-    CreatedOn,
-    CreatedBy,
-    UpdatedOn,
-    UpdatedBy,
-    LearnAimRef,
-    ProviderUkprn,
-    ProviderId,
-    CourseDescription,
-    EntryRequirements,
-    WhatYoullLearn,
-    HowYoullLearn,
-    WhatYoullNeed,
-    HowYoullBeAssessed,
-    WhereNext,
-    DataIsHtmlEncoded,
-    CourseType
-)
-SELECT
-    CourseId,
-    {(int)CourseStatus.Live},
-    @PublishedOn,
-    @PublishedByUserId,
-    @PublishedOn,
-    @PublishedByUserId,
-    LearnAimRef,
-    @ProviderUkprn,
-    @ProviderId,
-    WhoThisCourseIsFor,
-    EntryRequirements,
-    WhatYouWillLearn,
-    HowYouWillLearn,
-    WhatYouWillNeedToBring,
-    HowYouWillBeAssessed,
-    WhereNext,
-    0,  -- DataIsHtmlEncoded
-    ResolvedCourseType
-FROM CoursesCte
-WHERE GroupRowNumber = 1
+                DECLARE @CourseIds Pttcd.GuidIdTable
 
-INSERT INTO Pttcd.CourseRuns (
-    CourseRunId,
-    CourseId,
-    CourseRunStatus,
-    CreatedOn,
-    CreatedBy,
-    UpdatedOn,
-    UpdatedBy,
-    CourseName,
-    VenueId,
-    ProviderCourseId,
-    DeliveryMode,
-    FlexibleStartDate,
-    StartDate,
-    CourseWebsite,
-    Cost,
-    CostDescription,
-    DurationUnit,
-    DurationValue,
-    StudyMode,
-    AttendancePattern,
-    [National],
-    DataIsHtmlEncoded
-)
-SELECT
-    CourseRunId,
-    CourseId,
-    {(int)CourseStatus.Live},
-    @PublishedOn,
-    @PublishedByUserId,
-    @PublishedOn,
-    @PublishedByUserId,
-    CourseName,
-    VenueId,
-    ProviderCourseRef,
-    ResolvedDeliveryMode,
-    ResolvedFlexibleStartDate,
-    ResolvedStartDate,
-    CourseWebpage,
-    ResolvedCost,
-    CostDescription,
-    ResolvedDurationUnit,
-    ResolvedDuration,
-    ResolvedStudyMode,
-    ResolvedAttendancePattern,
-    ResolvedNationalDelivery,
-    0  -- DataIsHtmlEncoded
-FROM Pttcd.CourseUploadRows
-WHERE CourseUploadId = @CourseUploadId
-AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+                INSERT INTO @CourseIds
+                SELECT CourseId FROM Pttcd.Courses
+                WHERE ProviderUkprn = @ProviderUkprn
+                AND (CourseStatus & (~ {(int)CourseStatus.Archived})) <> 0
+                {condition}
 
-INSERT INTO Pttcd.CourseRunSubRegions (CourseRunId, RegionId)
-SELECT cur.CourseRunId, sr.RegionId
-FROM Pttcd.CourseUploadRows cur
-JOIN Pttcd.CourseUploadRowSubRegions sr ON cur.RowNumber = sr.RowNumber AND cur.CourseUploadId = sr.CourseUploadId
-WHERE cur.CourseUploadId = @CourseUploadId
-AND cur.CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+                UPDATE Pttcd.Courses
+                SET CourseStatus = {(int)CourseStatus.Archived}
+                FROM Pttcd.Courses c
+                JOIN @CourseIds x ON c.CourseId = x.Id
+
+                UPDATE Pttcd.CourseRuns 
+                SET CourseRunStatus = {(int)CourseStatus.Archived}
+                FROM Pttcd.CourseRuns cr
+                JOIN @CourseIds x ON cr.CourseId = x.Id
+                WHERE cr.CourseRunStatus <> {(int)CourseStatus.Archived}
+
+                UPDATE Pttcd.FindACourseIndex
+                SET Live = 0
+                FROM Pttcd.FindACourseIndex i
+                JOIN @CourseIds x ON i.CourseId = x.Id
 
 
-SELECT 1 AS Status
+                -- Create new courses from the Course Upload's rows
 
-SELECT CourseRunId FROM Pttcd.CourseUploadRows
-WHERE CourseUploadId = @CourseUploadId
-AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
-";
+                ;WITH CoursesCte AS (
+                    SELECT
+                        CourseId,
+                        LearnAimRef,
+                        WhoThisCourseIsFor,
+                        EntryRequirements,
+                        WhatYouWillLearn,
+                        HowYouWillLearn,
+                        WhatYouWillNeedToBring,
+                        HowYouWillBeAssessed,
+                        WhereNext,
+                        ResolvedCourseType,
+                        ROW_NUMBER() OVER (PARTITION BY CourseId ORDER BY RowNumber) AS GroupRowNumber
+                    FROM Pttcd.CourseUploadRows
+                    WHERE CourseUploadId = @CourseUploadId
+                    AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+                )
+                INSERT INTO Pttcd.Courses (
+                    CourseId,
+                    CourseStatus,
+                    CreatedOn,
+                    CreatedBy,
+                    UpdatedOn,
+                    UpdatedBy,
+                    LearnAimRef,
+                    ProviderUkprn,
+                    ProviderId,
+                    CourseDescription,
+                    EntryRequirements,
+                    WhatYoullLearn,
+                    HowYoullLearn,
+                    WhatYoullNeed,
+                    HowYoullBeAssessed,
+                    WhereNext,
+                    DataIsHtmlEncoded,
+                    CourseType
+                )
+                SELECT
+                    CourseId,
+                    {(int)CourseStatus.Live},
+                    @PublishedOn,
+                    @PublishedByUserId,
+                    @PublishedOn,
+                    @PublishedByUserId,
+                    LearnAimRef,
+                    @ProviderUkprn,
+                    @ProviderId,
+                    WhoThisCourseIsFor,
+                    EntryRequirements,
+                    WhatYouWillLearn,
+                    HowYouWillLearn,
+                    WhatYouWillNeedToBring,
+                    HowYouWillBeAssessed,
+                    WhereNext,
+                    0,  -- DataIsHtmlEncoded
+                    ResolvedCourseType
+                FROM CoursesCte
+                WHERE GroupRowNumber = 1
+
+                INSERT INTO Pttcd.CourseRuns (
+                    CourseRunId,
+                    CourseId,
+                    CourseRunStatus,
+                    CreatedOn,
+                    CreatedBy,
+                    UpdatedOn,
+                    UpdatedBy,
+                    CourseName,
+                    VenueId,
+                    ProviderCourseId,
+                    DeliveryMode,
+                    FlexibleStartDate,
+                    StartDate,
+                    CourseWebsite,
+                    Cost,
+                    CostDescription,
+                    DurationUnit,
+                    DurationValue,
+                    StudyMode,
+                    AttendancePattern,
+                    [National],
+                    DataIsHtmlEncoded
+                )
+                SELECT
+                    CourseRunId,
+                    CourseId,
+                    {(int)CourseStatus.Live},
+                    @PublishedOn,
+                    @PublishedByUserId,
+                    @PublishedOn,
+                    @PublishedByUserId,
+                    CourseName,
+                    VenueId,
+                    ProviderCourseRef,
+                    ResolvedDeliveryMode,
+                    ResolvedFlexibleStartDate,
+                    ResolvedStartDate,
+                    CourseWebpage,
+                    ResolvedCost,
+                    CostDescription,
+                    ResolvedDurationUnit,
+                    ResolvedDuration,
+                    ResolvedStudyMode,
+                    ResolvedAttendancePattern,
+                    ResolvedNationalDelivery,
+                    0  -- DataIsHtmlEncoded
+                FROM Pttcd.CourseUploadRows
+                WHERE CourseUploadId = @CourseUploadId
+                AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+
+                INSERT INTO Pttcd.CourseRunSubRegions (CourseRunId, RegionId)
+                SELECT cur.CourseRunId, sr.RegionId
+                FROM Pttcd.CourseUploadRows cur
+                JOIN Pttcd.CourseUploadRowSubRegions sr ON cur.RowNumber = sr.RowNumber AND cur.CourseUploadId = sr.CourseUploadId
+                WHERE cur.CourseUploadId = @CourseUploadId
+                AND cur.CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+
+
+                SELECT 1 AS Status
+
+                SELECT CourseRunId FROM Pttcd.CourseUploadRows
+                WHERE CourseUploadId = @CourseUploadId
+                AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+                ";
 
             var paramz = new
             {

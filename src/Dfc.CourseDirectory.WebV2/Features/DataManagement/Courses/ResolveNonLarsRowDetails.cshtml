@@ -17,6 +17,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
             <govuk-error-summary>
+                <govuk-error-summary-item asp-for="CourseType" />
                 <govuk-error-summary-item asp-for="CourseName" />
                 <govuk-error-summary-item asp-for="ProviderCourseRef" />
                 <govuk-error-summary-item asp-for="FlexibleStartDate" />

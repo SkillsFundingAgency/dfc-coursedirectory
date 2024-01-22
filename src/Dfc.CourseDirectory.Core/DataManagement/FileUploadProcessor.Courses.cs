@@ -488,6 +488,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var publishResult = await dispatcher.ExecuteQuery(new PublishCourseUpload()
                 {
+                    IsNonLars = isNonLars,
                     CourseUploadId = courseUpload.CourseUploadId,
                     PublishedBy = publishedBy,
                     PublishedOn = publishedOn
