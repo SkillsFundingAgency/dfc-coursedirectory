@@ -828,6 +828,10 @@
                 makeRequestWithPayload({
                     CourseName: $courseName.val(),
                     CourseProviderReference: $courseProviderReference.val(),
+                    CourseType: $radioCourseType.find("input[type='radio']:checked").val(),
+                    Sector: $radioSector.find("input[type='radio']:checked").val(),
+                    EducationLevel: $radioEducationLevel.find("input[type='radio']:checked").val(),
+                    AwardingBody: $awardingBody.val(),
                     DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
                     StartDateType: $("input[name='StartDateType']:checked").val(),
                     Day: $("#Day").val(),

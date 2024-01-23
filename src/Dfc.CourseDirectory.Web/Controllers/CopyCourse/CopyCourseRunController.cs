@@ -127,7 +127,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             var ukprn = _session.GetInt32("UKPRN").Value;
 
             var cachedData = _session.GetObject<CopyCourseRunViewModel>("CopyCourseRunObject");
-            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = cachedData.CourseId.Value });
+
+            var course = await GetCourse(cachedData.CourseId.Value);            
             var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == cachedData.CourseRunId);
             var venues = await GetVenuesForProvider();
 
