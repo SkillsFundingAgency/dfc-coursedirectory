@@ -42,5 +42,8 @@
 	[ResolvedStudyMode] TINYINT,
 	[ResolvedAttendancePattern] TINYINT,
 	[CourseType] NVARCHAR(MAX) NULL,
-	[ResolvedCourseType] TINYINT NULL
+	[ResolvedCourseType] TINYINT NULL,
+	[EducationLevel] NVARCHAR(MAX) NULL,
+	[ResolvedEducationLevel] TINYINT NULL,
+	[AwardingBody] NVARCHAR(MAX) NULL
 )

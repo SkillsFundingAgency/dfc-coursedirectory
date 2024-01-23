@@ -13,6 +13,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
         public new static CsvNonLarsCourseRowWithErrors FromModel(CourseUploadRow row) => new CsvNonLarsCourseRowWithErrors()
         {
+            EducationLevel = row.EducationLevel,
+            AwardingBody = row.AwardingBody,
             CourseType = row.CourseType,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
             EntryRequirements = row.EntryRequirements,

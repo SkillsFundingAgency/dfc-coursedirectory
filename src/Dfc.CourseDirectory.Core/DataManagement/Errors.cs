@@ -114,6 +114,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Venue name";
                 case "COURSE_COURSE_TYPE_REQUIRED":
                     return "Course type";
+                case "COURSE_AWARDING_BODY_REQUIRED":
+                case "COURSE_AWARDING_BODY_MAXLENGTH":
+                    return "Awarding body";
+                case "COURSE_EDUCATION_LEVEL_REQUIRED":
+                    return "Education level";
             }
 
             throw new ArgumentException($"Unknown error code: '{errorCode}'.", nameof(errorCode));

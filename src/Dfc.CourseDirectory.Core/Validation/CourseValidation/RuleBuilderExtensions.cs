@@ -93,6 +93,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_COURSE_TYPE_REQUIRED");
         }
 
+        public static void EducationLevel<T>(this IRuleBuilderInitial<T, EducationLevel?> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_EDUCATION_LEVEL_REQUIRED");
+        }
+
         public static void DeliveryMode<T>(this IRuleBuilderInitial<T, CourseDeliveryMode?> field)
         {
             field
@@ -430,6 +437,14 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED")
                 .MaximumLength(Constants.WhoThisCourseIsForMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH");
+        }
+        public static void AwardingBody<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotEmpty()
+                    .WithMessageFromErrorCode("COURSE_AWARDING_BODY_REQUIRED")
+                .MaximumLength(Constants.AwardingBodyMaxLength)
+                    .WithMessageFromErrorCode("COURSE_AWARDING_BODY_MAXLENGTH");
         }
     }
 }

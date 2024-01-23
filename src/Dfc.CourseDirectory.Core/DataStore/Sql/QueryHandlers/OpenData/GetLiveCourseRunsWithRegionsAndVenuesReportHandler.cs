@@ -65,7 +65,9 @@ SELECT
     v.Email AS VenueEmail,
     v.Website AS VenueWebsite,
     cr.UpdatedOn,
-	c.CourseType
+	c.CourseType,
+    c.EducationLevel, 
+    c.AwardingBody
 FROM [Pttcd].[CourseRuns] cr
 INNER JOIN [Pttcd].[Courses] c ON c.CourseId = cr.CourseId
 INNER JOIN [Pttcd].[Providers] p ON p.ProviderId = c.ProviderId 

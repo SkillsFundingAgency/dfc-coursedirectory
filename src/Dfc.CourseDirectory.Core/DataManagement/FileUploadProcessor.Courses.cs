@@ -1166,7 +1166,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ResolvedAttendancePattern = parsedRow.ResolvedAttendancePattern,
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
                     CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(parsedRow.ResolvedCourseType) ?? parsedRow.CourseType,
-                    ResolvedCourseType = parsedRow.ResolvedCourseType
+                    ResolvedCourseType = parsedRow.ResolvedCourseType,
+                    EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(parsedRow.ResolvedEducationLevel) ?? parsedRow.EducationLevel,
+                    ResolvedEducationLevel = parsedRow.ResolvedEducationLevel,
+                    AwardingBody = parsedRow.AwardingBody,
                 });
             }
 
@@ -1351,6 +1354,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Guid? matchedVenueId)
             {
                 RuleFor(c => c.ResolvedCourseType).CourseType();
+                RuleFor(c => c.ResolvedEducationLevel).EducationLevel();
+                RuleFor(c => c.AwardingBody).AwardingBody();
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
                 RuleFor(c => c.WhatYouWillLearn).WhatYouWillLearn();

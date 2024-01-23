@@ -27,10 +27,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public CourseAttendancePattern? ResolvedAttendancePattern { get; private set; }
         public IReadOnlyCollection<Region> ResolvedSubRegions { get; private set; }
         public CourseType? ResolvedCourseType { get; set; }
+        public EducationLevel? ResolvedEducationLevel { get; set; }
 
         public static ParsedCsvNonLarsCourseRow FromCsvCourseRow(CsvNonLarsCourseRow row, IEnumerable<Region> allRegions)
         {
             var parsedRow = row.Adapt(new ParsedCsvNonLarsCourseRow());
+            parsedRow.ResolvedEducationLevel = ResolveEducationLevel(parsedRow.EducationLevel);
             parsedRow.ResolvedCourseType = ResolveCourseType(parsedRow.CourseType);
             parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(parsedRow.DeliveryMode);
             parsedRow.ResolvedStartDate = ResolveStartDate(parsedRow.StartDate);
@@ -71,6 +73,20 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public static string MapCourseType(CourseType? value) => value switch
         {
             Models.CourseType.SkillsBootcamp => "Skills Bootcamp",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
+        public static string MapEducationLevel(EducationLevel? value) => value switch
+        {
+            Models.EducationLevel.EntryLevel => "Entry Level",
+            Models.EducationLevel.One => "1",
+            Models.EducationLevel.Two => "2",
+            Models.EducationLevel.Three => "3",
+            Models.EducationLevel.Four => "4",
+            Models.EducationLevel.Five => "5",
+            Models.EducationLevel.Six => "6",
+            Models.EducationLevel.Seven => "7",
             null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
@@ -158,6 +174,25 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "Skills bootcamp" => Models.CourseType.SkillsBootcamp,
             "Skillsbootcamp" => Models.CourseType.SkillsBootcamp,
             _ => (CourseType?)null
+        };
+        public static EducationLevel? ResolveEducationLevel(string value) => value?.ToLower()?.Trim() switch
+        {
+            "entry level" => Models.EducationLevel.EntryLevel,            
+            "1" => Models.EducationLevel.One,
+            "one" => Models.EducationLevel.One,
+            "2" => Models.EducationLevel.Two,
+            "two" => Models.EducationLevel.Two,
+            "3" => Models.EducationLevel.Three,
+            "three" => Models.EducationLevel.Three,
+            "4" => Models.EducationLevel.Four,
+            "four" => Models.EducationLevel.Four,
+            "5" => Models.EducationLevel.Five,
+            "five" => Models.EducationLevel.Five,
+            "6" => Models.EducationLevel.Six,
+            "six" => Models.EducationLevel.Six,
+            "7" => Models.EducationLevel.Seven,
+            "seven" => Models.EducationLevel.Seven,
+            _ => (EducationLevel?)null
         };
 
         public static int? ResolveDuration(string value) =>

@@ -101,6 +101,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             csvReader.Context.Reader.HeaderRecord.Should().BeEquivalentTo(new[]
             {
                 "COURSE_TYPE",
+                "EDUCATION_LEVEL", 
+                "AWARDING_BODY",
                 "WHO_THIS_COURSE_IS_FOR",
                 "ENTRY_REQUIREMENTS",
                 "WHAT_YOU_WILL_LEARN",
@@ -289,6 +291,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 Duration = courseRun.DurationValue?.ToString(),
                 StudyMode = "",
                 AttendancePattern = "",
+                AwardingBody = "test awarding body",
+                EducationLevel = "1"
             });
         }
 
@@ -410,6 +414,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 Duration = courseRun.DurationValue?.ToString(),
                 StudyMode = "",
                 AttendancePattern = "",
+                AwardingBody = "test awarding body",
+                EducationLevel = "1"
             });
         }
 

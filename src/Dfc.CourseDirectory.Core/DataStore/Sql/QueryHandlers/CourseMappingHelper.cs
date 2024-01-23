@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     CourseType = row.CourseType,
                     Sector = row.Sector,
                     EducationLevel = row.EducationLevel,
-                    AwardingBody = row.AwardingBody
+                    AwardingBody = DecodeIfNecessary(row.AwardingBody)
                 };
 
                 string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded != false ? HtmlDecode(field) : field;

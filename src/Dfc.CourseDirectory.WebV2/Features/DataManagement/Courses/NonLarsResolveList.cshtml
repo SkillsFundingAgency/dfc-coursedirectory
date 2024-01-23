@@ -26,7 +26,7 @@
                 @foreach (var row in Model.ErrorRows)
                 {
                     <tr class="govuk-table__row @(row.CourseRows.Count == 0 ? "pttcd-table__row-!-border" : "")" data-testid="NonLarsCourseRow">
-                        
+                        <td class="govuk-table__cell pttcd-table--no-border"></td>
                         <td class="govuk-table__cell pttcd-table--no-border"></td>
                         <td class="govuk-table__cell pttcd-table--no-border"></td>
                         <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
@@ -40,7 +40,7 @@
                         <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
                             @if (row.HasDescriptionErrors)
                             {
-                                <a asp-action="NonLarsResolveRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link" data-testid="NonLarsResolveDescription">
+                                <a asp-action="ResolveNonLarsRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link" data-testid="NonLarsResolveDescription">
                                     Resolve
                                 </a>
                             }

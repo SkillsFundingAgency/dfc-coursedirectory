@@ -111,6 +111,8 @@ namespace Dfc.CourseDirectory.Testing
                         HowYoullBeAssessed = howYoullBeAssessed,
                         WhereNext = whereNext,
                         CourseType = CourseType.SkillsBootcamp,
+                        EducationLevel = EducationLevel.One,
+                        AwardingBody = "test awarding body",
                         CourseRuns = courseRuns,
                         CreatedOn = createdUtc ?? _clock.UtcNow,
                         CreatedBy = createdBy

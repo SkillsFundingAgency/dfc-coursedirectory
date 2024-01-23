@@ -154,6 +154,7 @@ namespace Dfc.CourseDirectory.Testing
 
                     await dispatcher.ExecuteQuery(new PublishCourseUpload()
                     {
+                        IsNonLars = isNonLars,
                         CourseUploadId = courseUploadId,
                         PublishedBy = createdBy,
                         PublishedOn = publishedOn.Value
@@ -234,6 +235,8 @@ namespace Dfc.CourseDirectory.Testing
                 string studyMode,
                 string attendancePattern,
                 string courseType,
+                string educationLevel,
+                string awardingBody,
                 Guid? venueId,
                 IEnumerable<string> errors = null)
             {
@@ -265,6 +268,8 @@ namespace Dfc.CourseDirectory.Testing
                     studyMode,
                     attendancePattern,
                     courseType,
+                    educationLevel,
+                    awardingBody,
                     venueId,
                     errors);
 
@@ -337,6 +342,8 @@ namespace Dfc.CourseDirectory.Testing
                 string studyMode,
                 string attendancePattern,
                 string courseType,
+                string educationLevel,
+                string awardingBody,
                 Guid? venueId,
                 IEnumerable<string> errors = null)
             {
@@ -375,6 +382,8 @@ namespace Dfc.CourseDirectory.Testing
                     StudyMode = studyMode,
                     AttendancePattern = attendancePattern,
                     CourseType = courseType,
+                    EducationLevel = educationLevel,
+                    AwardingBody = awardingBody,
                     VenueId = venueId,
                     ResolvedDeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(deliveryMode),
                     ResolvedStartDate = ParsedCsvCourseRow.ResolveStartDate(startDate),
@@ -387,6 +396,8 @@ namespace Dfc.CourseDirectory.Testing
                     ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern),
                     ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id),
                     ResolvedCourseType = ParsedCsvNonLarsCourseRow.ResolveCourseType(courseType),
+                    ResolvedEducationLevel = ParsedCsvNonLarsCourseRow.ResolveEducationLevel(educationLevel),
+
                 };
             }
 
@@ -420,6 +431,8 @@ namespace Dfc.CourseDirectory.Testing
                     studyMode: "",
                     attendancePattern: "",
                     courseType: "",
+                    educationLevel : "",
+                    awardingBody:"",
                     venueId: null);
             }
             private UpsertCourseUploadRowsRecord CreateValidNonLarsRecord()
@@ -452,6 +465,8 @@ namespace Dfc.CourseDirectory.Testing
                     studyMode: "",
                     attendancePattern: "",
                     courseType: "Skills Bootcamp",
+                    educationLevel: "1",
+                    awardingBody: "test awarding body",
                     venueId: null);
             }
         }

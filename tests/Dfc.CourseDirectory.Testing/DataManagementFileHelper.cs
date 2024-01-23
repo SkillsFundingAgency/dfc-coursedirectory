@@ -63,7 +63,8 @@ namespace Dfc.CourseDirectory.Testing
             CreateCsvStream(csvWriter =>
             {
                 // N.B. We deliberately do not use the CsvCourseRow class here to ensure we notice if any columns change name
-
+                csvWriter.WriteField("EDUCATION_LEVEL");
+                csvWriter.WriteField("AWARDING_BODY");
                 csvWriter.WriteField("COURSE_TYPE");
                 csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
                 csvWriter.WriteField("ENTRY_REQUIREMENTS");
@@ -129,6 +130,8 @@ namespace Dfc.CourseDirectory.Testing
         {
             foreach (var row in rows)
             {
+                csvWriter.WriteField(row.EducationLevel);
+                csvWriter.WriteField(row.AwardingBody);                
                 csvWriter.WriteField(row.CourseType);
                 csvWriter.WriteField(row.WhoThisCourseIsFor);
                 csvWriter.WriteField(row.EntryRequirements);
@@ -227,7 +230,9 @@ namespace Dfc.CourseDirectory.Testing
                     Duration = "2",
                     DurationUnit = "years",
                     StudyMode = "",
-                    AttendancePattern = ""
+                    AttendancePattern = "",
+                    AwardingBody = "test awarding body",
+                    EducationLevel = "1"
                 };
             }
         }

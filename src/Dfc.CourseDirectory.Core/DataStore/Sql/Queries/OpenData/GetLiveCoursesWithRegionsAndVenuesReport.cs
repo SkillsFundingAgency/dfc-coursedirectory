@@ -45,5 +45,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData
         public string VenueWebsite { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public int? CourseType { get; set; }
+        public string EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
     }
 }

@@ -76,6 +76,9 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("VENUE_TOWN_REQUIRED"),
             new Error("VENUE_WEBSITE_FORMAT"),
             new Error("COURSE_COURSE_TYPE_REQUIRED"),
+            new Error("COURSE_AWARDING_BODY_REQUIRED"),
+            new Error("COURSE_AWARDING_BODY_MAXLENGTH",CourseConstants.AwardingBodyMaxLength),
+            new Error("COURSE_EDUCATION_LEVEL_REQUIRED"),
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 

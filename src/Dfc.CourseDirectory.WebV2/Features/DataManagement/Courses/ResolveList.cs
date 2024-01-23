@@ -43,9 +43,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public string VenueName { get; set; }
         public string DeliveryMode { get; set; }
         public string CourseType { get; set; }
+        public string AwardingBody { get; set; }
+        public string EducationLevel { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
         public bool HasDeliveryModeError { get; set; }
-        public bool HasCourseTypeError { get; set; }
+        //public bool HasCourseTypeError { get; set; }
         public bool HasDetailErrors { get; set; }
     }
 
@@ -111,10 +113,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                         VenueName = r.Row.VenueName,
                                         DeliveryMode = r.Row.DeliveryMode,
                                         CourseType = r.Row.CourseType,
+                                        AwardingBody = r.Row.AwardingBody,
+                                        EducationLevel = r.Row.EducationLevel,
                                         ErrorFields = r.NonGroupErrorFields,
                                         HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
-                                        HasCourseTypeError = r.NonGroupErrorFields.Contains("Course type"),
-                                        HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode","Course type" }).Any()
+                                        //HasCourseTypeError = r.NonGroupErrorFields.Contains("Course type"),
+                                        HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode"}).Any()
                                     })
                                     .Where(r => r.ErrorFields.Count > 0)
                                     .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)

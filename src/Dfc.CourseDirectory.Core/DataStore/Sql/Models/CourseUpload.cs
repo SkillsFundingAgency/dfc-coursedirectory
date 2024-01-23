@@ -52,10 +52,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
         public string CourseType { get; set; }
+        public string AwardingBody { get; set; }
+        public string EducationLevel { get; set; }
     }
 
     public class CourseUploadRowDetail : CourseUploadRow
     {
+        public EducationLevel? ResolvedEducationLevel { get; set; }
         public CourseType? ResolvedCourseType { get; set; }
         public CourseDeliveryMode? ResolvedDeliveryMode { get; set; }
         public DateTime? ResolvedStartDate { get; set; }

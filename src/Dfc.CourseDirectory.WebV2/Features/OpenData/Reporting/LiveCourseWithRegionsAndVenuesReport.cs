@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.DataManagement;
 using MediatR;
@@ -117,6 +116,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
 
         [Name("COURSE_TYPE")]
         public int? CourseType { get; set; }
+
+        [Name("EDUCATION_LEVEL")]
+        public string EducationLevel { get; set; }
+
+        [Name("AWARDING_BODY")]
+        public string AwardingBody { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -173,7 +178,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                             EntryRequirements = result.EntryRequirements,
                             HowYouWillBeAssessed = result.HowYouWillBeAssessed,
-                            CourseType = result.CourseType
+                            CourseType = result.CourseType,
+                            AwardingBody = result.AwardingBody,
+                            EducationLevel = result.EducationLevel
                         };
                     }
                 }

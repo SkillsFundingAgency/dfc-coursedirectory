@@ -66,7 +66,10 @@ WHEN NOT MATCHED THEN
         ResolvedStudyMode,
         ResolvedAttendancePattern,
         CourseType,
-        ResolvedCourseType
+        ResolvedCourseType,
+        EducationLevel,
+        ResolvedEducationLevel,
+        AwardingBody
     ) VALUES (
         @CourseUploadId,
         source.RowNumber,
@@ -112,7 +115,10 @@ WHEN NOT MATCHED THEN
         source.ResolvedStudyMode,
         source.ResolvedAttendancePattern,
         source.CourseType,
-        source.ResolvedCourseType
+        source.ResolvedCourseType,
+        source.EducationLevel,
+        source.ResolvedEducationLevel,
+        source.AwardingBody
     )
 WHEN MATCHED THEN UPDATE SET
     RowNumber = source.RowNumber,
@@ -157,8 +163,10 @@ WHEN MATCHED THEN UPDATE SET
     ResolvedStudyMode = source.ResolvedStudyMode,
     ResolvedAttendancePattern = source.ResolvedAttendancePattern,
     CourseType = source.CourseType,
-    ResolvedCourseType = source.ResolvedCourseType
-;
+    ResolvedCourseType = source.ResolvedCourseType,
+    EducationLevel = source.EducationLevel,
+    ResolvedEducationLevel = source.ResolvedEducationLevel,
+    AwardingBody = source.AwardingBody;
 
 MERGE Pttcd.CourseUploadRowSubRegions AS target
 USING (SELECT RowNumber, RegionId FROM @RowSubRegions) AS source
@@ -177,7 +185,7 @@ SELECT
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
     ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery, ResolvedCost,
-    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, CourseType, ResolvedCourseType
+    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, CourseType, ResolvedCourseType, EducationLevel, ResolvedEducationLevel, AwardingBody
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -246,6 +254,9 @@ ORDER BY RowNumber";
                 table.Columns.Add("ResolvedAttendancePattern", typeof(byte));
                 table.Columns.Add("CourseType", typeof(string));
                 table.Columns.Add("ResolvedCourseType", typeof(int));
+                table.Columns.Add("EducationLevel", typeof(string));
+                table.Columns.Add("ResolvedEducationLevel", typeof(int));
+                table.Columns.Add("AwardingBody", typeof(string));
 
                 foreach (var record in query.Records)
                 {
@@ -292,7 +303,10 @@ ORDER BY RowNumber";
                         record.ResolvedStudyMode,
                         record.ResolvedAttendancePattern,
                         record.CourseType,
-                        record.ResolvedCourseType);
+                        record.ResolvedCourseType,
+                        record.EducationLevel,
+                        record.ResolvedEducationLevel,
+                        record.AwardingBody);
                 }
 
                 return table.AsTableValuedParameter("Pttcd.CourseUploadRowTable");

@@ -15,5 +15,6 @@
         public const int WhereNextMaxLength = 500;
         public const int WhoThisCourseIsForMaxLength = 2000;
         public const int YourReferenceMaxLength = 255;
+        public const int AwardingBodyMaxLength = 255;
     }
 }

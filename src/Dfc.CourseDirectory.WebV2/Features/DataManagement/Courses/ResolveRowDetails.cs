@@ -28,6 +28,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
     {
+        public string AwardingBody { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
         public CourseType? CourseType { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public int RowNumber { get; set; }
@@ -149,6 +151,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 request.IsNonLars,
                 new CourseUploadRowUpdate()
                 {
+                    AwardingBody = request.AwardingBody,
+                    EducationLevel = request.EducationLevel,
                     CourseType = request.CourseType,
                     DeliveryMode = request.DeliveryMode,
                     CourseName = request.CourseName,
@@ -196,7 +200,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             }
         }
 
-        private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row, bool isNonLars = false)
+        private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row, bool isNonLars)
         {
             var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning )?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
@@ -232,6 +236,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             if (isNonLars)
             { 
                 vm.CourseType = row.ResolvedCourseType; 
+                vm.EducationLevel = row.ResolvedEducationLevel;
+                vm.AwardingBody = row.AwardingBody;
             }
             return vm;
         }
@@ -261,6 +267,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 if (isNonLars)
                 {
                     RuleFor(c => c.CourseType).CourseType();
+                    RuleFor(c => c.AwardingBody).AwardingBody();
+                    RuleFor(c => c.EducationLevel).EducationLevel();
                 }
                 
                 RuleFor(c => c.CourseName).CourseName();

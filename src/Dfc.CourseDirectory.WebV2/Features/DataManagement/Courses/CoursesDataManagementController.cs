@@ -180,17 +180,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("resolve/{rowNumber}/description")]
         public async Task<IActionResult> ResolveRowDescription(ResolveRowDescription.Query query)
         {
+            query.IsNonLars = false;
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
             return await _mediator.SendAndMapResponse(query, errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
         }
 
+        [HttpGet("nonlars-resolve/{rowNumber}/description")]
+        public async Task<IActionResult> ResolveNonLarsRowDescription(ResolveRowDescription.Query query)
+        {
+            //Generate Live service URL accordingly based on current host
+            query.IsNonLars = true;
+            string host = HttpContext.Request.Host.ToString();
+            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
+            return await _mediator.SendAndMapResponse(query, errors => this.ViewFromErrors(errors, statusCode: System.Net.HttpStatusCode.OK));
+        }
+
         [HttpPost("resolve/{rowNumber}/description")]
-        public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber,[FromRoute] bool isNonLars, ResolveRowDescription.Command command)
+        public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber,ResolveRowDescription.Command command)
         {
             command.RowNumber = rowNumber;
-            command.IsNonLars = isNonLars;
+            command.IsNonLars = false;
 
             return await _mediator.SendAndMapResponse(
                 command,
@@ -198,8 +209,25 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     errors => this.ViewFromErrors(errors),
                     uploadStatus => (uploadStatus switch
                     {
-                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish), isNonLars),
-                        _ => RedirectToAction(nameof(ResolveList), isNonLars)
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(CheckAndPublish)),
+                        _ => RedirectToAction(nameof(ResolveList))
+                    }).WithProviderContext(_providerContextProvider.GetProviderContext())));
+        }
+
+        [HttpPost("nonlars-resolve/{rowNumber}/description")]
+        public async Task<IActionResult> ResolveNonLarsRowDescription([FromRoute] int rowNumber, ResolveRowDescription.Command command)
+        {
+            command.RowNumber = rowNumber;
+            command.IsNonLars = true;
+
+            return await _mediator.SendAndMapResponse(
+                command,
+                result => result.Match<IActionResult>(
+                    errors => this.ViewFromErrors(errors),
+                    uploadStatus => (uploadStatus switch
+                    {
+                        UploadStatus.ProcessedSuccessfully => RedirectToAction(nameof(NonLarsCheckAndPublish)),
+                        _ => RedirectToAction(nameof(NonLarsResolveList))
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
 

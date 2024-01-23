@@ -331,11 +331,38 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Awarding body must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_AWARDING_BODY_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_AWARDING_BODY_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter course awarding body.
+        /// </summary>
+        public static string ERROR_COURSE_AWARDING_BODY_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_AWARDING_BODY_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select a course type.
         /// </summary>
         public static string ERROR_COURSE_COURSE_TYPE_REQUIRED {
             get {
                 return ResourceManager.GetString("ERROR_COURSE_COURSE_TYPE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select an education level.
+        /// </summary>
+        public static string ERROR_COURSE_EDUCATION_LEVEL_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_EDUCATION_LEVEL_REQUIRED", resourceCulture);
             }
         }
         
@@ -383,17 +410,7 @@ namespace Dfc.CourseDirectory.Core {
                 return ResourceManager.GetString("ERROR_COURSE_LARS_QAN_REQUIRED", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;TODO&gt;.
-        /// </summary>
-        public static string COURSE_COURSE_TYPE_REQUIRED
-        {
-            get
-            {
-                return ResourceManager.GetString("COURSE_COURSE_TYPE_REQUIRED", resourceCulture);
-            }
-        }
+        
         /// <summary>
         ///   Looks up a localized string similar to What you can do next must be {0} characters or fewer.
         /// </summary>
