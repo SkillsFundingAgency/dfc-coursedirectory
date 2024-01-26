@@ -40,6 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
         public string LearnAimRefTitle { get; set; }
+        public string CourseName { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
@@ -140,7 +141,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                             return new ViewModelErrorRowGroup()
                             {
                                 CourseId = g.Key,
-                               
+                                CourseName = g.First().Row.CourseName,
                                 CourseRows = g
                                     .Select(r => new ViewModelErrorRow()
                                     {
@@ -162,7 +163,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                         })
                         .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
                         .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
-                        .ThenBy(g => g.LearnAimRef)
                         .ThenBy(g => g.CourseId)
                         .ToArray(),
                     CanResolveOnScreen = canResolveOnScreen,

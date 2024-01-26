@@ -252,7 +252,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
             }
 
-            if (row.IsValid)
+            if (!row.IsValid)
             {
                 throw new InvalidStateException();
             }
@@ -267,7 +267,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 if (isNonLars)
                 {
                     RuleFor(c => c.CourseType).CourseType();
-                    RuleFor(c => c.AwardingBody).AwardingBody();
+                    //RuleFor(c => c.AwardingBody).AwardingBody();
                     //RuleFor(c => c.EducationLevel).EducationLevel();
                 }
                 

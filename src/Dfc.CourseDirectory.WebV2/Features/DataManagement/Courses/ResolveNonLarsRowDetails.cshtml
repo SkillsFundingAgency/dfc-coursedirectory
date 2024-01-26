@@ -17,6 +17,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
             <govuk-error-summary>
+                <govuk-error-summary-item asp-for="EducationLevel" />
                 <govuk-error-summary-item asp-for="AwardingBody" />
                 <govuk-error-summary-item asp-for="CourseType" />
                 <govuk-error-summary-item asp-for="CourseName" />
@@ -78,6 +79,13 @@
                     Select one option.
                 </govuk-radios-hint>
                 <govuk-radios-item value="@EducationLevel.EntryLevel">Entry level</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.One">1</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.Two">2</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.Three">3</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.Four">4</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.Five">5</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.Six">6</govuk-radios-item>
+                <govuk-radios-item value="@EducationLevel.Seven">7</govuk-radios-item>
             </govuk-radios>
             <govuk-input asp-for="AwardingBody">
                 <govuk-input-label class="govuk-label--m">Awarding body</govuk-input-label>
