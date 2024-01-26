@@ -137,6 +137,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         }
 
         [Fact]
+        public async Task Get_NonLarsRowHasDescriptionErrors_RendersResolveAndDeleteButtons()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.WhoThisCourseIsFor = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED"].ErrorCode,
+                        };
+                    });
+                },true);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/nonlars-resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("NonLarsResolveDescription").Should().NotBeNull();
+                doc.GetElementByTestId("NonLarsDeleteDescription").Should().NotBeNull();
+            }
+        }
+
+        [Fact]
         public async Task Get_RowDoesNotHaveDescriptionErrors_DoesNotRenderResolveAndDeleteButtons()
         {
             // Arrange
@@ -174,6 +212,46 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             {
                 doc.GetElementByTestId("ResolveDescription").Should().BeNull();
                 doc.GetElementByTestId("DeleteDescription").Should().BeNull();
+            }
+        }
+
+        [Fact]
+        public async Task Get_NonLarsRowDoesNotHaveCourseType_DoesRenderResolveAndDeleteButtons()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.CourseType = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_COURSE_TYPE_REQUIRED"].ErrorCode,
+                        };
+                    });
+                },
+                true);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/nonlars-resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                doc.GetElementByTestId("NonLarsResolveDetails").Should().NotBeNull();
+                doc.GetElementByTestId("NonLarsDeleteRowGroup").Should().NotBeNull();
             }
         }
 

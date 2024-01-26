@@ -32,6 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
         public bool HasDescriptionErrors { get; set; }
+        public bool HasDetailErrors { get; set; }
     }
 
     public class ViewModelErrorRow
@@ -47,7 +48,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public string EducationLevel { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
         public bool HasDeliveryModeError { get; set; }
-        //public bool HasCourseTypeError { get; set; }
         public bool HasDetailErrors { get; set; }
     }
 
@@ -97,8 +97,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                         .GroupBy(t => t.Row.CourseId)
                         .Select(g =>
                         {
-                            var learnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single();
-
                             return new ViewModelErrorRowGroup()
                             {
                                 RowNumber = g.First().Row.RowNumber,
@@ -117,7 +115,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                         EducationLevel = r.Row.EducationLevel,
                                         ErrorFields = r.NonGroupErrorFields,
                                         HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
-                                        //HasCourseTypeError = r.NonGroupErrorFields.Contains("Course type"),
                                         HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode"}).Any()
                                     })
                                     .Where(r => r.ErrorFields.Count > 0)
@@ -126,12 +123,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                     .ThenBy(r => r.DeliveryMode)
                                     .ToArray(),
                                 ErrorFields = g.First().GroupErrorFields,
-                                HasDescriptionErrors = g.First().GroupErrorFields.Any()
+                                HasDescriptionErrors = g.First().GroupErrorFields.Any(),
+                                HasDetailErrors =(g.First().GroupErrorFields.Contains("Course type") || g.First().GroupErrorFields.Contains("Awarding body") || g.First().GroupErrorFields.Contains("Education level") || g.First().GroupErrorFields.Contains("Sector")),
                             };
                         })
                         .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
                         .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
-                        .ThenBy(g => g.LearnAimRef)
                         .ThenBy(g => g.CourseId)
                         .ToArray()
                 };
