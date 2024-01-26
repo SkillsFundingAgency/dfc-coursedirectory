@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
@@ -170,7 +171,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (new AssertionScope())
             {
                 doc.GetElementByTestId("NonLarsResolveDescription").Should().NotBeNull();
-                doc.GetElementByTestId("NonLarsDeleteDescription").Should().NotBeNull();
+                doc.GetElementByTestId("NonLarsDeleteRowGroup").Should().NotBeNull();
             }
         }
 
@@ -215,26 +216,57 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             }
         }
 
-        [Fact]
-        public async Task Get_NonLarsRowDoesNotHaveCourseType_DoesRenderResolveAndDeleteButtons()
+        [Theory]
+        [InlineData(NonLarsFields.CourseType)]
+        [InlineData(NonLarsFields.AwardingBody)]
+        [InlineData(NonLarsFields.EducationLevel)]
+
+        public async Task Get_NonLarsRowDoesNotHaveItsSpecifics_DoesRenderResolveAndDeleteButtons(NonLarsFields field)
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+           
+            UpsertCourseUploadRowsRecord record = new UpsertCourseUploadRowsRecord()
+            {
+                IsValid = false
+            };
+            switch(field)
+            {
+                case NonLarsFields.CourseType:
+                    record.CourseType = string.Empty;
+                    record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_COURSE_TYPE_REQUIRED"].ErrorCode,
+                        };
+                    break;
+                case NonLarsFields.AwardingBody:
+                    record.AwardingBody = string.Empty;
+                    record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_AWARDING_BODY_REQUIRED"].ErrorCode,
+                        };
+                    break;
+                case NonLarsFields.EducationLevel:
+                    record.EducationLevel = string.Empty;
+                    record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_EDUCATION_LEVEL_REQUIRED"].ErrorCode,
+                        };
+                    break;
+            }
 
-            await TestData.CreateCourseUpload(
+            var rows = await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
                 rowBuilder =>
                 {
-                    rowBuilder.AddNonLarsRow(record =>
-                    {
-                        record.CourseType = string.Empty;
-                        record.IsValid = false;
-                        record.Errors = new[]
-                        {
-                            ErrorRegistry.All["COURSE_COURSE_TYPE_REQUIRED"].ErrorCode,
-                        };
+                    rowBuilder.AddNonLarsRow(rec => { 
+                        rec.AwardingBody = record.AwardingBody; 
+                        rec.EducationLevel = record.EducationLevel;
+                        rec.CourseType = record.CourseType;
+                        rec.Errors = record.Errors;
+                        rec.IsValid = record.IsValid;
                     });
                 },
                 true);
@@ -375,5 +407,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 doc.GetElementByTestId("DeleteDetails").Should().NotBeNull();
             }
         }
+    }
+    public enum NonLarsFields
+    {
+        CourseType,
+        AwardingBody,
+        EducationLevel,
+        Sectors
     }
 }
