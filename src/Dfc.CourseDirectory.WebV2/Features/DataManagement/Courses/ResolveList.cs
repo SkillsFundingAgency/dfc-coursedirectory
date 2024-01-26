@@ -27,6 +27,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
     {
         public int RowNumber { get; set; }
         public Guid CourseId { get; set; }
+        public string CourseName { get; set; }
+        public string DeliveryMode { get; set; }
         public string LearnAimRef { get; set; }
         public string LearnAimRefTitle { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
@@ -101,6 +103,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                             {
                                 RowNumber = g.First().Row.RowNumber,
                                 CourseId = g.Key,
+                                CourseName = g.First().Row.CourseName,
+                                DeliveryMode = g.First().Row.DeliveryMode,
                                 CourseRows = g
                                     .Select(r => new ViewModelErrorRow()
                                     {

@@ -255,7 +255,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     break;
             }
 
-            var rows = await TestData.CreateCourseUpload(
+            await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: User.ToUserInfo(),
                 UploadStatus.ProcessedWithErrors,
