@@ -40,7 +40,7 @@
                         <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
                             @if (row.HasDetailErrors)
                             {
-                                <a asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link" data-testid="NonLarsResolveDetails">
+                                <a asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" asp-route-deliveryMode="@row.DeliveryMode" class="govuk-link" data-testid="NonLarsResolveDetails">
                                     Resolve
                                 </a>
                             }

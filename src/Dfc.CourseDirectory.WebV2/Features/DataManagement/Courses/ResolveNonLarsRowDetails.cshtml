@@ -17,6 +17,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
             <govuk-error-summary>
+                <govuk-error-summary-item asp-for="AwardingBody" />
                 <govuk-error-summary-item asp-for="CourseType" />
                 <govuk-error-summary-item asp-for="CourseName" />
                 <govuk-error-summary-item asp-for="ProviderCourseRef" />
@@ -67,6 +68,24 @@
                 </govuk-radios-hint>
                 <govuk-radios-item value="@CourseType.SkillsBootcamp">Skills Bootcamp</govuk-radios-item>
             </govuk-radios>
+            <govuk-radios asp-for="EducationLevel">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        Education level
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-hint>
+                    Select one option.
+                </govuk-radios-hint>
+                <govuk-radios-item value="@EducationLevel.EntryLevel">Entry level</govuk-radios-item>
+            </govuk-radios>
+            <govuk-input asp-for="AwardingBody">
+                <govuk-input-label class="govuk-label--m">Awarding body</govuk-input-label>
+                <govuk-input-hint>
+                    The awarding body displayed on the National Careers Service,
+                    <a href="@ViewBag.LiveServiceURL" target="_blank" class="govuk-link">Find a course</a>.
+                </govuk-input-hint>
+            </govuk-input>
             <govuk-radios asp-for="FlexibleStartDate">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>

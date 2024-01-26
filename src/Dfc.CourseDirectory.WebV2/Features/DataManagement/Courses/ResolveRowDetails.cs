@@ -268,7 +268,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 {
                     RuleFor(c => c.CourseType).CourseType();
                     RuleFor(c => c.AwardingBody).AwardingBody();
-                    RuleFor(c => c.EducationLevel).EducationLevel();
+                    //RuleFor(c => c.EducationLevel).EducationLevel();
                 }
                 
                 RuleFor(c => c.CourseName).CourseName();
