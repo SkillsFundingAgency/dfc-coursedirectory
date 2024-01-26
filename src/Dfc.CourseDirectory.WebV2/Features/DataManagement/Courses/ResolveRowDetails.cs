@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            return await _fileUploadProcessor.UpdateCourseUploadRowForProvider(
+            var status = await _fileUploadProcessor.UpdateCourseUploadRowForProvider(
                 _providerContextProvider.GetProviderId(),
                 row.RowNumber,
                 request.IsNonLars,
@@ -170,6 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     AttendancePattern = request.AttendancePattern,
                     VenueId = request.VenueId
                 });
+            return status;
 
             void NormalizeCommand()
             {
