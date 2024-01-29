@@ -25,7 +25,7 @@ UPDATE Pttcd.Courses SET
     UpdatedOn = @UpdatedOn,
     DataIsHtmlEncoded = 0,
     CourseType = @CourseType,
-    Sector = @Sector,
+    SectorId = @SectorId,
     EducationLevel = @EducationLevel,
     AwardingBody = @AwardingBody
 WHERE CourseId = @CourseId
@@ -61,7 +61,7 @@ SELECT 0 AS Result";
                 UpdatedByUserId = query.UpdatedBy.UserId,
                 query.UpdatedOn,
                 query.CourseType,
-                query.Sector,
+                query.SectorId,
                 query.EducationLevel,
                 query.AwardingBody
             };

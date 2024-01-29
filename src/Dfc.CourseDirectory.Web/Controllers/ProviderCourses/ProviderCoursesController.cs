@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                         Url = cr.CourseWebsite,
                         National = national,
                         CourseType = course.CourseType.ToDescription(),
-                        Sector = course.Sector.ToDescription(),
+                        SectorId = course.SectorId,
                         EducationLevel = course.EducationLevel.ToDescription(),
                         AwardingBody = course.AwardingBody
                     };

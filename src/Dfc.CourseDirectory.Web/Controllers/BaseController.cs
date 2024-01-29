@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Web.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +29,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
         protected const string SessionAwardOrgCode = "AwardOrgCode";
         protected const string SessionNotionalNvqLevelV2 = "NotionalNVQLevelv2";
         protected const string SessionLearnAimRefTypeDesc = "LearnAimRefTypeDesc";
+        protected const string SessionSectors = "Sectors";
+        protected const int DefaultSectorId = 1;
 
         public BaseController(ISqlQueryDispatcher sqlQueryDispatcher)
         {
@@ -60,6 +65,32 @@ namespace Dfc.CourseDirectory.Web.Controllers
             course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
 
             return course;
+        }
+
+        protected async Task<List<Sector>> GetSectors()
+        {
+            var sectors = Session.GetObject<List<Sector>>(SessionSectors);
+
+            if (sectors != null)
+            {
+                return sectors;
+            }
+
+            sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
+            Session.SetObject(SessionSectors, sectors);
+            return sectors;
+        }
+
+        protected async Task<string> GetSectorDescription(int? sectorId)
+        {
+            if (!sectorId.HasValue)
+                return string.Empty;
+
+            var sectors = await GetSectors();
+            var selectedSector = sectors.FirstOrDefault(s => s.Id == sectorId);
+
+            return selectedSector?.Description ?? string.Empty;
         }
     }
 }

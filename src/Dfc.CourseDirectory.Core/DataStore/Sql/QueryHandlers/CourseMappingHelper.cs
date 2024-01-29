@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     NotionalNVQLevelv2 = row.NotionalNVQLevelv2,
                     LearnAimRefTitle = row.LearnAimRefTitle,
                     CourseType = row.CourseType,
-                    Sector = row.Sector,
+                    SectorId = row.SectorId,
                     EducationLevel = row.EducationLevel,
                     AwardingBody = DecodeIfNecessary(row.AwardingBody)
                 };
@@ -133,7 +133,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string NotionalNVQLevelv2 { get; set; }
             public string LearnAimRefTitle { get; set; }
             public CourseType? CourseType { get; set; }
-            public Sector? Sector { get; set; }
+            public int? SectorId { get; set; }
+            public string SectorDescription { get; set; }
             public EducationLevel? EducationLevel { get; set; }
             public string AwardingBody { get; set; }
         }

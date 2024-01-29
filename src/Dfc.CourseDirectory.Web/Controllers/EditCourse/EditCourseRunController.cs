@@ -316,7 +316,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         CurrentCourseRunDate = courseRun.StartDate,
                         NonLarsCourse = nonLarsCourse,
                         CourseType = course.CourseType,
-                        Sector = course.Sector,
+                        SectorId = course.SectorId,
+                        Sectors = await GetSectors(),
                         EducationLevel = course.EducationLevel,
                         AwardingBody = course.AwardingBody
                     };
@@ -431,7 +432,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow,
                 CourseType = course.CourseType,
-                Sector = model.Sector,
+                SectorId = model.SectorId,
                 EducationLevel = model.EducationLevel,
                 AwardingBody = model.AwardingBody
             });

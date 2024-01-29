@@ -2,7 +2,6 @@
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseName
 @using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel
 @using Dfc.CourseDirectory.Web.ViewComponents.Courses.AwardingBody
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
@@ -106,15 +105,27 @@
                     })
                 </div>
 
-                <div id="sectionSector">
-                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.Sector.Sector), new SectorModel
-                    {
-                    Sector = Model.Sector,
-                    LabelText = "Sector",
-                    HintText = "Select one option.",
-                    SecondHintText = "Select Sector",
-                    AriaDescribedBy = "Select Sector"
-                    })
+                <div class="govuk-form-group" id="Sector">
+
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading govuk-heading-m">
+                                Sector
+                            </h2>
+                        </legend>
+                        <div class="govuk-hint">
+                            Select one option
+                        </div>
+                        <div class="govuk-radios govuk-radios" val-required-message="Select Sector" id="SectorRadioButtons">
+                            @foreach (var item in Model.Sectors)
+                            {
+                                <div class="govuk-radios__item">
+                                    @Html.RadioButtonFor(m => m.SectorId, item.Id, new { @class = "govuk-radios__input", id = item.Id })
+                                    <label class="govuk-label govuk-radios__label" for="@item.Id">@item.Description</label>
+                                </div>
+                            }                            
+                        </div>
+                    </fieldset>
                 </div>
 
                 <div id="sectionEducationLevel">

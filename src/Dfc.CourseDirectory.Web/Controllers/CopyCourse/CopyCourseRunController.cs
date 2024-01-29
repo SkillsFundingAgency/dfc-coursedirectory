@@ -313,7 +313,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 PublishMode = PublishMode.Summary,
                 RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath,
                 CourseType = course.CourseType,
-                Sector = course.Sector,
+                SectorId = course.SectorId,
+                SectorDescription = await GetSectorDescription(course.SectorId),
                 EducationLevel = course.EducationLevel,
                 AwardingBody = course.AwardingBody,
                 NonLarsCourse = IsCourseNonLars()

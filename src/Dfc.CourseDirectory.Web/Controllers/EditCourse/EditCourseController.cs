@@ -186,7 +186,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow,
                 CourseType = course.CourseType,
-                Sector = course.Sector,
+                SectorId = course.SectorId,
                 EducationLevel = course.EducationLevel,
                 AwardingBody = course.AwardingBody
             });

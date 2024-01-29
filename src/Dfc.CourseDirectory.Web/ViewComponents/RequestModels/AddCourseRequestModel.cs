@@ -29,8 +29,9 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public Guid CourseRunId { get; set; }
         public CourseMode CourseMode { get; set; }
         public CourseType? CourseType { get; set; }
-        public Sector? Sector { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
         public EducationLevel? EducationLevel { get; set; }
-        public string AwardingBody { get; set; }        
+        public string AwardingBody { get; set; }
     }
 }

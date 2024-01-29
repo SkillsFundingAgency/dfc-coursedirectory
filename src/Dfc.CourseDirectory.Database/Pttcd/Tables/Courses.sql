@@ -22,7 +22,7 @@
 	[BulkUploadErrorCount] INT,
 	[DataIsHtmlEncoded] BIT CONSTRAINT [DF_Courses_DataIsHtmlEncoded] DEFAULT (0), 
     [CourseType] TINYINT NULL, 
-    [Sector] TINYINT NULL, 
+    [SectorId] TINYINT NULL CONSTRAINT [FK_Courses_Sectors] FOREIGN KEY REFERENCES [Pttcd].[Sectors] ([Id]), 
     [EducationLevel] TINYINT NULL, 
     [AwardingBody] NVARCHAR(255) NULL
 )
