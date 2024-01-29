@@ -162,6 +162,44 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             doc.AssertHasError("CourseName", ErrorRegistry.All["COURSERUN_COURSE_NAME_REQUIRED"].GetMessage());
         }
 
+        [Fact]
+        public async Task Get_ValidNonLarsRequest_RendersExpectedContent()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var venue = await TestData.CreateVenue(providerId: provider.ProviderId, createdBy: User.ToUserInfo());
+
+            var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.AwardingBody = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[] { "COURSE_AWARDING_BODY_REQUIRED" };
+                    });
+                },true);
+
+            var rowNumber = courseUploadRows.First().RowNumber;
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"/data-upload/courses/nonlars-resolve/{rowNumber}/details?providerId={provider.ProviderId}&deliveryMode=ClassroomBased");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("AwardingBody", ErrorRegistry.All["COURSE_AWARDING_BODY_REQUIRED"].GetMessage());
+        }
+
         [Theory]
         [InlineData(null)]
         [InlineData(UploadStatus.Created)]
@@ -927,6 +965,77 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 $"/data-upload/courses/resolve/{rowNumber}/details?providerId={provider.ProviderId}&deliveryMode=Online")
             {
                 Content = new FormUrlEncodedContentBuilder()
+                    .Add("CourseName", courseName)
+                    .Add("ProviderCourseRef", providerCourseRef)
+                    .Add("FlexibleStartDate", flexibleStartDate)
+                    .Add("CourseWebPage", courseWebPage)
+                    .Add("Cost", cost)
+                    .Add("Duration", duration)
+                    .Add("DurationUnit", durationUnit)
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
+            response.Headers.Location.OriginalString.Should().Be(string.Format(expectedLocation, provider.ProviderId));
+        }
+
+
+        [Theory]
+        [InlineData(true, "/data-upload/courses/nonlars-resolve?providerId={0}")]
+        [InlineData(false, "/data-upload/courses/nonlars-check-publish?providerId={0}")]
+        public async Task Post_ValidNonLarsRequest_UpdatesRowsAndRedirects(bool otherRowsHaveErrors, string expectedLocation)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (courseUpload, courseUploadRows) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                configureRows: rowBuilder =>
+                {
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.IsValid = false;
+                        record.Errors = new[] { "COURSE_COURSE_TYPE_REQUIRED" };
+                        record.CourseType = string.Empty;
+                    });
+
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        if (otherRowsHaveErrors)
+                        {
+                            record.IsValid = false;
+                            record.Errors = new[] { "COURSE_COURSE_TYPE_REQUIRED" };
+                            record.CourseType = string.Empty;
+                        }
+                    });
+                },true);
+
+            var rowNumber = courseUploadRows.First().RowNumber;
+            var courseType = "SkillsBootcamp";
+            var awardingBody = "test awarding body";
+            var educationLevel = "One";
+            var courseName = "Course name";
+            var providerCourseRef = "REF";
+            var flexibleStartDate = "true";
+            var courseWebPage = "provider.com/course";
+            var cost = "42.00";
+            var duration = "3";
+            var durationUnit = "Months";
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"/data-upload/courses/nonlars-resolve/{rowNumber}/details?providerId={provider.ProviderId}&deliveryMode=Online")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("CourseType", courseType)
+                    .Add("EducationLevel", educationLevel)
+                    .Add("AwardingBody", awardingBody)
                     .Add("CourseName", courseName)
                     .Add("ProviderCourseRef", providerCourseRef)
                     .Add("FlexibleStartDate", flexibleStartDate)

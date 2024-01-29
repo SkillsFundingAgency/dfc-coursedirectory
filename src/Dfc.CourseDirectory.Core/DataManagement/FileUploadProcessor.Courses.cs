@@ -673,6 +673,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                new NonLarsCourseDataUploadRowInfo(
                    new CsvNonLarsCourseRow()
                    {
+                       CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(update.CourseType),
+                       AwardingBody = RemoveASCII(update.AwardingBody),
+                       EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(update.EducationLevel),
                        AttendancePattern = ParsedCsvNonLarsCourseRow.MapAttendancePattern(update.AttendancePattern),
                        Cost = ParsedCsvNonLarsCourseRow.MapCost(update.Cost),
                        CostDescription = RemoveASCII(update.CostDescription),
