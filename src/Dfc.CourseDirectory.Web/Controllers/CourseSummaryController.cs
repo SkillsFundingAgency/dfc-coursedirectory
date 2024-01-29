@@ -84,7 +84,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedDate = courseRun.CreatedOn,
                 NonLarsCourse = nonLarsCourse,
                 CourseType = course.CourseType,
-                Sector = course.Sector,
+                SectorId = course.SectorId,
+                SectorDescription = await GetSectorDescription(course.SectorId),
                 EducationLevel = course.EducationLevel,
                 AwardingBody = course.AwardingBody
             };

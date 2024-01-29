@@ -250,13 +250,13 @@
                         Sector
                     </dt>
                     <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                        @if (!Model.Sector.HasValue)
+                        @if (string.IsNullOrEmpty(Model.SectorDescription))
                         {
                             <span class="govuk-visually-hidden">Data Unavailable</span>
                         }
                         else
                         {
-                            @Model.Sector.Value.ToDescription()
+                            @Model.SectorDescription
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">

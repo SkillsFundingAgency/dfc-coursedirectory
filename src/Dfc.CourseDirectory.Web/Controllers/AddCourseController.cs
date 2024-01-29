@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             int UKPRN = Session.GetInt32("UKPRN").Value;
-            bool nonLarsCourse = IsCourseNonLars();
+            bool nonLarsCourse = IsCourseNonLars();            
 
             var viewModel = new AddCourseDetailsViewModel
             {
@@ -119,7 +119,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     National = null
 
                 },
-                NonLarsCourse = nonLarsCourse
+                NonLarsCourse = nonLarsCourse,
+                Sectors = await GetSectors()
             };            
 
             if (!nonLarsCourse)
@@ -133,7 +134,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
             Session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
-
+            
             if (addCourseSection2Session != null)
             {
                 viewModel.CourseName = addCourseSection2Session.CourseName;
@@ -189,7 +190,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (nonLarsCourse)
                 {
                     viewModel.CourseType = addCourseSection2Session.CourseType;
-                    viewModel.Sector = addCourseSection2Session.Sector;
+                    viewModel.SectorId = addCourseSection2Session.SectorId;
+                    viewModel.SectorDescription = addCourseSection2Session.SectorDescription;
                     viewModel.EducationLevel = addCourseSection2Session.EducationLevel;
                     viewModel.AwardingBody = addCourseSection2Session.AwardingBody;
                 }
@@ -205,7 +207,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 if (nonLarsCourse)
                 {
                     viewModel.CourseType = CourseType.SkillsBootcamp;
-                    viewModel.Sector = Sector.BusinessAndAdministration;
+                    viewModel.SectorId = DefaultSectorId;
                     viewModel.EducationLevel = EducationLevel.EntryLevel;
                 }
             }
@@ -335,7 +337,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult AddCourseRun(AddCourseRequestModel model)
+        public async Task<IActionResult> AddCourseRun(AddCourseRequestModel model)
         {
             // AddCourseRun - going to Summary
             Session.SetObject(SessionAddCourseSection2, model);
@@ -348,7 +350,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // sort regions out
             model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions?.ToList() ?? new List<string>());
-
+            
             var summaryViewModel = new AddCourseSummaryViewModel
             {
                 LearnAimRef = addCourse.LearnAimRef,
@@ -378,7 +380,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     ? "Flexible"
                     : model.Day + "/" + model.Month + "/" + model.Year,
                 CourseType = model.CourseType.ToDescription(),
-                Sector = model.Sector.ToDescription(),
+                Sector = await GetSectorDescription(model.SectorId),
                 EducationLevel = model.EducationLevel.ToDescription(),
                 AwardingBody = model.AwardingBody,
                 NonLarsCourse = IsCourseNonLars()
@@ -438,7 +440,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.Remove("AddNewVenue");
             Session.Remove("Option");
             return View("Summary", summaryViewModel);
-        }
+        }        
 
         // Summary - can go to AddCourse, AddCourseRun or Edit screen
         [Authorize]
@@ -753,7 +755,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CreatedOn = DateTime.UtcNow,
                 CreatedBy = _currentUserProvider.GetCurrentUser(),
                 CourseType = courseType,
-                Sector = addCourseSection2.Sector,
+                SectorId = addCourseSection2.SectorId,
                 EducationLevel = addCourseSection2.EducationLevel,
                 AwardingBody = addCourseSection2.AwardingBody
             });
@@ -1095,7 +1097,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     National = null
 
                 },
-                NonLarsCourse = nonLarsCourse
+                NonLarsCourse = nonLarsCourse,
+                Sectors = await GetSectors()
             };
 
             if (!nonLarsCourse)
@@ -1117,9 +1120,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
             {
                 viewModel.CourseName = addCourseSection2Session.CourseName;
                 viewModel.CourseProviderReference = addCourseSection2Session.CourseProviderReference;
-                viewModel.CourseType = nonLarsCourse ? addCourseSection2Session.CourseType : default(CourseType?);
-                viewModel.Sector = nonLarsCourse ? addCourseSection2Session.Sector : default(Sector?);
-                viewModel.EducationLevel = nonLarsCourse ? addCourseSection2Session.EducationLevel : default(EducationLevel?);
+                viewModel.CourseType = nonLarsCourse ? addCourseSection2Session.CourseType : default;
+                viewModel.SectorId = nonLarsCourse ? addCourseSection2Session.SectorId : null;
+                viewModel.SectorDescription = nonLarsCourse ? addCourseSection2Session.SectorDescription : null;
+                viewModel.EducationLevel = nonLarsCourse ? addCourseSection2Session.EducationLevel : default;
                 viewModel.AwardingBody = nonLarsCourse ? addCourseSection2Session.AwardingBody : null;
                 viewModel.DeliveryMode = addCourseSection2Session.DeliveryMode;
 
@@ -1165,7 +1169,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 viewModel.DeliveryMode = CourseDeliveryMode.ClassroomBased;
                 viewModel.StartDateType = StartDateType.SpecifiedStartDate;
                 viewModel.CourseType = CourseType.SkillsBootcamp;
-                viewModel.Sector = Sector.BusinessAndAdministration;
+                viewModel.SectorId = DefaultSectorId;
                 viewModel.EducationLevel = EducationLevel.EntryLevel;
             }
             return viewModel;

@@ -36,7 +36,8 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
         public Guid? VenueId { get; set; }
         public bool National { get; set; }
         public string CourseType { get; set; }
-        public string Sector { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
         public string EducationLevel { get; set; }
         public string AwardingBody { get; set; }
     }

@@ -49,4 +49,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="IsActive" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ef03e4bd-6946-4b43-8e1d-b17b0adb36e1" ChangeDateTime="01/24/2024 14:35:49">
+    <Property Name="ElementName" Value="[dbo].[Sector].[Description]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Sector]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b253affa-1eaf-4aed-adf3-8bbaf3a5cfb4" ChangeDateTime="01/26/2024 09:29:04">
+    <Property Name="ElementName" Value="[Pttcd].[Sectors].[Name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[Sectors]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Description" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9f88d75b-39cb-40fd-a261-313eeccd1200" ChangeDateTime="01/26/2024 10:40:18">
+    <Property Name="ElementName" Value="[Pttcd].[Courses].[Sector]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Pttcd].[Courses]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SectorId" />
+  </Operation>
 </Operations>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -42,7 +43,9 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string ValPastDateMessage { get; set; }
         public bool NonLarsCourse { get; set; }
         public CourseType? CourseType { get; set; }
-        public Sector? Sector { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
+        public List<Sector> Sectors { get; set; }
         public EducationLevel? EducationLevel { get; set; }        
         public string AwardingBody { get; set; }
     }
