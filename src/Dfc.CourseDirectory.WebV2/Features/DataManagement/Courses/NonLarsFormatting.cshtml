@@ -3,7 +3,7 @@
 }
 
 @section BackLink {
-    <govuk-back-link asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back to course data upload</govuk-back-link>
+    <govuk-back-link asp-controller="CoursesDataManagement" asp-action="NonLars" asp-all-route-data="@ProviderContext.RouteValues">Back to course data upload</govuk-back-link>
 }
 
 <div class="govuk-grid-row">
@@ -275,21 +275,78 @@
                     What to enter
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    Business and Administration <br />
-
-                    Construction and the Built Environment <br />
-
-                    Creative and Design <br />
-
-                    Digital <br />
-
-                    Education and Early Years <br />
-
-                    Engineering and Manufacturing <br />
-
-                    Sales, Marketing and Procurement <br />
-
-                    Transport and Logistics <br />
+                    Please prvoide one of the sector codes listed below
+                    <table class="govuk-table">
+                        <thead class ="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Sector Code</th>
+                                <th scope="col" class="govuk-table__header">Sector Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">ENVIRONMENTAL</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Agriculture, environmental and animal care</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">BUSINESSADMIN</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Business and administration</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">CARE</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Care services</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">CATERINGHOSP</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Catering and hospitality</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">CONSTRUCTION</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Construction and the built environment</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">CREATIVE</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Creative and design</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">DIGITAL</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Digital</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">EDUCATION</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Education and early years</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">ENGMAN</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Engineering and manufacturing</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">BEAUTY</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Hair and beauty</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">HEALTH</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Health and science</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">LEGALFINANCE</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Legal, finance and accounting</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">PROTECTIVE</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Protective services</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">SALESMARKETING</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Sales, marketing and procurement</td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">TRANSPORT</td>
+                                <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">Transport and logistics</td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>                    
                 </dd>
             </div>
         </dl>

@@ -22,7 +22,7 @@ SELECT
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern, VenueId, CourseType, AwardingBody, EducationLevel,
     ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery,
-    ResolvedCost, ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, ResolvedCourseType
+    ResolvedCost, ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, ResolvedCourseType, ResolvedEducationLevel
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId AND RowNumber = @RowNumber
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
