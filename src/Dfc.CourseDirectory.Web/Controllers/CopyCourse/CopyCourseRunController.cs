@@ -583,6 +583,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     model.VenueId = Guid.Empty;
                     model.AttendanceMode = null;
                     model.StudyMode = null;
+                    model.National = null;
                     break;
             }
         }
