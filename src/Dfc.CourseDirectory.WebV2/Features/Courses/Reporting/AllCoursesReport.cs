@@ -118,6 +118,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
 
         [Name("COURSE_TYPE")]
         public int? CourseType { get; set; }
+
+        [Name("EDUCATION_LEVEL")]
+        public string EducationLevel { get; set; }
+
+        [Name("AWARDING_BODY")]
+        public string AwardingBody { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -175,7 +181,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                         EntryRequirements = result.EntryRequirements,
                         HowYouWillBeAssessed = result.HowYouWillBeAssessed,
-                        CourseType = result.CourseType
+                        CourseType = result.CourseType,
+                        EducationLevel = result.EducationLevel,
+                        AwardingBody = result.AwardingBody,
                     };
                 }
             }
