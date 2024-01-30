@@ -80,6 +80,11 @@ namespace Dfc.CourseDirectory.Core
                     if (optionAsInt == 2 || optionAsInt == 4)
                         split.Add(r);
                 }
+                else if (valueAsInt == 7)
+                {
+                    if (optionAsInt == 1 || optionAsInt == 2 || optionAsInt == 4)
+                        split.Add(r);
+                }
 
             }
 
