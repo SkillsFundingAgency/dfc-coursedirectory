@@ -101,6 +101,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             csvReader.Context.Reader.HeaderRecord.Should().BeEquivalentTo(new[]
             {
                 "COURSE_TYPE",
+                "SECTOR",
                 "EDUCATION_LEVEL", 
                 "AWARDING_BODY",
                 "WHO_THIS_COURSE_IS_FOR",
@@ -268,6 +269,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             downloadedcourse.Should().BeEquivalentTo(new CsvNonLarsCourseRow()
             {
                 CourseType = "Skills Bootcamp",
+                Sector = "",
                 WhoThisCourseIsFor = course.CourseDescription,
                 EntryRequirements = course.EntryRequirements,
                 WhatYouWillLearn = course.WhatYoullLearn,
@@ -391,6 +393,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             downloadedcourse.Should().BeEquivalentTo(new CsvNonLarsCourseRow()
             {
                 CourseType = "Skills Bootcamp",
+                Sector = "",
                 WhoThisCourseIsFor = course.CourseDescription,
                 EntryRequirements = course.EntryRequirements,
                 WhatYouWillLearn = course.WhatYoullLearn,
