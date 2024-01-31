@@ -60,7 +60,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var result = await _searchClient.Search(new LarsLearnAimRefSearchQuery
             {
                 LearnAimRef = request.Search,
-                CertificationEndDateFilter = DateTimeOffset.UtcNow
+                CertificationEndDateFilter = DateTimeOffset.UtcNow, 
+                ExcludeExpired = true
             });
 
             if (!result.Items.Any())
