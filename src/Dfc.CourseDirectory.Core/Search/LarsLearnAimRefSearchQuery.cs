@@ -12,6 +12,8 @@ namespace Dfc.CourseDirectory.Core.Search
 
         public DateTimeOffset? CertificationEndDateFilter { get; set; }
 
+        public bool ExcludeExpired { get; set; } = false;
+
         public (string SearchText, SearchOptions Options) GenerateSearchQuery()
         {
             var builder = new AzureSearchQueryBuilder(LearnAimRef)
@@ -22,6 +24,15 @@ namespace Dfc.CourseDirectory.Core.Search
             if (CertificationEndDateFilter.HasValue)
             {
                 builder.WithFilters($"({nameof(Lars.CertificationEndDate)} ge {CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null)");
+            }
+
+            if (ExcludeExpired)
+            {
+                builder.WithFilters($"{nameof(Lars.IsExpired)} eq false ");
+            }
+            else
+            {
+                builder.WithFilters($"{nameof(Lars.IsExpired)} eq true ");
             }
 
             return builder.Build();

@@ -25,7 +25,6 @@ EXEC Pttcd.RefreshFindACourseIndex @CourseRunIds, @Now
 
 SELECT COUNT(*) FROM @CourseRunIds
 ";
-
             return transaction.Connection.QuerySingleAsync<int>(
                 sql,
                 new
@@ -34,6 +33,7 @@ SELECT COUNT(*) FROM @CourseRunIds
                     query.CreatedAfter,
                     query.CreatedBefore
                 },
+                commandTimeout: 180,
                 transaction: transaction);
         }
     }

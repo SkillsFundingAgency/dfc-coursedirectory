@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
             result.SearchText.Should().Be("TestLearnAimRef");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { nameof(Lars.LearnAimRef) });
-            result.Options.Filter.Should().Be($"({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null)");
+            result.Options.Filter.Should().Be($"({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null) and IsExpired eq true ");
             result.Options.Size.Should().Be(1);
         }
 
@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
             result.SearchText.Should().Be("TestLearnAimRef");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { nameof(Lars.LearnAimRef) });
-            result.Options.Filter.Should().BeEmpty();
+            result.Options.Filter.Should().Be($"IsExpired eq true ");
             result.Options.Size.Should().Be(1);
         }
 

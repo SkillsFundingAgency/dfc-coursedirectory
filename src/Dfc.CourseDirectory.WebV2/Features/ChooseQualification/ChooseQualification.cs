@@ -109,7 +109,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                     SearchText = request.SearchTerm,
                     CertificationEndDateFilter = DateTimeOffset.UtcNow,
                     Facets = new[] { nameof(Lars.AwardOrgCode), nameof(Lars.NotionalNVQLevelv2) },
-                    PageSize = 0
+                    PageSize = 0,
+                    ExcludeExpired = true
                 }),
                 _searchClient.Search(new LarsSearchQuery
                 {
@@ -120,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                     PageNumber = request.PageNumber,
                     NotionalNVQLevelv2Filters = request.NotionalNVQLevelv2,
                     AwardOrgCodeFilters = request.AwardingOrganisation,
-                    //AwardOrgAimRefFilters = request.AwardOrgAimRefFilter,
+                    ExcludeExpired = true
                 }));
 
             var unfilteredResult = results[0];
