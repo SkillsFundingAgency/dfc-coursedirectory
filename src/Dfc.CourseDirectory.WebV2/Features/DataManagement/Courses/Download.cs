@@ -59,9 +59,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
                     ProviderId = providerContext.ProviderInfo.ProviderId
                 });
 
+                var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
                 var nonLarsrows = nonLarscourses.OrderBy(x => x.LearnAimRef)
                     .ThenBy(x => x.CourseId)
-                    .SelectMany(course => CsvNonLarsCourseRow.FromModel(course, allRegions))
+                    .SelectMany(course => CsvNonLarsCourseRow.FromModel(course, sectors, allRegions))
                     .ToList();
 
                 return new Response()

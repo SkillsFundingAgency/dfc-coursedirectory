@@ -13,62 +13,63 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
 
         [Index(0), Name("COURSE_TYPE")]
         public string CourseType { get; set; }
-        //[Index(1), Name("SECTOR")]
-        //public string Sector { get; set; }
-        [Index(1), Name("EDUCATION_LEVEL")]
+        [Index(1), Name("SECTOR")]
+        public string Sector { get; set; }
+        [Index(2), Name("EDUCATION_LEVEL")]
         public string EducationLevel { get; set; }
-        [Index(2), Name("AWARDING_BODY")]
+        [Index(3), Name("AWARDING_BODY")]
         public string AwardingBody { get; set; }
-        [Index(3), Name("WHO_THIS_COURSE_IS_FOR")]
+        [Index(4), Name("WHO_THIS_COURSE_IS_FOR")]
         public string WhoThisCourseIsFor { get; set; }
-        [Index(4), Name("ENTRY_REQUIREMENTS")]
+        [Index(5), Name("ENTRY_REQUIREMENTS")]
         public string EntryRequirements { get; set; }
-        [Index(5), Name("WHAT_YOU_WILL_LEARN")]
+        [Index(6), Name("WHAT_YOU_WILL_LEARN")]
         public string WhatYouWillLearn { get; set; }
-        [Index(6), Name("HOW_YOU_WILL_LEARN")]
+        [Index(7), Name("HOW_YOU_WILL_LEARN")]
         public string HowYouWillLearn { get; set; }
-        [Index(7), Name("WHAT_YOU_WILL_NEED_TO_BRING")]
+        [Index(8), Name("WHAT_YOU_WILL_NEED_TO_BRING")]
         public string WhatYouWillNeedToBring { get; set; }
-        [Index(8), Name("HOW_YOU_WILL_BE_ASSESSED")]
+        [Index(9), Name("HOW_YOU_WILL_BE_ASSESSED")]
         public string HowYouWillBeAssessed { get; set; }
-        [Index(9), Name("WHERE_NEXT")]
+        [Index(10), Name("WHERE_NEXT")]
         public string WhereNext { get; set; }
-        [Index(10), Name("COURSE_NAME")]
+        [Index(11), Name("COURSE_NAME")]
         public string CourseName { get; set; }
-        [Index(11), Name("YOUR_REFERENCE")]
+        [Index(12), Name("YOUR_REFERENCE")]
         public string ProviderCourseRef { get; set; }
-        [Index(12), Name("DELIVERY_MODE")]
+        [Index(13), Name("DELIVERY_MODE")]
         public string DeliveryMode { get; set; }
-        [Index(13), Name("START_DATE")]
+        [Index(14), Name("START_DATE")]
         public string StartDate { get; set; }
-        [Index(14), Name("FLEXIBLE_START_DATE")]
+        [Index(15), Name("FLEXIBLE_START_DATE")]
         public string FlexibleStartDate { get; set; }
-        [Index(15), Name("VENUE_NAME")]
+        [Index(16), Name("VENUE_NAME")]
         public string VenueName { get; set; }
-        [Index(16), Name("YOUR_VENUE_REFERENCE")]
+        [Index(17), Name("YOUR_VENUE_REFERENCE")]
         public string ProviderVenueRef { get; set; }
-        [Index(17), Name("NATIONAL_DELIVERY")]
+        [Index(18), Name("NATIONAL_DELIVERY")]
         public string NationalDelivery { get; set; }
-        [Index(18), Name("SUB_REGION")]
+        [Index(19), Name("SUB_REGION")]
         public string SubRegions { get; set; }
-        [Index(19), Name("COURSE_WEBPAGE")]
+        [Index(20), Name("COURSE_WEBPAGE")]
         public string CourseWebPage { get; set; }
-        [Index(20), Name("COST")]
+        [Index(21), Name("COST")]
         public string Cost { get; set; }
-        [Index(21), Name("COST_DESCRIPTION")]
+        [Index(22), Name("COST_DESCRIPTION")]
         public string CostDescription { get; set; }
-        [Index(22), Name("DURATION")]
+        [Index(23), Name("DURATION")]
         public string Duration { get; set; }
-        [Index(23), Name("DURATION_UNIT")]
+        [Index(24), Name("DURATION_UNIT")]
         public string DurationUnit { get; set; }
-        [Index(24), Name("STUDY_MODE")]
+        [Index(25), Name("STUDY_MODE")]
         public string StudyMode { get; set; }
-        [Index(25), Name("ATTENDANCE_PATTERN")]
+        [Index(26), Name("ATTENDANCE_PATTERN")]
         public string AttendancePattern { get; set; }
 
         public static CsvNonLarsCourseRow FromModel(CourseUploadRow row) => new CsvNonLarsCourseRow()
         {
             CourseType = row.CourseType,
+            //Sector = row.Sector,
             AwardingBody = row.AwardingBody,
             EducationLevel  = row.EducationLevel,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
@@ -96,13 +97,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             AttendancePattern = row.AttendancePattern
         };
 
-        public static IEnumerable<CsvNonLarsCourseRow> FromModel(Course row, IReadOnlyCollection<Region> allRegions) =>
+        public static IEnumerable<CsvNonLarsCourseRow> FromModel(Course row, List<Sector> sectors, IReadOnlyCollection<Region> allRegions) =>
             row.CourseRuns
                 .OrderBy(x => x.StartDate)
                 .ThenBy(x => x.DeliveryMode)
                 .Select(courseRun => new CsvNonLarsCourseRow()
                 {
                     CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(row.CourseType),
+                    Sector = sectors.FirstOrDefault(s => s.Id == row.SectorId)?.Code,
                     AwardingBody = row.AwardingBody,
                     EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(row.EducationLevel),
                     WhoThisCourseIsFor = row.CourseDescription,

@@ -1116,9 +1116,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var parsedRow = ParsedCsvNonLarsCourseRow.FromCsvCourseRow(row.Data, allRegions);
 
-                var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
-
-                //var courseType = await _courseTypeService.GetCourseType(parsedRow.LearnAimRef);
+                var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);                
 
                 var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 
