@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -405,6 +406,65 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 doc.GetElementByTestId("ResolveDelivery").Should().BeNull();
                 doc.GetElementByTestId("ResolveDetails").Should().NotBeNull();
                 doc.GetElementByTestId("DeleteDetails").Should().NotBeNull();
+            }
+        }
+        [Fact]
+        public async Task Get_NonLarsRowHasDetailsError_RendersResolveAndDeleteLinks()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+
+            await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: User.ToUserInfo(),
+                UploadStatus.ProcessedWithErrors,
+                rowBuilder =>
+                {
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.AwardingBody = string.Empty;
+                        record.EducationLevel = "11";
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_AWARDING_BODY_REQUIRED"].ErrorCode,
+                            ErrorRegistry.All["COURSE_EDUCATION_LEVEL_REQUIRED"].ErrorCode,
+                        };
+                    });
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.EducationLevel = string.Empty;
+                        record.IsValid = false;
+                        record.Errors = new[]
+                        {
+                            ErrorRegistry.All["COURSE_EDUCATION_LEVEL_REQUIRED"].ErrorCode,
+                        };
+                    });
+                    rowBuilder.AddNonLarsRow(record =>
+                    {
+                        record.IsValid = true;
+                    });
+                },true);
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/Courses/nonlars-resolve?providerId={provider.ProviderId}");
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var doc = await response.GetDocument();
+            using (new AssertionScope())
+            {
+                Assert.True(doc.GetAllElementsByTestId("NonLarsCourseRow").Count == 2, "Number of errors rows does not match");
+                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[0].GetInnerText() == "Awarding body, Education level", "Expected errors not listed");
+                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[1].GetInnerText() == "Education level", "Expected errors not listed");
+
+                doc.GetAllElementsByTestId("NonLarsResolveDetails").First().Should().NotBeNull();
+                doc.GetAllElementsByTestId("NonLarsDeleteRowGroup").First().Should().NotBeNull();
             }
         }
     }

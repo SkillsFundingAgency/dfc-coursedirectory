@@ -237,7 +237,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value, null, true);
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -277,7 +277,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     });
                 },true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -334,7 +334,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     }
                 },true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
