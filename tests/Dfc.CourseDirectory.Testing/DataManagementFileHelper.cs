@@ -64,6 +64,7 @@ namespace Dfc.CourseDirectory.Testing
             {
                 // N.B. We deliberately do not use the CsvCourseRow class here to ensure we notice if any columns change name
                 csvWriter.WriteField("EDUCATION_LEVEL");
+                csvWriter.WriteField("SECTOR");
                 csvWriter.WriteField("AWARDING_BODY");
                 csvWriter.WriteField("COURSE_TYPE");
                 csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
@@ -131,6 +132,7 @@ namespace Dfc.CourseDirectory.Testing
             foreach (var row in rows)
             {
                 csvWriter.WriteField(row.EducationLevel);
+                csvWriter.WriteField(row.Sector);
                 csvWriter.WriteField(row.AwardingBody);                
                 csvWriter.WriteField(row.CourseType);
                 csvWriter.WriteField(row.WhoThisCourseIsFor);
