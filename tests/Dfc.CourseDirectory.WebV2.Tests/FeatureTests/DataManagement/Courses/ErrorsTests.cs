@@ -289,13 +289,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (new AssertionScope())
             {
                 // Should only have one error row in the table
-                var errorRows = doc.GetAllElementsByTestId("CourseRunRow");
+                var errorRows = doc.GetAllElementsByTestId("NonLarsCourseRunRow");
 
-                doc.GetElementByTestId("ErrorCount").TextContent.Should().Be("2");
+                doc.GetElementByTestId("NonLarsErrorCount").TextContent.Should().Be("2");
 
                 errorRows.Count().Should().Be(1);
 
-                var errors = errorRows.Single().GetElementByTestId("Errors").GetTrimmedTextContent();
+                var errors = errorRows.Single().GetElementByTestId("NonLarsErrors").GetTrimmedTextContent();
                 errors.Should().BeEquivalentTo(
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")

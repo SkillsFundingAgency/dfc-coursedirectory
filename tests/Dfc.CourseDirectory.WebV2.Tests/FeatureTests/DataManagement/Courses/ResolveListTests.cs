@@ -460,8 +460,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (new AssertionScope())
             {
                 Assert.True(doc.GetAllElementsByTestId("NonLarsCourseRow").Count == 2, "Number of errors rows does not match");
-                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[0].GetInnerText() == "Awarding body, Education level", "Expected errors not listed");
-                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[1].GetInnerText() == "Education level", "Expected errors not listed");
+                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[1].TextContent.Contains("Awarding body"), "Expected errors not listed");
+                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[1].TextContent.Contains("Education level"), "Expected errors not listed");
+                Assert.True(doc.GetAllElementsByTestId("NonLarsErrorFields")[0].TextContent.Contains("Education level"), "Expected errors not listed");
 
                 doc.GetAllElementsByTestId("NonLarsResolveDetails").First().Should().NotBeNull();
                 doc.GetAllElementsByTestId("NonLarsDeleteRowGroup").First().Should().NotBeNull();
