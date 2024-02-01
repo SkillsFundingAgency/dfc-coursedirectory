@@ -116,11 +116,11 @@
     "ProviderPortalSharedResourceGroupName": {
       "value": "__providerPortalResourceGroup__"
     },
-    
+
     "RedisCacheName": {
       "value": "__providerPortalRedisCacheName__"
     },
-    
+
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"
     },
@@ -132,6 +132,9 @@
     },
     "workspaceResourceGroup": {
         "value": "__sharedLogAnalyticsResourceGroup__"
+    },
+    "UkrlpUrl": {
+      "value": "__UkrlpUrl__"
     }
   }
 }

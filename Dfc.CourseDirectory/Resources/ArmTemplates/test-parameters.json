@@ -130,6 +130,9 @@
     },
     "workspaceResourceGroup": {
         "value": "aResourceGroup"
+    },
+    "UkrlpUrl": {
+      "value": "aUrl"
     }
   }
 }

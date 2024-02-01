@@ -254,6 +254,9 @@
     },
     "workspaceResourceGroup": {
         "type": "string"
+    },
+    "UkrlpUrl": {
+      "type": "string"
     }
   },
   "variables": {
@@ -679,7 +682,12 @@
               {
                 "name": "LarsDataset__Url",
                 "value": "[parameters('larsDatasetUrl')]"
+              },
+              {
+                "name":"UkrlpUrl",
+                "value": "[parameters('UkrlpUrl')]"
               }
+
             ]
           },
           "appServiceConnectionStrings": {
