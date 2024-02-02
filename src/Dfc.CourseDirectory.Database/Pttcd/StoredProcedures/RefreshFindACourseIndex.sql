@@ -80,7 +80,7 @@ BEGIN
 			c.ProviderUkprn,
 			NULL AS QualificationCourseTitle,
 			NULL AS LearnAimRef,
-			ld.NotionalNVQLevelv2,
+			NULL AS NotionalNVQLevelv2,
 			c.CourseDescription,
 			cr.CourseName,
 			cr.DeliveryMode,
