@@ -53,7 +53,10 @@ BEGIN
 			v.VenueId,
 			cc.CampaignCodesJson CampaignCodes,
 			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
-			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded
+			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded,
+			C.CourseType,
+			C.EducationLevel,
+			C.AwardingBody
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
@@ -64,6 +67,69 @@ BEGIN
 		LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
 		LEFT JOIN Pttcd.FindACourseIndexCampaignCodes cc ON p.ProviderId = cc.ProviderId AND c.LearnAimRef = cc.LearnAimRef
 		WHERE cr.CourseRunStatus = 1  -- Live
+		UNION ALL
+		SELECT
+			-- Id is the CourseRun's ID appended with the Region, if there is one
+			CONVERT(VARCHAR(36), cr.CourseRunId) + CASE WHEN crr.RegionId IS NOT NULL THEN '-' + crr.RegionId ELSE '' END AS Id,
+			1 AS OfferingType, -- Course
+			c.CourseId,
+			cr.CourseRunId,
+			cr.UpdatedOn,
+			p.ProviderId,
+			CASE WHEN p.DisplayNameSource = 1 /* TradingName */ THEN ISNULL(NULLIF(p.Alias, ''), p.ProviderName) ELSE p.ProviderName END AS ProviderDisplayName,
+			c.ProviderUkprn,
+			NULL AS QualificationCourseTitle,
+			NULL AS LearnAimRef,
+			ld.NotionalNVQLevelv2,
+			c.CourseDescription,
+			cr.CourseName,
+			cr.DeliveryMode,
+			cr.FlexibleStartDate,
+			cr.StartDate,
+			cr.Cost,
+			cr.CostDescription,
+			cr.DurationUnit,
+			cr.DurationValue,
+			CASE WHEN cr.DeliveryMode = 1 or cr.DeliveryMode = 4 THEN cr.StudyMode ELSE null END StudyMode,
+			CASE WHEN cr.DeliveryMode = 1 or cr.DeliveryMode = 4 THEN cr.AttendancePattern ELSE null END AttendancePattern,
+			CASE WHEN cr.DeliveryMode = 2 THEN 1 ELSE cr.[National] END AS [National],  -- Treat Online as National for the purposes of searching
+			v.VenueName,
+			STUFF(
+				CONCAT(
+					NULLIF(', ' + v.AddressLine1, ', '),
+					NULLIF(', ' + v.AddressLine2, ', '),
+					NULLIF(', ' + v.Town, ', '),
+					NULLIF(', ' + v.County, ', '),
+					NULLIF(', ' + v.Postcode, ', ')),
+				1, 2, NULL) AS VenueAddress,
+			v.Town AS VenueTown,
+			COALESCE(v.Position, r.Position) AS Position,
+			CASE WHEN r.Name IS NOT NULL THEN r.Name WHEN cr.[National] = 1 OR cr.DeliveryMode = 2 THEN 'National' ELSE '' END AS RegionName,
+
+			-- Magic numbers and logic from https://github.com/SkillsFundingAgency/dfc-providerportal-changefeedlistener/commit/608340dcfaa5c74ee8b1ae422ad902ee0c529c01#diff-5f9ef9c9ca0b0bc9af8b5c7926cfcfe31fa7e8367b9104357104ad568fbe0302R103-R104
+			CAST(CASE
+				WHEN r.RegionId IS NULL THEN 1
+				WHEN r.ParentRegionId IS NOT NULL THEN 4.5  -- Sub region
+				ELSE 2.3  -- Region
+				END AS float) AS ScoreBoost,
+
+			v.VenueId,
+			cc.CampaignCodesJson CampaignCodes,
+			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
+			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded,
+			C.CourseType,
+			C.EducationLevel,
+			C.AwardingBody
+		FROM @CourseRunIds d
+		INNER JOIN Pttcd.CourseRuns cr ON d.Id = cr.CourseRunId
+		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId AND (C.LearnAimRef IS NULL OR C.LearnAimRef = '') 
+		LEFT JOIN Pttcd.CourseRunSubRegions crr ON cr.CourseRunId = crr.CourseRunId AND cr.DeliveryMode = 3 AND cr.[National] = 0
+		LEFT JOIN Pttcd.Regions r ON crr.RegionId = r.RegionId
+		INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn AND p.ProviderType IN (2,3,6,7)
+		LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
+		LEFT JOIN Pttcd.FindACourseIndexCampaignCodes cc ON p.ProviderId = cc.ProviderId AND c.LearnAimRef = cc.LearnAimRef
+		WHERE cr.CourseRunStatus = 1  -- Live
+
 	)
 	MERGE Pttcd.FindACourseIndex AS target
 	USING (SELECT * FROM RecordsCte) AS source
@@ -102,7 +168,10 @@ BEGIN
 		VenueId = source.VenueId,
 		CampaignCodes = source.CampaignCodes,
 		CourseDataIsHtmlEncoded = source.CourseDataIsHtmlEncoded,
-		CourseRunDataIsHtmlEncoded = source.CourseRunDataIsHtmlEncoded
+		CourseRunDataIsHtmlEncoded = source.CourseRunDataIsHtmlEncoded,
+		CourseType = source.CourseType,
+		EducationLevel = source.EducationLevel,
+		AwardingBody = source.AwardingBody
 	WHEN NOT MATCHED THEN INSERT (
 		Id,
 		LastSynced,
@@ -138,7 +207,10 @@ BEGIN
 		VenueId,
 		CampaignCodes,
 		CourseDataIsHtmlEncoded,
-		CourseRunDataIsHtmlEncoded)
+		CourseRunDataIsHtmlEncoded,
+		CourseType,
+		EducationLevel,
+		AwardingBody)
 	VALUES (
 		source.Id,
 		@Now,
@@ -174,7 +246,10 @@ BEGIN
 		source.VenueId,
 		source.CampaignCodes,
 		source.CourseDataIsHtmlEncoded,
-		source.CourseRunDataIsHtmlEncoded)
+		source.CourseRunDataIsHtmlEncoded,
+		source.CourseType,
+		source.EducationLevel,
+		source.AwardingBody)
 	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET
 		Live = 0,
 		LastSynced = @Now;
