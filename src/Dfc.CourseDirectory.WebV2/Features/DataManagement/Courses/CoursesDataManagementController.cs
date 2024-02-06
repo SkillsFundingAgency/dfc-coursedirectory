@@ -484,19 +484,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 result => result.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
                     publishResult => publishResult.Status == Core.DataManagement.PublishResultStatus.Success ?
-                        RedirectToAction(nameof(Published)).WithProviderContext(_providerContextProvider.GetProviderContext()) :
+                        RedirectToAction(nameof(Published),true).WithProviderContext(_providerContextProvider.GetProviderContext()) :
                         RedirectToAction(nameof(NonLarsErrors)).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
         [HttpGet("success")]
         [RequireJourneyInstance]
         [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
-        public async Task<IActionResult> Published() 
+        public async Task<IActionResult> Published(bool isNonLars = false) 
         {
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
-            return await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm)); 
+            return await _mediator.SendAndMapResponse(new Published.Query() { IsNonLars = isNonLars}, vm => View(vm)); 
         }
 
         [HttpGet("template")]

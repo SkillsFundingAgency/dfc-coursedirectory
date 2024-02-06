@@ -7,10 +7,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Published
 {
     public class Query : IRequest<ViewModel>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public class ViewModel
     {
+        public bool IsNonLars { get; set; }
         public int PublishedCount { get; set; }
     }
 
@@ -29,6 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Published
 
             return Task.FromResult(new ViewModel()
             {
+                IsNonLars = request.IsNonLars,
                 PublishedCount = journeyInstance.State.CoursesPublished
             });
         }

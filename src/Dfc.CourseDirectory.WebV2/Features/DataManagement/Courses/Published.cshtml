@@ -8,6 +8,10 @@
         <govuk-panel heading-level="1">
             <govuk-panel-title>
                 <span data-testid="PublishedCount">@Model.PublishedCount</span>
+                @if (Model.IsNonLars)
+                {
+                    <span>Non LARS </span>
+                }
                 courses have been published
             </govuk-panel-title>
         </govuk-panel>
@@ -22,7 +26,14 @@
 
         <h2 class="govuk-heading-m">What next?</h2>
         <ul class="govuk-list">
-            <li><a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link">View and edit courses</a></li>
+            @if(Model.IsNonLars)
+            {
+                <li><a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="1" class="govuk-link">View and edit courses</a></li>
+            }
+            else
+            {
+                <li><a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link">View and edit courses</a></li>
+            }
             <li><a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to data upload</a></li>
             <li><a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to the home screen</a></li>
         </ul>
