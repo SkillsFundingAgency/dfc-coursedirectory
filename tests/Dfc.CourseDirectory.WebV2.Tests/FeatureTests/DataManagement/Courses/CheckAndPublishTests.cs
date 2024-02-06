@@ -349,7 +349,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString
-                .Should().Be($"/data-upload/courses/success?providerId={provider.ProviderId}");
+                .Should().Be($"/data-upload/courses/nonlars-success?providerId={provider.ProviderId}");
 
             courseUpload = await WithSqlQueryDispatcher(
                 dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUpload.CourseUploadId }));
