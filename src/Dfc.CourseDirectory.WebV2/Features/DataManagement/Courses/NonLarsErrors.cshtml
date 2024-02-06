@@ -42,10 +42,10 @@
                             if (row.ErrorFields.Count > 0)
                             {
                                 <tr class="govuk-table__row @(row.CourseRows.Count == 0 ? "pttcd-table__row-!-border" : "")" data-testid="NonLarsCourseRow">
-                                    <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@row.CourseName</th>
-                                    <td class="govuk-table__cell pttcd-table--no-border"></td>
-                                    <td class="govuk-table__cell pttcd-table--no-border"></td>
-                                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error">
+                                    <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@row.CourseRows.Count == 0 ? @row.CourseName : "" </th>
+                                    <td class="govuk-table__cell pttcd-table--no-border">@row.CourseRows.Count == 0 ? @row.DeliveryMode : "" </td>
+                                    <td class="govuk-table__cell pttcd-table--no-border">@row.CourseRows.Count == 0 ? @row.StartDate : "" </td>
+                                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="NonLarsErrors">
                                         @for (var i = 0; i < row.ErrorFields.Count; i++)
                                         {
                                             <span class="govuk-!-display-inline-block">
@@ -62,7 +62,7 @@
                                     <th scope="row" class="govuk-table__header pttcd-table--no-border govuk-body-s govuk-!-padding-left-2" style="text-align: left">@course.CourseName</th>
                                     <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.DeliveryMode</td>
                                     <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">@course.StartDate</td>
-                                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="NonLarsErrors">
+                                    <td class="govuk-table__cell pttcd-table--no-border govuk-body-s pttcd-dm-error" data-testid="NonLarsRowErrors">
                                         @for (var i = 0; i < course.ErrorFields.Count; i++)
                                         {
                                             <span class="govuk-!-display-inline-block">

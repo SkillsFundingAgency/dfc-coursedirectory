@@ -295,7 +295,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
                 errorRows.Count().Should().Be(1);
 
-                var errors = errorRows.Single().GetElementByTestId("NonLarsErrors").GetTrimmedTextContent();
+                var errors = errorRows.Single().GetElementByTestId("NonLarsRowErrors").GetTrimmedTextContent();
                 errors.Should().BeEquivalentTo(
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
