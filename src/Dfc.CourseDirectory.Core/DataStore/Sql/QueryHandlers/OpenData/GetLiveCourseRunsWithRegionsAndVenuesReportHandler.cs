@@ -63,8 +63,9 @@ SELECT
     v.Position.Long AS VenueLongitude,
     v.Telephone AS VenueTelephone,
     v.Email AS VenueEmail,
+    cr.CreatedOn,
     v.Website AS VenueWebsite,
-    cr.UpdatedOn,
+    cr.UpdatedOn,    
 	c.CourseType,
     c.EducationLevel, 
     c.AwardingBody

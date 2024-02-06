@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 return new ViewModel()
                 {
                     ErrorRows = rows
-                        .Select(r =>
+                        .Select(r => 
                         {
                             var errorsByComponent = r.Errors
                                 .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
