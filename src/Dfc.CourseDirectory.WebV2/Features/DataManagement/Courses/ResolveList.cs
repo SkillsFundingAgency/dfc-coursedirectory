@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public Guid CourseId { get; set; }
         public string CourseName { get; set; }
         public string DeliveryMode { get; set; }
+        public string StartDate { get; set; }
         public string LearnAimRef { get; set; }
         public string LearnAimRefTitle { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
@@ -102,6 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                 CourseId = g.Key,
                                 CourseName = g.First().Row.CourseName,
                                 DeliveryMode = g.First().Row.DeliveryMode,
+                                StartDate = g.First().Row.StartDate,
                                 CourseRows = g
                                     .Select(r => new ViewModelErrorRow()
                                     {

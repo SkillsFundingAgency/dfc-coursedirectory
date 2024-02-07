@@ -22,7 +22,7 @@
 
         <h2 class="govuk-heading-m">What next?</h2>
         <ul class="govuk-list">
-            <li><a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="1" class="govuk-link">View and edit Non LARS courses</a></li>
+            <li><a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="true" class="govuk-link">View and edit Non LARS courses</a></li>
             <li><a asp-controller="DataManagement" asp-action="Dashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to data upload</a></li>
             <li><a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Back to the home screen</a></li>
         </ul>
