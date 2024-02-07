@@ -158,6 +158,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                 }
 
                 return
+                    x.Sector == y.Sector &&
+                    x.AwardingBody == y.AwardingBody &&
+                    x.EducationLevel == y.EducationLevel &&
                     x.CourseType == y.CourseType &&
                     x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
                     x.EntryRequirements == y.EntryRequirements &&
