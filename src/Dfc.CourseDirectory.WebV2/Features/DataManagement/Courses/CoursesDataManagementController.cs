@@ -500,7 +500,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
-            return await _mediator.SendAndMapResponse(new Published.Query() { IsNonLars = false}, vm => View(vm)); 
+            return await _mediator.SendAndMapResponse(new Published.Query() {}, vm => View(vm)); 
         }
 
         [HttpGet("nonlars-success")]
@@ -512,7 +512,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
-            return await _mediator.SendAndMapResponse(new Published.Query() { IsNonLars = true }, vm => View(vm));
+            return await _mediator.SendAndMapResponse(new Published.Query() {}, vm => View(vm));
         }
 
         [HttpGet("template")]
