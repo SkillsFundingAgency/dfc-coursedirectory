@@ -237,7 +237,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), uploadStatus.Value, null, true);
             }
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -277,7 +277,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     });
                 },true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -289,13 +289,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             using (new AssertionScope())
             {
                 // Should only have one error row in the table
-                var errorRows = doc.GetAllElementsByTestId("CourseRunRow");
+                var errorRows = doc.GetAllElementsByTestId("NonLarsCourseRunRow");
 
-                doc.GetElementByTestId("ErrorCount").TextContent.Should().Be("2");
+                doc.GetElementByTestId("NonLarsErrorCount").TextContent.Should().Be("2");
 
                 errorRows.Count().Should().Be(1);
 
-                var errors = errorRows.Single().GetElementByTestId("Errors").GetTrimmedTextContent();
+                var errors = errorRows.Single().GetElementByTestId("NonLarsRowErrors").GetTrimmedTextContent();
                 errors.Should().BeEquivalentTo(
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
                     Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
@@ -334,7 +334,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     }
                 },true);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/errors?providerId={provider.ProviderId}&isnonlars=true");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/data-upload/courses/nonlars-errors?providerId={provider.ProviderId}");
 
             // Act
             var response = await HttpClient.SendAsync(request);

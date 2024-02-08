@@ -41,18 +41,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         public string LearnAimRef { get; set; }
         public string LearnAimRefTitle { get; set; }
         public string CourseName { get; set; }
+        public string DeliveryMode { get; set; }
+        public string StartDate { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
 
     public class ViewModelErrorRow
     {
-        public string AwardingBody { get; set; }
-        public string EducationLevel { get; set; }
         public string CourseName { get; set; }
         public string StartDate { get; set; }
         public string DeliveryMode { get; set; }
-        public string CourseType { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
 
@@ -122,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 return new ViewModel()
                 {
                     ErrorRows = rows
-                        .Select(r =>
+                        .Select(r => 
                         {
                             var errorsByComponent = r.Errors
                                 .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
@@ -142,12 +141,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                             {
                                 CourseId = g.Key,
                                 CourseName = g.First().Row.CourseName,
+                                DeliveryMode = g.First().Row.DeliveryMode,
+                                StartDate = g.First().Row.StartDate,
                                 CourseRows = g
                                     .Select(r => new ViewModelErrorRow()
                                     {
-                                        AwardingBody = r.Row.AwardingBody,
-                                        EducationLevel = r.Row.EducationLevel,
-                                        CourseType = r.Row.CourseType,
                                         CourseName = r.Row.CourseName,
                                         StartDate = r.Row.StartDate,
                                         DeliveryMode = r.Row.DeliveryMode,

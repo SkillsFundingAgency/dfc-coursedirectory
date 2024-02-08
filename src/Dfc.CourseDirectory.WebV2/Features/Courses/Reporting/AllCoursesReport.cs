@@ -124,6 +124,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
 
         [Name("AWARDING_BODY")]
         public string AwardingBody { get; set; }
+
+        [Name("CREATED_DATE")]
+        public string CreatedDate { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -178,6 +181,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         LocationTown = result.VenueTown,
                         LocationPhone = result.VenueTelephone,
                         LocationWebsite = result.VenueWebsite,
+                        CreatedDate = ParsedCsvCourseRow.MapStartDate(result.CreatedOn),
                         UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                         EntryRequirements = result.EntryRequirements,
                         HowYouWillBeAssessed = result.HowYouWillBeAssessed,

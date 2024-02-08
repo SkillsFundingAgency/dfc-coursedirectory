@@ -151,13 +151,27 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                     return false;
                 }
 
-                // Don't group together records that have no LARS code
                 if (string.IsNullOrEmpty(x.CourseType) || string.IsNullOrEmpty(y.CourseType))
                 {
                     return false;
                 }
+                if (string.IsNullOrEmpty(x.AwardingBody) || string.IsNullOrEmpty(y.AwardingBody))
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(x.EducationLevel) || string.IsNullOrEmpty(y.EducationLevel))
+                {
+                    return false;
+                }
+                //if (string.IsNullOrEmpty(x.Sector) || string.IsNullOrEmpty(y.Sector))
+                //{
+                //    return false;
+                //}
 
                 return
+                    //x.Sector == y.Sector &&
+                    x.AwardingBody == y.AwardingBody &&
+                    x.EducationLevel == y.EducationLevel &&
                     x.CourseType == y.CourseType &&
                     x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
                     x.EntryRequirements == y.EntryRequirements &&
