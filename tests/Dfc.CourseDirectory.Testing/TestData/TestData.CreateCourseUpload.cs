@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.Testing
 
             return WithSqlQueryDispatcher(async dispatcher =>
             {
-                CourseUploadRow[] rows = null;
+                CourseUploadRow[] rows = null;                                
 
                 await dispatcher.ExecuteQuery(new CreateCourseUpload()
                 {
@@ -183,6 +183,11 @@ namespace Dfc.CourseDirectory.Testing
             });
         }
 
+        public async Task AddSectors()
+        {
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertSectors()));            
+        }
+
         public class CourseUploadRowBuilder
         {
             private readonly List<UpsertCourseUploadRowsRecord> _records = new List<UpsertCourseUploadRowsRecord>();
@@ -235,6 +240,7 @@ namespace Dfc.CourseDirectory.Testing
                 string studyMode,
                 string attendancePattern,
                 string courseType,
+                string sector,
                 string educationLevel,
                 string awardingBody,
                 Guid? venueId,
@@ -268,6 +274,7 @@ namespace Dfc.CourseDirectory.Testing
                     studyMode,
                     attendancePattern,
                     courseType,
+                    sector,
                     educationLevel,
                     awardingBody,
                     venueId,
@@ -310,7 +317,7 @@ namespace Dfc.CourseDirectory.Testing
                 }
 
                 return this;
-            }
+            }            
 
             internal IReadOnlyCollection<UpsertCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
 
@@ -342,6 +349,7 @@ namespace Dfc.CourseDirectory.Testing
                 string studyMode,
                 string attendancePattern,
                 string courseType,
+                string sector,
                 string educationLevel,
                 string awardingBody,
                 Guid? venueId,
@@ -382,6 +390,7 @@ namespace Dfc.CourseDirectory.Testing
                     StudyMode = studyMode,
                     AttendancePattern = attendancePattern,
                     CourseType = courseType,
+                    Sector  = sector,
                     EducationLevel = educationLevel,
                     AwardingBody = awardingBody,
                     VenueId = venueId,
@@ -431,6 +440,7 @@ namespace Dfc.CourseDirectory.Testing
                     studyMode: "",
                     attendancePattern: "",
                     courseType: "",
+                    sector: "ENVIRONMENTAL",
                     educationLevel : "",
                     awardingBody:"",
                     venueId: null);
@@ -465,6 +475,7 @@ namespace Dfc.CourseDirectory.Testing
                     studyMode: "",
                     attendancePattern: "",
                     courseType: "Skills Bootcamp",
+                    sector: "ENVIRONMENTAL",
                     educationLevel: "1",
                     awardingBody: "test awarding body",
                     venueId: null);

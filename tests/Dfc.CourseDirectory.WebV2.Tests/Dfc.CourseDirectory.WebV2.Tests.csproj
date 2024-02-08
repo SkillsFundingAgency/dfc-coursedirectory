@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <UserSecretsId>19e8cd72-e693-46e1-8650-96e958947813</UserSecretsId>
   </PropertyGroup>
   
   <ItemGroup>

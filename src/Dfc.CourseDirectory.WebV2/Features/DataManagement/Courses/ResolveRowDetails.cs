@@ -31,6 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public string AwardingBody { get; set; }
         public EducationLevel? EducationLevel { get; set; }
         public CourseType? CourseType { get; set; }
+        public string Sector { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public int RowNumber { get; set; }
         public string CourseName { get; set; }
@@ -154,6 +155,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     AwardingBody = request.AwardingBody,
                     EducationLevel = request.EducationLevel,
                     CourseType = request.CourseType,
+                    Sector = request.Sector,
                     DeliveryMode = request.DeliveryMode,
                     CourseName = request.CourseName,
                     ProviderCourseRef = request.ProviderCourseRef,

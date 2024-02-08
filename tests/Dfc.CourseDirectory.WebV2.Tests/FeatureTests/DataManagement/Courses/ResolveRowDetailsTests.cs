@@ -1018,6 +1018,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             var rowNumber = courseUploadRows.First().RowNumber;
             var courseType = "SkillsBootcamp";
+            var sector = "CARE";
             var awardingBody = "test awarding body";
             var educationLevel = "One";
             var courseName = "Course name";
@@ -1034,6 +1035,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("CourseType", courseType)
+                    .Add("Sector", sector)
                     .Add("EducationLevel", educationLevel)
                     .Add("AwardingBody", awardingBody)
                     .Add("CourseName", courseName)
@@ -1045,6 +1047,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     .Add("DurationUnit", durationUnit)
                     .ToContent()
             };
+
+            await TestData.AddSectors();
 
             // Act
             var response = await HttpClient.SendAsync(request);

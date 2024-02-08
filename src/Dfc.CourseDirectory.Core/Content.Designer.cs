@@ -412,6 +412,15 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select a sector.
+        /// </summary>
+        public static string ERROR_COURSE_SECTOR_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_SECTOR_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to What you can do next must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH {
