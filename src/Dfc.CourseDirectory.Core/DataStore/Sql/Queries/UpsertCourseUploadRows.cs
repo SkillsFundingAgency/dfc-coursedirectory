@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public CourseType? ResolvedCourseType { get; set; }
         public string CourseType { get; set; }
         public string Sector { get; set; }
-        public int ResolvedSector { get; set; }
+        public int? ResolvedSector { get; set; }
         public string AwardingBody { get; set; }
         public EducationLevel? ResolvedEducationLevel { get; set; }
         public string EducationLevel { get; set; }

@@ -29,13 +29,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public IReadOnlyCollection<Region> ResolvedSubRegions { get; private set; }
         public CourseType? ResolvedCourseType { get; set; }
         public EducationLevel? ResolvedEducationLevel { get; set; }
-        public int ResolvedSector { get; set; }
+        public int? ResolvedSector { get; set; }
 
         public static ParsedCsvNonLarsCourseRow FromCsvCourseRow(CsvNonLarsCourseRow row, IEnumerable<Region> allRegions, List<Sector> sectors)
         {
             var parsedRow = row.Adapt(new ParsedCsvNonLarsCourseRow());
             parsedRow.ResolvedEducationLevel = ResolveEducationLevel(parsedRow.EducationLevel);
-            parsedRow.ResolvedSector = sectors.FirstOrDefault(s => s.Code.Equals(parsedRow.Sector, StringComparison.InvariantCultureIgnoreCase))?.Id ?? default(int);
+            parsedRow.ResolvedSector = sectors.FirstOrDefault(s => s.Code.Equals(parsedRow.Sector, StringComparison.InvariantCultureIgnoreCase))?.Id ?? null;
             parsedRow.ResolvedCourseType = ResolveCourseType(parsedRow.CourseType);
             parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(parsedRow.DeliveryMode);
             parsedRow.ResolvedStartDate = ResolveStartDate(parsedRow.StartDate);
