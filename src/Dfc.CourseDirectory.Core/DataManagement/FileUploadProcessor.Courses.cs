@@ -1171,6 +1171,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
                     CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(parsedRow.ResolvedCourseType) ?? parsedRow.CourseType,
                     ResolvedCourseType = parsedRow.ResolvedCourseType,
+                    Sector = parsedRow.Sector,
+                    ResolvedSector = parsedRow.ResolvedSector,
                     EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(parsedRow.ResolvedEducationLevel) ?? parsedRow.EducationLevel,
                     ResolvedEducationLevel = parsedRow.ResolvedEducationLevel,
                     AwardingBody = parsedRow.AwardingBody,

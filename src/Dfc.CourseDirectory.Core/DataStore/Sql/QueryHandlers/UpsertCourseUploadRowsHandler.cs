@@ -67,6 +67,8 @@ WHEN NOT MATCHED THEN
         ResolvedAttendancePattern,
         CourseType,
         ResolvedCourseType,
+        Sector,
+        ResolvedSector,
         EducationLevel,
         ResolvedEducationLevel,
         AwardingBody
@@ -116,6 +118,8 @@ WHEN NOT MATCHED THEN
         source.ResolvedAttendancePattern,
         source.CourseType,
         source.ResolvedCourseType,
+        source.Sector,
+        source.ResolvedSector,
         source.EducationLevel,
         source.ResolvedEducationLevel,
         source.AwardingBody
@@ -164,6 +168,8 @@ WHEN MATCHED THEN UPDATE SET
     ResolvedAttendancePattern = source.ResolvedAttendancePattern,
     CourseType = source.CourseType,
     ResolvedCourseType = source.ResolvedCourseType,
+    Sector = source.Sector,
+    ResolvedSector = source.ResolvedSector,
     EducationLevel = source.EducationLevel,
     ResolvedEducationLevel = source.ResolvedEducationLevel,
     AwardingBody = source.AwardingBody;
@@ -185,7 +191,7 @@ SELECT
     VenueName, ProviderVenueRef, NationalDelivery, SubRegions, CourseWebpage, Cost, CostDescription,
     Duration, DurationUnit, StudyMode, AttendancePattern, VenueId,
     ResolvedDeliveryMode, ResolvedStartDate, ResolvedFlexibleStartDate, ResolvedNationalDelivery, ResolvedCost,
-    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, CourseType, ResolvedCourseType, EducationLevel, ResolvedEducationLevel, AwardingBody
+    ResolvedDuration, ResolvedDurationUnit, ResolvedStudyMode, ResolvedAttendancePattern, CourseType, ResolvedCourseType, Sector, ResolvedSector, EducationLevel, ResolvedEducationLevel, AwardingBody
 FROM Pttcd.CourseUploadRows
 WHERE CourseUploadId = @CourseUploadId
 AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
@@ -254,6 +260,8 @@ ORDER BY RowNumber";
                 table.Columns.Add("ResolvedAttendancePattern", typeof(byte));
                 table.Columns.Add("CourseType", typeof(string));
                 table.Columns.Add("ResolvedCourseType", typeof(int));
+                table.Columns.Add("Sector", typeof(string));
+                table.Columns.Add("ResolvedSector", typeof(string));
                 table.Columns.Add("EducationLevel", typeof(string));
                 table.Columns.Add("ResolvedEducationLevel", typeof(int));
                 table.Columns.Add("AwardingBody", typeof(string));
@@ -304,6 +312,8 @@ ORDER BY RowNumber";
                         record.ResolvedAttendancePattern,
                         record.CourseType,
                         record.ResolvedCourseType,
+                        record.Sector,
+                        record.ResolvedSector,
                         record.EducationLevel,
                         record.ResolvedEducationLevel,
                         record.AwardingBody);

@@ -406,7 +406,7 @@ namespace Dfc.CourseDirectory.Testing
                     ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id),
                     ResolvedCourseType = ParsedCsvNonLarsCourseRow.ResolveCourseType(courseType),
                     ResolvedEducationLevel = ParsedCsvNonLarsCourseRow.ResolveEducationLevel(educationLevel),
-
+                    ResolvedSector = 1
                 };
             }
 
