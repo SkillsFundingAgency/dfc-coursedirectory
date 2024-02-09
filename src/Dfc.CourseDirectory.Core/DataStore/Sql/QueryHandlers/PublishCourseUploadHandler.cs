@@ -79,8 +79,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         HowYouWillBeAssessed,
                         WhereNext,
                         ResolvedCourseType,
-                        AwardingBody,
+                        ResolvedSector,                        
                         ResolvedEducationLevel,
+                        AwardingBody,
                         ROW_NUMBER() OVER (PARTITION BY CourseId ORDER BY RowNumber) AS GroupRowNumber
                     FROM Pttcd.CourseUploadRows
                     WHERE CourseUploadId = @CourseUploadId
@@ -105,8 +106,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     WhereNext,
                     DataIsHtmlEncoded,
                     CourseType,
-                    AwardingBody,
-                    EducationLevel
+                    Sector,
+                    EducationLevel,
+                    AwardingBody
                 )
                 SELECT
                     CourseId,
@@ -127,8 +129,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     WhereNext,
                     0,  -- DataIsHtmlEncoded
                     ResolvedCourseType,
-                    AwardingBody,
-                    ResolvedEducationLevel
+                    ResolvedSector,
+                    ResolvedEducationLevel,                    
+                    AwardingBody                    
                 FROM CoursesCte
                 WHERE GroupRowNumber = 1
 

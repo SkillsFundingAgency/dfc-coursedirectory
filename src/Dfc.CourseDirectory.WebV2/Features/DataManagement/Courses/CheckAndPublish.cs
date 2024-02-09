@@ -49,6 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
         public string AwardingBody { get; set; }
         public string EducationLevel { get; set; }
         public string CourseType { get; set; }
+        public string Sector { get; set; }
         public string DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string StartDate { get; set; }
@@ -131,9 +132,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                             CourseRows = g
                                 .Select(r => new ViewModelRow()
                                 {
-                                    AwardingBody = r.AwardingBody,
-                                    EducationLevel = r.EducationLevel,
                                     CourseType = r.CourseType,
+                                    Sector = r.Sector,
+                                    AwardingBody = r.AwardingBody,
+                                    EducationLevel = r.EducationLevel,                                    
                                     CourseName = r.CourseName,
                                     StartDate = r.StartDate,
                                     DeliveryMode = r.DeliveryMode

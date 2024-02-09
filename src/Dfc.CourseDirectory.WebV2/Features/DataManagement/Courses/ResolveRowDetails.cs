@@ -244,7 +244,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 vm.CourseType = row.ResolvedCourseType; 
                 vm.EducationLevel = row.ResolvedEducationLevel;
                 vm.AwardingBody = row.AwardingBody;
-                vm.Sector = row.ResolvedSector;
+                vm.Sector = row.Sector;
                 vm.Sectors = sectors;
             }
             return vm;
