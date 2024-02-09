@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             // Arrange
             var providerName = "Test provider";
 
+            await TestData.AddSectors();
             var provider = await TestData.CreateProvider(
                 providerName,
                 providerType: ProviderType.FE | ProviderType.TLevels | ProviderType.NonLARS);

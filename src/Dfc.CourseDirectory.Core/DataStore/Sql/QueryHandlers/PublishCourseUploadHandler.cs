@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     WhereNext,
                     DataIsHtmlEncoded,
                     CourseType,
-                    Sector,
+                    SectorId,
                     EducationLevel,
                     AwardingBody
                 )

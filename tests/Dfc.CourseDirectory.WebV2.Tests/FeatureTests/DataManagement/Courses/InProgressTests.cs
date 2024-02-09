@@ -23,6 +23,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+            await TestData.AddSectors();
 
             if (uploadStatus != null)
             {
@@ -91,6 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+            await TestData.AddSectors();
 
             if (uploadStatus != null)
             {

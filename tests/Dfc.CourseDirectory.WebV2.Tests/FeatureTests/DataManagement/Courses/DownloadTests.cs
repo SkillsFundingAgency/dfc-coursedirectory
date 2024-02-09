@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using FluentAssertions;
+using Microsoft.Extensions.Hosting;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
@@ -79,6 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerName: "Test Provider");
+            await TestData.AddSectors();
 
             await TestData.CreateNonLarsCourse(provider.ProviderId, createdBy: User.ToUserInfo());
 
@@ -238,6 +240,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerName: "Test Provider");
+            await TestData.AddSectors();
 
             var course = await TestData.CreateNonLarsCourse(provider.ProviderId, createdBy: User.ToUserInfo(),
                 configureCourseRuns: b => b.WithWorkBasedCourseRun(
@@ -269,7 +272,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             downloadedcourse.Should().BeEquivalentTo(new CsvNonLarsCourseRow()
             {
                 CourseType = "Skills Bootcamp",
-                Sector = "",
+                Sector = "ENVIRONMENTAL",
                 WhoThisCourseIsFor = course.CourseDescription,
                 EntryRequirements = course.EntryRequirements,
                 WhatYouWillLearn = course.WhatYoullLearn,
@@ -364,6 +367,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider(providerName: "Test Provider");
+            await TestData.AddSectors();
 
             var course = await TestData.CreateNonLarsCourse(provider.ProviderId, createdBy: User.ToUserInfo(),
                 configureCourseRuns: b => b.WithOnlineCourseRun(
@@ -393,7 +397,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             downloadedcourse.Should().BeEquivalentTo(new CsvNonLarsCourseRow()
             {
                 CourseType = "Skills Bootcamp",
-                Sector = "",
+                Sector = "ENVIRONMENTAL",
                 WhoThisCourseIsFor = course.CourseDescription,
                 EntryRequirements = course.EntryRequirements,
                 WhatYouWillLearn = course.WhatYoullLearn,
