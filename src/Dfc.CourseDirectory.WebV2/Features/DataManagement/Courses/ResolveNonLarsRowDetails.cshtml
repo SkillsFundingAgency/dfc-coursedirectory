@@ -81,7 +81,7 @@
                 </govuk-radios-hint>
                 @foreach(var sector in Model.Sectors)
                 {
-                    <govuk-radios-item checked="@Model.Sector == sector.Code" value="@sector.Code">@sector.Description</govuk-radios-item>
+                    <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
                 }
             </govuk-radios>
             <input type="hidden" name="testing" value="@Model.Sector" />
