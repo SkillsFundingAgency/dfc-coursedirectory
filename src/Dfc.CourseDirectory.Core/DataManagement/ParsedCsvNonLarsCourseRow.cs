@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             var parsedRow = row.Adapt(new ParsedCsvNonLarsCourseRow());
             parsedRow.ResolvedEducationLevel = ResolveEducationLevel(parsedRow.EducationLevel);
-            parsedRow.ResolvedSector = sectors.FirstOrDefault(s => s.Code.Equals(parsedRow.Sector, StringComparison.InvariantCultureIgnoreCase))?.Id ?? null;
+            parsedRow.ResolvedSector = ResolveSector(parsedRow.Sector, sectors);
             parsedRow.ResolvedCourseType = ResolveCourseType(parsedRow.CourseType);
             parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(parsedRow.DeliveryMode);
             parsedRow.ResolvedStartDate = ResolveStartDate(parsedRow.StartDate);
@@ -301,6 +301,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
 
             return decimalPlaces;
+        }
+
+        public static string MapSectorIdToCode(int? sectorId, List<Sector> sectors)
+        {
+            return sectors.FirstOrDefault(s => s.Id.Equals(sectorId))?.Code ?? null;
+        }
+
+        public static int? ResolveSector(string code, List<Sector> sectors)
+        {
+            return sectors.FirstOrDefault(s => s.Code.Equals(code, StringComparison.InvariantCultureIgnoreCase))?.Id ?? null;
         }
     }
 }
