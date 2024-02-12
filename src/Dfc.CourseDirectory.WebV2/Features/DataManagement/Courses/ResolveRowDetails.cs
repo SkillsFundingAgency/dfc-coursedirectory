@@ -244,7 +244,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 vm.CourseType = row.ResolvedCourseType; 
                 vm.EducationLevel = row.ResolvedEducationLevel;
                 vm.AwardingBody = row.AwardingBody;
-                vm.Sector = row.Sector;
+                vm.Sector = sectors.FirstOrDefault(s => s.Code.Equals(row.Sector, StringComparison.InvariantCultureIgnoreCase))?.Code ?? null;
                 vm.Sectors = sectors;
             }
             return vm;
