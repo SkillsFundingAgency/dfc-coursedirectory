@@ -17,11 +17,12 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
             <govuk-error-summary>
-                <govuk-error-summary-item asp-for="EducationLevel" />
-                <govuk-error-summary-item asp-for="AwardingBody" />
-                <govuk-error-summary-item asp-for="CourseType" />
                 <govuk-error-summary-item asp-for="CourseName" />
                 <govuk-error-summary-item asp-for="ProviderCourseRef" />
+                <govuk-error-summary-item asp-for="CourseType" />
+                <govuk-error-summary-item asp-for="Sector" />
+                <govuk-error-summary-item asp-for="EducationLevel" />
+                <govuk-error-summary-item asp-for="AwardingBody" />
                 <govuk-error-summary-item asp-for="FlexibleStartDate" />
                 <govuk-error-summary-item asp-for="StartDate" />
                 <govuk-error-summary-item asp-for="VenueId" />
@@ -69,6 +70,21 @@
                 </govuk-radios-hint>
                 <govuk-radios-item value="@CourseType.SkillsBootcamp">Skills Bootcamp</govuk-radios-item>
             </govuk-radios>
+            <govuk-radios asp-for="Sector">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
+                        Sector
+                    </govuk-radios-fieldset-legend>
+                </govuk-radios-fieldset>
+                <govuk-radios-hint>
+                    Select one option.
+                </govuk-radios-hint>
+                @foreach(var sector in Model.Sectors)
+                {
+                    <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
+                }
+            </govuk-radios>
+            <input type="hidden" name="testing" value="@Model.Sector" />
             <govuk-radios asp-for="EducationLevel">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">

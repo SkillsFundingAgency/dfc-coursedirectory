@@ -69,7 +69,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public static CsvNonLarsCourseRow FromModel(CourseUploadRow row) => new CsvNonLarsCourseRow()
         {
             CourseType = row.CourseType,
-            //Sector = row.Sector,
+            Sector = row.Sector,
             AwardingBody = row.AwardingBody,
             EducationLevel  = row.EducationLevel,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
@@ -104,9 +104,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                 .Select(courseRun => new CsvNonLarsCourseRow()
                 {
                     CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(row.CourseType),
-                    Sector = sectors.FirstOrDefault(s => s.Id == row.SectorId)?.Code,
-                    AwardingBody = row.AwardingBody,
+                    Sector = sectors.FirstOrDefault(s => s.Id == row.SectorId)?.Code,                    
                     EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(row.EducationLevel),
+                    AwardingBody = row.AwardingBody,
                     WhoThisCourseIsFor = row.CourseDescription,
                     EntryRequirements = row.EntryRequirements,
                     WhatYouWillLearn = row.WhatYoullLearn,
@@ -163,16 +163,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                 {
                     return false;
                 }
-                //if (string.IsNullOrEmpty(x.Sector) || string.IsNullOrEmpty(y.Sector))
-                //{
-                //    return false;
-                //}
+                if (string.IsNullOrEmpty(x.Sector) || string.IsNullOrEmpty(y.Sector))
+                {
+                    return false;
+                }
 
                 return
-                    //x.Sector == y.Sector &&
-                    x.AwardingBody == y.AwardingBody &&
-                    x.EducationLevel == y.EducationLevel &&
                     x.CourseType == y.CourseType &&
+                    x.Sector == y.Sector &&
+                    x.AwardingBody == y.AwardingBody &&
+                    x.EducationLevel == y.EducationLevel &&                    
                     x.WhoThisCourseIsFor == y.WhoThisCourseIsFor &&
                     x.EntryRequirements == y.EntryRequirements &&
                     x.WhatYouWillLearn == y.WhatYouWillLearn &&

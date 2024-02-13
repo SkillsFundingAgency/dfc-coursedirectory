@@ -3,7 +3,6 @@ using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
@@ -67,6 +66,7 @@ SELECT
     v.Website AS VenueWebsite,
     cr.UpdatedOn,    
 	c.CourseType,
+    c.SectorId,
     c.EducationLevel, 
     c.AwardingBody
 FROM [Pttcd].[CourseRuns] cr

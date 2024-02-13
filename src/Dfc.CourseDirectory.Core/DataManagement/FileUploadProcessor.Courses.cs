@@ -674,6 +674,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                    new CsvNonLarsCourseRow()
                    {
                        CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(update.CourseType),
+                       Sector = RemoveASCII(update.Sector),
                        AwardingBody = RemoveASCII(update.AwardingBody),
                        EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(update.EducationLevel),
                        AttendancePattern = ParsedCsvNonLarsCourseRow.MapAttendancePattern(update.AttendancePattern),
@@ -1013,7 +1014,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             var allRegions = await _regionCache.GetAllRegions();
 
-            var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
+            var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });            
 
             var rowsAreValid = true;
 
@@ -1105,6 +1106,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var providerVenues = await sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
+            var sectors = (await sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
             var rowsAreValid = true;
 
             var upsertRecords = new List<UpsertCourseUploadRowsRecord>();
@@ -1114,9 +1117,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowNumber = row.RowNumber;
                 var courseRunId = Guid.NewGuid();
 
-                var parsedRow = ParsedCsvNonLarsCourseRow.FromCsvCourseRow(row.Data, allRegions);
+                var parsedRow = ParsedCsvNonLarsCourseRow.FromCsvCourseRow(row.Data, allRegions, sectors);
 
-                var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);                
+                var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
 
                 var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 
@@ -1168,6 +1171,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ResolvedSubRegions = parsedRow.ResolvedSubRegions?.Select(sr => sr.Id)?.ToArray(),
                     CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(parsedRow.ResolvedCourseType) ?? parsedRow.CourseType,
                     ResolvedCourseType = parsedRow.ResolvedCourseType,
+                    Sector = parsedRow.Sector,
+                    ResolvedSector = parsedRow.ResolvedSector,
                     EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(parsedRow.ResolvedEducationLevel) ?? parsedRow.EducationLevel,
                     ResolvedEducationLevel = parsedRow.ResolvedEducationLevel,
                     AwardingBody = parsedRow.AwardingBody,
@@ -1355,6 +1360,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Guid? matchedVenueId)
             {
                 RuleFor(c => c.ResolvedCourseType).CourseType();
+                RuleFor(c => c.ResolvedSector).Sector();
                 RuleFor(c => c.ResolvedEducationLevel).EducationLevel();
                 RuleFor(c => c.AwardingBody).AwardingBody();
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();

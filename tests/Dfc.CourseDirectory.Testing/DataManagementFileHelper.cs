@@ -234,7 +234,8 @@ namespace Dfc.CourseDirectory.Testing
                     StudyMode = "",
                     AttendancePattern = "",
                     AwardingBody = "test awarding body",
-                    EducationLevel = "1"
+                    EducationLevel = "1",
+                    Sector = "ENVIRONMENTAL"
                 };
             }
         }

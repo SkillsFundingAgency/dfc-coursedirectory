@@ -9,6 +9,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public string AwardingBody { get; set; }
         public EducationLevel? EducationLevel { get; set; }
         public CourseType? CourseType { get; set; }
+        public string Sector { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }

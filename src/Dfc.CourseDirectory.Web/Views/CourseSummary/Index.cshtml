@@ -9,12 +9,16 @@
 @model Dfc.CourseDirectory.Web.ViewModels.CourseSummary.CourseSummaryViewModel
 @{
     ViewData["Title"] = WebUtility.HtmlDecode(@Model.CourseName);
-    Layout = "_Layout_Your_Courses";
+    Layout = "_Layout_Your_Courses";    
+
+    var backLinkHref = Model.NonLarsCourse ?
+                                Url.Action("Index", "ProviderCourses", new { nlc = "true" }) :
+                                Url.Action("Index", "ProviderCourses");
 
     ViewData.SetLayoutModel(new LayoutModel
                     {
                         BackLink = true,
-                        BackLinkHref = Url.Action("Index", "ProviderCourses"),
+                        BackLinkHref = backLinkHref,
                         BackLinkText = "Back to course list"
                     });
 

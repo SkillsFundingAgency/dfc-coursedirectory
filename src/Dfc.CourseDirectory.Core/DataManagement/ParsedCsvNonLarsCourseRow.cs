@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Mapster;
 
@@ -28,11 +29,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public IReadOnlyCollection<Region> ResolvedSubRegions { get; private set; }
         public CourseType? ResolvedCourseType { get; set; }
         public EducationLevel? ResolvedEducationLevel { get; set; }
+        public int? ResolvedSector { get; set; }
 
-        public static ParsedCsvNonLarsCourseRow FromCsvCourseRow(CsvNonLarsCourseRow row, IEnumerable<Region> allRegions)
+        public static ParsedCsvNonLarsCourseRow FromCsvCourseRow(CsvNonLarsCourseRow row, IEnumerable<Region> allRegions, List<Sector> sectors)
         {
             var parsedRow = row.Adapt(new ParsedCsvNonLarsCourseRow());
             parsedRow.ResolvedEducationLevel = ResolveEducationLevel(parsedRow.EducationLevel);
+            parsedRow.ResolvedSector = ResolveSector(parsedRow.Sector, sectors);
             parsedRow.ResolvedCourseType = ResolveCourseType(parsedRow.CourseType);
             parsedRow.ResolvedDeliveryMode = ResolveDeliveryMode(parsedRow.DeliveryMode);
             parsedRow.ResolvedStartDate = ResolveStartDate(parsedRow.StartDate);
@@ -193,7 +196,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "7" => Models.EducationLevel.Seven,
             "seven" => Models.EducationLevel.Seven,
             _ => (EducationLevel?)null
-        };
+        };        
 
         public static int? ResolveDuration(string value) =>
             int.TryParse(value, out var duration) ? duration : (int?)null;
@@ -298,6 +301,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
 
             return decimalPlaces;
+        }
+
+        public static string MapSectorIdToCode(int? sectorId, List<Sector> sectors)
+        {
+            return sectors.FirstOrDefault(s => s.Id.Equals(sectorId))?.Code ?? null;
+        }
+
+        public static int? ResolveSector(string code, List<Sector> sectors)
+        {
+            return sectors.FirstOrDefault(s => s.Code.Equals(code, StringComparison.InvariantCultureIgnoreCase))?.Id ?? null;
         }
     }
 }

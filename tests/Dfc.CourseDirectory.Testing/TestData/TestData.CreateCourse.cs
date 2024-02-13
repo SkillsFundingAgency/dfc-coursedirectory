@@ -111,6 +111,7 @@ namespace Dfc.CourseDirectory.Testing
                         HowYoullBeAssessed = howYoullBeAssessed,
                         WhereNext = whereNext,
                         CourseType = CourseType.SkillsBootcamp,
+                        SectorId = 1,
                         EducationLevel = EducationLevel.One,
                         AwardingBody = "test awarding body",
                         CourseRuns = courseRuns,

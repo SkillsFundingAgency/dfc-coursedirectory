@@ -27,10 +27,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
-    {
+    {        
+        public CourseType? CourseType { get; set; }
+        public string Sector { get; set; }
         public string AwardingBody { get; set; }
         public EducationLevel? EducationLevel { get; set; }
-        public CourseType? CourseType { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public int RowNumber { get; set; }
         public string CourseName { get; set; }
@@ -48,6 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
         public bool IsNonLars { get; set; }
+        public List<Sector> Sectors { get; set; }
     }
 
     public class ViewModel : Command
@@ -154,6 +156,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     AwardingBody = request.AwardingBody,
                     EducationLevel = request.EducationLevel,
                     CourseType = request.CourseType,
+                    Sector = request.Sector,
                     DeliveryMode = request.DeliveryMode,
                     CourseName = request.CourseName,
                     ProviderCourseRef = request.ProviderCourseRef,
@@ -214,6 +217,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     .ToArray() :
                 null;
 
+            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
             var vm = new ViewModel()
             {
                 DeliveryMode = deliveryMode,
@@ -239,6 +244,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 vm.CourseType = row.ResolvedCourseType; 
                 vm.EducationLevel = row.ResolvedEducationLevel;
                 vm.AwardingBody = row.AwardingBody;
+                vm.Sector = sectors.FirstOrDefault(s => s.Code.Equals(row.Sector, StringComparison.InvariantCultureIgnoreCase))?.Code ?? null;
+                vm.Sectors = sectors;
             }
             return vm;
         }
@@ -268,6 +275,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 if (isNonLars)
                 {
                     RuleFor(c => c.CourseType).CourseType();
+                    RuleFor(c => c.Sector).Sector();
                     RuleFor(c => c.AwardingBody).AwardingBody();
                     RuleFor(c => c.EducationLevel).EducationLevel();
                 }

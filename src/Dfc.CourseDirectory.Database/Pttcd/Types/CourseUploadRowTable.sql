@@ -43,6 +43,8 @@
 	[ResolvedAttendancePattern] TINYINT,
 	[CourseType] NVARCHAR(MAX) NULL,
 	[ResolvedCourseType] TINYINT NULL,
+	[Sector] NVARCHAR(MAX) NULL,
+	[ResolvedSector] TINYINT NULL,
 	[EducationLevel] NVARCHAR(MAX) NULL,
 	[ResolvedEducationLevel] TINYINT NULL,
 	[AwardingBody] NVARCHAR(MAX) NULL

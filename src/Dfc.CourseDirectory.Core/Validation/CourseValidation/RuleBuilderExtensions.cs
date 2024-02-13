@@ -93,6 +93,19 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_COURSE_TYPE_REQUIRED");
         }
 
+        public static void Sector<T>(this IRuleBuilderInitial<T, int?> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_SECTOR_REQUIRED");
+        }
+        public static void Sector<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_SECTOR_REQUIRED");
+        }
+
         public static void EducationLevel<T>(this IRuleBuilderInitial<T, EducationLevel?> field)
         {
             field

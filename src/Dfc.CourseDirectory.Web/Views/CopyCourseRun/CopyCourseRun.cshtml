@@ -119,7 +119,7 @@ else
                 HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
                 AriaDescribedBy = "Please enter your reference for this course"
                 })
-            </div>            
+            </div>
 
             <div class="section" id="sectionDeliveryType">
                 @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
@@ -225,7 +225,13 @@ else
 
             <button name="saveButton" type="submit" class="govuk-button cd-cancel-btn" id="save">Continue</button>
 
-            <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : @Url.Action("Index", "ProviderCourses"))" class="cd-cancel-link-unset govuk-link cd-cancel-link">Cancel</a>
+            @{
+                var cancelUrl = Model.NonLarsCourse ?
+                                Url.Action("Index", "ProviderCourses", new { nlc = "true" }) :
+                                Url.Action("Index", "ProviderCourses");
+            }
+
+            <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : cancelUrl)" class="cd-cancel-link-unset govuk-link cd-cancel-link">Cancel</a>
 
         </form>
 

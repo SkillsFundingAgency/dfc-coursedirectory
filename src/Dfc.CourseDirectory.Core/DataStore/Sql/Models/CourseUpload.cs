@@ -52,14 +52,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
         public string CourseType { get; set; }
+        public string Sector { get; set; }
         public string AwardingBody { get; set; }
         public string EducationLevel { get; set; }
     }
 
     public class CourseUploadRowDetail : CourseUploadRow
-    {
-        public EducationLevel? ResolvedEducationLevel { get; set; }
+    {        
         public CourseType? ResolvedCourseType { get; set; }
+        public string ResolvedSector { get; set; }
+        public EducationLevel? ResolvedEducationLevel { get; set; }
         public CourseDeliveryMode? ResolvedDeliveryMode { get; set; }
         public DateTime? ResolvedStartDate { get; set; }
         public bool? ResolvedFlexibleStartDate { get; set; }
@@ -69,6 +71,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public CourseDurationUnit? ResolvedDurationUnit { get; set; }
         public CourseStudyMode? ResolvedStudyMode { get; set; }
         public CourseAttendancePattern? ResolvedAttendancePattern { get; set; }
-        public IReadOnlyCollection<string> ResolvedSubRegionIds { get; set; }
+        public IReadOnlyCollection<string> ResolvedSubRegionIds { get; set; }        
     }
 }
