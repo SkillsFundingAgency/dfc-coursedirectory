@@ -317,12 +317,16 @@ else
                        asp-route-courseRunId="@courseRun.CourseRunId"
                        asp-route-publishMode="@PublishMode.Summary" aria-label="Copy course: @courseRun.CourseName">Copy course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
 
+                    @{
+                        var returnUrl = Model.NonLarsCourse ?
+                                        Url.Action("Index", "ProviderCourses", new { nlc = "true" }) :
+                                        Url.Action("Index", "ProviderCourses");
+                    }
 
                     <a class="govuk-link" asp-controller="DeleteCourseRun" asp-action="Get"
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
-                       asp-route-returnUrl="@Url.Action("Index", "ProviderCourses")" aria-label="Delete course: @courseRun.CourseName">Delete course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
-
+                       asp-route-returnUrl="@returnUrl" aria-label="Delete course: @courseRun.CourseName">Delete course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
 
                 </div>
             </div>
