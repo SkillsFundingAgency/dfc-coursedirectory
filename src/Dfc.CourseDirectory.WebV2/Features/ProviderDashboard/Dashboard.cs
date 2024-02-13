@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public int UnpublishedNonLarsCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
         public bool NonLarsCourseUploadInProgress { get; set; }
+        public int PastStartDateNonLarsCourseRunCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -93,6 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 CourseRunCount = dashboardCounts.CourseRunCount,
                 NonLarsCourseCount = dashboardCounts.NonLarsCourseCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
+                PastStartDateNonLarsCourseRunCount = dashboardCounts.PastStartDateNonLarsCourseRunCount,
                 TLevelCount = dashboardCounts.TLevelCount,
                 VenueCount = dashboardCounts.VenueCount,
                 IsNewProvider = provider.ProviderType == ProviderType.None,

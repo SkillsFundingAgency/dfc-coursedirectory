@@ -69,6 +69,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 WHERE cu.UploadStatus IN ({(int)UploadStatus.ProcessedWithErrors}, {(int)UploadStatus.ProcessedSuccessfully})
                 AND cr.CourseUploadRowStatus = 0 and cr.LearnAimRef is null
                 AND cu.ProviderId = @{nameof(query.ProviderId)}
+
+                SELECT COUNT(*)
+                FROM Pttcd.CourseRuns cr
+                JOIN Pttcd.Courses c ON c.CourseId = cr.CourseId and c.LearnAimRef is null              
+                WHERE c.ProviderId = @ProviderId
+                AND cr.CourseRunStatus = {(int)CourseStatus.Live}
+                AND cr.StartDate < @{nameof(query.Date)}
                 ";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
@@ -81,6 +88,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 var unpublishedVenueCount = reader.ReadSingle<int>();
                 var unpublishedCourseCount = reader.ReadSingle<int>();
                 var unpublishedNonLarsCount = reader.ReadSingle<int>();
+                var pastStartDateNonLarsCourseRunCount = reader.ReadSingle<int>();
 
                 return new DashboardCounts
                 {
@@ -91,7 +99,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     PastStartDateCourseRunCount = pastStartDateCourseRunCount,
                     UnpublishedVenueCount = unpublishedVenueCount,
                     UnpublishedCourseCount = unpublishedCourseCount,
-                    UnpublishedNonLarsCourseCount = unpublishedNonLarsCount
+                    UnpublishedNonLarsCourseCount = unpublishedNonLarsCount,
+                    PastStartDateNonLarsCourseRunCount = pastStartDateNonLarsCourseRunCount
                 };
             }
         }

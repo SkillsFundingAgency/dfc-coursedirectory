@@ -13,6 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
 {
     public class Query : IRequest<ViewModel>
     {
+        public bool IsNonLars { get; set; }
     }
     
     public class ViewModel
@@ -64,7 +65,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
             var results = await _sqlQueryDispatcher.ExecuteQuery(new GetExpiredCourseRunsForProvider()
             {
                 ProviderId = _providerContextProvider.GetProviderId(),
-                Today = _clock.UtcNow.Date
+                Today = _clock.UtcNow.Date,
+                IsNonLars = request.IsNonLars
             });
 
             var allRegions = await _regionCache.GetAllRegions();
