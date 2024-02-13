@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDefinitions
 
     public class ViewModel
     {
-        public IReadOnlyCollection<NonLarsSubTypeViewModel> TLevelDefinitions { get; set; }
+        public IReadOnlyCollection<TLevelDefinitionViewModel> TLevelDefinitions { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevelDefinitions
 
             return new ViewModel
             {
-                TLevelDefinitions = tLevelDefinitions.Select(t => new NonLarsSubTypeViewModel
+                TLevelDefinitions = tLevelDefinitions.Select(t => new TLevelDefinitionViewModel
                 {
                     TLevelDefinitionId = t.TLevelDefinitionId,
                     FrameworkCode = t.FrameworkCode,

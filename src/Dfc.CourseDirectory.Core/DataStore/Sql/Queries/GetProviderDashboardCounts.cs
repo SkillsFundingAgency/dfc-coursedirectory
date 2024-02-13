@@ -20,5 +20,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
         public int UnpublishedNonLarsCourseCount { get; set; }
+        public int PastStartDateNonLarsCourseRunCount { get; set; }
     }
 }
