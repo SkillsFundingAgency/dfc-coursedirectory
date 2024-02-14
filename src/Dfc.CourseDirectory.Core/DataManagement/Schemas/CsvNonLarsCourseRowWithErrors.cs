@@ -16,6 +16,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
             EducationLevel = row.EducationLevel,
             AwardingBody = row.AwardingBody,
             CourseType = row.CourseType,
+            Sector = row.Sector,
             WhoThisCourseIsFor = row.WhoThisCourseIsFor,
             EntryRequirements = row.EntryRequirements,
             WhatYouWillLearn = row.WhatYouWillLearn,
