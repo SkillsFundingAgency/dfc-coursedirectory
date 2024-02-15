@@ -113,6 +113,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF":
                     return "Venue name";
                 case "COURSE_COURSE_TYPE_REQUIRED":
+                    return "Course type";
                 case "COURSE_SECTOR_REQUIRED":
                     return "Sector";
                 case "COURSE_AWARDING_BODY_REQUIRED":
