@@ -13,6 +13,7 @@
         }
         @if (Model.PastStartDateNonLarsCourseRunCount > 0)
         {
+            <br/>
             <p class="govuk-body">The start date of @Model.PastStartDateNonLarsCourseRunCount Non LARS courses are in the past.</p>
             <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link">Update Non LARS course start dates</a></p>
         }

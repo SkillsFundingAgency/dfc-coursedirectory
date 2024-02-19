@@ -24,6 +24,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             {
                 Session.SetString(SessionNonLarsCourse,"true");
             }
+            else
+            {
+                Session.SetString(SessionNonLarsCourse, "false");
+            }
             return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query() { IsNonLars = isNonLars }, vm => View("ExpiredCourseRuns", vm));
         }
             
