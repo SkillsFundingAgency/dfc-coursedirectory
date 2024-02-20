@@ -260,6 +260,10 @@
                 case PublishMode.Summary:
                     @Html.ActionLink("Cancel", "Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }, new { @class = "cd-cancel-link-unset govuk-link cd-cancel-link" })
                     break;
+                case PublishMode.DataQualityIndicator:
+                    //@Html.ActionLink("Cancel", "Index", "ExpiredCourseRuns", new { ProviderContext.RouteValues, isnonlars = Model.NonLarsCourse }, new { @class = "cd-cancel-link-unset govuk-link cd-cancel-link" })
+                    <a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="@Model.NonLarsCourse" class="cd-cancel-link-unset govuk-link cd-cancel-link">Cancel</a>
+                    break;
                 default:
                     @Html.ActionLink("Cancel", "Courses", "Provider", new
             {

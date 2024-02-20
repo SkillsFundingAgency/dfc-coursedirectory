@@ -9,12 +9,11 @@
         @if(Model.PastStartDateCourseRunCount > 0)
         {
             <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount LARS courses are in the past.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course start dates</a></p> 
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course start dates</a></p>
         }
-
         @if (Model.PastStartDateNonLarsCourseRunCount > 0)
         {
-            <br />
+            <br/>
             <p class="govuk-body">The start date of @Model.PastStartDateNonLarsCourseRunCount Non LARS courses are in the past.</p>
             <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link">Update Non LARS course start dates</a></p>
         }
@@ -195,7 +194,7 @@
                 </div>
             </div>
         </div>
-        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
+@*         @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
         {
             <div class="govuk-grid-column-one-third">
                 <div class="pttcd-provider-dashboard__card">
@@ -245,7 +244,7 @@
                     </div>
                 </div>
             </div>
-        }
+        } *@
     </div>
 }
 
