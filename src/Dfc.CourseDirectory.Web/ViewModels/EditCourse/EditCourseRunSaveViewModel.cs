@@ -34,5 +34,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string SectorDescription { get; set; }
         public EducationLevel? EducationLevel { get; set; }
         public string AwardingBody { get; set; }
+        public bool NonLarsCourse { get; set; }
     }
 }
