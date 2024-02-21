@@ -382,7 +382,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 return BadRequest();
             }
-
+            model.NonLarsCourse = IsCourseNonLars();
             var courseId = model.CourseId.Value;
 
             var allRegions = await _regionCache.GetAllRegions();
@@ -508,7 +508,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 case PublishMode.DataQualityIndicator:
                     TempData[TempDataKeys.ExpiredCoursesNotification] = model.CourseName + " has been updated";
-                    return RedirectToAction("Index", "ExpiredCourseRuns")
+                    return RedirectToAction("Index", "ExpiredCourseRuns",new { isnonlars = model.NonLarsCourse })
                         .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
                 default:
                     TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
