@@ -700,7 +700,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var learnAimRefTitleBytes = Encoding.UTF8.GetBytes("Learn Aim Ref Title");
             _mockSession.Setup(m => m.TryGetValue(SessionLearnAimRefTitle, out learnAimRefTitleBytes)).Returns(true);
 
-            _mockCourseTypeService.Setup(m => m.GetCourseType(learnAimRef)).ReturnsAsync(CourseType.EssentialSkills);
+            _mockCourseTypeService.Setup(m => m.GetCourseType(learnAimRef, It.IsAny<Guid>())).ReturnsAsync(CourseType.EssentialSkills);
 
             var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
             var providerContext = new ProviderContext(providerInfo);

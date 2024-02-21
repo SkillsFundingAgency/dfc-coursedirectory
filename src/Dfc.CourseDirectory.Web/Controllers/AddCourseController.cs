@@ -737,7 +737,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var courseId = Guid.NewGuid();
             var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
-            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef);            
+            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef, providerId);            
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
