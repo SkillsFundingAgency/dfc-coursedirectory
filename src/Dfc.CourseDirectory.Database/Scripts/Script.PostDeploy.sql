@@ -79,6 +79,17 @@ WHERE
 DROP TABLE #LearnAimRefCourseTypes
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+---------Update Course type to null for those courses which have course type of 4 but are not in eligible proivders list---------
+UPDATE 
+	Pttcd.Courses 
+SET 
+	CourseType = NULL
+WHERE 
+	CourseType = 4  
+	AND CourseStatus = 1
+	AND ProviderId NOT IN (SELECT DISTINCT(ProviderId) FROM Pttcd.FindACourseIndexCampaignCodes)
+---------------------------------------------------------------------------------------------------------------------------------
+
 
 --------- This script inserts IFATE sectors in Pttcd.Sectors table-----------------
   IF (NOT EXISTS (SELECT 1 FROM [Pttcd].[Sectors]))
