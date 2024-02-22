@@ -9,4 +9,6 @@
 	[Modified_By] [nvarchar](50) NULL,
 	[Modified_On] [nvarchar](50) NULL
 );
-
+GO
+CREATE NONCLUSTERED INDEX [IDX_Validity_LearnAimRef_LastNewStartDate]
+    ON [LARS].[Validity]([LearnAimRef], [LastNewStartDate] ) WITH (ONLINE = ON);
