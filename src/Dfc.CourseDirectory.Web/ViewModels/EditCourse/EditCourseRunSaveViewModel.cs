@@ -30,5 +30,10 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public string QualificationType { get; set; }
         public bool FlexibleStartDate { get; set; }
         public PublishMode Mode { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
+        public bool NonLarsCourse { get; set; }
     }
 }

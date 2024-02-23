@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Courses;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
 {
@@ -18,6 +17,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string CostDescription { get; set; }
         public string CourseLength { get; set; }
         public CourseAttendancePattern? AttendancePattern { get; set; }
-        public CourseStudyMode? StudyMode { get; set; }
+        public CourseStudyMode? StudyMode { get; set; }        
+        public bool NonLarsCourse { get; set; }
     }
 }

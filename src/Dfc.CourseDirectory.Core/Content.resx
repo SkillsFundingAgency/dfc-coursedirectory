@@ -240,6 +240,18 @@
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH" xml:space="preserve">
     <value>Course webpage must be {0} characters or fewer</value>
   </data>
+  <data name="ERROR_COURSE_COURSE_TYPE_REQUIRED" xml:space="preserve">
+    <value>Select a course type</value>
+  </data>
+  <data name="ERROR_COURSE_EDUCATION_LEVEL_REQUIRED" xml:space="preserve">
+    <value>Select an education level</value>
+  </data>
+  <data name="ERROR_COURSE_AWARDING_BODY_MAXLENGTH" xml:space="preserve">
+    <value>Awarding body must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_AWARDING_BODY_REQUIRED" xml:space="preserve">
+    <value>Enter course awarding body</value>
+  </data>
   <data name="ERROR_COURSERUN_DELIVERY_MODE_REQUIRED" xml:space="preserve">
     <value>Select a delivery mode</value>
   </data>
@@ -404,5 +416,8 @@
   </data>
   <data name="ERROR_VENUE_WEBSITE_FORMAT" xml:space="preserve">
     <value>Enter a website in the correct format</value>
+  </data>
+  <data name="ERROR_COURSE_SECTOR_REQUIRED" xml:space="preserve">
+    <value>Select a sector</value>
   </data>
 </root>

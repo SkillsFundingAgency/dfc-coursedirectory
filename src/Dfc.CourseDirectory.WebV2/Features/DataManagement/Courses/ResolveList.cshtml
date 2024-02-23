@@ -16,7 +16,7 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header" style="width: 200px">Course</th>
-                    <th scope="col" class="govuk-table__header" style="width: 150px">Delivery type</th>
+                    <th scope="col" class="govuk-table__header" style="width: 150px">Delivery mode</th>
                     <th scope="col" class="govuk-table__header" style="width: 90px">Start date</th>
                     <th scope="col" class="govuk-table__header">Error(s)</th>
                     <th scope="col" class="govuk-table__header" colspan="2"></th>
@@ -43,7 +43,7 @@
                         <td class="govuk-table__cell pttcd-table--no-border govuk-body-s">
                             @if (row.HasDescriptionErrors)
                             {
-                                <a asp-action="ResolveRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" class="govuk-link" data-testid="ResolveDescription">
+                                <a asp-action="ResolveRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@row.RowNumber" asp-route-deliveryMode="@row.DeliveryMode" class="govuk-link" data-testid="ResolveDescription">
                                     Resolve
                                 </a>
                             }

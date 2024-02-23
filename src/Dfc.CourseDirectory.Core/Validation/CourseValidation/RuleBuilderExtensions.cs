@@ -86,6 +86,32 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .Apply(Rules.Website)
                     .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
         }
+        public static void CourseType<T>(this IRuleBuilderInitial<T, CourseType?> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_COURSE_TYPE_REQUIRED");
+        }
+
+        public static void Sector<T>(this IRuleBuilderInitial<T, int?> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_SECTOR_REQUIRED");
+        }
+        public static void Sector<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_SECTOR_REQUIRED");
+        }
+
+        public static void EducationLevel<T>(this IRuleBuilderInitial<T, EducationLevel?> field)
+        {
+            field
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSE_EDUCATION_LEVEL_REQUIRED");
+        }
 
         public static void DeliveryMode<T>(this IRuleBuilderInitial<T, CourseDeliveryMode?> field)
         {
@@ -424,6 +450,14 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED")
                 .MaximumLength(Constants.WhoThisCourseIsForMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH");
+        }
+        public static void AwardingBody<T>(this IRuleBuilderInitial<T, string> field)
+        {
+            field
+                .NotEmpty()
+                    .WithMessageFromErrorCode("COURSE_AWARDING_BODY_REQUIRED")
+                .MaximumLength(Constants.AwardingBodyMaxLength)
+                    .WithMessageFromErrorCode("COURSE_AWARDING_BODY_MAXLENGTH");
         }
     }
 }

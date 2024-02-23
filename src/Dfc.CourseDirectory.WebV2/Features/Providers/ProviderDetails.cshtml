@@ -42,10 +42,17 @@
                         {
                             <li data-testid="providerType">@ProviderType.None.ToDescription()</li>
                         }
+
                         @if (Model.ProviderType.HasFlag(ProviderType.FE))
                         {
                             <li data-testid="providerType">@ProviderType.FE.ToDescription()</li>
                         }
+
+                        @if (Model.ProviderType.HasFlag(ProviderType.NonLARS))
+                        {
+                            <li data-testid="providerType">@ProviderType.NonLARS.ToDescription()</li>
+                        }
+
                         @if (Model.ProviderType.HasFlag(ProviderType.TLevels))
                         {
                             <li data-testid="providerType">@ProviderType.TLevels.ToDescription()</li>

@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
     public class PublishCourseUpload : ISqlQuery<OneOf<NotFound, PublishCourseUploadResult>>
     {
+        public bool IsNonLars { get; set; }
         public Guid CourseUploadId { get; set; }
         public UserInfo PublishedBy { get; set; }
         public DateTime PublishedOn { get; set; }

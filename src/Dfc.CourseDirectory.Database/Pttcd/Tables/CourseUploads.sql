@@ -8,5 +8,6 @@
 	[ProcessingStartedOn] DATETIME,
 	[ProcessingCompletedOn] DATETIME,
 	[PublishedOn] DATETIME,
-	[AbandonedOn] DATETIME
+	[AbandonedOn] DATETIME,
+	[IsNonLars] BIT NULL
 )

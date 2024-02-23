@@ -27,5 +27,6 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public CourseAttendancePattern? AttendanceMode { get; set; }
         public CourseStudyMode? StudyMode { get; set; }
         public string RefererAbsolutePath { get; set; }
+        public CourseType? CourseType { get; set; }
     }
 }

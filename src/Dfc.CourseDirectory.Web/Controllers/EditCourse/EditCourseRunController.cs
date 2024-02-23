@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -34,7 +35,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 {
-    public class EditCourseRunController : Controller
+    public class EditCourseRunController : BaseController
     {
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -43,10 +44,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly IRegionCache _regionCache;
-
-        private const string SessionVenues = "Venues";
-        private const string SessionRegions = "Regions";
+        private readonly IRegionCache _regionCache;        
 
         public EditCourseRunController(
             ICourseService courseService,
@@ -54,7 +52,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache): base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -145,8 +143,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             var cachedData = Session.GetObject<EditCourseRunViewModel>("EditCourseRunObject");
 
-
-            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = cachedData.CourseId.Value });
+            var course = await GetCourse(cachedData.CourseId.Value);            
 
             var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == cachedData.CourseRunId);
 
@@ -274,7 +271,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             if (courseId.HasValue)
             {
-                var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+                var nonLarsCourse = IsCourseNonLars();
+                var course = await GetCourse(courseId, nonLarsCourse);
 
                 var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == courseRunId);
 
@@ -315,7 +313,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         AttendanceMode = courseRun.AttendancePattern,
                         QualificationType = course.LearnAimRefTypeDesc,
                         NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                        CurrentCourseRunDate = courseRun.StartDate
+                        CurrentCourseRunDate = courseRun.StartDate,
+                        NonLarsCourse = nonLarsCourse,
+                        CourseType = course.CourseType,
+                        SectorId = course.SectorId,
+                        Sectors = await GetSectors(),
+                        EducationLevel = course.EducationLevel,
+                        AwardingBody = course.AwardingBody
                     };
 
                     vm.ValPastDateRef = DateTime.Now;
@@ -350,9 +354,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                                 }
                             }
                         }
-
-                        
-
                     }
 
                     if (vm.ChooseRegion.Regions.RegionItems != null && vm.ChooseRegion.Regions.RegionItems.Any())
@@ -381,7 +382,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 return BadRequest();
             }
-
+            model.NonLarsCourse = IsCourseNonLars();
             var courseId = model.CourseId.Value;
 
             var allRegions = await _regionCache.GetAllRegions();
@@ -416,6 +417,25 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 return BadRequest();
             }
+
+            var course = await GetCourse(courseId);
+            var updateCourseResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
+            {
+                CourseId = courseId,
+                WhoThisCourseIsFor = course.CourseDescription,
+                EntryRequirements = course.EntryRequirements,
+                WhatYoullLearn = course.WhatYoullLearn,
+                HowYoullLearn = course.HowYoullLearn,
+                WhatYoullNeed = course.WhatYoullNeed,
+                HowYoullBeAssessed = course.HowYoullBeAssessed,
+                WhereNext = course.WhereNext,
+                UpdatedBy = _currentUserProvider.GetCurrentUser(),
+                UpdatedOn = _clock.UtcNow,
+                CourseType = course.CourseType,
+                SectorId = model.SectorId,
+                EducationLevel = model.EducationLevel,
+                AwardingBody = model.AwardingBody
+            });
 
             var updateCommand = new UpdateCourseRun()
             {
@@ -488,7 +508,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 case PublishMode.DataQualityIndicator:
                     TempData[TempDataKeys.ExpiredCoursesNotification] = model.CourseName + " has been updated";
-                    return RedirectToAction("Index", "ExpiredCourseRuns")
+                    return RedirectToAction("Index", "ExpiredCourseRuns",new { isnonlars = model.NonLarsCourse })
                         .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
                 default:
                     TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
@@ -590,6 +610,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     .Transform(v => v == default ? (Guid?)null : v)
                     .VenueId(getDeliveryMode: c => c.DeliveryMode);
             }
-        }
+        }        
     }
 }

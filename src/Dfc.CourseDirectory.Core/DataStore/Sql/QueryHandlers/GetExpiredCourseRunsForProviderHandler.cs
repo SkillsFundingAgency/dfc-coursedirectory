@@ -14,32 +14,46 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             SqlTransaction transaction,
             GetExpiredCourseRunsForProvider query)
         {
+
             var sql = $@"
-SELECT
-	c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
-	v.VenueName, cr.[National], cr.StudyMode, ld.LearnAimRefTitle, ld.NotionalNVQLevelv2, ld.AwardOrgCode, lart.LearnAimRefTypeDesc,
-	cr.StartDate
-FROM Pttcd.Courses c
-JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
-JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
-LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
-WHERE cr.CourseRunStatus = 1
-AND cr.StartDate < @Today
-AND p.ProviderId = @ProviderId
-ORDER BY ld.LearnAimRefTitle
+                    SELECT c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
+	                    v.VenueName, cr.[National], cr.StudyMode, ld.LearnAimRefTitle, ld.NotionalNVQLevelv2, ld.AwardOrgCode, lart.LearnAimRefTypeDesc,
+	                    cr.StartDate
+                    FROM Pttcd.Courses c
+                    JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
+                    JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
+                    JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
+                    JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
+                    LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
+                    WHERE cr.CourseRunStatus = 1
+                    AND cr.StartDate < @Today
+                    AND p.ProviderId = @ProviderId
+                    ORDER BY ld.LearnAimRefTitle ";
+            if (query.IsNonLars)
+            {
+                sql = $@"
+                    SELECT c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
+	                    v.VenueName, cr.[National], cr.StudyMode, cr.StartDate
+                    FROM Pttcd.Courses c
+                    JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId and c.LearnAimRef is null
+                    JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
+                    LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
+                    WHERE cr.CourseRunStatus = 1
+                    AND cr.StartDate < @Today
+                    AND p.ProviderId = @ProviderId
+                    ORDER BY cr.CourseRunId";
+            }
+          
 
-SELECT
-	crsr.CourseRunId, crsr.RegionId
-FROM Pttcd.Courses c
-JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-JOIN Pttcd.CourseRunSubRegions crsr ON cr.CourseRunId = crsr.CourseRunId
-WHERE cr.CourseRunStatus = 1
-AND cr.StartDate < @Today
-AND p.ProviderId = @ProviderId";
+            sql += $@"
+                    SELECT crsr.CourseRunId, crsr.RegionId
+                    FROM Pttcd.Courses c
+                        JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
+                        JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
+                        JOIN Pttcd.CourseRunSubRegions crsr ON cr.CourseRunId = crsr.CourseRunId
+                    WHERE cr.CourseRunStatus = 1 AND cr.StartDate < @Today AND p.ProviderId = @ProviderId";
 
+            
             var paramz = new
             {
                 query.ProviderId,

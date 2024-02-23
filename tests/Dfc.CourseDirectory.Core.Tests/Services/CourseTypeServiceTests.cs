@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
 {
     public class CourseTypeServiceTests
     {        
-        private readonly Mock<ISqlQueryDispatcher> _mockSqlQueryDispatcher;        
+        private readonly Mock<ISqlQueryDispatcher> _mockSqlQueryDispatcher;
 
         public CourseTypeServiceTests()
         {            

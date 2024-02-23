@@ -17,13 +17,13 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT TOP 1 CourseUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
 ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn
 FROM Pttcd.CourseUploads
-WHERE ProviderId = @ProviderId
+WHERE ProviderId = @ProviderId AND IsNonLars = @IsNonLars
 AND UploadStatus IN ({string.Join(", ", UploadStatusExtensions.UnpublishedStatuses.Cast<int>())})
 ORDER BY CreatedOn DESC";
 
             return transaction.Connection.QuerySingleOrDefaultAsync<CourseUpload>(
                 sql,
-                new { query.ProviderId },
+                new { query.ProviderId, query.IsNonLars },
                 transaction);
         }
     }

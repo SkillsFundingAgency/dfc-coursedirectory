@@ -16,10 +16,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
     public class Query : IRequest<OneOf<NotFound, Command>>
     {
         public int RowNumber { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class Command : IRequest<OneOf<NotFound, ModelWithErrors<Command>, Success>>
     {
+        public bool IsNonLars { get; set; }
         public int RowNumber { get; set; }
         public CourseDeliveryMode? DeliveryMode { get; set; }
     }
@@ -39,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<OneOf<NotFound, Command>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var rowStatus = await GetRowStatus(request.RowNumber);
+            var rowStatus = await GetRowStatus(request.RowNumber,request.IsNonLars);
 
             if (rowStatus == RowStatus.DoesNotExist)
             {
@@ -61,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<OneOf<NotFound, ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var rowStatus = await GetRowStatus(request.RowNumber);
+            var rowStatus = await GetRowStatus(request.RowNumber, request.IsNonLars);
 
             if (rowStatus == RowStatus.DoesNotExist)
             {
@@ -86,10 +88,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             return new Success();
         }
 
-        private async Task<RowStatus> GetRowStatus(int rowNumber)
+        private async Task<RowStatus> GetRowStatus(int rowNumber, bool isNonLars)
         {
             var providerId = _providerContextProvider.GetProviderId();
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber,isNonLars);
 
             if (row == null)
             {

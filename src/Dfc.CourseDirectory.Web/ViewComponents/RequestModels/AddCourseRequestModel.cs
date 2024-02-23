@@ -23,15 +23,15 @@ namespace Dfc.CourseDirectory.Web.RequestModels
         public CourseStudyMode? StudyMode { get; set; }
         public CourseAttendancePattern? AttendanceMode { get; set; }
         public bool National { get; set; }
-
         public Guid[] SelectedVenues { get; set; }
-
-
         public string[] SelectedRegions { get; set; }
-
         public Guid? CourseId { get; set; }
         public Guid CourseRunId { get; set; }
-
         public CourseMode CourseMode { get; set; }
+        public CourseType? CourseType { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
     }
 }

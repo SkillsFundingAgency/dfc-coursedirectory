@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.Features.NonLarsSubType;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
         public bool ShowMarketingInformation { get; set; }
         public bool CanUpdateMarketingInformation { get; set; }
         public IEnumerable<TLevelDefinitionViewModel> ProviderTLevelDefinitions { get; set; }
+        public IEnumerable<NonLarsSubTypeViewModel> ProviderNonLarsSubTypes { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -65,6 +66,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
             var providerTLevelDefinitions = sqlProvider.ProviderType.HasFlag(ProviderType.TLevels)
                 ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
+            var providerNonLarsSubTypes = sqlProvider.ProviderType.HasFlag(ProviderType.NonLARS)
+                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetNonLarsSubTypeForProvider { ProviderId = request.ProviderId })
+                : Enumerable.Empty<SqlModels.NonLarsSubType>();
 
             return new ViewModel()
             {
@@ -84,6 +88,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
                 ProviderTLevelDefinitions = providerTLevelDefinitions.Select(d => new TLevelDefinitionViewModel
                 {
                     TLevelDefinitionId = d.TLevelDefinitionId,
+                    Name = d.Name
+                }),
+                ProviderNonLarsSubTypes = providerNonLarsSubTypes.Select(d => new NonLarsSubTypeViewModel
+                {
+                    NonLarsSubTypeId = d.NonLarsSubTypeId,
                     Name = d.Name
                 })
             };

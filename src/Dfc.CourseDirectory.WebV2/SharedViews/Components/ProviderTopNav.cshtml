@@ -12,34 +12,37 @@
                 Home
             </a>
         </li>
-        @if (Model.ShowCoursesLinks)
+        @if (Model.ShowLinksApartFromHomeAndSignOut)
         {
-            <li class="govuk-header__navigation-item@(currentController == "Qualifications" ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="LandingOptions" asp-controller="Qualifications" class="govuk-header__link" data-testid="topnav-courses">
-                    Courses
+            @if (Model.ShowCoursesLinks)
+            {
+                <li class="govuk-header__navigation-item@(currentController == "Qualifications" ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="LandingOptions" asp-controller="Qualifications" class="govuk-header__link" data-testid="topnav-courses">
+                        Courses
+                    </a>
+                </li>
+            }
+            @if (Model.ShowTLevelsLinks)
+            {
+                <li class="govuk-header__navigation-item">
+                    <a asp-action="List" asp-controller="ViewTLevels" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-tlevels">
+                        T Levels
+                    </a>
+                </li>
+            }
+            <li class="govuk-header__navigation-item@(currentController == "Venues" ? " govuk-header__navigation-item--active" : null)">
+                <a asp-action="ViewVenues" asp-controller="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-locations">
+                    Venues
                 </a>
             </li>
-        }
-        @if (Model.ShowTLevelsLinks)
-        {
-            <li class="govuk-header__navigation-item">
-                <a asp-action="List" asp-controller="ViewTLevels" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-tlevels">
-                    T Levels
-                </a>
-            </li>
-        }
-        <li class="govuk-header__navigation-item@(currentController == "Venues" ? " govuk-header__navigation-item--active" : null)">
-            <a asp-action="ViewVenues" asp-controller="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-locations">
-                Venues
-            </a>
-        </li>
-        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement))
-        {
-            <li class="govuk-header__navigation-item@(currentController.StartsWith("DataManagement") ? " govuk-header__navigation-item--active" : null)">
-                <a asp-action="Dashboard" asp-controller="DataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-datamanagement">
-                    Data upload
-                </a>
-            </li>
+            @if (FeatureFlagProvider.HaveFeature(FeatureFlags.DataManagement))
+            {
+                <li class="govuk-header__navigation-item@(currentController.StartsWith("DataManagement") ? " govuk-header__navigation-item--active" : null)">
+                    <a asp-action="Dashboard" asp-controller="DataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-header__link" data-testid="topnav-datamanagement">
+                        Data upload
+                    </a>
+                </li>
+            }
         }
         <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
             <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link" data-testid="topnav-signout">
