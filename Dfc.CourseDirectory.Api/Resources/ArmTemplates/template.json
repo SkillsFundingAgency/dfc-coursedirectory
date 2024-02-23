@@ -55,6 +55,12 @@
       "metadata": {
         "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
       }
+    },
+    "workspaceName": {
+        "type": "string"
+    },
+    "workspaceResourceGroup": {
+        "type": "string"
     }
   },
   "variables": {
@@ -79,6 +85,12 @@
           },
           "attachedService": {
             "value": "[variables('webAppName')]"
+          },
+          "workspaceName": {
+            "value": "[parameters('workspaceName')]"
+          },
+          "workspaceResourceGroup": {
+            "value": "[parameters('workspaceResourceGroup')]"
           }
         }
       }

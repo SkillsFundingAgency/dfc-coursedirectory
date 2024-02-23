@@ -15,6 +15,15 @@ SELECT COUNT(*) FROM Pttcd.Providers p
 JOIN Pttcd.Courses c ON p.Ukprn = c.ProviderUkprn
 JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
 WHERE p.ProviderId = @ProviderId AND cr.CourseRunStatus = {(int)CourseStatus.Live}";
+            if(query.IsNonLars)
+            {
+                sql = $@"
+                    SELECT COUNT(*) FROM Pttcd.Providers p
+                    JOIN Pttcd.Courses c ON p.Ukprn = c.ProviderUkprn
+                    JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
+                    WHERE p.ProviderId = @ProviderId AND cr.CourseRunStatus = {(int)CourseStatus.Live}
+                    AND (c.LearnAimRef IS NULL OR c.LearnAimRef = '') ";
+            }
 
             var paramz = new { query.ProviderId };
 

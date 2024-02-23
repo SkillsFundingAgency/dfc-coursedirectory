@@ -55,6 +55,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public CourseStudyMode? ResolvedStudyMode { get; set; }
         public CourseAttendancePattern? ResolvedAttendancePattern { get; set; }
         public IEnumerable<string> ResolvedSubRegions { get; set; }
-        public CourseType? CourseType { get; set; }
+        public CourseType? ResolvedCourseType { get; set; }
+        public string CourseType { get; set; }
+        public string Sector { get; set; }
+        public int? ResolvedSector { get; set; }
+        public string AwardingBody { get; set; }
+        public EducationLevel? ResolvedEducationLevel { get; set; }
+        public string EducationLevel { get; set; }
     }
 }

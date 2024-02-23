@@ -12,19 +12,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
     public interface IFileUploadProcessor
     {
         // Courses
-        Task DeleteCourseUploadForProvider(Guid providerId);
-        Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber);
-        Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
-        Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber);
-        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId);
-        Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId);
-        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId);
-        IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId);
+        Task DeleteCourseUploadForProvider(Guid providerId, bool isNonLars);
+        Task<UploadStatus> DeleteCourseUploadRowForProvider(Guid providerId, int rowNumber, bool isNonLars);
+        Task<UploadStatus> DeleteCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, bool isNonLars);
+        Task<CourseUploadRowDetail> GetCourseUploadRowDetailForProvider(Guid providerId, int rowNumber, bool isNonLars);
+        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, bool isNonLars);
+        Task<(IReadOnlyCollection<CourseUploadRow> Rows, UploadStatus UploadStatus)> GetCourseUploadRowsForProvider(Guid providerId, bool isNonLars);
+        Task<IReadOnlyCollection<CourseUploadRow>> GetCourseUploadRowsWithErrorsForProvider(Guid providerId, bool isNonLars);
+        IObservable<UploadStatus> GetCourseUploadStatusUpdatesForProvider(Guid providerId, bool isNonLars);
         Task ProcessCourseFile(Guid courseUploadId, Stream stream);
-        Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy);
-        Task<SaveCourseFileResult> SaveCourseFile(Guid providerId, Stream stream, UserInfo uploadedBy);
-        Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, CourseUploadRowUpdate update);
-        Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update);
+        Task<PublishResult> PublishCourseUploadForProvider(Guid providerId, UserInfo publishedBy, bool IsNonLars);
+        Task<SaveCourseFileResult> SaveCourseFile(Guid providerId,bool isNonLars, Stream stream, UserInfo uploadedBy);
+        Task<UploadStatus> UpdateCourseUploadRowForProvider(Guid providerId, int rowNumber, bool isNonLars, CourseUploadRowUpdate update);
+        Task<UploadStatus> UpdateCourseUploadRowGroupForProvider(Guid providerId, Guid courseId, CourseUploadRowGroupUpdate update, bool isNonLars);
 
         // Venues
         Task DeleteVenueUploadForProvider(Guid providerId);

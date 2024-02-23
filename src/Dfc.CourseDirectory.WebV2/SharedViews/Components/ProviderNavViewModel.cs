@@ -7,6 +7,7 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
         public ProviderInfo ProviderInfo { get; set; }
         public bool ShowCoursesLinks { get; set; }
         public bool ShowTLevelsLinks { get; set; }
+        public bool ShowLinksApartFromHomeAndSignOut { get; set; }
 
         public static ProviderNavViewModel Create(
             ProviderInfo providerInfo)

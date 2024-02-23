@@ -12,12 +12,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DownloadErro
 {
     public class Query : IRequest<Response>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public class Response
     {
         public string FileName { get; set; }
         public IReadOnlyCollection<CsvCourseRowWithErrors> Rows { get; set; }
+        public IReadOnlyCollection<CsvNonLarsCourseRowWithErrors> NonLarsRows { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, Response>
@@ -40,25 +42,43 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DownloadErro
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerContext.ProviderInfo.ProviderId);
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerContext.ProviderInfo.ProviderId,request.IsNonLars);
 
             if (uploadStatus != UploadStatus.ProcessedWithErrors)
             {
                 throw new InvalidUploadStatusException(uploadStatus, UploadStatus.ProcessedWithErrors);
             }
+            if(request.IsNonLars)
+            {
+                var rows = uploadRows
+                .Select(CsvNonLarsCourseRowWithErrors.FromModel)
+                .ToList();
 
-            var rows = uploadRows
+                var fileName = FileNameHelper.SanitizeFileName(
+                    $"{providerContext.ProviderInfo.ProviderName}_nonlars_courses_errors_{_clock.UtcNow:yyyyMMddHHmm}.csv");
+
+                return new Response()
+                {
+                    FileName = fileName,
+                    NonLarsRows = rows
+                };
+            }
+            else
+            {
+                var rows = uploadRows
                 .Select(CsvCourseRowWithErrors.FromModel)
                 .ToList();
 
-            var fileName = FileNameHelper.SanitizeFileName(
-                $"{providerContext.ProviderInfo.ProviderName}_courses_errors_{_clock.UtcNow:yyyyMMddHHmm}.csv");
+                var fileName = FileNameHelper.SanitizeFileName(
+                    $"{providerContext.ProviderInfo.ProviderName}_courses_errors_{_clock.UtcNow:yyyyMMddHHmm}.csv");
 
-            return new Response()
-            {
-                FileName = fileName,
-                Rows = rows
-            };
+                return new Response()
+                {
+                    FileName = fileName,
+                    Rows = rows
+                };
+            }
+            
         }
     }
 }

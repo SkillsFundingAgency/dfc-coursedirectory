@@ -13,12 +13,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
 {
     public class Query : IRequest<Response>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public class Response
     {
         public string FileName { get; set; }
         public IReadOnlyCollection<CsvCourseRow> Rows { get; set; }
+        public IReadOnlyCollection<CsvNonLarsCourseRow> NonLarsRows { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, Response>
@@ -43,26 +45,51 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Download
         public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
         {
             var providerContext = _providerContextProvider.GetProviderContext();
-
-            var courses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
-            {
-                ProviderId = providerContext.ProviderInfo.ProviderId
-            });
-
             var allRegions = await _regionCache.GetAllRegions();
-            var rows = courses.OrderBy(x => x.LearnAimRef)
-                .ThenBy(x => x.CourseId)
-                .SelectMany(course => CsvCourseRow.FromModel(course, allRegions))
-                .ToList();
 
             var fileName = FileNameHelper.SanitizeFileName(
-                $"{providerContext.ProviderInfo.ProviderName}_courses_{_clock.UtcNow:yyyyMMddHHmm}.csv");
+                    $"{providerContext.ProviderInfo.ProviderName}_courses_{_clock.UtcNow:yyyyMMddHHmm}.csv");
 
-            return new Response()
+            if (request.IsNonLars)
             {
-                FileName = fileName,
-                Rows = rows
-            };
+                fileName = FileNameHelper.SanitizeFileName(
+                    $"{providerContext.ProviderInfo.ProviderName}_non_lars_courses_{_clock.UtcNow:yyyyMMddHHmm}.csv");
+                var nonLarscourses = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider()
+                {
+                    ProviderId = providerContext.ProviderInfo.ProviderId
+                });
+
+                var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
+                var nonLarsrows = nonLarscourses.OrderBy(x => x.LearnAimRef)
+                    .ThenBy(x => x.CourseId)
+                    .SelectMany(course => CsvNonLarsCourseRow.FromModel(course, sectors, allRegions))
+                    .ToList();
+
+                return new Response()
+                {
+                    FileName = fileName,
+                    NonLarsRows = nonLarsrows
+                };
+            }
+            else
+            {
+                var courses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
+                {
+                    ProviderId = providerContext.ProviderInfo.ProviderId
+                });
+
+                var rows = courses.OrderBy(x => x.LearnAimRef)
+                    .ThenBy(x => x.CourseId)
+                    .SelectMany(course => CsvCourseRow.FromModel(course, allRegions))
+                    .ToList();
+
+                return new Response()
+                {
+                    FileName = fileName,
+                    Rows = rows
+                };
+            }
         }
     }
 }

@@ -17,5 +17,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string WhereNext { get; set; }
         public UserInfo UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
+        public CourseType? CourseType { get; set; }
+        public int? SectorId { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
     }
 }

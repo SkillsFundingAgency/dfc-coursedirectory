@@ -9,5 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels
         public Guid CourseRunId { get; set; }
 
         public string CourseName { get; set; }
+
+        public bool NonLarsCourse { get; set; }
     }
 }

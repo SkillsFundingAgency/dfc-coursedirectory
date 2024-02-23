@@ -49,30 +49,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact]
-        public async Task Post_NotConfirmed_RendersError()
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider();
-
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/delete?providerId={provider.ProviderId}")
-            {
-                Content = new FormUrlEncodedContentBuilder()
-                    .ToContent()
-            };
-
-            // Act
-            var response = await HttpClient.SendAsync(request);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var doc = await response.GetDocument();
-            doc.AssertHasError("Confirm", "Confirm you want to delete course data upload");
-        }
-
         [Theory(Skip = "TestData.CreateCourse does not have an implementation for all these statuses")]
         [InlineData(UploadStatus.ProcessedWithErrors)]
         [InlineData(UploadStatus.ProcessedSuccessfully)]
@@ -99,6 +75,55 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             SqlQuerySpy.VerifyQuery<SetCourseUploadAbandoned, OneOf<NotFound, Success>>(
                 q => q.CourseUploadId == courseUpload.CourseUploadId && q.AbandonedOn == Clock.UtcNow);
+        }
+
+        [Fact]
+        public async Task Post_NotConfirmed_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/delete?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("Confirm", "Confirm you want to delete course data upload");
+        }
+
+        [Fact]
+        public async Task Post_NonLarsNotConfirmed_RendersError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: User.ToUserInfo(), UploadStatus.ProcessedSuccessfully,null,true);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/data-upload/courses/delete?providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                     .Add("IsNonLars", "true")
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+            var doc = await response.GetDocument();
+            doc.AssertHasError("Confirm", "Confirm you want to delete course data upload");
         }
 
     }

@@ -19,129 +19,129 @@
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "CourseName",
-                Title = "Course name",
-                Value = Model.CourseName,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionCourseName"
+            Id = "CourseName",
+            Title = "Course name",
+            Value = Model.CourseName,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionCourseName"
             })
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "CourseId",
-                Title = "Your reference",
-                Value = Model.CourseProviderReference,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionCourseProviderReference"
+            Id = "CourseId",
+            Title = "Your reference",
+            Value = Model.CourseProviderReference,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionCourseProviderReference"
+            })            
+
+            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
+            {
+            Id = "DeliveryMode",
+            Title = "Delivery mode",
+            Value = Model.DeliveryMode.ToDescription(),
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionDeliveryType"
             })
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "DeliveryMode",
-                Title = "Delivery mode",
-                Value = Model.DeliveryMode.ToDescription(),
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionDeliveryType"
-            })
-
-            @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-            {
-                Id = "StartDate",
-                Title = "Start date",
-                Value = Model.StartDate,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionStartDate"
+            Id = "StartDate",
+            Title = "Start date",
+            Value = Model.StartDate,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionStartDate"
             })
 
             @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
-                {
-                    Id = "Venues",
-                    Title = "Venue",
-                    Value = Model.Venues,
-                    Action = "Index",
-                    Controller = "CopyCourseRun",
-                    Section = "sectionVenue"
-                })
+            {
+            Id = "Venues",
+            Title = "Venue",
+            Value = Model.Venues,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionVenue"
+            })
             }
             else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
             {
                 @await Component.InvokeAsync(nameof(SummaryList), new SummaryListModel
-                {
-                    Id = "Regions",
-                    Title = "Regions",
-                    Value = Model.Regions,
-                    Action = "Index",
-                    Controller = "CopyCourseRun",
-                    Section = "RegionItemsCheckboxList"
-                })
+            {
+            Id = "Regions",
+            Title = "Regions",
+            Value = Model.Regions,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "RegionItemsCheckboxList"
+            })
             }
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "Url",
-                Title = "Course webpage",
-                Value = Model.Url,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionUrl"
+            Id = "Url",
+            Title = "Course webpage",
+            Value = Model.Url,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionUrl"
             })
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "Cost",
-                Title = "Cost",
-                Value = string.IsNullOrWhiteSpace(Model.Cost) ? Model.Cost : "£" + Model.Cost,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionCost"
+            Id = "Cost",
+            Title = "Cost",
+            Value = string.IsNullOrWhiteSpace(Model.Cost) ? Model.Cost : "£" + Model.Cost,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionCost"
             })
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "CostDesc",
-                Title = "Cost description",
-                Value = Model.CostDescription,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionCost"
+            Id = "CostDesc",
+            Title = "Cost description",
+            Value = Model.CostDescription,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionCost"
             })
 
             @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
             {
-                Id = "CourseLength",
-                Title = "Duration",
-                Value = Model.CourseLength,
-                Action = "Index",
-                Controller = "CopyCourseRun",
-                Section = "sectionDuration"
+            Id = "CourseLength",
+            Title = "Duration",
+            Value = Model.CourseLength,
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "sectionDuration"
             })
 
-            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased|| Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
+            @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-                {
-                    Id = "AttendancePattern",
-                    Title = "Course hours",
-                    Value = Model.AttendancePattern.ToDescription(),
-                    Action = "Index",
-                    Controller = "CopyCourseRun",
-                    Section = "FullPartTimeRadioButtons"
-                })
+            {
+            Id = "AttendancePattern",
+            Title = "Course hours",
+            Value = Model.AttendancePattern.ToDescription(),
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "FullPartTimeRadioButtons"
+            })
                 @await Component.InvokeAsync(nameof(SummaryComponent), new SummaryComponentModel
-                {
-                    Id = "AttendanceTime",
-                    Title = "Attendance pattern",
-                    Value = Model.StudyMode.ToDescription(),
-                    Action = "Index",
-                    Controller = "CopyCourseRun",
-                    Section = "AttendancePatternRadioButtons"
-                })
+            {
+            Id = "AttendanceTime",
+            Title = "Attendance pattern",
+            Value = Model.StudyMode.ToDescription(),
+            Action = "Index",
+            Controller = "CopyCourseRun",
+            Section = "AttendancePatternRadioButtons"
+            })
             }
 
         </dl>

@@ -8,7 +8,8 @@ namespace Dfc.CourseDirectory.Core.Models
         TLevels,
         HTQs,
         FreeCoursesForJobs,
-        Multiply
+        Multiply,
+        SkillsBootcamp
     }
 
     public static class CourseTypeExtensions
@@ -27,6 +28,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 CourseType.HTQs => "HTQs",
                 CourseType.FreeCoursesForJobs => "Free Courses for Jobs",                
                 CourseType.Multiply => "Multiply",
+                CourseType.SkillsBootcamp => "Skills Bootcamp",
                 _ => throw new NotImplementedException($"Unknown value: '{courseType}'.")
             };
         }

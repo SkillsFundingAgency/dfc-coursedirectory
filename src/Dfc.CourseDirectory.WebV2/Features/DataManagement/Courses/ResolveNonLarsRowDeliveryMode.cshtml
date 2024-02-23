@@ -1,0 +1,28 @@
+﻿@model Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDeliveryMode.Command
+@{
+    ViewContext.SetLayoutData(title: "How will the Non LARS course be delivered?");
+}
+
+<form asp-action="ResolveNonLarsRowDeliveryMode" asp-all-route-data="@RouteValuesHelper.FromQueryString()">
+    <govuk-error-summary>
+        <govuk-error-summary-item asp-for="DeliveryMode" />
+    </govuk-error-summary>
+
+    <govuk-radios asp-for="DeliveryMode">
+        <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+                How will the Non LARS course be delivered?
+            </govuk-radios-fieldset-legend>
+        </govuk-radios-fieldset>
+        <govuk-radios-item value="@CourseDeliveryMode.BlendedLearning">Blended learning</govuk-radios-item>
+        <govuk-radios-item value="@CourseDeliveryMode.Online">Online</govuk-radios-item>
+        <govuk-radios-item value="@CourseDeliveryMode.ClassroomBased">Classroom based</govuk-radios-item>
+        <govuk-radios-item value="@CourseDeliveryMode.WorkBased">Work based</govuk-radios-item>
+    </govuk-radios>
+
+    <div class="govuk-button-group">
+        <govuk-button type="Submit" class="cd-cancel-btn">Resolve errors</govuk-button>
+        <a asp-action="NonLarsResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
+    </div>
+
+</form>

@@ -31,6 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+            await TestData.AddSectors();
 
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
@@ -168,6 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
+            await TestData.AddSectors();
 
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 

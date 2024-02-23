@@ -17,7 +17,8 @@ namespace Dfc.CourseDirectory.Testing
             Guid providerId,
             UserInfo createdBy,
             UploadStatus uploadStatus,
-            Action<CourseUploadRowBuilder> configureRows = null)
+            Action<CourseUploadRowBuilder> configureRows = null,
+            bool isNonLars = false)
         {
             var createdOn = _clock.UtcNow;
 
@@ -41,6 +42,7 @@ namespace Dfc.CourseDirectory.Testing
                 processingCompletedOn,
                 publishedOn,
                 abandonedOn,
+                isNonLars,
                 isValid,
                 configureRows);
 
@@ -57,6 +59,7 @@ namespace Dfc.CourseDirectory.Testing
             DateTime? processingCompletedOn = null,
             DateTime? publishedOn = null,
             DateTime? abandonedOn = null,
+            bool isNonLars = false,
             bool? isValid = null,
             Action<CourseUploadRowBuilder> configureRows = null)
         {
@@ -70,14 +73,15 @@ namespace Dfc.CourseDirectory.Testing
 
             return WithSqlQueryDispatcher(async dispatcher =>
             {
-                CourseUploadRow[] rows = null;
+                CourseUploadRow[] rows = null;                                
 
                 await dispatcher.ExecuteQuery(new CreateCourseUpload()
                 {
                     CourseUploadId = courseUploadId,
                     ProviderId = providerId,
                     CreatedBy = createdBy,
-                    CreatedOn = createdOn.Value
+                    CreatedOn = createdOn.Value,
+                    IsNonLars = isNonLars
                 });
 
                 if (processingStartedOn.HasValue)
@@ -150,6 +154,7 @@ namespace Dfc.CourseDirectory.Testing
 
                     await dispatcher.ExecuteQuery(new PublishCourseUpload()
                     {
+                        IsNonLars = isNonLars,
                         CourseUploadId = courseUploadId,
                         PublishedBy = createdBy,
                         PublishedOn = publishedOn.Value
@@ -178,6 +183,11 @@ namespace Dfc.CourseDirectory.Testing
             });
         }
 
+        public async Task AddSectors()
+        {
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertSectors()));            
+        }
+
         public class CourseUploadRowBuilder
         {
             private readonly List<UpsertCourseUploadRowsRecord> _records = new List<UpsertCourseUploadRowsRecord>();
@@ -195,7 +205,13 @@ namespace Dfc.CourseDirectory.Testing
                 _records.Add(record);
                 return this;
             }
-
+            public CourseUploadRowBuilder AddNonLarsRow( Action<UpsertCourseUploadRowsRecord> configureRecord)
+            {
+                var record = CreateValidNonLarsRecord();
+                configureRecord(record);
+                _records.Add(record);
+                return this;
+            }
             public CourseUploadRowBuilder AddRow(
                 Guid courseId,
                 Guid courseRunId,
@@ -223,6 +239,10 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                string courseType,
+                string sector,
+                string educationLevel,
+                string awardingBody,
                 Guid? venueId,
                 IEnumerable<string> errors = null)
             {
@@ -253,6 +273,10 @@ namespace Dfc.CourseDirectory.Testing
                     durationUnit,
                     studyMode,
                     attendancePattern,
+                    courseType,
+                    sector,
+                    educationLevel,
+                    awardingBody,
                     venueId,
                     errors);
 
@@ -277,6 +301,23 @@ namespace Dfc.CourseDirectory.Testing
 
                 return this;
             }
+
+            public CourseUploadRowBuilder AddValidNonLarsRow()
+            {
+                var record = CreateValidNonLarsRecord();
+                _records.Add(record);
+                return this;
+            }
+
+            public CourseUploadRowBuilder AddValidNonLarsRows( int count)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    AddValidNonLarsRow();
+                }
+
+                return this;
+            }            
 
             internal IReadOnlyCollection<UpsertCourseUploadRowsRecord> GetUpsertQueryRows() => _records;
 
@@ -307,6 +348,10 @@ namespace Dfc.CourseDirectory.Testing
                 string durationUnit,
                 string studyMode,
                 string attendancePattern,
+                string courseType,
+                string sector,
+                string educationLevel,
+                string awardingBody,
                 Guid? venueId,
                 IEnumerable<string> errors = null)
             {
@@ -344,6 +389,10 @@ namespace Dfc.CourseDirectory.Testing
                     DurationUnit = durationUnit,
                     StudyMode = studyMode,
                     AttendancePattern = attendancePattern,
+                    CourseType = courseType,
+                    Sector  = sector,
+                    EducationLevel = educationLevel,
+                    AwardingBody = awardingBody,
                     VenueId = venueId,
                     ResolvedDeliveryMode = ParsedCsvCourseRow.ResolveDeliveryMode(deliveryMode),
                     ResolvedStartDate = ParsedCsvCourseRow.ResolveStartDate(startDate),
@@ -354,7 +403,10 @@ namespace Dfc.CourseDirectory.Testing
                     ResolvedDurationUnit = ParsedCsvCourseRow.ResolveDurationUnit(durationUnit),
                     ResolvedStudyMode = ParsedCsvCourseRow.ResolveStudyMode(studyMode),
                     ResolvedAttendancePattern = ParsedCsvCourseRow.ResolveAttendancePattern(attendancePattern),
-                    ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id)
+                    ResolvedSubRegions = ParsedCsvCourseRow.ResolveSubRegions(subRegions, _allRegions)?.Select(r => r.Id),
+                    ResolvedCourseType = ParsedCsvNonLarsCourseRow.ResolveCourseType(courseType),
+                    ResolvedEducationLevel = ParsedCsvNonLarsCourseRow.ResolveEducationLevel(educationLevel),
+                    ResolvedSector = 1
                 };
             }
 
@@ -387,6 +439,45 @@ namespace Dfc.CourseDirectory.Testing
                     durationUnit: "years",
                     studyMode: "",
                     attendancePattern: "",
+                    courseType: "",
+                    sector: "ENVIRONMENTAL",
+                    educationLevel : "",
+                    awardingBody:"",
+                    venueId: null);
+            }
+            private UpsertCourseUploadRowsRecord CreateValidNonLarsRecord()
+            {
+                return CreateRecord(
+                    courseId: Guid.NewGuid(),
+                    courseRunId: Guid.NewGuid(),
+                    learnAimRef: "",
+                    whoThisCourseIsFor: "Who this course is for",
+                    entryRequirements: "",
+                    whatYouWillLearn: "",
+                    howYouWillLearn: "",
+                    whatYouWillNeedToBring: "",
+                    howYouWillBeAssessed: "",
+                    whereNext: "",
+                    courseName: "Course name",
+                    providerCourseRef: "",
+                    deliveryMode: "Online",
+                    startDate: "",
+                    flexibleStartDate: "yes",
+                    venueName: "",
+                    providerVenueRef: "",
+                    nationalDelivery: "",
+                    subRegions: "",
+                    courseWebpage: "provider.com/course",
+                    cost: "",
+                    costDescription: "Free",
+                    duration: "2",
+                    durationUnit: "years",
+                    studyMode: "",
+                    attendancePattern: "",
+                    courseType: "Skills Bootcamp",
+                    sector: "ENVIRONMENTAL",
+                    educationLevel: "1",
+                    awardingBody: "test awarding body",
                     venueId: null);
             }
         }

@@ -19,6 +19,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 {
     public class Query : IRequest<OneOf<UploadHasErrors, ViewModel>>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public struct UploadHasErrors { }
@@ -26,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, PublishResult>>
     {
         public bool Confirm { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class ViewModel : Command
@@ -44,6 +46,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
     public class ViewModelRow
     {
+        public string AwardingBody { get; set; }
+        public string EducationLevel { get; set; }
+        public string CourseType { get; set; }
+        public string Sector { get; set; }
         public string DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string StartDate { get; set; }
@@ -75,14 +81,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId());
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId(),request.IsNonLars);
 
             if (uploadStatus == UploadStatus.ProcessedWithErrors)
             {
                 return new UploadHasErrors();
             }
 
-            return await CreateViewModel(uploadRows);
+            return await CreateViewModel(uploadRows, request.IsNonLars);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, PublishResult>> Handle(Command request, CancellationToken cancellationToken)
@@ -91,9 +97,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
             if (!request.Confirm)
             {
-                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId);
+                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId,request.IsNonLars);
 
-                var vm = await CreateViewModel(uploadRows);
+                var vm = await CreateViewModel(uploadRows, request.IsNonLars);
                 var validationResult = new ValidationResult(new[]
                 {
                     new ValidationFailure(nameof(request.Confirm), "Confirm you want to publish these courses")
@@ -101,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser());
+            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser(),request.IsNonLars);
 
             if (publishResult.Status == PublishResultStatus.Success)
             {
@@ -112,35 +118,67 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
             return publishResult;
         }
 
-        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
+        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, bool isNonLars)
         {
-            var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = rows.Select(x => x.LearnAimRef).Distinct().ToArray() }));
-
-            return new ViewModel()
+            if(isNonLars)
             {
-                RowGroups = rows
-                    .GroupBy(t => t.CourseId)
-                    .Select(g => new ViewModelRowGroup()
-                    {
-                        CourseId = g.Key,
-                        LearnAimRef = g.Select(r => r.LearnAimRef).Distinct().Single(),
-                        LearnAimRefTitle = learningDelivery[g.Select(r => r.LearnAimRef).Distinct().Single()].LearnAimRefTitle,
-                        CourseRows = g
-                            .Select(r => new ViewModelRow()
-                            {
-                                CourseName = r.CourseName,
-                                StartDate = r.StartDate,
-                                DeliveryMode = r.DeliveryMode
-                            })
-                            .OrderBy(r => r.StartDate)
-                            .ThenBy(r => r.DeliveryMode)
-                            .ToArray()
-                    })
-                    .OrderBy(g => g.LearnAimRef)
-                    .ThenBy(g => g.CourseId)
-                    .ToArray(),
-                RowCount = rows.Count
-            };
+                return new ViewModel()
+                {
+                    RowGroups = rows
+                        .GroupBy(t => t.CourseId)
+                        .Select(g => new ViewModelRowGroup()
+                        {
+                            CourseId = g.Key,
+                            CourseRows = g
+                                .Select(r => new ViewModelRow()
+                                {
+                                    CourseType = r.CourseType,
+                                    Sector = r.Sector,
+                                    AwardingBody = r.AwardingBody,
+                                    EducationLevel = r.EducationLevel,                                    
+                                    CourseName = r.CourseName,
+                                    StartDate = r.StartDate,
+                                    DeliveryMode = r.DeliveryMode
+                                })
+                                .OrderBy(r => r.StartDate)
+                                .ThenBy(r => r.DeliveryMode)
+                                .ToArray()
+                        })
+                        .OrderBy(g => g.CourseId)
+                        .ToArray(),
+                    RowCount = rows.Count
+                };
+            }
+            else
+            {
+                var learningDelivery = (await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = rows.Select(x => x.LearnAimRef).Distinct().ToArray() }));
+
+                return new ViewModel()
+                {
+                    RowGroups = rows
+                        .GroupBy(t => t.CourseId)
+                        .Select(g => new ViewModelRowGroup()
+                        {
+                            CourseId = g.Key,
+                            LearnAimRef = g.Select(r => r.LearnAimRef).Distinct().Single(),
+                            LearnAimRefTitle = learningDelivery[g.Select(r => r.LearnAimRef).Distinct().Single()].LearnAimRefTitle,
+                            CourseRows = g
+                                .Select(r => new ViewModelRow()
+                                {
+                                    CourseName = r.CourseName,
+                                    StartDate = r.StartDate,
+                                    DeliveryMode = r.DeliveryMode
+                                })
+                                .OrderBy(r => r.StartDate)
+                                .ThenBy(r => r.DeliveryMode)
+                                .ToArray()
+                        })
+                        .OrderBy(g => g.LearnAimRef)
+                        .ThenBy(g => g.CourseId)
+                        .ToArray(),
+                    RowCount = rows.Count
+                };
+            }            
         }
     }
 }

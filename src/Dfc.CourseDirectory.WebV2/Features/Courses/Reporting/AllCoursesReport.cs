@@ -7,6 +7,9 @@ using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
 using Dfc.CourseDirectory.Core.DataManagement;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using System.Linq;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
 {
@@ -118,6 +121,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
 
         [Name("COURSE_TYPE")]
         public int? CourseType { get; set; }
+
+        [Name("SECTOR")]
+        public string Sector { get; set; }
+
+        [Name("EDUCATION_LEVEL")]
+        public string EducationLevel { get; set; }
+
+        [Name("AWARDING_BODY")]
+        public string AwardingBody { get; set; }
+
+        [Name("CREATED_DATE")]
+        public string CreatedDate { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -129,14 +144,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        public Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(Process(_sqlQueryDispatcher.ExecuteQuery(new GetLiveCoursesWithRegionsAndVenuesReport
+            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
+            var liveCoursesRecords = _sqlQueryDispatcher.ExecuteQuery(new GetLiveCoursesWithRegionsAndVenuesReport
             {
                 FromDate = request.FromDate
-            })));
+            });
 
-            static async IAsyncEnumerable<Csv> Process(IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> results)
+            return Process(liveCoursesRecords, sectors);
+
+            static async IAsyncEnumerable<Csv> Process(IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> results, List<Sector> sectors)
             {
                 await foreach (var result in results)
                 {
@@ -172,10 +191,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting.AllCoursesReport
                         LocationTown = result.VenueTown,
                         LocationPhone = result.VenueTelephone,
                         LocationWebsite = result.VenueWebsite,
+                        CreatedDate = ParsedCsvCourseRow.MapStartDate(result.CreatedOn),
                         UpdatedDate = ParsedCsvCourseRow.MapStartDate(result.UpdatedOn),
                         EntryRequirements = result.EntryRequirements,
                         HowYouWillBeAssessed = result.HowYouWillBeAssessed,
-                        CourseType = result.CourseType
+                        CourseType = result.CourseType,
+                        Sector = ParsedCsvNonLarsCourseRow.MapSectorIdToCode(result.SectorId, sectors),
+                        EducationLevel = result.EducationLevel,
+                        AwardingBody = result.AwardingBody,
                     };
                 }
             }

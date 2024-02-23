@@ -33,7 +33,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 {
-    public class CopyCourseRunController : Controller
+    public class CopyCourseRunController : BaseController
     {
         private const string CopyCourseRunSaveViewModelSessionKey = "CopyCourseRunSaveViewModel";
         private const string CopyCourseRunPublishedCourseSessionKey = "CopyCourseRunPublishedCourse";
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache)
+            IRegionCache regionCache) : base(sqlQueryDispatcher)
         {
             if (logger == null)
             {
@@ -127,7 +127,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             var ukprn = _session.GetInt32("UKPRN").Value;
 
             var cachedData = _session.GetObject<CopyCourseRunViewModel>("CopyCourseRunObject");
-            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = cachedData.CourseId.Value });
+
+            var course = await GetCourse(cachedData.CourseId.Value);            
             var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == cachedData.CourseRunId);
             var venues = await GetVenuesForProvider();
 
@@ -253,8 +254,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             {
                 return NotFound();
             }
-
-            var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
+                        
+            var course = await GetCourse(courseId.Value);
 
             if (course == null)
             {
@@ -310,7 +311,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 QualificationType = course.LearnAimRefTypeDesc,
                 NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
                 PublishMode = PublishMode.Summary,
-                RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath
+                RefererAbsolutePath = Request.GetTypedHeaders().Referer?.AbsolutePath,
+                CourseType = course.CourseType,
+                SectorId = course.SectorId,
+                SectorDescription = await GetSectorDescription(course.SectorId),
+                EducationLevel = course.EducationLevel,
+                AwardingBody = course.AwardingBody,
+                NonLarsCourse = IsCourseNonLars()
             };
 
             if (savedModel != null)
@@ -429,7 +436,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 CostDescription = model.CostDescription,
                 CourseLength = $"{model.DurationLength} {model.DurationUnit}",
                 AttendancePattern = model.AttendanceMode,
-                StudyMode = model.StudyMode
+                StudyMode = model.StudyMode,                
+                NonLarsCourse = IsCourseNonLars()
             };
 
             return View(summaryViewModel);
@@ -470,10 +478,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                     System.Globalization.CultureInfo.InvariantCulture);
             }
 
-            if (model.National == true)
-            {
-                model.SelectedRegions = null;
-            }
+            RefineModelDataForADeliveryMode(model);
 
             var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
             if (!validationResult.IsValid)
@@ -548,7 +553,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             {
                 CourseId = createCommand.CourseId,
                 CourseRunId = createCommand.CourseRunId,
-                CourseName = createCommand.CourseName
+                CourseName = createCommand.CourseName,
+                NonLarsCourse = IsCourseNonLars()
             });
 
             _session.Remove("NewAddedVenue");
@@ -556,6 +562,30 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _session.Remove(CopyCourseRunSaveViewModelSessionKey);
 
             return RedirectToAction("Published");
+        }
+
+        private static void RefineModelDataForADeliveryMode(CopyCourseRunSaveViewModel model)
+        {
+            switch (model.DeliveryMode)
+            {
+                case CourseDeliveryMode.ClassroomBased:
+                case CourseDeliveryMode.BlendedLearning:                   
+                    model.SelectedRegions = null;
+                    model.National = null;
+                    break;
+                case CourseDeliveryMode.WorkBased:
+                    model.VenueId = Guid.Empty;
+                    model.AttendanceMode = null;
+                    model.StudyMode = null;                    
+                    break;
+                case CourseDeliveryMode.Online:
+                    model.SelectedRegions = null;
+                    model.VenueId = Guid.Empty;
+                    model.AttendanceMode = null;
+                    model.StudyMode = null;
+                    model.National = null;
+                    break;
+            }
         }
 
         [HttpGet]

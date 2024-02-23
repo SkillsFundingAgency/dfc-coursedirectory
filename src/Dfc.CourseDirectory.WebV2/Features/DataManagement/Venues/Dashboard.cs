@@ -16,12 +16,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
     public class ViewModel
     {
         public bool ShowCourses { get; set; }
+        public bool ShowNonLars { get; set; }
         public int PublishedCourseCount { get; set; }
+        public int PublishedNonLarsCourseCount { get; set; }
         public bool CourseUploadInProgress { get; set; }
+        public bool NonLarsUploadInProgress { get; set; }
         public int PublishedVenueCount { get; set; }
         public bool VenueUploadInProgress { get; set; }
         public int UnpublishedVenueCount { get; set; }
         public int UnpublishedCourseCount { get; set; }
+        public int UnpublishedNonLarsCourseCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -61,18 +65,29 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
             var courseUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestUnpublishedCourseUploadForProvider()
                 {
-                    ProviderId = providerContext.ProviderInfo.ProviderId
+                    ProviderId = providerContext.ProviderInfo.ProviderId,
+                    IsNonLars = false
                 });
 
+            var nonLarsUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
+               new GetLatestUnpublishedCourseUploadForProvider()
+               {
+                   ProviderId = providerContext.ProviderInfo.ProviderId,
+                   IsNonLars = true
+               });
             return new ViewModel()
             {
                 PublishedCourseCount = counts.CourseRunCount,
+                PublishedNonLarsCourseCount = counts.NonLarsCourseCount,
                 PublishedVenueCount = counts.VenueCount,
                 ShowCourses = providerType.HasFlag(ProviderType.FE),
+                ShowNonLars = providerType.HasFlag(ProviderType.NonLARS),
                 VenueUploadInProgress = venueUploadStatus != null && (venueUploadStatus.UploadStatus == UploadStatus.Processing || venueUploadStatus.UploadStatus == UploadStatus.Created),
                 UnpublishedVenueCount = counts.UnpublishedVenueCount,
                 UnpublishedCourseCount = counts.UnpublishedCourseCount,
+                UnpublishedNonLarsCourseCount = counts.UnpublishedNonLarsCourseCount,
                 CourseUploadInProgress = courseUploadStatus != null && (courseUploadStatus.UploadStatus == UploadStatus.Processing || courseUploadStatus.UploadStatus == UploadStatus.Created),
+                NonLarsUploadInProgress = nonLarsUploadStatus != null && (nonLarsUploadStatus.UploadStatus == UploadStatus.Processing || nonLarsUploadStatus.UploadStatus == UploadStatus.Created),
             };
         }
     }

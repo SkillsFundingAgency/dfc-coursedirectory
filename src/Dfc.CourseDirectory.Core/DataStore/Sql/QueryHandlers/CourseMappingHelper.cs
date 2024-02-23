@@ -51,7 +51,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     LearnAimRefTypeDesc = row.LearnAimRefTypeDesc,
                     AwardOrgCode = row.AwardOrgCode,
                     NotionalNVQLevelv2 = row.NotionalNVQLevelv2,
-                    LearnAimRefTitle = row.LearnAimRefTitle
+                    LearnAimRefTitle = row.LearnAimRefTitle,
+                    CourseType = row.CourseType,
+                    SectorId = row.SectorId,
+                    EducationLevel = row.EducationLevel,
+                    AwardingBody = DecodeIfNecessary(row.AwardingBody)
                 };
 
                 string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded != false ? HtmlDecode(field) : field;
@@ -128,6 +132,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string AwardOrgCode { get; set; }
             public string NotionalNVQLevelv2 { get; set; }
             public string LearnAimRefTitle { get; set; }
+            public CourseType? CourseType { get; set; }
+            public int? SectorId { get; set; }
+            public string SectorDescription { get; set; }
+            public EducationLevel? EducationLevel { get; set; }
+            public string AwardingBody { get; set; }
         }
 
         private class CourseRunResult

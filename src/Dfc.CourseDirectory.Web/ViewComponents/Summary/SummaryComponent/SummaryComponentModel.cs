@@ -8,5 +8,6 @@
         public string Action { get; set; }
         public string Controller { get; set; }
         public string Section { get; set; }
+        public bool HideChangeLink { get; set; }
     }
 }
