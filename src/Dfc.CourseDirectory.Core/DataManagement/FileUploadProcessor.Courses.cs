@@ -1029,7 +1029,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
 
-                var courseType = await _courseTypeService.GetCourseType(parsedRow.LearnAimRef);
+                var courseType = await _courseTypeService.GetCourseType(parsedRow.LearnAimRef, providerId);
 
                 var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 

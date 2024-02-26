@@ -68,6 +68,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         public static string MapCourseType(CourseType? value) => value switch
         {
+            CourseType.EssentialSkills => "Essential Skills",
+            CourseType.TLevels => "T Levels",
+            CourseType.HTQs => "HTQs",
+            CourseType.FreeCoursesForJobs => "Free Courses for Jobs",
+            CourseType.Multiply => "Multiply",
             CourseType.SkillsBootcamp => "Skills Bootcamp",
             null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
