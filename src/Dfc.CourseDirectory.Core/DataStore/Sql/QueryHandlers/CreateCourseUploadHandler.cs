@@ -12,26 +12,29 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<Success> Execute(SqlTransaction transaction, CreateCourseUpload query)
         {
             var sql = $@"
-INSERT INTO Pttcd.CourseUploads (
-    CourseUploadId,
-    ProviderId,
-    UploadStatus,
-    CreatedOn,
-    CreatedByUserId
-) VALUES (
-    @CourseUploadId,
-    @ProviderId,
-    {(int)UploadStatus.Created},
-    @CreatedOn,
-    @CreatedByUserId
-)";
+                INSERT INTO Pttcd.CourseUploads (
+                    CourseUploadId,
+                    ProviderId,
+                    UploadStatus,
+                    CreatedOn,
+                    CreatedByUserId,
+                    IsNonLars
+                ) VALUES (
+                    @CourseUploadId,
+                    @ProviderId,
+                    {(int)UploadStatus.Created},
+                    @CreatedOn,
+                    @CreatedByUserId,
+                    @IsNonLars
+                )";
 
             var paramz = new
             {
                 query.CourseUploadId,
                 query.ProviderId,
                 query.CreatedOn,
-                CreatedByUserId = query.CreatedBy.UserId
+                CreatedByUserId = query.CreatedBy.UserId,
+                query.IsNonLars
             };
 
             await transaction.Connection.ExecuteAsync(sql, paramz, transaction);

@@ -5,6 +5,7 @@ using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
@@ -47,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid(), venueIdHint: venue.VenueId);
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint,rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result?.VenueId);
@@ -81,7 +82,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -115,7 +116,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result?.VenueId);
@@ -150,7 +151,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -185,7 +186,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result?.VenueId);
@@ -219,7 +220,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Null(result);
@@ -253,7 +254,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid());
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result?.VenueId);
@@ -469,6 +470,87 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
 
             // Act
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream );
+
+            // Assert
+            courseUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUpload.CourseUploadId }));
+
+            using (new AssertionScope())
+            {
+                courseUpload.UploadStatus.Should().Be(UploadStatus.ProcessedSuccessfully);
+                courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
+                courseUpload.ProcessingStartedOn.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task ProcessNonLarsCourseFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            await TestData.AddSectors();
+            
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
+
+            var uploadRows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 3).ToArray();
+            var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(uploadRows);
+
+            // Act
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
+
+            // Assert
+            courseUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUpload.CourseUploadId }));
+
+            using (new AssertionScope())
+            {
+                courseUpload.UploadStatus.Should().Be(UploadStatus.ProcessedSuccessfully);
+                courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
+                courseUpload.ProcessingStartedOn.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task ProcessNonLarsCourseFile_CorrectSectorWithLowerCase_SetStatusToProcessedSuccessfully()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            await TestData.AddSectors();
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created, null, true);
+
+            var uploadRows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 3).ToArray();
+            uploadRows[1].Sector = "environmental";
+            var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(uploadRows);
+
+            // Act
             await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
@@ -508,6 +590,86 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 new CsvCourseRow()
                 {
                     LearnAimRef = learnAimRef
+                });
+
+            // Act
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
+
+            // Assert
+            courseUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUpload.CourseUploadId }));
+
+            using (new AssertionScope())
+            {
+                courseUpload.UploadStatus.Should().Be(UploadStatus.ProcessedWithErrors);
+                courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
+                courseUpload.ProcessingStartedOn.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task ProcessNonLarsCourseFile_SectorFieldIsEmpty_SetStatusToProcessedWithErrors()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created, null, true);
+
+            var uploadRows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 3).ToArray();
+            uploadRows[1].Sector = "";
+            var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(uploadRows);
+
+            // Act
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
+
+            // Assert
+            courseUpload = await WithSqlQueryDispatcher(
+                dispatcher => dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUpload.CourseUploadId }));
+
+            using (new AssertionScope())
+            {
+                courseUpload.UploadStatus.Should().Be(UploadStatus.ProcessedWithErrors);
+                courseUpload.ProcessingCompletedOn.Should().Be(Clock.UtcNow);
+                courseUpload.ProcessingStartedOn.Should().NotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task ProcessNonLarsCourseFile_RowHasErrors_SetStatusToProcessedWithErrors()
+        {
+            // Arrange
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
+           
+            var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(
+                // Empty record will always yield errors
+                new CsvNonLarsCourseRow()
+                {
                 });
 
             // Act
@@ -626,7 +788,34 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<ICourseTypeService>());
 
             // Act
-            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false  );
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
+        }
+
+        [Fact]
+        public async Task PublishNonLarsCourseUpload_StatusIsProcessedWithErrors_ReturnsUploadHasErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedWithErrors,null,true);
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            // Act
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, true);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
@@ -679,7 +868,60 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Mock.Of<ICourseTypeService>());
 
             // Act
-            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user);
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false  );
+
+            // Assert
+            result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
+        }
+
+        [Fact]
+        public async Task PublishNonLarsCourseUpload_StatusIsProcessedWithErrorsAfterRevalidation_ReturnsUploadHasErrors()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+
+            var venue = await TestData.CreateVenue(provider.ProviderId, createdBy: user, venueName: "My Venue", providerVenueRef: "VENUE1");
+
+            var (courseUpload, _) = await TestData.CreateCourseUpload(
+                provider.ProviderId,
+                createdBy: user,
+                UploadStatus.ProcessedSuccessfully,
+                rowBuilder =>
+                {
+                    rowBuilder.AddNonLarsRow( record =>
+                    {
+                        record.CourseType = "Skills Bootcamp";
+                        record.ResolvedCourseType = CourseType.SkillsBootcamp;
+                        record.DeliveryMode = "classroom based";
+                        record.ResolvedDeliveryMode = CourseDeliveryMode.ClassroomBased;
+                        record.ProviderVenueRef = venue.ProviderVenueRef;
+                        record.VenueId = venue.VenueId;
+                    });
+                },true);
+
+            // Delete the venue linked to the row in the upload, triggering revalidation
+            // (which should fail since the venue has gone away)
+
+            Clock.UtcNow += TimeSpan.FromDays(1);
+
+            await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new DeleteVenue()
+            {
+                VenueId = venue.VenueId,
+                DeletedBy = user,
+                DeletedOn = Clock.UtcNow
+            }));
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            // Act
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, true);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
@@ -719,6 +961,42 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             {
                 // Act
                 var (_, rows) = await fileUploadProcessor.ValidateCourseUploadRows(
+                    dispatcher,
+                    courseUpload.CourseUploadId,
+                    provider.ProviderId,
+                    uploadRows);
+
+                // Assert
+                rows.First().CourseId.Should().NotBe(rows.Last().CourseId);
+            });
+        }
+        [Fact]
+        public async Task ValidateNonLarsCourseUploadRows_RowsHaveNoCourseType_AreNotGrouped()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var user = await TestData.CreateUser(providerId: provider.ProviderId);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null,null,null,null,null,true);
+           
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
+
+            var rows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 2).ToArray();
+            rows[0].CourseType = string.Empty;
+            rows[1].CourseType = string.Empty;
+
+            var uploadRows = rows.ToDataUploadRowCollection();
+
+            await WithSqlQueryDispatcher(async dispatcher =>
+            {
+                // Act
+                var (_, rows) = await fileUploadProcessor.ValidateNonLarsCourseUploadRows(
                     dispatcher,
                     courseUpload.CourseUploadId,
                     provider.ProviderId,

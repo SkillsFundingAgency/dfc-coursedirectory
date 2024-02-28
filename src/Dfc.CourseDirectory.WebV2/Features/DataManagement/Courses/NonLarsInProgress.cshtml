@@ -1,0 +1,69 @@
+﻿@model Dfc.CourseDirectory.Core.Models.UploadStatus
+@{
+    ViewBag.Title = "Uploading your Non LARS course data";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Uploading your Non LARS course data</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="pttcd-loading-spinner__container">
+
+            <div class="pttcd-loading-spinner"></div>
+
+            <div class="pttcd-loading-spinner__message govuk-!-margin-4" id="StatusMessage">
+                @if (Model == Dfc.CourseDirectory.Core.Models.UploadStatus.Created)
+                {
+                    <text>Uploading Non LARS file</text>
+                }
+                else
+                {
+                    <text>Processing Non LARS data</text>
+                }
+            </div>
+
+            <a asp-action="NonLarsInProgress" asp-all-route-data="@ProviderContext.RouteValues" id="NonLarsRefreshLink">
+                Refresh <span class="govuk-visually-hidden">the page</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $('#NonLarsRefreshLink').hide();
+
+        const onRealtimeUpdateFailed = function() {
+            // Fall back to non-JS solution
+            $('#NonLarsRefreshLink').show();
+        }
+
+        var queryParams = new URLSearchParams(window.location.search);
+        const url = '/data-upload/courses/hub?providerId=' + queryParams.get('providerId');
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(url)
+            .withAutomaticReconnect()
+            .build();
+        
+            connection.start().then(function () {
+                connection.stream('NonLarsStatusUpdates').subscribe({
+                    next: function (status) {
+                    const message = status == 0 ? 'Uploading Non LARS file' : 'Processing Non LARS data';
+                        $('#StatusMessage').text(message);
+                    },
+                    complete: function () {
+                        window.location = window.location.href;
+                    },
+                    error: onRealtimeUpdateFailed
+                });
+            }, onRealtimeUpdateFailed);
+
+       
+        
+    </script>
+}

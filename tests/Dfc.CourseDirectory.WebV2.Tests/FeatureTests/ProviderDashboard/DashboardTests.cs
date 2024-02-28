@@ -39,14 +39,16 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             // Arrange
             var providerName = "Test provider";
 
+            await TestData.AddSectors();
             var provider = await TestData.CreateProvider(
                 providerName,
-                providerType: ProviderType.FE | ProviderType.TLevels);
+                providerType: ProviderType.FE | ProviderType.TLevels | ProviderType.NonLARS);
 
             var tLevelDefinitions = await TestData.CreateInitialTLevelDefinitions();
             var venues = await CreateVenues(provider.ProviderId, count: 2);
 
             await CreateCourses(provider.ProviderId, count: 5);
+            await CreateNonLarsCourses(provider.ProviderId, count: 3);
             await CreateTLevels(provider.ProviderId, tLevelDefinitions, venues, 4);
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/dashboard?providerId={provider.ProviderId}");
@@ -65,6 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("tlevels-row").TextContent.Should().NotBeNull();
 
             doc.GetElementByTestId("course-count").TextContent.Should().Be("5");
+            doc.GetElementByTestId("nonlars-count").TextContent.Should().Be("3");            
             doc.GetElementByTestId("tlevel-count").TextContent.Should().Be("4");
             doc.GetElementByTestId("venue-count").TextContent.Should().Be("2");
         }
@@ -396,6 +399,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             for (var i = 1; i <= count; i++)
             {
                 await TestData.CreateCourse(providerId, createdBy: User.ToUserInfo());
+            }
+        }
+        private async Task CreateNonLarsCourses(Guid providerId, int count)
+        {
+            for (var i = 1; i <= count; i++)
+            {
+                await TestData.CreateNonLarsCourse(providerId, createdBy: User.ToUserInfo());
             }
         }
 

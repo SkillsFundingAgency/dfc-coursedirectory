@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
@@ -42,15 +41,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, CommandResponse>
     {
-        private readonly MptxInstanceContext<FlowModel> _flow;
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly MptxInstanceContext<FlowModel> _flow;        
         private readonly ICourseTypeService _courseTypeService;
+        private readonly IProviderContextProvider _providerContextProvider;
 
-        public Handler(MptxInstanceContext<FlowModel> flow, ISqlQueryDispatcher sqlQueryDispatcher, ICourseTypeService courseTypeService)
+        public Handler(MptxInstanceContext<FlowModel> flow, ICourseTypeService courseTypeService, IProviderContextProvider providerContextProvider)
         {
-            _flow = flow;
-            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _flow = flow;            
             _courseTypeService = courseTypeService;
+            _providerContextProvider = providerContextProvider;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -99,8 +98,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
                 var vm = request.Adapt<ViewModel>();
                 return new ModelWithErrors<Command>(vm, validationResult);
             }
-            
-            request.CourseType = await _courseTypeService.GetCourseType(_flow.State.LarsCode);
+
+            var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
+
+            request.CourseType = await _courseTypeService.GetCourseType(_flow.State.LarsCode, providerId);
 
             _flow.Update(s => s.SetCourseDescription(
                 request.WhoThisCourseIsFor,

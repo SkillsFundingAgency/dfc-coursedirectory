@@ -23,7 +23,11 @@ UPDATE Pttcd.Courses SET
     WhereNext = @WhereNext,
     UpdatedBy = @UpdatedByUserId,
     UpdatedOn = @UpdatedOn,
-    DataIsHtmlEncoded = 0
+    DataIsHtmlEncoded = 0,
+    CourseType = @CourseType,
+    SectorId = @SectorId,
+    EducationLevel = @EducationLevel,
+    AwardingBody = @AwardingBody
 WHERE CourseId = @CourseId
 AND CourseStatus <> {(int)CourseStatus.Archived}
 
@@ -55,7 +59,11 @@ SELECT 0 AS Result";
                 query.HowYoullBeAssessed,
                 query.WhereNext,
                 UpdatedByUserId = query.UpdatedBy.UserId,
-                query.UpdatedOn
+                query.UpdatedOn,
+                query.CourseType,
+                query.SectorId,
+                query.EducationLevel,
+                query.AwardingBody
             };
 
             var result = await transaction.Connection.QuerySingleAsync<Result>(sql, paramz, transaction);

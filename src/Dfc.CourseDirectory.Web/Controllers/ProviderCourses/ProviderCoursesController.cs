@@ -23,9 +23,10 @@ using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
-    public class ProviderCoursesController : Controller
+    public class ProviderCoursesController : BaseController
     {
         private readonly ILogger<ProviderCoursesController> _logger;
+
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -35,7 +36,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             ILogger<ProviderCoursesController> logger,
             ICourseService courseService,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IProviderContextProvider providerContextProvider)
+            IProviderContextProvider providerContextProvider) : base(sqlQueryDispatcher)
         {
             if (logger == null)
             {
@@ -100,7 +101,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
         public async Task<IActionResult> Index(
             Guid? courseRunId,
             string notificationTitle,
-            string notificationMessage)
+            string notificationMessage,
+            bool nlc = false)
         {
             Session.SetString("Option", "Courses");
             int? UKPRN = Session.GetInt32("UKPRN");
@@ -112,10 +114,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId }))
-                .OrderBy(c => c.LearnAimRefTypeDesc)
-                .ThenBy(c => c.LearnAimRef)
-                .ToArray();
+            var nonLarsCourse = nlc;
+            if (nonLarsCourse)
+            {
+                Session.SetString(SessionNonLarsCourse, "true");
+            }
+            else
+            {
+                Session.SetString(SessionNonLarsCourse, "false");
+            }
+
+            var providerCourses = await GetProviderCourses(nonLarsCourse, providerId);
 
             var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
@@ -124,7 +133,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             var model = new ProviderCoursesViewModel()
             {
                 PendingCoursesCount = 0,
-                ProviderCourseRuns = new List<ProviderCourseRunViewModel>()
+                ProviderCourseRuns = new List<ProviderCourseRunViewModel>(),
+                NonLarsCourse = nonLarsCourse
             };
 
             List<ProviderCoursesFilterItemModel> levelFilterItems = new List<ProviderCoursesFilterItemModel>();
@@ -171,10 +181,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
                                                         ? string.Empty
                                                         : cr.StudyMode.ToDescription(),
                         Url = cr.CourseWebsite,
-                        National = national
-
-
-
+                        National = national,
+                        CourseType = course.CourseType.ToDescription(),
+                        SectorId = course.SectorId,
+                        EducationLevel = course.EducationLevel.ToDescription(),
+                        AwardingBody = course.AwardingBody
                     };
                     //If National
                     if (national)
@@ -197,51 +208,55 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             Session.SetObject("ProviderCourses", model.ProviderCourseRuns);
 
             int s = 0;
-            var textValue = string.Empty;
-            var levelFilter = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
-            foreach (var level in levelFilter)
-            {
-                textValue = string.Empty;
-                string levelKey = string.Empty;
-                if (level.Key != null)
-                    levelKey = level.Key;
-                switch (levelKey.ToLower())
-                {
-                    case "e":
-                        textValue = "Entry level";
-                        break;
-                    case "x":
-                        textValue = "X - Not applicable/unknown";
-                        break;
-                    case "h":
-                        textValue = "Higher";
-                        break;
-                    case "m":
-                        textValue = "Mixed";
-                        break;
-                    default:
-                        textValue = "Level " + levelKey;
-                        break;
 
+            if (!nonLarsCourse)
+            {
+                var textValue = string.Empty;
+                var levelFilter = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
+                foreach (var level in levelFilter)
+                {
+                    textValue = string.Empty;
+                    string levelKey = string.Empty;
+                    if (level.Key != null)
+                        levelKey = level.Key;
+                    switch (levelKey.ToLower())
+                    {
+                        case "e":
+                            textValue = "Entry level";
+                            break;
+                        case "x":
+                            textValue = "X - Not applicable/unknown";
+                            break;
+                        case "h":
+                            textValue = "Higher";
+                            break;
+                        case "m":
+                            textValue = "Mixed";
+                            break;
+                        default:
+                            textValue = "Level " + levelKey;
+                            break;
+
+                    }
+
+                    ProviderCoursesFilterItemModel itemModel = new ProviderCoursesFilterItemModel()
+                    {
+                        Id = "level-" + s++.ToString(),
+                        Value = levelKey,
+                        Text = textValue,
+                        Name = "level"
+                    };
+
+                    levelFilterItems.Add(itemModel);
                 }
 
-                ProviderCoursesFilterItemModel itemModel = new ProviderCoursesFilterItemModel()
+                var entryItem = levelFilterItems.Where(x => x.Text.ToLower().Contains("entry")).SingleOrDefault();
+
+                if (entryItem != null)
                 {
-                    Id = "level-" + s++.ToString(),
-                    Value = levelKey,
-                    Text = textValue,
-                    Name = "level"
-                };
-
-                levelFilterItems.Add(itemModel);
-            }
-
-            var entryItem = levelFilterItems.Where(x => x.Text.ToLower().Contains("entry")).SingleOrDefault();
-
-            if (entryItem != null)
-            {
-                levelFilterItems.Remove(entryItem);
-                levelFilterItems.Insert(0, entryItem);
+                    levelFilterItems.Remove(entryItem);
+                    levelFilterItems.Insert(0, entryItem);
+                }
             }
 
             s = 0;
@@ -345,7 +360,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Venues = venueFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
             model.Regions = regionFilterItems;
-            
+
             //Setup backlink to go to the dashboard
             ViewBag.BackLinkController = "Home";
             ViewBag.BackLinkAction = "Index";
@@ -353,6 +368,24 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             return View(model);
         }
 
+        private async Task<Core.DataStore.Sql.Models.Course[]> GetProviderCourses(bool nonLarsCourse, Guid providerId)
+        {
+            Core.DataStore.Sql.Models.Course[] providerCourses;
+            if (nonLarsCourse)
+            {
+                providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider() { ProviderId = providerId }))
+                .ToArray();
+
+                return providerCourses;
+            }
+
+            providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId }))
+                    .OrderBy(c => c.LearnAimRefTypeDesc)
+                    .ThenBy(c => c.LearnAimRef)
+                    .ToArray();
+
+            return providerCourses;
+        }
 
         [Authorize]
         public IActionResult FilterCourses(ProviderCoursesRequestModel requestModel)
@@ -379,8 +412,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             {
                 model.ProviderCourseRuns = model.ProviderCourseRuns
                     .Where(x => x.CourseName.ToLower().Contains(requestModel.Keyword.ToLower())
-                                || x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower())
-                                || x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower())
+                                || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower()))
+                                || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower()))
                                  || x.AttendancePattern.ToLower().Contains(requestModel.Keyword.ToLower())
                                   || x.DeliveryMode.ToLower().Contains(requestModel.Keyword.ToLower())
                                    || x.Venue.ToLower().Contains(requestModel.Keyword.ToLower())
@@ -434,19 +467,20 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 
             model.ProviderCourseRuns = model.ProviderCourseRuns.OrderBy(x => x.CourseName).ToList();
 
-            // _session.SetObject("ProviderCourses", model.ProviderCourseRuns.OrderBy(x=>x.CourseName));
-
+            model.NonLarsCourse = IsCourseNonLars();
 
             int s = 0;
-            levelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            if (!model.NonLarsCourse)
             {
-                Id = "level-" + s++.ToString(),
-                Value = r.Key,
-                Text = "Level " + r.Key,
-                Name = "level",
-                IsSelected = requestModel.LevelFilter.Length > 0 && requestModel.LevelFilter.Contains(r.Key)
-            }).ToList();
-
+                levelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+                {
+                    Id = "level-" + s++.ToString(),
+                    Value = r.Key,
+                    Text = "Level " + r.Key,
+                    Name = "level",
+                    IsSelected = requestModel.LevelFilter.Length > 0 && requestModel.LevelFilter.Contains(r.Key)
+                }).ToList();
+            }
             s = 0;
             deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
             {

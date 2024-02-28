@@ -13,18 +13,22 @@ using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Dfc.CourseDirectory.WebV2;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
-    public class CourseSummaryController : Controller
+    public class CourseSummaryController : BaseController
     {
+        private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        
 
         public CourseSummaryController(
             ICourseService courseService,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -38,14 +42,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             Course course = null;
             CourseRun courseRun = null;
-            if (courseId.HasValue)
-            {
-                course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId.Value });
-                courseRun = course.CourseRuns.Where(x => x.CourseRunId == courseRunId.Value).FirstOrDefault();
-            }
+            
+            var nonLarsCourse = IsCourseNonLars();
+            course = await GetCourse(courseId, nonLarsCourse);
+            courseRun = course.CourseRuns.Where(x => x.CourseRunId == courseRunId.Value).FirstOrDefault();
 
             CourseSummaryViewModel vm = new CourseSummaryViewModel
-
             {
                 ProviderUKPRN = course.ProviderUkprn,
                 CourseId = course.CourseId,
@@ -80,7 +82,12 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 StudyMode = courseRun.StudyMode,
                 AttendancePattern = courseRun.AttendancePattern,
                 CreatedDate = courseRun.CreatedOn,
-
+                NonLarsCourse = nonLarsCourse,
+                CourseType = course.CourseType,
+                SectorId = course.SectorId,
+                SectorDescription = await GetSectorDescription(course.SectorId),
+                EducationLevel = course.EducationLevel,
+                AwardingBody = course.AwardingBody
             };
 
             //Determine newer edited date

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -19,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.Services
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        public async Task<Models.CourseType?> GetCourseType(string learnAimRef)
+        public async Task<Models.CourseType?> GetCourseType(string learnAimRef, Guid providerId)
         {
             var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
 
@@ -49,8 +50,19 @@ namespace Dfc.CourseDirectory.Core.Services
             }
 
             var distinctLarsCourseTypes = larsCourseTypes.Select(lc => lc.CourseType).Distinct();
+            var courseType = distinctLarsCourseTypes.FirstOrDefault(l => l.HasValue);
 
-            return distinctLarsCourseTypes.FirstOrDefault(l => l.HasValue);
+            if (courseType.HasValue && courseType.Value == Models.CourseType.FreeCoursesForJobs)
+            {                
+                var providerCampaignCodes = await _sqlQueryDispatcher.ExecuteQuery(new GetCampaignCodesForProvider() { ProviderId = providerId });
+
+                var providerInEligibleList = providerCampaignCodes.Any();
+
+                if (!providerInEligibleList)
+                    courseType = null;
+            }
+
+            return courseType;
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public Guid ProviderId { get; set; }
         public DateTime CreatedOn { get; set; }
         public UserInfo CreatedBy { get; set; }
+        public bool IsNonLars { get; set; }
     }
 }

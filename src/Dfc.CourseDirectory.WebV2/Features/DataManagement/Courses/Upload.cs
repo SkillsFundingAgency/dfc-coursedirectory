@@ -20,16 +20,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 {
     public class Query : IRequest<ViewModel>
     {
+        
     }
 
     public class ViewModel : Command
     {
         public int CourseCount { get; set; }
+        
     }
+
 
     public class Command : IRequest<OneOf<UploadFailedResult, Success>>
     {
         public IFormFile File { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class UploadFailedResult : ModelWithErrors<ViewModel>
@@ -109,32 +113,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 
             var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
                 _providerContextProvider.GetProviderId(),
+                request.IsNonLars,
                 stream,
                 _currentUserProvider.GetCurrentUser());
 
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(),
+                    await CreateViewModel(request.IsNonLars),
                     "The selected file must be a CSV");
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidRows)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(),
+                    await CreateViewModel(request.IsNonLars),
                     "The selected file must use the template");
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidHeader)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(),
+                    await CreateViewModel(request.IsNonLars),
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
-            else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidLars)
+            else if (!request.IsNonLars && saveFileResult.Status == SaveCourseFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(),
+                    await CreateViewModel(request.IsNonLars),
                     "The file contains errors",
                     null,
                     saveFileResult.MissingLearnAimRefRows,
@@ -144,7 +149,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             else if (saveFileResult.Status == SaveCourseFileResultStatus.EmptyFile)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(),
+                    await CreateViewModel(request.IsNonLars),
                     "The selected file is empty");
             }
 
@@ -157,10 +162,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
             return new Success();
         }
 
-        private async Task<ViewModel> CreateViewModel()
+        private async Task<ViewModel> CreateViewModel(bool isNonLars = false)
         {
             var courseRunCount = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetLiveCourseRunCountForProvider() { ProviderId = _providerContextProvider.GetProviderId() });
+                new GetLiveCourseRunCountForProvider() { ProviderId = _providerContextProvider.GetProviderId(), IsNonLars = isNonLars });
 
             return new ViewModel()
             {

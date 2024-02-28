@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Filters;
 using FormFlow;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
@@ -34,11 +35,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             Request request,
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl)
         {
-            _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
+            _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());            
 
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View(vm));
+                vm => View(vm));            
         }
 
         [HttpPost("")]
@@ -59,13 +60,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             [FromServices] IProviderContextProvider providerContextProvider,
             [FromServices] IProviderInfoCache providerInfoCache,
             ConfirmedQuery request)
-        {
-            var vm = await _mediator.Send(request);
+        {            
+            var vm = await _mediator.Send(request);            
 
             var providerInfo = await providerInfoCache.GetProviderInfo(vm.ProviderId);
             providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
 
+            vm.NonLarsCourse = IsCourseNonLars();
             return View(vm);
+        }
+
+        private bool IsCourseNonLars()
+        {
+            var nonLarsCourseString = HttpContext.Session.GetString("NonLarsCourse");
+            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
         }
     }
 }

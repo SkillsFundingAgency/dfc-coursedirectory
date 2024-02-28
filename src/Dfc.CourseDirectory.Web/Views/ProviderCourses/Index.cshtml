@@ -1,7 +1,7 @@
 ﻿@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.ProviderCoursesResults
 @{
-    ViewData["Title"] = "Your published courses"; 
+    ViewData["Title"] = "Your published courses";
     Layout = "_Layout_Your_Courses";
 }
 
@@ -65,11 +65,11 @@
                                 @if (!string.IsNullOrWhiteSpace(Model.NotificationTitle))
                                 {
                                     @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-                                    {
-                                        NotificationTitle = Model.NotificationTitle,
-                                        NotificationMessage = Model.NotificationMessage,
-                                        ClassType = "info-summary"
-                                    })
+                        {
+                        NotificationTitle = Model.NotificationTitle,
+                        NotificationMessage = Model.NotificationMessage,
+                        ClassType = "info-summary"
+                        })
                                 }
                                 <h1 class="govuk-heading-l">Your courses</h1>
                                 <p class="govuk-body-l">These courses are published on the course directory.</p>
@@ -80,28 +80,35 @@
                                     <div class="header-search-content">
                                         <span asp-validation-for="@Model.Search" class="govuk-error-message"></span>
                                         <div class="search-input-wrapper">
-                                            <label class="govuk-label-m" id="courseSearch">Search by Learning Aims Reference Service (LARS) code or keyword</label>
+                                            @if (Model.NonLarsCourse)
+                                            {
+                                                <label class="govuk-label-m" id="courseSearch">Search by keyword</label>
+                                            }
+                                            else
+                                            {
+                                                <label class="govuk-label-m" id="courseSearch">Search by Learning Aims Reference Service (LARS) code or keyword</label>
+                                            }
                                             <div class="search--container">
                                                 <input class="govuk-input search-input js-search-focus" asp-for="@Model.Search" type="text" aria-labelledby="courseSearch">
                                                 <div class="cd-c-search__item cd-search__submit-wrapper">
                                                     <button type="button" class=" submit" id="searchButton">Search</button>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
                                     </div>
                                 </form>
-                                </div>
+                            </div>
 
-                                <div class="govuk-grid-row">
+                            <div class="govuk-grid-row">
 
-                                    <div id="results">
+                                <div id="results">
 
-                                        @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
-                                    </div>
-
+                                    @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
                                 </div>
 
                             </div>
+
+                        </div>
                     </div>
                 </div>
             </header>
@@ -117,7 +124,7 @@
     (function ($) {
         $(function () {
 
-             var formGroupErrorClass = "govuk-form-group--error";
+            var formGroupErrorClass = "govuk-form-group--error";
             var elementErrorClass = "govuk-input--error";
 
             var $searchForm = $("#zCodeSearch");
@@ -137,21 +144,21 @@
 
             var $buttonSearch = $("#searchButton");
 
-             var debounce = function (cb, delay) {
-                 var inDebounce;
-                 return function () {
-                     var context = this;
-                     var args = arguments;
-                     clearTimeout(inDebounce);
-                     inDebounce = setTimeout(function () {
-                             cb.apply(context, args);
-                         },
-                         delay);
-                 };
+            var debounce = function (cb, delay) {
+                var inDebounce;
+                return function () {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(inDebounce);
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
+                        delay);
+                };
             };
 
 
-           
+
 
             $(document).ready(function () {
                 assignEventsToAllCheckboxes();
@@ -167,7 +174,7 @@
                 }
             });
 
-          
+
 
             var isNullOrWhitespace = function (input) {
                 if (typeof input === 'undefined' || input == null) return true;
@@ -198,15 +205,15 @@
                     if (isNullOrWhitespace($elementSearchTerm.val())) {
 
                     } else {
-                           var result = validator.element($elementSearchTerm);
-                if (result) {
-                    HideValidationErrorMessage();
-                    runSearch = true;
-                } else {
-                    ShowValidationErrorMessage();
-                }
+                        var result = validator.element($elementSearchTerm);
+                        if (result) {
+                            HideValidationErrorMessage();
+                            runSearch = true;
+                        } else {
+                            ShowValidationErrorMessage();
+                        }
                     }
-                
+
                 } else {
                     runSearch = true;
                 }
@@ -269,21 +276,21 @@
                     });
             };
 
-             var assignEventsToAllCheckboxes = function () {
-                 var $levelFilterCheckboxes = $("input[name='level']:checkbox");
-                 var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
-                 var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
-                 var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
-                 var $regionFilterCheckboxes = $("input[name='region']:checkbox");
+            var assignEventsToAllCheckboxes = function () {
+                var $levelFilterCheckboxes = $("input[name='level']:checkbox");
+                var $deliverymodeFilterCheckboxes = $("input[name='deliverymode']:checkbox");
+                var $venueFilterCheckboxes = $("input[name='venue']:checkbox");
+                var $attendancePatternFilterCheckboxes = $("input[name='attendancepattern']:checkbox");
+                var $regionFilterCheckboxes = $("input[name='region']:checkbox");
 
-                 //$levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                 //$deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                 //$venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                 //$attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
-                 //$regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$levelFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$deliverymodeFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$venueFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$attendancePatternFilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$regionFilterCheckboxes.on("click", debounce(doSearch, 1500));
 
-                 $("#ApplyFilter").on("click", debounce(doSearch,0));
-             };
+                $("#ApplyFilter").on("click", debounce(doSearch, 0));
+            };
 
             var onSucess = function (data) {
 
@@ -306,27 +313,27 @@
                 $.get("/ProviderCourses/FilterCourses?" + qs, success);
             };
 
-             function ShowValidationErrorMessage() {
-                    $elementSearchTerm.addClass(elementErrorClass);
-                    $formGroupSearchTerm.addClass(formGroupErrorClass);
-                    $searchForm.addClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.show();
-                    $validationMessageSearchTerm.css("margin-bottom", "15px");
+            function ShowValidationErrorMessage() {
+                $elementSearchTerm.addClass(elementErrorClass);
+                $formGroupSearchTerm.addClass(formGroupErrorClass);
+                $searchForm.addClass("govuk-form-group, govuk-form-group--error");
+                $validationMessageSearchTerm.show();
+                $validationMessageSearchTerm.css("margin-bottom", "15px");
             }
             function HideValidationErrorMessage() {
-                    $elementSearchTerm.removeClass(elementErrorClass);
-                    $formGroupSearchTerm.removeClass(formGroupErrorClass);
-                    $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
-                    $validationMessageSearchTerm.hide();
-                    $validationMessageSearchTerm.css("margin-bottom", "0");
+                $elementSearchTerm.removeClass(elementErrorClass);
+                $formGroupSearchTerm.removeClass(formGroupErrorClass);
+                $searchForm.removeClass("govuk-form-group, govuk-form-group--error");
+                $validationMessageSearchTerm.hide();
+                $validationMessageSearchTerm.css("margin-bottom", "0");
             }
 
-             // $elementSearchTerm.on("keyup", debounce(doSearch, 400));
+            // $elementSearchTerm.on("keyup", debounce(doSearch, 400));
             $buttonSearch.on("click", doSearch);
 
 
 
-      function ValidateAndSearchForProvider() {
+            function ValidateAndSearchForProvider() {
                 var trimmed = $elementSearchTerm.val().trim();
                 $elementSearchTerm.val(trimmed);
                 $elementSearchTerm.trigger("blur");
