@@ -235,6 +235,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     "StudyMode",
                     "AttendancePattern",
                     "DeliveryMode",
+                    "CourseType",
                     "ProviderDisplayName,count:100",
                     "RegionName,count:100"
                 },
