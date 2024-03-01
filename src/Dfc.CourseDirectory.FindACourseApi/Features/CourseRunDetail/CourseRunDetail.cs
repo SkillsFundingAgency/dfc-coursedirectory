@@ -65,7 +65,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
             var provider = getProvider.Result;
             var getProviderContact = _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = provider.ProviderId });
 
-            var qualification = getQualification.Result.Items.SingleOrDefault();
+            SearchResultItem<Core.Search.Models.Lars> qualification = null;
+            if (course.LearnAimRef != null)
+            {
+                qualification = getQualification.Result.Items.SingleOrDefault();
+            }
 
             var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(new GetProviderById { ProviderId = provider.ProviderId });
             var getProviderVenues = _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = provider.ProviderId });
@@ -109,14 +113,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                 National = courseRun.National,
                 Course = new CourseViewModel
                 {
-                    AwardOrgCode = qualification.Record.AwardOrgCode,
+                    AwardOrgCode = qualification?.Record.AwardOrgCode ?? null,
                     CourseDescription = HtmlEncode(course.CourseDescription),
                     CourseId = course.CourseId,
                     EntryRequirements = HtmlEncode(course.EntryRequirements),
                     HowYoullBeAssessed = HtmlEncode(course.HowYoullBeAssessed),
                     HowYoullLearn = HtmlEncode(course.HowYoullLearn),
                     LearnAimRef = course.LearnAimRef,
-                    QualificationLevel = qualification.Record.NotionalNVQLevelv2,
+                    QualificationLevel = qualification?.Record.NotionalNVQLevelv2 ?? null,
                     WhatYoullLearn = HtmlEncode(course.WhatYoullLearn),
                     WhatYoullNeed = HtmlEncode(course.WhatYoullNeed),
                     WhereNext = HtmlEncode(course.WhereNext),
@@ -163,7 +167,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     EmployerSatisfaction = sqlProvider?.EmployerSatisfaction,
                     LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
                 },
-                Qualification = new QualificationViewModel
+                Qualification = qualification != null ? new QualificationViewModel
                 {
                     AwardOrgCode = qualification.Record.AwardOrgCode,
                     AwardOrgName = HtmlEncode(qualification.Record.AwardOrgName),
@@ -173,7 +177,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     QualificationLevel = qualification.Record.NotionalNVQLevelv2,
                     SectorSubjectAreaTier1Desc = HtmlEncode(qualification.Record.SectorSubjectAreaTier1Desc),
                     SectorSubjectAreaTier2Desc = HtmlEncode(qualification.Record.SectorSubjectAreaTier2Desc)
-                },
+                } : null,
                 AlternativeCourseRuns = alternativeCourseRuns.Select(c => new AlternativeCourseRunViewModel
                 {
                     CourseRunId = c.CourseRun.CourseRunId,
