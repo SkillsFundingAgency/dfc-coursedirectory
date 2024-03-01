@@ -42,7 +42,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
             if (course == null)
             {
-                return new NotFound();
+                course = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = request.CourseId });
+
+                if (course == null)
+                {
+                    return new NotFound();
+                }
             }
 
             var courseRun = course.CourseRuns.SingleOrDefault(c => c.CourseRunId == request.CourseRunId && c.CourseRunStatus == CourseStatus.Live);
@@ -83,6 +88,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 
             var regions = await _regionCache.GetAllRegions();
 
+            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+
             return new CourseRunDetailViewModel
             {
                 CourseRunId = courseRun.CourseRunId,
@@ -112,7 +119,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     QualificationLevel = qualification.Record.NotionalNVQLevelv2,
                     WhatYoullLearn = HtmlEncode(course.WhatYoullLearn),
                     WhatYoullNeed = HtmlEncode(course.WhatYoullNeed),
-                    WhereNext = HtmlEncode(course.WhereNext)
+                    WhereNext = HtmlEncode(course.WhereNext),
+                    CourseType = course.CourseType,
+                    CourseTypeDescription = course.CourseType.ToDescription(),
+                    SectorId = course.SectorId,
+                    SectorDescription = sectors.FirstOrDefault(s => s.Id == course.SectorId)?.Description ?? null,
+                    EducationLevel = course.EducationLevel,
+                    EducationLevelDescription = course.EducationLevel.ToDescription(),
+                    AwardingBody = course.AwardingBody
                 },
                 Venue = venue != null
                     ? new VenueViewModel

@@ -235,6 +235,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     "StudyMode",
                     "AttendancePattern",
                     "DeliveryMode",
+                    "SectorId",
+                    "EducationLevel",
                     "ProviderDisplayName,count:100",
                     "RegionName,count:100"
                 },
@@ -246,6 +248,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             };
 
             var result = await _courseSearchClient.Search(query);
+
+            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
 
             return new SearchViewModel()
             {
@@ -310,8 +314,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                             null,
                         VenueTown = HtmlEncode(i.Record.VenueTown),
                         CourseType = i.Record.CourseType,
+                        CourseTypeDescription = i.Record.CourseType.ToDescription(),
                         SectorId = i.Record.SectorId,
+                        SectorDescription = sectors.FirstOrDefault(s => s.Id == i.Record.SectorId)?.Description ?? null,
                         EducationLevel = i.Record.EducationLevel,
+                        EducationLevelDescription = i.Record.EducationLevel.ToDescription(),
                         AwardingBody = i.Record.AwardingBody
                     };
 

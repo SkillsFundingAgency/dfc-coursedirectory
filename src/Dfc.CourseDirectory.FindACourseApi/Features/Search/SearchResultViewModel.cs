@@ -41,8 +41,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         public int? DurationValue { get; set; }
         public bool? National { get; set; }
         public CourseType? CourseType { get; set; }
+        public string CourseTypeDescription { get; set; }
         public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
         public EducationLevel? EducationLevel { get; set; }
+        public string EducationLevelDescription { get; set; }
         public string AwardingBody { get; set; }
     }
 }

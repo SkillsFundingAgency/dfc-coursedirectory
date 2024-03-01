@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 {
     internal static class UpsertHelper
     {
-        private const string Collation = "SQL_Latin1_General_CP1_CI_AS";
+        private const string Collation = "Latin1_General_CI_AS";
 
         private static readonly int _commandTimeout = (int)TimeSpan.FromMinutes(5).TotalSeconds;
 
