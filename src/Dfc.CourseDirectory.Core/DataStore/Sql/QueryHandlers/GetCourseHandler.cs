@@ -17,7 +17,7 @@ SELECT
     c.CourseId, c.CreatedOn, c.UpdatedOn, c.ProviderId, c.ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded,
-    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
+    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle, c.CourseType
 FROM Pttcd.Courses c
 JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
