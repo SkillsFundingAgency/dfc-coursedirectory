@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 DROP TABLE IF EXISTS #Postcodes
 
 CREATE TABLE #Postcodes (
-    Postcode varchar(9) COLLATE Latin1_General_CI_AS,
+    Postcode varchar(9) COLLATE SQL_Latin1_General_CP1_CI_AS,
     Latitude float,
     Longitude float,
     InEngland bit
