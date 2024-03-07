@@ -108,7 +108,7 @@ SET
 WHERE 
 	CourseType = 4  
 	AND CourseStatus = 1
-	AND ProviderId NOT IN (SELECT DISTINCT(ProviderId) FROM Pttcd.FindACourseIndexCampaignCodes)
+	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
 ---------------------------------------------------------------------------------------------------------------------------------
 
 
