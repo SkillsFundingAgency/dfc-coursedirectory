@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var blobContainerClient = new Mock<BlobContainerClient>();
 
             blobContainerClient
-                .Setup(mock => mock.GetBlobClient("LEVEL3_FREE.csv"))
+                .Setup(mock => mock.GetBlobClient($"{campaignCode}.csv"))
                 .Returns(blobClient.Object);
             var blobServiceClient = new Mock<BlobServiceClient>();
 
