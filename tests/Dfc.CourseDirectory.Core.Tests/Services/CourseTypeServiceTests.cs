@@ -268,14 +268,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()
-                .RuleFor(c => c.CodeId, f => f.Random.Int(8).ToString())
-                .RuleFor(c => c.CampaignCodes, f => "[\"LEVEL3_FREE\"]")
-                .RuleFor(c => c.ProviderId, f => f.Random.Guid())
-                .RuleFor(c => c.LearnAimRef, f => "50098123")
-                .Generate(4);
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), providerId };
 
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
             // Act
             var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
@@ -295,10 +290,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()
-                .Generate(0);
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
             // Act
             var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
@@ -306,7 +300,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Assert
             Assert.Equal(expectedCourseType, courseType);
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
-            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>()), Times.Once);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>()), Times.Once);
         }
 
         [Fact]
@@ -319,14 +313,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()
-                .RuleFor(c => c.CodeId, f => f.Random.Int(8).ToString())
-                .RuleFor(c => c.CampaignCodes, f => "[\"LEVEL3_FREE\"]")
-                .RuleFor(c => c.ProviderId, f => f.Random.Guid())
-                .RuleFor(c => c.LearnAimRef, f => "50098123")
-                .Generate(3);
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
-
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), providerId };
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
             // Act
             var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
@@ -334,7 +322,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Assert
             Assert.Equal(expectedCourseType, courseType);
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
-            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>()), Times.Once);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>()), Times.Once);
         }
 
         [Fact]
@@ -347,9 +335,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()                
-                .Generate(0);
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
 
             // Act
@@ -358,7 +345,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Assert
             Assert.Equal(expectedCourseType, courseType);
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
-            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>()), Times.Once);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>()), Times.Once);
         }
 
         [Fact]
@@ -371,13 +358,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()
-                .RuleFor(c => c.CodeId, f => f.Random.Int(8).ToString())
-                .RuleFor(c => c.CampaignCodes, f => "[\"LEVEL3_FREE\"]")
-                .RuleFor(c => c.ProviderId, f => f.Random.Guid())
-                .RuleFor(c => c.LearnAimRef, f => "50098123")
-                .Generate(2);
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), providerId };
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
             // Act
             var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
@@ -385,7 +367,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Assert
             Assert.Equal(expectedCourseType, courseType);
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
-            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>()), Times.Once);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>()), Times.Once);
         }
 
         [Fact]
@@ -398,13 +380,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()
-                .RuleFor(c => c.CodeId, f => f.Random.Int(8).ToString())
-                .RuleFor(c => c.CampaignCodes, f => "[\"LEVEL3_FREE\"]")
-                .RuleFor(c => c.ProviderId, f => f.Random.Guid())
-                .RuleFor(c => c.LearnAimRef, f => "50098123")
-                .Generate(1);
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), providerId };
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
             // Act
             var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
@@ -424,13 +401,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
-            var campaignCodeRecords = new Faker<ProviderCampaignCode>()
-                .RuleFor(c => c.CodeId, f => f.Random.Int(8).ToString())
-                .RuleFor(c => c.CampaignCodes, f => "[\"LEVEL3_FREE\"]")
-                .RuleFor(c => c.ProviderId, f => f.Random.Guid())
-                .RuleFor(c => c.LearnAimRef, f => "50098123")
-                .Generate(1);
-            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCampaignCodesForProvider>())).ReturnsAsync(campaignCodeRecords);
+            var eligibleProvidersList = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), providerId };
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetFcfjEligibleProvidersList>())).ReturnsAsync(eligibleProvidersList);
 
             // Act
             var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
