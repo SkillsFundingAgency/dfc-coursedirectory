@@ -1,10 +1,15 @@
 ﻿using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs;
+using Azure;
 using CsvHelper;
 using Dapper;
 using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
+using Moq;
 using Xunit;
+using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
@@ -38,7 +43,31 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             }
             csvStream.Seek(0L, SeekOrigin.Begin);
 
-            var importer = new CampaignDataImporter(SqlQueryDispatcherFactory);
+            var downloadResponse = new Mock<Response<BlobDownloadInfo>>();
+
+            var blobDownloadInfo = BlobsModelFactory.BlobDownloadInfo(content: csvStream);
+
+            downloadResponse.SetupGet(mock => mock.Value).Returns(blobDownloadInfo);
+
+            var blobClient = new Mock<BlobClient>();
+
+            blobClient
+                .Setup(mock => mock.DownloadAsync())
+                .ReturnsAsync(downloadResponse.Object);
+
+            var blobContainerClient = new Mock<BlobContainerClient>();
+
+            blobContainerClient
+                .Setup(mock => mock.GetBlobClient("LEVEL3_FREE.csv"))
+                .Returns(blobClient.Object);
+            var blobServiceClient = new Mock<BlobServiceClient>();
+
+            blobServiceClient
+                .Setup(mock => mock.GetBlobContainerClient(OnspdDataImporter.ContainerName))
+                .Returns(blobContainerClient.Object);
+
+
+            var importer = new CampaignDataImporter(SqlQueryDispatcherFactory, blobServiceClient.Object);
 
             // Act
             await importer.ImportCampaignData(campaignCode, csvStream);
