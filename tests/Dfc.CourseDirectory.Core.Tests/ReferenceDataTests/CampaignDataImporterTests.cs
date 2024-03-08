@@ -49,22 +49,9 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             downloadResponse.SetupGet(mock => mock.Value).Returns(blobDownloadInfo);
 
-            var blobClient = new Mock<BlobClient>();
-
-            blobClient
-                .Setup(mock => mock.DownloadAsync())
-                .ReturnsAsync(downloadResponse.Object);
-
-            var blobContainerClient = new Mock<BlobContainerClient>();
-
-            blobContainerClient
-                .Setup(mock => mock.GetBlobClient($"{campaignCode}.csv"))
-                .Returns(blobClient.Object);
+            
             var blobServiceClient = new Mock<BlobServiceClient>();
-
-            blobServiceClient
-                .Setup(mock => mock.GetBlobContainerClient(OnspdDataImporter.ContainerName))
-                .Returns(blobContainerClient.Object);
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
 
 
             var importer = new CampaignDataImporter(SqlQueryDispatcherFactory, blobServiceClient.Object);
