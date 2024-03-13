@@ -3,7 +3,6 @@ using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Search.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 {
@@ -63,15 +62,19 @@ SELECT
     v.Position.Long AS VenueLongitude,
     v.Telephone AS VenueTelephone,
     v.Email AS VenueEmail,
+    cr.CreatedOn,
     v.Website AS VenueWebsite,
-    cr.UpdatedOn,
-	c.CourseType
+    cr.UpdatedOn,    
+	c.CourseType,
+    c.SectorId,
+    c.EducationLevel, 
+    c.AwardingBody
 FROM [Pttcd].[CourseRuns] cr
 INNER JOIN [Pttcd].[Courses] c ON c.CourseId = cr.CourseId
 INNER JOIN [Pttcd].[Providers] p ON p.ProviderId = c.ProviderId 
 LEFT JOIN [Pttcd].[Venues] v ON cr.VenueId = v.VenueId
 LEFT JOIN cte_course_run_regions r ON cr.CourseRunId = r.CourseRunId
-WHERE p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
+WHERE p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels},{(int)ProviderType.FE + (int)ProviderType.NonLARS},{(int)ProviderType.NonLARS + (int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
     AND cr.CourseRunId IN (SELECT CourseRunId FROM cte_CourseRunIds)
 ";
 

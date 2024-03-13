@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
     {
         public Guid ProviderId { get; set; }
         public DateTime Today { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class ExpiredCourseRunResult

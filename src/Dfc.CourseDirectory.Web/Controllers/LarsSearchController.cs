@@ -48,7 +48,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     SearchText = request.SearchTerm,
                     CertificationEndDateFilter = DateTimeOffset.UtcNow,
                     Facets = new[] { nameof(Lars.AwardOrgCode), nameof(Lars.NotionalNVQLevelv2) },
-                    PageSize = 0
+                    PageSize = 0, 
+                    ExcludeExpired = true
                 }),
                 _searchClient.Search(new LarsSearchQuery
                 {
@@ -59,41 +60,17 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CertificationEndDateFilter = DateTimeOffset.UtcNow,
                     Facets = new[] { nameof(Lars.AwardOrgCode), nameof(Lars.NotionalNVQLevelv2) },
                     PageSize = _larsSearchSettings.ItemsPerPage,
-                    PageNumber = request.PageNo
+                    PageNumber = request.PageNo, 
+                    ExcludeExpired = true
                 }));
 
             var unfilteredResult = results[0];
             var result = results[1];
 
-            //Remove expired from result.Items
-            var expiredResults = new List<string>();
-            foreach (var item in result.Items)
-            {
-                using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted);
-                var lastNewStartDates = await dispatcher.ExecuteQuery(new GetValidityLastNewStartDate() { LearnAimRef = item.Record.LearnAimRef });
-                if (lastNewStartDates.Count() > 0)
-                {
-                    if (lastNewStartDates.Contains(string.Empty))
-                    { }
-                    else
-                    {
-                        List<DateTime> dates = new List<DateTime>();
-                        foreach (var date in lastNewStartDates)
-                        {
-                            DateTime resultdate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                            dates.Add(resultdate);
-                        }
-                        DateTime latestdate = dates.OrderByDescending(x => x).First();
-                        if (latestdate < DateTime.Now)
-                            expiredResults.Add(item.Record.LearnAimRef);
-                    }
-                }
-            }
-            var enumerable = result.Items.Where(r => !expiredResults.Contains(r.Record.LearnAimRef));
             var viewModel = new LarsSearchResultModel
             {
                 SearchTerm = request.SearchTerm,
-                Items = enumerable.Select(r => r.Record).Select(LarsSearchResultItemModel.FromLars),
+                Items = result.Items.Select(r => r.Record).Select(LarsSearchResultItemModel.FromLars),
                 Filters = new[]
                 {
                     new LarsSearchFilterModel
@@ -129,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                             .OrderBy(f => f.Text).ToArray()
                     }
                 },
-                TotalCount = (int)(enumerable.ToList().Count()),
+                TotalCount = (int)(result.TotalCount ?? 0),
                 PageNumber = request.PageNo,
                 ItemsPerPage = _larsSearchSettings.ItemsPerPage,
                 PageParamName = _larsSearchSettings.PageParamName,

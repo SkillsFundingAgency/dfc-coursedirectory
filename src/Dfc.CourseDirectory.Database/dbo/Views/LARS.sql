@@ -5,7 +5,16 @@ CREATE VIEW [dbo].[LARS]
 AS
 SELECT        ld.LearnAimRef, ld.LearnAimRefTitle, lt.LearnAimRefTypeDesc, ld.NotionalNVQLevelv2, ld.AwardOrgCode, ld.AwardOrgAimRef, ld.LearnDirectClassSystemCode1, ld.LearnDirectClassSystemCode2, ld.SectorSubjectAreaTier1, 
                          SSA1.SectorSubjectAreaTier1Desc, ld.SectorSubjectAreaTier2, SSA2.SectorSubjectAreaTier2Desc, ld.GuidedLearningHours, ld.TotalQualificationTime, ld.UnitType, ac.AwardOrgName, ld.Modified_On, ld.EffectiveTo, 
-                         ld.CertificationEndDate, ld.OperationalEndDate
+                         ld.CertificationEndDate, ld.OperationalEndDate,
+Case when ld.LearnAimRef in  
+(
+select LearnAimRef from lars.Validity where LastNewStartDate =''
+UNION ALL
+select LearnAimRef from lars.Validity where LearnAimRef not in (
+select LearnAimRef from lars.Validity where LastNewStartDate ='') group by LearnAimRef HAVING max(convert(varchar, LastNewStartDate ,105))>GETDATE()
+) Then 'false'
+Else 'true'
+End as IsExpired
 FROM            LARS.LearningDelivery AS ld INNER JOIN
                          LARS.AwardOrgCode AS ac ON ac.AwardOrgCode = ld.AwardOrgCode INNER JOIN
                          LARS.LearnAimRefType AS lt ON lt.LearnAimRefType = ld.LearnAimRefType INNER JOIN

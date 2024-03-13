@@ -59,7 +59,41 @@ namespace Dfc.CourseDirectory.Testing
 
                 writeRows(csvWriter);
             });
+        public static Stream CreateNonLarsCourseUploadCsvStream(Action<CsvWriter> writeRows) =>
+            CreateCsvStream(csvWriter =>
+            {
+                // N.B. We deliberately do not use the CsvCourseRow class here to ensure we notice if any columns change name
+                csvWriter.WriteField("EDUCATION_LEVEL");
+                csvWriter.WriteField("SECTOR");
+                csvWriter.WriteField("AWARDING_BODY");
+                csvWriter.WriteField("COURSE_TYPE");
+                csvWriter.WriteField("WHO_THIS_COURSE_IS_FOR");
+                csvWriter.WriteField("ENTRY_REQUIREMENTS");
+                csvWriter.WriteField("WHAT_YOU_WILL_LEARN");
+                csvWriter.WriteField("HOW_YOU_WILL_LEARN");
+                csvWriter.WriteField("WHAT_YOU_WILL_NEED_TO_BRING");
+                csvWriter.WriteField("HOW_YOU_WILL_BE_ASSESSED");
+                csvWriter.WriteField("WHERE_NEXT");
+                csvWriter.WriteField("COURSE_NAME");
+                csvWriter.WriteField("YOUR_REFERENCE");
+                csvWriter.WriteField("DELIVERY_MODE");
+                csvWriter.WriteField("START_DATE");
+                csvWriter.WriteField("FLEXIBLE_START_DATE");
+                csvWriter.WriteField("VENUE_NAME");
+                csvWriter.WriteField("YOUR_VENUE_REFERENCE");
+                csvWriter.WriteField("NATIONAL_DELIVERY");
+                csvWriter.WriteField("SUB_REGION");
+                csvWriter.WriteField("COURSE_WEBPAGE");
+                csvWriter.WriteField("COST");
+                csvWriter.WriteField("COST_DESCRIPTION");
+                csvWriter.WriteField("DURATION");
+                csvWriter.WriteField("DURATION_UNIT");
+                csvWriter.WriteField("STUDY_MODE");
+                csvWriter.WriteField("ATTENDANCE_PATTERN");
+                csvWriter.NextRecord();
 
+                writeRows(csvWriter);
+            });
         public static Stream CreateCourseUploadCsvStream(params CsvCourseRow[] rows) => CreateCourseUploadCsvStream(csvWriter =>
         {
             foreach (var row in rows)
@@ -93,9 +127,49 @@ namespace Dfc.CourseDirectory.Testing
             }
         });
 
-        public static Stream CreateCourseUploadCsvStream(string learningAimRef, int rowCount) =>
-            CreateCourseUploadCsvStream(CreateCourseUploadRows(learningAimRef, rowCount).ToArray());
+        public static Stream CreateNonLarsCourseUploadCsvStream(params CsvNonLarsCourseRow[] rows) => CreateNonLarsCourseUploadCsvStream(csvWriter =>
+        {
+            foreach (var row in rows)
+            {
+                csvWriter.WriteField(row.EducationLevel);
+                csvWriter.WriteField(row.Sector);
+                csvWriter.WriteField(row.AwardingBody);                
+                csvWriter.WriteField(row.CourseType);
+                csvWriter.WriteField(row.WhoThisCourseIsFor);
+                csvWriter.WriteField(row.EntryRequirements);
+                csvWriter.WriteField(row.WhatYouWillLearn);
+                csvWriter.WriteField(row.HowYouWillLearn);
+                csvWriter.WriteField(row.WhatYouWillNeedToBring);
+                csvWriter.WriteField(row.HowYouWillBeAssessed);
+                csvWriter.WriteField(row.WhereNext);
+                csvWriter.WriteField(row.CourseName);
+                csvWriter.WriteField(row.ProviderCourseRef);
+                csvWriter.WriteField(row.DeliveryMode);
+                csvWriter.WriteField(row.StartDate);
+                csvWriter.WriteField(row.FlexibleStartDate);
+                csvWriter.WriteField(row.VenueName);
+                csvWriter.WriteField(row.ProviderVenueRef);
+                csvWriter.WriteField(row.NationalDelivery);
+                csvWriter.WriteField(row.SubRegions);
+                csvWriter.WriteField(row.CourseWebPage);
+                csvWriter.WriteField(row.Cost);
+                csvWriter.WriteField(row.CostDescription);
+                csvWriter.WriteField(row.Duration);
+                csvWriter.WriteField(row.DurationUnit);
+                csvWriter.WriteField(row.StudyMode);
+                csvWriter.WriteField(row.AttendancePattern);
 
+                csvWriter.NextRecord();
+            }
+        });
+
+        public static Stream CreateCourseUploadCsvStream(string learningAimRef, int rowCount, bool isNonLars)
+        {
+            if(isNonLars)
+                return CreateNonLarsCourseUploadCsvStream(CreateNonLarsCourseUploadRows(rowCount).ToArray());
+            else
+                return CreateCourseUploadCsvStream(CreateCourseUploadRows(learningAimRef, rowCount).ToArray());
+        }
         public static IEnumerable<CsvCourseRow> CreateCourseUploadRows(string learningAimRef, int rowCount)
         {
             for (int i = 0; i < rowCount; i++)
@@ -129,7 +203,42 @@ namespace Dfc.CourseDirectory.Testing
                 };
             }
         }
-
+        public static IEnumerable<CsvNonLarsCourseRow> CreateNonLarsCourseUploadRows(int rowCount)
+        {
+            for (int i = 0; i < rowCount; i++)
+            {
+                yield return new CsvNonLarsCourseRow()
+                {
+                    CourseType = "Skills Bootcamp",
+                    WhoThisCourseIsFor = "Who this course is for",
+                    EntryRequirements = "",
+                    WhatYouWillLearn = "",
+                    HowYouWillLearn = "",
+                    WhatYouWillNeedToBring = "",
+                    HowYouWillBeAssessed = "",
+                    WhereNext = "",
+                    CourseName = "Course name",
+                    ProviderCourseRef = "",
+                    DeliveryMode = "Online",
+                    StartDate = "",
+                    FlexibleStartDate = "yes",
+                    VenueName = "",
+                    ProviderVenueRef = "",
+                    NationalDelivery = "",
+                    SubRegions = "",
+                    CourseWebPage = "provider.com/course",
+                    Cost = "",
+                    CostDescription = "Free",
+                    Duration = "2",
+                    DurationUnit = "years",
+                    StudyMode = "",
+                    AttendancePattern = "",
+                    AwardingBody = "test awarding body",
+                    EducationLevel = "1",
+                    Sector = "ENVIRONMENTAL"
+                };
+            }
+        }
         public static Stream CreateVenueUploadCsvStream(Action<CsvWriter> writeRows) =>
             CreateCsvStream(csvWriter =>
             {
@@ -218,7 +327,22 @@ namespace Dfc.CourseDirectory.Testing
 
             return new CourseDataUploadRowInfoCollection(rowInfos);
         }
+        public static NonLarsCourseDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvNonLarsCourseRow> rows)
+        {
+            var rowInfos = new List<NonLarsCourseDataUploadRowInfo>();
 
+            foreach (var group in CsvNonLarsCourseRow.GroupRows(rows))
+            {
+                var courseId = Guid.NewGuid();
+
+                foreach (var row in group)
+                {
+                    rowInfos.Add(new NonLarsCourseDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, courseId));
+                }
+            }
+
+            return new NonLarsCourseDataUploadRowInfoCollection(rowInfos);
+        }
         public static VenueDataUploadRowInfoCollection ToDataUploadRowCollection(this IEnumerable<CsvVenueRow> rows)
         {
             var rowsArray = rows.ToArray();

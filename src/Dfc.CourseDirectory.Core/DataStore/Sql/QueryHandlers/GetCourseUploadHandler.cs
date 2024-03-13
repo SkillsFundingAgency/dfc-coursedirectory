@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
 SELECT CourseUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
-ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn
+ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn, IsNonLars
 FROM Pttcd.CourseUploads WITH (HOLDLOCK)
 WHERE CourseUploadId = @CourseUploadId";
 

@@ -17,12 +17,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
 {
     public class Query : IRequest<OneOf<UploadHasNoErrors, ViewModel>>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public struct UploadHasNoErrors { }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
+        public bool IsNonLars { get; set; }
         public WhatNext? WhatNext { get; set; }
     }
 
@@ -38,6 +40,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         public Guid CourseId { get; set; }
         public string LearnAimRef { get; set; }
         public string LearnAimRefTitle { get; set; }
+        public string CourseName { get; set; }
+        public string DeliveryMode { get; set; }
+        public string StartDate { get; set; }
         public IReadOnlyCollection<ViewModelErrorRow> CourseRows { get; set; }
         public IReadOnlyCollection<string> ErrorFields { get; set; }
     }
@@ -78,14 +83,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
             var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
-                _providerContextProvider.GetProviderId());
+                _providerContextProvider.GetProviderId(),request.IsNonLars);
 
             if (errorRows.Count == 0)
             {
                 return new UploadHasNoErrors();
             }
 
-            return await CreateViewModel(errorRows);
+            return await CreateViewModel(errorRows, request.IsNonLars);
         }
 
         public async Task<OneOf<ModelWithErrors<ViewModel>, Success>> Handle(Command request, CancellationToken cancellationToken)
@@ -96,74 +101,128 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
             if (!validationResult.IsValid)
             {
                 var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
-                    _providerContextProvider.GetProviderId());
+                    _providerContextProvider.GetProviderId(),request.IsNonLars);
 
-                var vm = await CreateViewModel(errorRows);
+                var vm = await CreateViewModel(errorRows, request.IsNonLars);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
             return new Success();
         }
 
-        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows)
+        private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, bool isNonLars)
         {
             var errorRowCount = rows.Count;
             var canResolveOnScreen = errorRowCount <= 30;
             var errorCount = rows.SelectMany(r => r.Errors).Count();
 
-            var learnAimRefs = rows.Select(r => r.LearnAimRef).Distinct();
-            var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
-
-            return new ViewModel()
+            if (isNonLars)
             {
-                ErrorRows = rows
-                    .Select(r =>
-                    {
-                        var errorsByComponent = r.Errors
-                            .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
-                            .GroupBy(t => Core.DataManagement.Errors.GetCourseErrorComponent(t.ErrorCode))
-                            .ToDictionary(g => g.Key, g => g.Select(i => i.Field).ToArray());
-
-                        return (
-                            Row: r,
-                            GroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.Course, Array.Empty<string>()),
-                            NonGroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.CourseRun, Array.Empty<string>())
-                        );
-                    })
-                    .GroupBy(t => t.Row.CourseId)
-                    .Select(g =>
-                    {
-                        var learnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single();
-
-                        return new ViewModelErrorRowGroup()
+                return new ViewModel()
+                {
+                    ErrorRows = rows
+                        .Select(r => 
                         {
-                            CourseId = g.Key,
-                            LearnAimRef = learnAimRef,
-                            LearnAimRefTitle = learningDeliveries[learnAimRef].LearnAimRefTitle,
-                            CourseRows = g
-                                .Select(r => new ViewModelErrorRow()
-                                {
-                                    CourseName = r.Row.CourseName,
-                                    StartDate = r.Row.StartDate,
-                                    DeliveryMode = r.Row.DeliveryMode,
-                                    ErrorFields = r.NonGroupErrorFields
-                                })
-                                .Where(r => r.ErrorFields.Count > 0)
-                                .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
-                                .ThenBy(r => r.StartDate)
-                                .ThenBy(r => r.DeliveryMode)
-                                .ToArray(),
-                            ErrorFields = g.First().GroupErrorFields
-                        };
-                    })
-                    .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
-                    .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
-                    .ThenBy(g => g.LearnAimRef)
-                    .ThenBy(g => g.CourseId)
-                    .ToArray(),
-                CanResolveOnScreen = canResolveOnScreen,
-                ErrorCount = errorCount
-            };
+                            var errorsByComponent = r.Errors
+                                .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
+                                .GroupBy(t => Core.DataManagement.Errors.GetCourseErrorComponent(t.ErrorCode))
+                                .ToDictionary(g => g.Key, g => g.Select(i => i.Field).ToArray());
+
+                            return (
+                                Row: r,
+                                GroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.Course, Array.Empty<string>()),
+                                NonGroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.CourseRun, Array.Empty<string>())
+                            );
+                        })
+                        .GroupBy(t => t.Row.CourseId)
+                        .Select(g =>
+                        {
+                            return new ViewModelErrorRowGroup()
+                            {
+                                CourseId = g.Key,
+                                CourseName = g.First().Row.CourseName,
+                                DeliveryMode = g.First().Row.DeliveryMode,
+                                StartDate = g.First().Row.StartDate,
+                                CourseRows = g
+                                    .Select(r => new ViewModelErrorRow()
+                                    {
+                                        CourseName = r.Row.CourseName,
+                                        StartDate = r.Row.StartDate,
+                                        DeliveryMode = r.Row.DeliveryMode,
+                                        ErrorFields = r.NonGroupErrorFields
+                                    })
+                                    .Where(r => r.ErrorFields.Count > 0)
+                                    .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
+                                    .ThenBy(r => r.StartDate)
+                                    .ThenBy(r => r.DeliveryMode)
+                                    .ToArray(),
+                                ErrorFields = g.First().GroupErrorFields
+                            };
+                        })
+                        .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
+                        .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
+                        .ThenBy(g => g.CourseId)
+                        .ToArray(),
+                    CanResolveOnScreen = canResolveOnScreen,
+                    ErrorCount = errorCount
+                };
+            }
+            else
+            {
+                var learnAimRefs = rows.Select(r => r.LearnAimRef).Distinct();
+                var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = learnAimRefs });
+
+                return new ViewModel()
+                {
+                    ErrorRows = rows
+                        .Select(r =>
+                        {
+                            var errorsByComponent = r.Errors
+                                .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
+                                .GroupBy(t => Core.DataManagement.Errors.GetCourseErrorComponent(t.ErrorCode))
+                                .ToDictionary(g => g.Key, g => g.Select(i => i.Field).ToArray());
+
+                            return (
+                                Row: r,
+                                GroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.Course, Array.Empty<string>()),
+                                NonGroupErrorFields: errorsByComponent.GetValueOrDefault(CourseErrorComponent.CourseRun, Array.Empty<string>())
+                            );
+                        })
+                        .GroupBy(t => t.Row.CourseId)
+                        .Select(g =>
+                        {
+                            var learnAimRef = g.Select(r => r.Row.LearnAimRef).Distinct().Single();
+
+                            return new ViewModelErrorRowGroup()
+                            {
+                                CourseId = g.Key,
+                                LearnAimRef = learnAimRef,
+                                LearnAimRefTitle = learningDeliveries[learnAimRef].LearnAimRefTitle,
+                                CourseRows = g
+                                    .Select(r => new ViewModelErrorRow()
+                                    {
+                                        CourseName = r.Row.CourseName,
+                                        StartDate = r.Row.StartDate,
+                                        DeliveryMode = r.Row.DeliveryMode,
+                                        ErrorFields = r.NonGroupErrorFields
+                                    })
+                                    .Where(r => r.ErrorFields.Count > 0)
+                                    .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
+                                    .ThenBy(r => r.StartDate)
+                                    .ThenBy(r => r.DeliveryMode)
+                                    .ToArray(),
+                                ErrorFields = g.First().GroupErrorFields
+                            };
+                        })
+                        .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
+                        .ThenByDescending(g => g.ErrorFields.Contains("Course description") ? 1 : 0)
+                        .ThenBy(g => g.LearnAimRef)
+                        .ThenBy(g => g.CourseId)
+                        .ToArray(),
+                    CanResolveOnScreen = canResolveOnScreen,
+                    ErrorCount = errorCount
+                };
+            }
         }
 
         private class CommandValidator : AbstractValidator<Command>

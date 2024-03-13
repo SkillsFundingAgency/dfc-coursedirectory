@@ -11,10 +11,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteUpload
 {
     public class Query : IRequest<Command>
     {
+        public bool IsNonLars { get; set; } 
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
+        public bool IsNonLars { get; set; }
         public bool Confirm { get; set; }
     }
 
@@ -32,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteUpload
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken) =>
-            Task.FromResult(new Command());
+            Task.FromResult(new Command() { IsNonLars = request.IsNonLars});
 
         public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -45,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteUpload
                 return new ModelWithErrors<Command>(new Command(), validationResult);
             }
 
-            await _fileUploadProcessor.DeleteCourseUploadForProvider(_providerContextProvider.GetProviderId());
+            await _fileUploadProcessor.DeleteCourseUploadForProvider(_providerContextProvider.GetProviderId(),request.IsNonLars);
 
             return new Success();
         }

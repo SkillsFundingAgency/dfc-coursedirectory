@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses
@@ -9,14 +10,26 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
     public class ExpiredCourseRunsController : Controller
     {
         private readonly IMediator _mediator;
-
+        private ISession Session => HttpContext.Session;
+        protected const string SessionNonLarsCourse = "NonLarsCourse";
         public ExpiredCourseRunsController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index() =>
-            await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query(), vm => View("ExpiredCourseRuns", vm));
+        public async Task<IActionResult> Index(bool isNonLars)
+        {
+            if (isNonLars)
+            {
+                Session.SetString(SessionNonLarsCourse,"true");
+            }
+            else
+            {
+                Session.SetString(SessionNonLarsCourse, "false");
+            }
+            return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query() { IsNonLars = isNonLars }, vm => View("ExpiredCourseRuns", vm));
+        }
+            
     }
 }

@@ -8,6 +8,7 @@ namespace Dfc.CourseDirectory.Core.Models
     {
         None = 0,
         FE = 1,
+        NonLARS = 2,
         TLevels = 4
     }
 
@@ -25,6 +26,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 {
                     ProviderType.FE => "FE Courses",
                     ProviderType.TLevels => "T Levels",
+                    ProviderType.NonLARS => "Non LARS Courses",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
                 })
                 .ToArray();
@@ -39,6 +41,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 {
                     ProviderType.FE => "FE Courses",
                     ProviderType.TLevels => "T Levels",
+                    ProviderType.NonLARS => "Non LARS Courses",
                     _ => throw new NotImplementedException($"Unknown value: '{providerType}'.")
                 })
                 .ToArray();

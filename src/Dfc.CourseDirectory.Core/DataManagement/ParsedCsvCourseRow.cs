@@ -66,6 +66,18 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),
         };
 
+        public static string MapCourseType(CourseType? value) => value switch
+        {
+            CourseType.EssentialSkills => "Essential Skills",
+            CourseType.TLevels => "T Levels",
+            CourseType.HTQs => "HTQs",
+            CourseType.FreeCoursesForJobs => "Free Courses for Jobs",
+            CourseType.Multiply => "Multiply",
+            CourseType.SkillsBootcamp => "Skills Bootcamp",
+            null => null,
+            _ => throw new NotSupportedException($"Unknown value: '{value}'."),
+        };
+
         public static string MapDuration(int? value) => value?.ToString("0.##");
 
         public static string MapDurationUnit(CourseDurationUnit? value) => value switch
@@ -141,6 +153,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "workbased" => CourseDeliveryMode.WorkBased,
             "work" => CourseDeliveryMode.WorkBased,
             _ => (CourseDeliveryMode?)null
+        };
+
+        public static CourseType? ResolveCourseType(string value) => value?.ToLower()?.Trim() switch
+        {
+            "skills bootcamp" => CourseType.SkillsBootcamp,
+            "Skills bootcamp" => CourseType.SkillsBootcamp,
+            "Skillsbootcamp" => CourseType.SkillsBootcamp,
+            _ => (CourseType?)null
         };
 
         public static int? ResolveDuration(string value) =>

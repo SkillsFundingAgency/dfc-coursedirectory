@@ -61,13 +61,28 @@ namespace Dfc.CourseDirectory.Core
             {
                 var optionAsInt = r.ToInt32(provider: null);
 
-                // If the value is not a power of two treat it as a combination of other options
-                // and don't return it
-                if (valueAsInt == optionAsInt && (valueAsInt == 1 || valueAsInt == 4)) split.Add(r);
+                if (valueAsInt == optionAsInt) split.Add(r);
 
-                if (valueAsInt == 5)
+                else if (valueAsInt == 3)
+                {
+                    if (optionAsInt == 1 || optionAsInt == 2)
+                        split.Add(r);
+                }
+
+                else if (valueAsInt == 5)
                 {
                     if (optionAsInt == 1 || optionAsInt == 4)
+                        split.Add(r);
+                }
+
+                else if (valueAsInt == 6)
+                {
+                    if (optionAsInt == 2 || optionAsInt == 4)
+                        split.Add(r);
+                }
+                else if (valueAsInt == 7)
+                {
+                    if (optionAsInt == 1 || optionAsInt == 2 || optionAsInt == 4)
                         split.Add(r);
                 }
 

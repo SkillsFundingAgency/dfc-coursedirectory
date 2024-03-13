@@ -25,5 +25,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string NotionalNVQLevelv2 { get; set; }
         public string LearnAimRefTitle { get; set; }
         public CourseType? CourseType { get; set; }
+        public int? SectorId { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
     }
 }

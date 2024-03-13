@@ -45,6 +45,12 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public CourseStudyMode? StudyMode { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public bool NonLarsCourse { get; set; }
+        public CourseType? CourseType { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
     }
 
     public class CourseSummaryFilterItemModel

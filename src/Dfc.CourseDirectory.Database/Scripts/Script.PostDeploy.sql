@@ -79,6 +79,62 @@ WHERE
 DROP TABLE #LearnAimRefCourseTypes
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+---------Update Course type to null for those courses which have course type of 4 but are not in eligible proivders list---------
+UPDATE 
+	Pttcd.Courses 
+SET 
+	CourseType = NULL
+WHERE 
+	CourseType = 4  
+	AND CourseStatus = 1
+	AND ProviderId NOT IN (SELECT DISTINCT(ProviderId) FROM Pttcd.FindACourseIndexCampaignCodes)
+---------------------------------------------------------------------------------------------------------------------------------
+
+
+--------- This script inserts IFATE sectors in Pttcd.Sectors table-----------------
+  IF (NOT EXISTS (SELECT 1 FROM [Pttcd].[Sectors]))
+  BEGIN
+  
+	INSERT INTO [Pttcd].[Sectors] ([Id], [Code], [Description]) 
+	VALUES
+	(1,		'ENVIRONMENTAL',	'Agriculture, environmental and animal care'),
+	(2,		'BUSINESSADMIN',	'Business and administration'),
+	(3,		'CARE',				'Care services'),
+	(4,		'CATERINGHOSP',		'Catering and hospitality'),
+	(5,		'CONSTRUCTION',		'Construction and the built environment'),
+	(6,		'CREATIVE',			'Creative and design'),
+	(7,		'DIGITAL',			'Digital'),
+	(8,		'EDUCATION',		'Education and early years'),
+	(9,		'ENGMAN',			'Engineering and manufacturing'),
+	(10,	'BEAUTY',			'Hair and beauty'),
+	(11,	'HEALTH',			'Health and science'),
+	(12,	'LEGALFINANCE',		'Legal, finance and accounting'),
+	(13,	'PROTECTIVE',		'Protective services'),
+	(14,	'SALESMARKETING',	'Sales, marketing and procurement'),
+	(15,	'TRANSPORT',		'Transport and logistics')
+
+  END
+
+
+----- Script below will insert Non LARS Provider SubTypes----------------------------
+IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'NonLarsSubType'))
+BEGIN
+    Delete from Pttcd.[NonLarsSubType]
+END
+
+INSERT INTO [Pttcd].[NonLarsSubType]
+           ([NonLarsSubTypeId]
+           ,[Name]
+           ,[AddedOn]
+           ,[IsActive])
+     VALUES
+           ('7BEEC516-77D6-4115-A3B4-401D929F15FB'
+           ,'Skills Bootcamp'
+           ,'2023-12-27 13:16:33.797'
+           ,1)
+
+--------------------------------------------------------------------------------------
+
 
 
 DECLARE @Regions TABLE (

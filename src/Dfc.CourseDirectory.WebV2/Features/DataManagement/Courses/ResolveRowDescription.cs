@@ -15,11 +15,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
     public class Query : IRequest<ModelWithErrors<Command>>
     {
         public int RowNumber { get; set; }
+        public bool IsNonLars { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, UploadStatus>>
     {
         public int RowNumber { get; set; }
+        public bool IsNonLars { get; set; }
         public string WhoThisCourseIsFor { get; set; }
         public string EntryRequirements { get; set; }
         public string WhatYouWillLearn { get; set; }
@@ -44,11 +46,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<ModelWithErrors<Command>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var row = await GetRow(request.RowNumber);
+            var row = await GetRow(request.RowNumber, request.IsNonLars);
 
             var command = new Command()
             {
                 RowNumber = request.RowNumber,
+                IsNonLars = request.IsNonLars,
                 WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(row.WhoThisCourseIsFor),
                 EntryRequirements = ASCIICodeHelper.RemoveASCII(row.EntryRequirements),
                 WhatYouWillLearn = ASCIICodeHelper.RemoveASCII(row.WhatYouWillLearn),
@@ -66,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<OneOf<ModelWithErrors<Command>, UploadStatus>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var row = await GetRow(request.RowNumber);
+            var row = await GetRow(request.RowNumber, request.IsNonLars);
 
             Command formattedRequest = new Command
             {
@@ -77,7 +80,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 WhatYouWillNeedToBring = request.WhatYouWillNeedToBring?.Replace("\r\n", "\n"),
                 HowYouWillBeAssessed = request.HowYouWillBeAssessed?.Replace("\r\n", "\n"),
                 WhereNext = request.WhereNext?.Replace("\r\n", "\n"),
-                RowNumber = request.RowNumber
+                RowNumber = request.RowNumber,
+                IsNonLars = request.IsNonLars
             };
 
             var validator = new CommandValidator();
@@ -100,14 +104,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     WhatYouWillNeedToBring = ASCIICodeHelper.RemoveASCII(formattedRequest.WhatYouWillNeedToBring),
                     HowYouWillBeAssessed = ASCIICodeHelper.RemoveASCII(formattedRequest.HowYouWillBeAssessed),
                     WhereNext = ASCIICodeHelper.RemoveASCII(formattedRequest.WhereNext)
-                });
+                },request.IsNonLars);
         }
 
-        private async Task<CourseUploadRow> GetRow(int rowNumber)
+        private async Task<CourseUploadRow> GetRow(int rowNumber, bool isNonLars)
         {
             var providerId = _providerContextProvider.GetProviderId();
 
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars);
             if (row == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);

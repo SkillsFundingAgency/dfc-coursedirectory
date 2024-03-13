@@ -36,5 +36,8 @@
 	[VenueId] UNIQUEIDENTIFIER,
 	[CampaignCodes] NVARCHAR(MAX),
 	[CourseDataIsHtmlEncoded] BIT,
-	[CourseRunDataIsHtmlEncoded] BIT
+	[CourseRunDataIsHtmlEncoded] BIT,
+	[CourseType] TINYINT NULL,
+	[EducationLevel] TINYINT NULL,
+	[AwardingBody] NVARCHAR(MAX) NULL
 )

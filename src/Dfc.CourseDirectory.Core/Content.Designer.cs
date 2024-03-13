@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Content {
@@ -331,6 +331,42 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Awarding body must be {0} characters or fewer.
+        /// </summary>
+        public static string ERROR_COURSE_AWARDING_BODY_MAXLENGTH {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_AWARDING_BODY_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter course awarding body.
+        /// </summary>
+        public static string ERROR_COURSE_AWARDING_BODY_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_AWARDING_BODY_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a course type.
+        /// </summary>
+        public static string ERROR_COURSE_COURSE_TYPE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_COURSE_TYPE_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select an education level.
+        /// </summary>
+        public static string ERROR_COURSE_EDUCATION_LEVEL_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_EDUCATION_LEVEL_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Entry requirements must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH {
@@ -372,6 +408,15 @@ namespace Dfc.CourseDirectory.Core {
         public static string ERROR_COURSE_LARS_QAN_REQUIRED {
             get {
                 return ResourceManager.GetString("ERROR_COURSE_LARS_QAN_REQUIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a sector.
+        /// </summary>
+        public static string ERROR_COURSE_SECTOR_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_SECTOR_REQUIRED", resourceCulture);
             }
         }
         
@@ -500,14 +545,7 @@ namespace Dfc.CourseDirectory.Core {
                 return ResourceManager.GetString("ERROR_COURSERUN_COURSE_NAME_REQUIRED", resourceCulture);
             }
         }
-        /// <summary>
-        ///   Looks up a localized string similar to Enter a Course Web Page.
-        /// </summary>
-        public static string ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED {
-            get {
-                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED", resourceCulture);
-            }
-        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Course webpage must be a real website.
         /// </summary>
@@ -523,6 +561,15 @@ namespace Dfc.CourseDirectory.Core {
         public static string ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH {
             get {
                 return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a Course Web Page Url.
+        /// </summary>
+        public static string ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED", resourceCulture);
             }
         }
         

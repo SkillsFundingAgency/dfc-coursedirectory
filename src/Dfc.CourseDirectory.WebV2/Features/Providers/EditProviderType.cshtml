@@ -5,6 +5,7 @@
 
 <govuk-error-summary>
     <govuk-error-summary-item asp-for="ProviderType" />
+    <govuk-error-summary-item asp-for="SelectedNonLarsSubTypeIds" />
     <govuk-error-summary-item asp-for="SelectedProviderTLevelDefinitionIds" />
 </govuk-error-summary>
 
@@ -18,6 +19,27 @@
                 <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
                     @ProviderType.FE.ToDescription()
                 </govuk-checkboxes-item>
+
+                <govuk-checkboxes-item value="@((int)ProviderType.NonLARS)" checked="@(Model.ProviderType.HasFlag(ProviderType.NonLARS))" input-data-testid="nonLars" onchange="SelectAllNonLARSDefinitionCheckboxes($(this));">
+                    @ProviderType.NonLARS.ToDescription()
+
+                    <govuk-checkboxes-item-conditional>
+                        <govuk-checkboxes asp-for="@Model.SelectedNonLarsSubTypeIds">
+                            <govuk-checkboxes-fieldset>
+                                <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+                                    What Non LARS Courses can this provider offer?
+                                </govuk-checkboxes-fieldset-legend>
+                            </govuk-checkboxes-fieldset>
+                            @foreach (var providerNonLars in Model.ProviderNonLarsSubTypes)
+                            {
+                                <govuk-checkboxes-item value="@providerNonLars.NonLarsSubTypeId" checked="@providerNonLars.Selected" input-data-testid="@($"nonLarsSubtype-{providerNonLars.NonLarsSubTypeId}")">
+                                    @providerNonLars.Name
+                                </govuk-checkboxes-item>
+                            }
+                        </govuk-checkboxes>                        
+                    </govuk-checkboxes-item-conditional>
+                </govuk-checkboxes-item>
+
                 <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels" onchange="SelectAllTLevelDefinitionCheckboxes($(this));">
                     @ProviderType.TLevels.ToDescription()
                     <govuk-checkboxes-item-conditional>
@@ -30,9 +52,9 @@
 
                             @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
                             {
-                                <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
-                                    @providerTLevelDefinition.Name
-                                </govuk-checkboxes-item>
+                            <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
+                                @providerTLevelDefinition.Name
+                            </govuk-checkboxes-item>
                             }
 
                         </govuk-checkboxes>
@@ -53,10 +75,16 @@
 <script>
     function SelectAllTLevelDefinitionCheckboxes(checkbox) 
     {
-        var checkBoxesToCheck = $('#conditional-ProviderType-1').find('input[type="checkbox"]');
+        var checkBoxesToCheck = $('#conditional-ProviderType-2').find('input[type="checkbox"]');
         for (let i = 0; i < checkBoxesToCheck.length; i++) 
         {
           checkBoxesToCheck[i].checked = true;
+        }
+    }
+    function SelectAllNonLARSDefinitionCheckboxes(checkbox) {
+        var checkBoxesToCheck = $('#conditional-ProviderType-1').find('input[type="checkbox"]');
+        for (let i = 0; i < checkBoxesToCheck.length; i++) {
+            checkBoxesToCheck[i].checked = true;
         }
     }
 </script>

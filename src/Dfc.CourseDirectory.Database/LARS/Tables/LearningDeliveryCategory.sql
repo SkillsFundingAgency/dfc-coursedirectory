@@ -8,4 +8,6 @@
     [Modified_On]   NVARCHAR (50) NOT NULL,
     [Modified_By]   NVARCHAR (50) NOT NULL
 );
-
+GO
+CREATE NONCLUSTERED INDEX [IDX_LearningDeliveryCategory_LearnAimRef]
+    ON [LARS].[LearningDeliveryCategory]([LearnAimRef] ) WITH (ONLINE = ON);

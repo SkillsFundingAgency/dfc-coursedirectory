@@ -64,6 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         public Guid ProviderId { get; set; }
         public string CourseName { get; set; }
         public bool HasOtherCourseRuns { get; set; }
+        public bool NonLarsCourse { get; set; }
     }
 
     public class Handler :
@@ -180,6 +181,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         private async Task<(Course Course, CourseRun CourseRun)> GetCourseAndCourseRun(Guid courseId, Guid courseRunId)
         {
             var course = await _sqlQueryDispatcher.ExecuteQuery(new GetCourse() { CourseId = courseId });
+
+            course ??= await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCourse() { CourseId = courseId });
 
             if (course == null)
             {
