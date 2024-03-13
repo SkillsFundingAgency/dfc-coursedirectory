@@ -109,6 +109,16 @@ WHERE
 	CourseType = 4  
 	AND CourseStatus = 1
 	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
+
+UPDATE 
+	Pttcd.FindACourseIndex 
+SET 
+	CourseType = NULL
+WHERE 
+	CourseType = 4  
+	AND Live = 1
+	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 
