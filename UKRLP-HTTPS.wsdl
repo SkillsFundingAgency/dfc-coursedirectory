@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is JAX-WS RI 2.3.2-1 git-revision#dbe58a8. --><!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by Hotcourses Ltd (Hotcourses Ltd) --><wsdl:definitions xmlns:types="http://ukrlp.co.uk.server.ws.v3" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:messages="http://ukrlp.co.uk.server.ws.v3" name="ProviderQueryServiceV6" targetNamespace="http://ukrlp.co.uk.server.ws.v3">
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import namespace="http://ukrlp.co.uk.server.ws.v3" schemaLocation="http://webservices.ukrlp.co.uk:80/UkrlpProviderQueryWS/ProviderQueryServiceV6?xsd=1"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="ProviderQueryFault">
+		<wsdl:part name="fault" element="messages:faultDetail"/>
+	</wsdl:message>
+	<wsdl:message name="ProviderQueryParameter">
+		<wsdl:part name="ProviderQuery" element="messages:ProviderQueryRequest"/>
+	</wsdl:message>
+	<wsdl:message name="ProviderQueryResponse">
+		<wsdl:part name="ProviderQueryResponse" element="messages:ProviderQueryResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="ProviderQueryPortType">
+		<wsdl:operation name="retrieveAllProviders">
+			<wsdl:input name="ProviderQueryParam" message="types:ProviderQueryParameter"/>
+			<wsdl:output name="response" message="types:ProviderQueryResponse"/>
+			<wsdl:fault name="fault" message="types:ProviderQueryFault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ProviderQuerySoapBinding" type="types:ProviderQueryPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="retrieveAllProviders">
+			<soap:operation soapAction="retrieveAllProviders" style="document"/>
+			<wsdl:input name="ProviderQueryParam">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="response">
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ProviderQueryServiceV6">
+		<wsdl:port name="ProviderQueryPort" binding="types:ProviderQuerySoapBinding">
+			<soap:address location="https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
