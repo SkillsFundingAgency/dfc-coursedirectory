@@ -11,7 +11,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<IReadOnlyCollection<Sector>> Execute(SqlTransaction transaction, GetSectors query)
         {
-            var sql = @"SELECT Id, Code, Description FROM Pttcd.Sectors";
+            var sql = @"SELECT Id, Code, [Description] 
+                        FROM Pttcd.Sectors 
+                        WHERE Id IN (
+                        SELECT DISTINCT SectorId FROM Pttcd.Courses Where SectorId IS NOT NULL
+                        )";
 
             var sectors = (await transaction.Connection.QueryAsync<Sector>(sql, transaction: transaction)).AsList();
 
