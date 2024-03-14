@@ -250,7 +250,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             var result = await _courseSearchClient.Search(query);
 
-            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
+            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors()))?.ToList();
 
             return new SearchViewModel()
             {
@@ -317,7 +317,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         CourseType = i.Record.CourseType,
                         CourseTypeDescription = i.Record.CourseType.ToDescription(),
                         SectorId = i.Record.SectorId,
-                        SectorDescription = sectors.FirstOrDefault(s => s.Id == i.Record.SectorId)?.Description ?? null,
+                        SectorDescription = sectors?.FirstOrDefault(s => s.Id == i.Record.SectorId)?.Description ?? null,
                         EducationLevel = i.Record.EducationLevel,
                         EducationLevelDescription = i.Record.EducationLevel.ToDescription(),
                         AwardingBody = i.Record.AwardingBody
