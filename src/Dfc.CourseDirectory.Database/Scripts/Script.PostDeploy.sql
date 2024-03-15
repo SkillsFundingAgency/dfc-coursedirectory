@@ -1,4 +1,17 @@
-﻿--- This script is only for df-coursedirectoryinttest db to run unit tests in pipeline. [LARS].[Category] table will always be populated in dfc-coursedirectory db in all environments ---
+﻿---------------- UPDATE COURSETYPE TO 2 FOR EXISTING T LEVEL COURSES--------------------------------
+IF (EXISTS (SELECT TLevelId FROM [Pttcd].[FindACourseIndex] Where TLevelId IS NOT NULL AND TLevelLocationId IS NOT NULL AND  Live = 1 AND CourseType IS NULL))
+BEGIN
+	UPDATE fac
+		SET fac.CourseType = 2
+	  FROM [Pttcd].[FindACourseIndex] as fac
+	  WHERE fac.TLevelId IS NOT NULL AND 
+		fac.TLevelLocationId IS NOT NULL AND  
+		Live = 1 AND 
+		fac.CourseType IS NULL
+END
+
+
+--- This script is only for df-coursedirectoryinttest db to run unit tests in pipeline. [LARS].[Category] table will always be populated in dfc-coursedirectory db in all environments ---
 IF (NOT EXISTS (SELECT 1 FROM [LARS].[Category]))
 BEGIN
     INSERT INTO LARS.Category ([CategoryRef], [ParentCategoryRef], [CategoryName], [Target], [EffectiveFrom], [EffectiveTo]) 
@@ -22,13 +35,13 @@ END
 
 
 
---- This is the script to insert mapping data between Lars Category and CourseType ---
-IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'CourseTypeCategory'))
-BEGIN
-    Delete from Pttcd.CourseTypeCategory
-END
+--- This is the script to insert/update mapping data between Lars Category and CourseType -----------------
+DECLARE @CourseTypeCategory TABLE (
+	CourseType TINYINT,
+	CategoryRef NVARCHAR(50)
+)
 
-INSERT INTO Pttcd.CourseTypeCategory (CourseType, CategoryRef) 
+INSERT INTO @CourseTypeCategory (CourseType, CategoryRef) 
 VALUES
 	(1, '24'),
 	(1, '29'),
@@ -44,8 +57,16 @@ VALUES
 	(4, '49'),
 	(4, '56'),
 	(5, '63');
--------------------------------------------------------------------------------------
 
+
+MERGE Pttcd.CourseTypeCategory AS target
+USING (SELECT * FROM @CourseTypeCategory) AS source
+ON source.CourseType = target.CourseType AND source.CategoryRef = target.CategoryRef
+WHEN NOT MATCHED THEN
+	INSERT ([CourseType], [CategoryRef])
+	VALUES (source.CourseType, source.CategoryRef)
+WHEN NOT MATCHED BY SOURCE THEN DELETE;
+----------------------------------------------------------------------------------------------------------
 
 
 --------- This script updates CourseType column value in Pttcd.Courses table for already existing courses. It derives CourseType from the mapping inserted in above table i.e. Pttcd.CourseTypeCategory -----------------
@@ -87,15 +108,28 @@ SET
 WHERE 
 	CourseType = 4  
 	AND CourseStatus = 1
-	AND ProviderId NOT IN (SELECT DISTINCT(ProviderId) FROM Pttcd.FindACourseIndexCampaignCodes)
+	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
+
+UPDATE 
+	Pttcd.FindACourseIndex 
+SET 
+	CourseType = NULL
+WHERE 
+	CourseType = 4  
+	AND Live = 1
+	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 
---------- This script inserts IFATE sectors in Pttcd.Sectors table-----------------
-  IF (NOT EXISTS (SELECT 1 FROM [Pttcd].[Sectors]))
-  BEGIN
-  
-	INSERT INTO [Pttcd].[Sectors] ([Id], [Code], [Description]) 
+--------- This script inserts/updates IFATE sectors in Pttcd.Sectors table-----------------
+DECLARE @Sectors TABLE (
+	Id TINYINT,
+	Code NVARCHAR(50),
+	[Description] NVARCHAR(255)
+)
+
+INSERT INTO @Sectors ([Id], [Code], [Description]) 
 	VALUES
 	(1,		'ENVIRONMENTAL',	'Agriculture, environmental and animal care'),
 	(2,		'BUSINESSADMIN',	'Business and administration'),
@@ -113,7 +147,18 @@ WHERE
 	(14,	'SALESMARKETING',	'Sales, marketing and procurement'),
 	(15,	'TRANSPORT',		'Transport and logistics')
 
-  END
+
+MERGE Pttcd.Sectors AS target
+USING (SELECT * FROM @Sectors) AS source
+ON source.Id = target.Id
+WHEN MATCHED THEN
+	UPDATE SET
+	target.Code = source.Code,
+	target.[Description] = source.[Description]
+WHEN NOT MATCHED THEN
+	INSERT ([Id], [Code], [Description])
+	VALUES (source.Id, source.Code, source.[Description])
+WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
 
 ----- Script below will insert Non LARS Provider SubTypes----------------------------

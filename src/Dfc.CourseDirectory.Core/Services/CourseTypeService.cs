@@ -54,11 +54,9 @@ namespace Dfc.CourseDirectory.Core.Services
 
             if (courseType.HasValue && courseType.Value == Models.CourseType.FreeCoursesForJobs)
             {                
-                var providerCampaignCodes = await _sqlQueryDispatcher.ExecuteQuery(new GetCampaignCodesForProvider() { ProviderId = providerId });
+                var eligibleProvidersList = await _sqlQueryDispatcher.ExecuteQuery(new GetFcfjEligibleProvidersList());
 
-                var providerInEligibleList = providerCampaignCodes.Any();
-
-                if (!providerInEligibleList)
+                if (!eligibleProvidersList.Contains(providerId))
                     courseType = null;
             }
 
