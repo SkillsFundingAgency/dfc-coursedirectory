@@ -1020,7 +1020,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             var rowNumber = courseUploadRows.First().RowNumber;
             var courseType = "SkillsBootcamp";
-            var sector = "CARE";
+            var sector = "ENVIRONMENTAL";
             var awardingBody = "test awarding body";
             var educationLevel = "One";
             var courseName = "Course name";
@@ -1051,6 +1051,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             };
 
             await TestData.AddSectors();
+            await TestData.CreateNonLarsCourse(provider.ProviderId, User.ToUserInfo());
 
             // Act
             var response = await HttpClient.SendAsync(request);
