@@ -1,4 +1,5 @@
 using System.ServiceModel;
+using System.ServiceModel.Security;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using UkrlpService;
 
@@ -15,6 +16,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         {
             var client = new ProviderQueryPortTypeClient();
             client.Endpoint.Address = new EndpointAddress(Endpoint);
+            client.ClientCredentials.ServiceCertificate.SslCertificateAuthentication =
+                new X509ServiceCertificateAuthentication
+                {
+                    CertificateValidationMode = X509CertificateValidationMode.None
+                };
+
             return client;
         }
     }
