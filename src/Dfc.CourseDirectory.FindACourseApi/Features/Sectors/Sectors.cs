@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Sectors
 
         public async Task<IReadOnlyCollection<SectorViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var sectors = await _sqlQueryDispatcher.ExecuteQuery(new GetSectors());
+            var sectors = await _sqlQueryDispatcher.ExecuteQuery(new GetSectorsAttachedWithCourses());
 
             return sectors?.Select(s => new SectorViewModel { Id = s.Id, Code = s.Code, Description = s.Description }).ToList() ?? new List<SectorViewModel>();
         }
