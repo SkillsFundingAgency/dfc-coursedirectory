@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 new Sector { Id = 3, Code = "CARE", Description = "Care services" }
             };
 
-            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetSectors>()))
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetSectorsAttachedWithCourses>()))
                 .ReturnsAsync(sectors);
 
             // Act
