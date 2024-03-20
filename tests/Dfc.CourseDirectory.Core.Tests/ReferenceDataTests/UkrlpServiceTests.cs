@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -24,7 +25,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 port = 49178;
             }
 
-            var host = $"http://localhost:{port}";
+            var host = $"https://localhost:{port}";
             var endpoint = "UkrlpProviderQueryWS6/ProviderQueryServiceV6";
 
             using var server = WebHost.CreateDefaultBuilder()
@@ -47,11 +48,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 .Build();
 
             await server.StartAsync();
-
+            
             var ukrlpWcfClientBuilder = new TestUkrlpWcfClientFactory
             {
                 Endpoint = $"{host}/{endpoint}"
             };
+
 
             var ukrlpService = new ReferenceData.Ukrlp.UkrlpService(ukrlpWcfClientBuilder, NullLogger<ReferenceData.Ukrlp.UkrlpService>.Instance);
 
