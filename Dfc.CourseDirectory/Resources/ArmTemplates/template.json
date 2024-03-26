@@ -579,6 +579,10 @@
               {
                 "name": "Logging__ApplicationInsights__LogLevel__Default",
                 "value": "Information"
+              },
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
               }
             ]
           },
@@ -679,6 +683,10 @@
               {
                 "name": "LarsDataset__Url",
                 "value": "[parameters('larsDatasetUrl')]"
+              },
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
               }
             ]
           },
