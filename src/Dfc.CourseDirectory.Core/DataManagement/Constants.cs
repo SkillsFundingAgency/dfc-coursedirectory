@@ -2,6 +2,7 @@
 {
     public static class Constants
     {
+        public const string CampaignContainerName = "campaign-data";
         public const string ContainerName = "data-uploads";
         public const string VenuesFolder = "venues";
         public const int VenueFileMaxSizeBytes = 1048576;

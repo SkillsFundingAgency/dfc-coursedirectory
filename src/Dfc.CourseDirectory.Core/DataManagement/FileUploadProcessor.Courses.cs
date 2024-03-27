@@ -323,7 +323,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var uploadedCourse = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
-                isNonLars = uploadedCourse.IsNonLars;
+                isNonLars = uploadedCourse != null ?  uploadedCourse.IsNonLars : false;
 
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetCourseUploadProcessing()
                 {
