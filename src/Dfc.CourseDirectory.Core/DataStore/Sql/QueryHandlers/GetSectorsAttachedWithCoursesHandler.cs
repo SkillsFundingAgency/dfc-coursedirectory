@@ -7,12 +7,15 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetSectorsHandler : ISqlQueryHandler<GetSectors, IReadOnlyCollection<Sector>>
+    public class GetSectorsAttachedWithCoursesHandler : ISqlQueryHandler<GetSectorsAttachedWithCourses, IReadOnlyCollection<Sector>>
     {
-        public async Task<IReadOnlyCollection<Sector>> Execute(SqlTransaction transaction, GetSectors query)
+        public async Task<IReadOnlyCollection<Sector>> Execute(SqlTransaction transaction, GetSectorsAttachedWithCourses query)
         {
             var sql = @"SELECT Id, Code, [Description] 
-                        FROM Pttcd.Sectors";
+                        FROM Pttcd.Sectors 
+                        WHERE Id IN (
+                        SELECT DISTINCT SectorId FROM Pttcd.Courses Where SectorId IS NOT NULL AND CourseStatus = 1
+                        )";
 
             var sectors = (await transaction.Connection.QueryAsync<Sector>(sql, transaction: transaction)).AsList();
 
