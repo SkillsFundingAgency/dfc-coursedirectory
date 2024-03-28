@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
 {
@@ -16,5 +17,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
         public string EntryRequirements { get; set; }
         public string HowYoullBeAssessed { get; set; }
         public string HowYoullLearn { get; set; }
+        public CourseType? CourseType { get; set; }
+        public string CourseTypeDescription { get; set; }
+        public int? SectorId { get; set; }
+        public string SectorDescription { get; set; }
+        public EducationLevel? EducationLevel { get; set; }
+        public string EducationLevelDescription { get; set; }
+        public string AwardingBody { get; set; }
     }
 }

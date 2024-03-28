@@ -38,6 +38,7 @@
 	[CourseDataIsHtmlEncoded] BIT,
 	[CourseRunDataIsHtmlEncoded] BIT,
 	[CourseType] TINYINT NULL,
+	[SectorId] TINYINT NULL,
 	[EducationLevel] TINYINT NULL,
 	[AwardingBody] NVARCHAR(MAX) NULL
 )

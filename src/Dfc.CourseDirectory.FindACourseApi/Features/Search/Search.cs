@@ -26,6 +26,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
         public IEnumerable<int> StudyModes { get; set; }
         public IEnumerable<int> AttendancePatterns { get; set; }
         public IEnumerable<int> DeliveryModes { get; set; }
+        public IEnumerable<int> CourseTypes { get; set; }
+        public IEnumerable<int> SectorIds { get; set; }
+        public IEnumerable<int> EducationLevels { get; set; }
         public string Town { get; set; }
         public string Postcode { get; set; }
         public double? Latitude { get; set; }
@@ -186,6 +189,21 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 filters.Add($"({string.Join(" or ", request.DeliveryModes.Select(dm => $"{nameof(FindACourseOffering.DeliveryMode)} eq {dm}"))})");
             }
 
+            if (request.CourseTypes?.Any() ?? false)
+            {
+                filters.Add($"({string.Join(" or ", request.CourseTypes.Select(ct => $"{nameof(FindACourseOffering.CourseType)} eq {ct}"))})");
+            }
+
+            if (request.SectorIds?.Any() ?? false)
+            {
+                filters.Add($"({string.Join(" or ", request.SectorIds.Select(s => $"{nameof(FindACourseOffering.SectorId)} eq {s}"))})");
+            }
+
+            if (request.EducationLevels?.Any() ?? false)
+            {
+                filters.Add($"({string.Join(" or ", request.EducationLevels.Select(el => $"{nameof(FindACourseOffering.EducationLevel)} eq {el}"))})");
+            }
+
             if (!string.IsNullOrWhiteSpace(request.ProviderName))
             {
                 filters.Add($"search.ismatchscoring('{EscapeFilterValue(request.ProviderName)}', '{nameof(FindACourseOffering.ProviderDisplayName)}', 'simple', 'any')");
@@ -217,6 +235,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                     "StudyMode",
                     "AttendancePattern",
                     "DeliveryMode",
+                    "CourseType",
+                    "SectorId",
+                    "EducationLevel",
                     "ProviderDisplayName,count:100",
                     "RegionName,count:100"
                 },
@@ -228,6 +249,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             };
 
             var result = await _courseSearchClient.Search(query);
+
+            var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors()))?.ToList();
 
             return new SearchViewModel()
             {
@@ -290,7 +313,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                         VenueStudyModeDescription = (i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased || i.Record.DeliveryMode == CourseDeliveryMode.BlendedLearning) ? 
                             i.Record.StudyMode?.ToDescription() :
                             null,
-                        VenueTown = HtmlEncode(i.Record.VenueTown)
+                        VenueTown = HtmlEncode(i.Record.VenueTown),
+                        CourseType = i.Record.CourseType,
+                        CourseTypeDescription = i.Record.CourseType.ToDescription(),
+                        SectorId = i.Record.SectorId,
+                        SectorDescription = sectors?.FirstOrDefault(s => s.Id == i.Record.SectorId)?.Description ?? null,
+                        EducationLevel = i.Record.EducationLevel,
+                        EducationLevelDescription = i.Record.EducationLevel.ToDescription(),
+                        AwardingBody = i.Record.AwardingBody
                     };
 
                     static string HtmlEncode(string value) => System.Net.WebUtility.HtmlEncode(value);

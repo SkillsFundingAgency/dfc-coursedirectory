@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
             result.SearchText.Should().Be("TestLearnAimRef");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { nameof(Lars.LearnAimRef) });
-            result.Options.Filter.Should().Be($"({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null) and IsExpired eq true ");
+            result.Options.Filter.Should().Be($"({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null)");
             result.Options.Size.Should().Be(1);
         }
 
@@ -34,7 +34,22 @@ namespace Dfc.CourseDirectory.Core.Tests.Search
             result.SearchText.Should().Be("TestLearnAimRef");
             result.Options.SearchMode.Should().Be(SearchMode.All);
             result.Options.SearchFields.Should().Equal(new[] { nameof(Lars.LearnAimRef) });
-            result.Options.Filter.Should().Be($"IsExpired eq true ");
+            result.Options.Filter.Should().BeEmpty();
+            result.Options.Size.Should().Be(1);
+        }
+
+        [Fact]
+        public void GenerateSearchQuery_WithExcludeExpiredPropertySetToTrue_GeneratesSearchQueryWithIsExpiredEqFalse()
+        {
+            var query = BuildTestQuery();
+            query.ExcludeExpired = true;
+
+            var result = query.GenerateSearchQuery();
+
+            result.SearchText.Should().Be("TestLearnAimRef");
+            result.Options.SearchMode.Should().Be(SearchMode.All);
+            result.Options.SearchFields.Should().Equal(new[] { nameof(Lars.LearnAimRef) });
+            result.Options.Filter.Should().Be($"({nameof(Lars.CertificationEndDate)} ge {query.CertificationEndDateFilter.Value:O} or {nameof(Lars.CertificationEndDate)} eq null) and IsExpired eq false ");
             result.Options.Size.Should().Be(1);
         }
 

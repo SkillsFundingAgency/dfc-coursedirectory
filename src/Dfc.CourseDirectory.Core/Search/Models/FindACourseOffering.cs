@@ -50,5 +50,10 @@ namespace Dfc.CourseDirectory.Core.Search.Models
         public IEnumerable<string> CampaignCodes { get; set; }
         public bool? CourseDataIsHtmlEncoded { get; set; }
         public bool? CourseRunDataIsHtmlEncoded { get; set; }
+        public CourseType? CourseType { get; set; }
+        public int? SectorId { get; set; }        
+        public EducationLevel? EducationLevel { get; set; }
+        public string AwardingBody { get; set; }
+
     }
 }

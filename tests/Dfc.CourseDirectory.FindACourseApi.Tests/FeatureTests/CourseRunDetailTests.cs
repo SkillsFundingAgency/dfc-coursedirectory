@@ -13,6 +13,7 @@ using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Provider = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Provider;
+using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {
@@ -105,8 +106,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 ProviderId = Guid.NewGuid(),
                 Ukprn = 12345678,
-                  
-                
+
+
             };
 
             var providerContact = new ProviderContact
@@ -114,7 +115,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 Email = "test@test.com",
                 ContactType = "P"
             };
-                  
+
+            var sectors = new List<Sector>
+            {
+                new Sector{ Id=1, Code="bcd", Description="dlskfjasd lfksdjf" }
+            };
+
 
             var sqlProvider = new Core.DataStore.Sql.Models.Provider
             {
@@ -146,6 +152,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<Core.DataStore.Sql.Queries.GetProviderContactById>()))
                 .ReturnsAsync(providerContact);
+
+            SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetSectors>()))
+                .ReturnsAsync(sectors);
 
 
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRun.CourseRunId));

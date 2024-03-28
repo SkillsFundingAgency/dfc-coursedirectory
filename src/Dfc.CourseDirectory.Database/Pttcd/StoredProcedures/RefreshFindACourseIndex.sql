@@ -54,9 +54,10 @@ BEGIN
 			cc.CampaignCodesJson CampaignCodes,
 			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
 			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded,
-			C.CourseType,
-			C.EducationLevel,
-			C.AwardingBody
+			c.CourseType,
+			c.SectorId,
+			c.EducationLevel,
+			c.AwardingBody			
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId
@@ -117,9 +118,10 @@ BEGIN
 			cc.CampaignCodesJson CampaignCodes,
 			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
 			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded,
-			C.CourseType,
-			C.EducationLevel,
-			C.AwardingBody
+			c.CourseType,
+			c.SectorId,
+			c.EducationLevel,
+			c.AwardingBody
 		FROM @CourseRunIds d
 		INNER JOIN Pttcd.CourseRuns cr ON d.Id = cr.CourseRunId
 		INNER JOIN Pttcd.Courses c ON cr.CourseId = c.CourseId AND (C.LearnAimRef IS NULL OR C.LearnAimRef = '') 
@@ -170,6 +172,7 @@ BEGIN
 		CourseDataIsHtmlEncoded = source.CourseDataIsHtmlEncoded,
 		CourseRunDataIsHtmlEncoded = source.CourseRunDataIsHtmlEncoded,
 		CourseType = source.CourseType,
+		SectorId = source.SectorId,
 		EducationLevel = source.EducationLevel,
 		AwardingBody = source.AwardingBody
 	WHEN NOT MATCHED THEN INSERT (
@@ -209,6 +212,7 @@ BEGIN
 		CourseDataIsHtmlEncoded,
 		CourseRunDataIsHtmlEncoded,
 		CourseType,
+		SectorId,
 		EducationLevel,
 		AwardingBody)
 	VALUES (
@@ -246,8 +250,9 @@ BEGIN
 		source.VenueId,
 		source.CampaignCodes,
 		source.CourseDataIsHtmlEncoded,
-		source.CourseRunDataIsHtmlEncoded,
+		source.CourseRunDataIsHtmlEncoded,		
 		source.CourseType,
+		source.SectorId,
 		source.EducationLevel,
 		source.AwardingBody)
 	WHEN NOT MATCHED BY SOURCE AND target.CourseRunId IN (SELECT Id FROM @CourseRunIds) THEN UPDATE SET

@@ -3,9 +3,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Campaigns
@@ -13,14 +16,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Campaigns
     public class CampaignDataImporter
     {
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
+        private readonly BlobContainerClient _blobContainerClient;
 
-        public CampaignDataImporter(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory)
+        public CampaignDataImporter(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, BlobServiceClient blobServiceClient)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
+            _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.CampaignContainerName);
         }
 
         public async Task ImportCampaignData(string campaignCode, Stream csvStream)
         {
+            
             using var streamReader = new StreamReader(csvStream);
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
@@ -59,6 +65,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Campaigns
 
                 await sqlDispatcher.Commit();
             }
+            var blobName = $"{campaignCode}.csv";
+            await _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
         }
 
         private class CsvRow
