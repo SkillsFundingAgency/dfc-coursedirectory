@@ -503,7 +503,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
 
             await TestData.AddSectors();
-            
+            await TestData.CreateNonLarsCourse(provider.ProviderId, user);
+
             var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
 
             var uploadRows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 3).ToArray();
@@ -543,6 +544,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
 
             await TestData.AddSectors();
+            await TestData.CreateNonLarsCourse(provider.ProviderId, user);
 
             var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created, null, true);
 

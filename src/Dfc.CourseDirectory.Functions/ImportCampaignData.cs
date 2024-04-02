@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
 using Microsoft.Azure.WebJobs;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -16,16 +15,16 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName(nameof(CampaignDataImporter))]
-        public async Task Execute(
-           [BlobTrigger("%CampaignDataContainerName%/{campaignCode}.csv")] CloudBlockBlob blob,
+        public async Task Run(
+           [BlobTrigger("%CampaignDataContainerName%/{campaignCode}.csv")] Stream blob,
            string campaignCode)
         {
-            using var stream = new MemoryStream();
-            await blob.DownloadToStreamAsync(stream);
-            stream.Seek(0L, SeekOrigin.Begin);
+            //using var stream = new MemoryStream();
+            //await blob.DownloadToStreamAsync(stream);
+           // stream.Seek(0L, SeekOrigin.Begin);
 
-            await _campaignDataImporter.ImportCampaignData(campaignCode, stream);
-            await blob.DeleteAsync();
+            await _campaignDataImporter.ImportCampaignData(campaignCode, blob);
+            blob.Dispose();
         }
     }
 }

@@ -30,10 +30,6 @@ namespace Dfc.CourseDirectory.Core.Search
             {
                 builder.WithFilters($"{nameof(Lars.IsExpired)} eq false ");
             }
-            else
-            {
-                builder.WithFilters($"{nameof(Lars.IsExpired)} eq true ");
-            }
 
             return builder.Build();
         }
