@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
@@ -443,7 +444,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 DurationUnit = model.DurationUnit,
                 DeliveryMode = model.DeliveryMode,
                 Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
-                CostDescription = ASCIICodeHelper.RemoveASCII(model.CostDescription) ?? "",
+                CostDescription = ASCIICodeHelper.ReplaceHexCodes(model.CostDescription) ?? "",
                 CourseName = model.CourseName,
                 CourseUrl = model.Url,
                 DurationValue = Convert.ToInt32(model.DurationLength),
