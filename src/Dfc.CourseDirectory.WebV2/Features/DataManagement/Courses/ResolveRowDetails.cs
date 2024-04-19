@@ -100,7 +100,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars);
+            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars, _webRiskService);
             var validationResult = await validator.ValidateAsync(vm);
 
             return new ModelWithErrors<ViewModel>(vm, validationResult);
@@ -142,9 +142,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars);
+            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars, _webRiskService);
             var validationResult = await validator.ValidateAsync(request);
-            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.CourseWebPage);
 
             if (!validationResult.IsValid)
             {
@@ -276,7 +275,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, bool isNonLars)
+            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, bool isNonLars, IWebRiskService webRiskService)
             {
                 if (isNonLars)
                 {
@@ -291,8 +290,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
                 RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.NationalDelivery).NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
-                RuleFor(c => c.CourseWebPage).CourseWebPage();
-                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
                 RuleFor(c => c.Cost)
                     .Transform(v => decimal.TryParse(v, out var parsed) ? parsed : (decimal?)null)
                     .Cost(costWasSpecified: c => !string.IsNullOrWhiteSpace(c.Cost), getCostDescription: c => c.CostDescription);

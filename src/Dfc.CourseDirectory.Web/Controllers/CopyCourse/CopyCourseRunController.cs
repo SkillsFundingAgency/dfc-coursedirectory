@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
@@ -47,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+        private readonly IWebRiskService _webRiskService;
 
         public CopyCourseRunController(
             ILogger<CopyCourseRunController> logger,
@@ -55,7 +57,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache) : base(sqlQueryDispatcher)
+            IRegionCache regionCache,
+            IWebRiskService? webRiskService = null) : base(sqlQueryDispatcher)
         {
             if (logger == null)
             {
@@ -74,6 +77,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _regionCache = regionCache;
+            _webRiskService = webRiskService;
         }
 
         [Authorize]
@@ -480,7 +484,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             RefineModelDataForADeliveryMode(model);
 
-            var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
+            var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).Validate(model);
             if (!validationResult.IsValid)
             {
                 return BadRequest();
@@ -610,7 +614,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
         private class CopyCourseRunSaveViewModelValidator : AbstractValidator<CopyCourseRunSaveViewModel>
         {
-            public CopyCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock)
+            public CopyCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.AttendanceMode)
                     .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
@@ -654,7 +658,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
                 RuleFor(c => c.StudyMode)
                     .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
 
-                RuleFor(c => c.Url).CourseWebPage();
+                RuleFor(c => c.Url).CourseWebPage(webRiskService);
 
                 RuleFor(c => c.VenueId)
                     .Transform(v => v == default ? (Guid?)null : v)

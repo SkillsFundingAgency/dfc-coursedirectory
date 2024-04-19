@@ -117,8 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         {
             NormalizeCommand();
             var allRegions = await _regionCache.GetAllRegions();
-            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.CourseWebPage);
-            var validator = new CommandValidator(_clock, allRegions);
+            var validator = new CommandValidator(_clock, allRegions, _webRiskService);
             var validationResult = await validator.ValidateAsync(request);
             if (validationResult.IsValid)
             {
@@ -211,7 +210,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions)
+            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, IWebRiskService webRiskService)
             {
                 {
                     RuleFor(c => c.CourseName).CourseName();
@@ -219,8 +218,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
                     RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
                     RuleFor(c => c.NationalDelivery).NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
-                    RuleFor(c => c.CourseWebPage).CourseWebPage();
-                    RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                    RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
                     RuleFor(c => c.Cost)
                         .Transform(v => decimal.TryParse(v, out var parsed) ? parsed : (decimal?)null)
                         .Cost(costWasSpecified: c => !string.IsNullOrWhiteSpace(c.Cost), getCostDescription: c => c.CostDescription);

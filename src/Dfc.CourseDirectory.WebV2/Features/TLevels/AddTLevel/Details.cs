@@ -89,7 +89,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
             var validator = new CommandValidator(
                 request.ProviderId,
                 _journeyInstance.State.TLevelDefinitionId.Value,
-                _sqlQueryDispatcher);
+                _sqlQueryDispatcher,
+                _webRiskService);
 
             var validationResult = await validator.ValidateAsync(request);
 
@@ -150,7 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher)
+            public CommandValidator(Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
@@ -161,8 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
                     .NotEmpty()
                         .WithMessage("Select a T Level venue");
 
-                RuleFor(c => c.Website).Website();
-                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                RuleFor(c => c.Website).Website(webRiskService);
             }
         }
     }

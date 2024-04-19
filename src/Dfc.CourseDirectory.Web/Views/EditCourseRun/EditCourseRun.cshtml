@@ -700,13 +700,13 @@
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } else if (
-                    !$.secureWebsiteValidate(urlToValidate)) {
-                    $url.govUkInput("invalidState", $url.attr("val-secure-website-message"));
-                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
-                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
-                    $errorSummary.govUkErrorSummary("show");
-                    validStates.push(false);
+                // } else if (
+                //     !$.secureWebsiteValidate(urlToValidate)) {
+                //     $url.govUkInput("invalidState", $url.attr("val-secure-website-message"));
+                //     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
+                //     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
+                //     $errorSummary.govUkErrorSummary("show");
+                //     validStates.push(false);
                 } else {
                     $url.govUkInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $url[0].id);

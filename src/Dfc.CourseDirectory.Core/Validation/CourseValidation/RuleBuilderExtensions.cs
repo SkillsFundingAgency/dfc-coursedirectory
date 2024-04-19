@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -75,7 +76,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_FORMAT");
         }
 
-        public static void CourseWebPage<T>(this IRuleBuilderInitial<T, string> field)
+        public static void CourseWebPage<T>(this IRuleBuilderInitial<T, string> field, IWebRiskService webRiskService)
         {
             field
                 .Cascade(CascadeMode.Stop)
@@ -84,13 +85,9 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             .MaximumLength(Constants.CourseWebPageMaxLength)
                 .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH")
             .Apply(Rules.Website)
-                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
-        }
-
-        public static void IsSecureWebsite<T>(this IRuleBuilderInitial<T, bool> field)
-        {
-            field
-            .Apply(Rules.SecureWebsite).WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE");
+                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT")
+            .Apply(Rules.SecureWebsite<T>(webRiskService))
+                .WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE");
         }
 
         public static void CourseType<T>(this IRuleBuilderInitial<T, CourseType?> field)

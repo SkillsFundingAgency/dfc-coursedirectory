@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
@@ -194,17 +195,14 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
                     .WithMessageFromErrorCode("VENUE_NAME_UNIQUE");
         }
 
-        public static void Website<T>(this IRuleBuilderInitial<T, string> field)
+        public static void Website<T>(this IRuleBuilderInitial<T, string> field, IWebRiskService webRiskService)
         {
             field
+                .Cascade(CascadeMode.Stop)
                 .Apply(Rules.Website)
-                    .WithMessageFromErrorCode("VENUE_WEBSITE_FORMAT");
-        }
-
-        public static void IsSecureWebsite<T>(this IRuleBuilderInitial<T, bool> field)
-        {
-            field
-            .Apply(Rules.SecureWebsite).WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE");
+                    .WithMessageFromErrorCode("VENUE_WEBSITE_FORMAT")
+                .Apply(Rules.SecureWebsite<T>(webRiskService))
+                    .WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE");
         }
     }
 }

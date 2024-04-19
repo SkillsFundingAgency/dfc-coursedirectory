@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = postcode }) :
                 null;
 
-            var validator = new CommandValidator(otherRows, postcodeInfo);
+            var validator = new CommandValidator(otherRows, postcodeInfo, _webRiskService);
             var validationResult = await validator.ValidateAsync(command);
 
             return new ModelWithErrors<Command>(command, validationResult);
@@ -97,9 +97,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = postcode }) :
                 null;
 
-            var validator = new CommandValidator(otherRows, postcodeInfo);
+            var validator = new CommandValidator(otherRows, postcodeInfo, _webRiskService);
             var validationResult = await validator.ValidateAsync(request);
-            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -154,7 +153,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
         {
             public CommandValidator(
                 IEnumerable<VenueUploadRow> otherRows,
-                PostcodeInfo postcodeInfo)
+                PostcodeInfo postcodeInfo,
+                IWebRiskService webRiskService)
             {
                 RuleFor(c => c.ProviderVenueRef)
                     .ProviderVenueRef(_ => Task.FromResult(otherRows.Select(r => r.ProviderVenueRef)));
@@ -169,8 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 RuleFor(c => c.Postcode).Postcode(_ => postcodeInfo);
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
-                RuleFor(c => c.Website).Website();
-                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                RuleFor(c => c.Website).Website(webRiskService);
             }
         }
     }

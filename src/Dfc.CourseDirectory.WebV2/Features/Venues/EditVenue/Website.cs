@@ -50,9 +50,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
             Command request,
             CancellationToken cancellationToken)
         {
-            var validator = new CommandValidator();
+            var validator = new CommandValidator(_webRiskService);
             var validationResult = await validator.ValidateAsync(request);
-            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -66,10 +65,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator()
+            public CommandValidator(IWebRiskService webRiskService)
             {
-                RuleFor(c => c.Website).Website();
-                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                RuleFor(c => c.Website).Website(webRiskService);
             }
         }
     }

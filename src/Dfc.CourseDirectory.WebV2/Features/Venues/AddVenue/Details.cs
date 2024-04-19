@@ -66,9 +66,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         {
             ThrowIfFlowStateNotValid();
 
-            var validator = new CommandValidator(request.ProviderId, _sqlQueryDispatcher);
+            var validator = new CommandValidator(request.ProviderId, _sqlQueryDispatcher, _webRiskService);
             var validationResult = await validator.ValidateAsync(request);
-            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -131,7 +130,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         {
             public CommandValidator(
                 Guid providerId,
-                ISqlQueryDispatcher sqlQueryDispatcher)
+                ISqlQueryDispatcher sqlQueryDispatcher,
+                IWebRiskService webRiskService)
             {
                 RuleFor(c => c.ProviderVenueRef)
                     .ProviderVenueRef(providerId, venueId: null, sqlQueryDispatcher);
@@ -139,8 +139,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                     .VenueName(providerId, venueId: null, sqlQueryDispatcher);
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
-                RuleFor(c => c.Website).Website();
-                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                RuleFor(c => c.Website).Website(webRiskService);
             }
         }
     }

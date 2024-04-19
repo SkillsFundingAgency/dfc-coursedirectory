@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.Services
                     string threat_types = "&threatTypes=MALWARE&threatTypes=SOCIAL_ENGINEERING&threatTypes=UNWANTED_SOFTWARE";
 
                     string query = $"{prefix}key={key}{threat_types}&uri={url}";
-                    var result = client.GetAsync(query).Result;
+                    var result = await client.GetAsync(query);       
                     var json = await result.Content.ReadAsStringAsync();
 
                     if (result.StatusCode == System.Net.HttpStatusCode.OK)

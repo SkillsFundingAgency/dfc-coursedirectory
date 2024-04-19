@@ -89,7 +89,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                 _journeyInstance.State.TLevelId,
                 _journeyInstance.State.ProviderId,
                 _journeyInstance.State.TLevelDefinitionId,
-                _sqlQueryDispatcher);
+                _sqlQueryDispatcher,
+                _webRiskService);
 
             var validationResult = await validator.ValidateAsync(request);
             request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
@@ -152,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher)
+            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
@@ -163,8 +164,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                     .NotEmpty()
                         .WithMessage("Select a T Level venue");
 
-                RuleFor(c => c.Website).Website();
-                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
+                RuleFor(c => c.Website).Website(webRiskService);
 
                 RuleFor(c => c.WhoFor).WhoFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
