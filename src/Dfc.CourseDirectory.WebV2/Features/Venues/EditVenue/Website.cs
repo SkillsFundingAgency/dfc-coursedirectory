@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
@@ -20,6 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
     {
         public Guid VenueId { get; set; }
         public string Website { get; set; }
+        public bool IsSecureWebsite { get; set; }
     }
 
     public class Handler :
@@ -27,10 +29,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
         IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
     {
         private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
+        private readonly IWebRiskService _webRiskService;
 
-        public Handler(JourneyInstance<EditVenueJourneyModel> journeyInstance)
+        public Handler(JourneyInstance<EditVenueJourneyModel> journeyInstance, IWebRiskService webRiskService)
         {
             _journeyInstance = journeyInstance;
+            _webRiskService = webRiskService;
         }
 
         public Task<Command> Handle(Query request, CancellationToken cancellationToken)
@@ -48,6 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
         {
             var validator = new CommandValidator();
             var validationResult = await validator.ValidateAsync(request);
+            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -64,6 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Website
             public CommandValidator()
             {
                 RuleFor(c => c.Website).Website();
+                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
             }
         }
     }

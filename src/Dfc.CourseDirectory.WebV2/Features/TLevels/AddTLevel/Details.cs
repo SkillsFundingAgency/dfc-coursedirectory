@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.TLevelValidation;
 using FluentValidation;
@@ -32,6 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         // If any additional data is added here be sure to replicate in SaveDetails.Command
+        public bool IsSecureWebsite { get; set; }
     }
 
     public class ViewModel : Command
@@ -52,19 +54,21 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
     {
         private readonly JourneyInstance<AddTLevelJourneyModel> _journeyInstance;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             JourneyInstance<AddTLevelJourneyModel> journeyInstance,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IWebRiskService webRiskService)
         {
             _journeyInstance = journeyInstance;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _webRiskService = webRiskService;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             ThrowIfFlowStateNotValid();
-
             var providerVenues = await GetVenuesForProvider(request.ProviderId);
             return CreateViewModel(request.ProviderId, providerVenues);
         }
@@ -76,6 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
             ThrowIfFlowStateNotValid();
 
             var providerVenues = await GetVenuesForProvider(request.ProviderId);
+            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             // Remove any invalid venue IDs
             request.LocationVenueIds ??= new HashSet<Guid>();
@@ -157,6 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
                         .WithMessage("Select a T Level venue");
 
                 RuleFor(c => c.Website).Website();
+                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
             }
         }
     }

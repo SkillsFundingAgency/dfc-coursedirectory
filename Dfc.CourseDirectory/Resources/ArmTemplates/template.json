@@ -254,6 +254,9 @@
     },
     "workspaceResourceGroup": {
         "type": "string"
+    },
+    "googleWebRiskApiKey": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -583,6 +586,10 @@
               {
                 "name": "WEBSITE_RUN_FROM_PACKAGE",
                 "value": "1"
+              },
+              {
+                "name": "GoogleWebRiskSettings__ApiKey",
+                "value": "[parameters('googleWebRiskApiKey')]"
               }
             ]
           },

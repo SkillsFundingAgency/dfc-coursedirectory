@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
@@ -28,6 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         public string Email { get; set; }
         public string Telephone { get; set; }
         public string Website { get; set; }
+        public bool IsSecureWebsite { get; set; }
     }
 
     public class ViewModel : Command
@@ -41,13 +43,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            JourneyInstanceProvider journeyInstanceProvider)
+            JourneyInstanceProvider journeyInstanceProvider,
+            IWebRiskService webRiskService)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstanceProvider = journeyInstanceProvider;
+            _webRiskService = webRiskService;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -63,6 +68,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
 
             var validator = new CommandValidator(request.ProviderId, _sqlQueryDispatcher);
             var validationResult = await validator.ValidateAsync(request);
+            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -134,6 +140,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
                 RuleFor(c => c.Website).Website();
+                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
             }
         }
     }

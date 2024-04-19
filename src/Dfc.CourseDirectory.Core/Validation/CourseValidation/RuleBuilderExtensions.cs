@@ -79,13 +79,20 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
-                .MaximumLength(Constants.CourseWebPageMaxLength)
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH")
-                .Apply(Rules.Website)
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
+            .NotEmpty()
+                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
+            .MaximumLength(Constants.CourseWebPageMaxLength)
+                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_MAXLENGTH")
+            .Apply(Rules.Website)
+                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT");
         }
+
+        public static void IsSecureWebsite<T>(this IRuleBuilderInitial<T, bool> field)
+        {
+            field
+            .Apply(Rules.SecureWebsite).WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE");
+        }
+
         public static void CourseType<T>(this IRuleBuilderInitial<T, CourseType?> field)
         {
             field

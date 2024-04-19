@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
@@ -35,6 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
         public string Email { get; set; }
         public string Telephone { get; set; }
         public string Website { get; set; }
+        public bool IsSecureWebsite { get; set; }
     }
 
     public class Handler :
@@ -44,15 +46,18 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IWebRiskService webRiskService)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _webRiskService = webRiskService;
         }
 
         public async Task<OneOf<NotFound, ModelWithErrors<Command>>> Handle(Query request, CancellationToken cancellationToken)
@@ -94,6 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
 
             var validator = new CommandValidator(otherRows, postcodeInfo);
             var validationResult = await validator.ValidateAsync(request);
+            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -164,6 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
                 RuleFor(c => c.Website).Website();
+                RuleFor(c => c.IsSecureWebsite).IsSecureWebsite();
             }
         }
     }

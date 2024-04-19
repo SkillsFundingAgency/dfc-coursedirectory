@@ -95,5 +95,28 @@ namespace Dfc.CourseDirectory.Core.Validation
                         && !uri.Host.StartsWith('.')
                         && !uri.Host.EndsWith('.');
                 });
+
+        //public static IRuleBuilderOptions<T, bool> SecureWebsite<T>(IRuleBuilder<T, bool> field) =>
+        //    field
+        //        .Must(b =>
+        //        {
+        //            if (b == true)
+        //            {
+        //                return true;
+        //            }
+        //            return false;
+        //        });
+
+        public static IRuleBuilderOptions<T, bool> SecureWebsite<T>(IRuleBuilder<T, bool> field)
+        {
+            return field.Must(b =>
+            {
+                if (b == true)
+                {
+                    return true;
+                }
+                return false;
+            });
+        }
     }
 }

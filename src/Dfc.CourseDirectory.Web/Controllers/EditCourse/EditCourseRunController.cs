@@ -413,10 +413,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             model.FlexibleStartDate = flexibleStartDate;
 
             var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest();
-            }
 
             var course = await GetCourse(courseId);
             var updateCourseResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
