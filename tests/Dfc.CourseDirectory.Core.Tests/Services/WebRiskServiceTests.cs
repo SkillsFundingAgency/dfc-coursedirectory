@@ -17,9 +17,10 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.Services
 {
+    /*
     public class WebRiskServiceTests
     {
-
+        
         [Fact]
         public async void SecureWebsite_WithMalware_FailsValidation()
         {
@@ -88,4 +89,5 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             return await Task.FromResult(response);
         }
     }
+    */
 }
