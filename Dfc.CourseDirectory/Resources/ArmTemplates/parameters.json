@@ -132,6 +132,9 @@
     },
     "workspaceResourceGroup": {
         "value": "__sharedLogAnalyticsResourceGroup__"
+    },
+    "googleWebRiskApiKey": {
+        "value": "__GoogleWebRiskApiKey__"
     }
   }
 }
