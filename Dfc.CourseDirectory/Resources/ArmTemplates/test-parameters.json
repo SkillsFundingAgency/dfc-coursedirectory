@@ -130,6 +130,9 @@
     },
     "workspaceResourceGroup": {
         "value": "aResourceGroup"
+    },
+    "googleWebRiskApiKey": {
+      "value": "AnApiKey"
     }
   }
 }
