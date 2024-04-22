@@ -73,8 +73,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             services.AddCourseDirectory(HostingEnvironment, Configuration);
 
-            services.Configure<GoogleWebRiskOptions>(
-            Configuration.GetSection(nameof(GoogleWebRiskOptions)));
+            services.Configure<GoogleWebRiskSettings>(
+            Configuration.GetSection(nameof(GoogleWebRiskSettings)));
             services.AddScoped<IWebRiskService, WebRiskService>();
 
             services.AddMediatR(typeof(Startup));

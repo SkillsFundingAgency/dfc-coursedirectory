@@ -1,6 +1,6 @@
 ﻿namespace Dfc.CourseDirectory.Core
 {
-    public class GoogleWebRiskOptions
+    public class GoogleWebRiskSettings
     {
         public string ApiKey { get; set; }
     }

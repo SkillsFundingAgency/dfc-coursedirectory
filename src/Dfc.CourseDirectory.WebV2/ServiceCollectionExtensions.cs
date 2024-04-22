@@ -163,7 +163,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
             services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
-            services.Configure<GoogleWebRiskOptions>(configuration.GetSection("GoogleWebRisk"));
+            services.Configure<GoogleWebRiskSettings>(configuration.GetSection("GoogleWebRisk"));
             services.AddScoped<RouteValuesHelper>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();

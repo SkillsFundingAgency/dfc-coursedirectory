@@ -76,8 +76,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
 
-            services.Configure<GoogleWebRiskOptions>(
-                Configuration.GetSection(nameof(GoogleWebRiskOptions)));
+            services.Configure<GoogleWebRiskSettings>(
+                Configuration.GetSection(nameof(GoogleWebRiskSettings)));
             services.AddScoped<IWebRiskService, WebRiskService>();
 
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));

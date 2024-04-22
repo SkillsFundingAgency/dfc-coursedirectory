@@ -13,11 +13,11 @@ namespace Dfc.CourseDirectory.Core.Services
 {
     public class WebRiskService : IWebRiskService
     {
-        private readonly GoogleWebRiskOptions _WebRiskSettings;
+        private readonly GoogleWebRiskSettings _WebRiskSettings;
         private readonly IHttpClientFactory _factory;
         private readonly ILogger<WebRiskService> _logger;
 
-        public WebRiskService(IOptions<GoogleWebRiskOptions> options, IHttpClientFactory factory)
+        public WebRiskService(IOptions<GoogleWebRiskSettings> options, IHttpClientFactory factory)
         {
             _WebRiskSettings = options.Value;
             _factory = factory;
