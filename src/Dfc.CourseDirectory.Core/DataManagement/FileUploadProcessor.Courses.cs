@@ -1319,7 +1319,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             public CourseUploadRowValidator(
                 IClock clock,
                 Guid? matchedVenueId,
-                IWebRiskService? webRiskService = null)
+                IWebRiskService webRiskService)
             {
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();

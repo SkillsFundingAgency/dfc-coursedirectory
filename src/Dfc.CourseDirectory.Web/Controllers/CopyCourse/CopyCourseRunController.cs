@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             IRegionCache regionCache,
-            IWebRiskService? webRiskService = null) : base(sqlQueryDispatcher)
+            IWebRiskService webRiskService = null) : base(sqlQueryDispatcher)
         {
             if (logger == null)
             {
