@@ -21,14 +21,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-
-        private readonly IWebRiskService _webRiskService;
-
-        public FileUploadProcessor(IWebRiskService webRiskService)
-        {
-            _webRiskService = webRiskService;
-        }
-
         public async Task DeleteVenueUploadForProvider(Guid providerId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))

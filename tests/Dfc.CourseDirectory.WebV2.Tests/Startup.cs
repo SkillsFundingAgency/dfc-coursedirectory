@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace Dfc.CourseDirectory.WebV2.Tests
 {
@@ -75,7 +76,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
             services.Configure<GoogleWebRiskSettings>(
             Configuration.GetSection(nameof(GoogleWebRiskSettings)));
-            services.AddScoped<IWebRiskService, WebRiskService>();
+
+            var mockWebRiskService = new Mock<IWebRiskService>();
+            mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
+            services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
             services.AddMediatR(typeof(Startup));
 

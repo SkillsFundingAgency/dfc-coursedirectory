@@ -135,6 +135,7 @@ namespace Dfc.CourseDirectory.WebV2
                     new ModelBinding.DateInputModelConverter()
                 }
             });
+            services.AddHttpClient();
             services.AddMediatR(typeof(ServiceCollectionExtensions));
             services.AddTransient<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
