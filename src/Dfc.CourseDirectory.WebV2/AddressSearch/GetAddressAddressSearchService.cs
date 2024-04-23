@@ -154,7 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
         private async Task<OsGetAddress> FindAddresses(string postcode)
         {
             var url = new Url(string.Format(_options.ApiUrl, postcode))
-            .SetQueryParam("api-key", _options.ApiKey);
+            .SetQueryParam("key", _options.ApiKey);
             //.SetQueryParam("expand", "true")
             //.SetQueryParam("dataset", "LPI");
           
