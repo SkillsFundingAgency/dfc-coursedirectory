@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using JustEat.HttpClientInterception;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -39,23 +40,24 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                         dataset = "",
                         lr = "",
                         maxresults = 1,
-                                          lastupdate = "2024-04-19",
+                        lastupdate = "2024-04-19",
                         output_srs = "",
                     },
-                    result = new
+                    results = new[]
                     {
-                        lpi = new 
-                    {
-                UPRN = 1,
-                ADDRESS = "",
-                USRN = 1,
-                LPI_KEY = "",
-                //PAO_START_NUMBER = 1,
-                PAO_TEXT = "658 Mitcham Road",
-                STREET_DESCRIPTION = "",
-                TOWN_NAME = "Croydon",
-          
-                        }
+                        new
+                        {
+                            LPI = new
+                            {
+                                UPRN = 1,
+                                USRN = 1,
+                                LPI_KEY = "",
+                                //PAO_START_NUMBER = 1,
+                                Address = "658 Mitcham Road",
+                                STREET_DESCRIPTION = "",
+                                TOWN_NAME = "Croydon"
+                            }
+                        } 
                     }
                 })
                 .RegisterWith(httpRequestInterceptor);
@@ -71,11 +73,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var result = await service.SearchByPostcode("XX2 00X");
 
             // Assert
-            Assert.Equal(0, result.Count);
+            Assert.Equal(1, result.Count);
 
-            //Assert.Equal($"XX2 00X::658 Mitcham Road", result.First().Id );
-            //Assert.Equal("658 Mitcham Road", result.First().StreetAddress);
-            //Assert.Equal("Croydon", result.First().Place);
+              Assert.Equal($"XX2 00X::1", result.First().Id );
+              Assert.Equal("658 Mitcham Road", result.First().StreetAddress);
+             Assert.Equal("Croydon", result.First().Place);
 
         }
 
@@ -173,77 +175,45 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpRequestInterceptor = new HttpClientInterceptorOptions();
 
             new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
-                .Responds()
-                .WithJsonContent(new
-                {
-                    postcode = "XX2 00X",
-                    latitude = 51.39020538330078,
-                    longitude = -0.1320359706878662,
-                    addresses = new[]
-                    {
+               .Requests()
+               .ForHttps()
+               .ForHost("example.com")
+               .ForPath("getaddress/XX2 00X")
+               .ForQuery("key=key")
+               .Responds()
+               .WithJsonContent(new
+               {
+                   header = new
+                   {
+                       uri = "https://example.com/getaddress/{0}",
+                       query = "",
+                       offset = 1,
+                       totalresults = 1,
+                       format = "",
+                       dataset = "",
+                       lr = "",
+                       maxresults = 1,
+                       lastupdate = "2024-04-19",
+                       output_srs = "",
+                   },
+                   results = new[]
+                   {
                         new
                         {
-                            formatted_address = new[] { "658 Mitcham Road", "", "", "Croydon", "Surrey" },
-                            thoroughfare = "Mitcham Road",
-                            building_name = "",
-                            sub_building_name = "",
-                            sub_building_number = "",
-                            building_number = "658",
-                            line_1 = "658 Mitcham Road",
-                            line_2 = "",
-                            line_3 = "",
-                            line_4 = "",
-                            locality = "",
-                            town_or_city = "Croydon",
-                            county = "Surrey",
-                            district = "Croydon",
-                            country = "England"
-                        },
-                        new
-                        {
-                            formatted_address = new[] { "660 Mitcham Road", "", "", "Croydon", "Surrey" },
-                            thoroughfare = "Mitcham Road",
-                            building_name = "",
-                            sub_building_name = "",
-                            sub_building_number = "",
-                            building_number = "660",
-                            line_1 = "660 Mitcham Road",
-                            line_2 = "",
-                            line_3 = "",
-                            line_4 = "",
-                            locality = "",
-                            town_or_city = "Croydon",
-                            county = "Surrey",
-                            district = "Croydon",
-                            country = "England"
-                        },
-                        new
-                        {
-                            formatted_address = new[] { "Lanfranc School House", "Mitcham Road", "", "Croydon", "Surrey" },
-                            thoroughfare = "Mitcham Road",
-                            building_name = "",
-                            sub_building_name = "Lanfranc School House",
-                            sub_building_number = "",
-                            building_number = "",
-                            line_1 = "Lanfranc School House",
-                            line_2 = "Mitcham Road",
-                            line_3 = "",
-                            line_4 = "",
-                            locality = "",
-                            town_or_city = "Croydon",
-                            county = "Surrey",
-                            district = "Croydon",
-                            country = "England"
+                            LPI = new
+                            {
+                                UPRN = 1,
+                                USRN = 1,
+                                LPI_KEY = "",
+                                //PAO_START_NUMBER = 1,
+                                PAO_TEXT="660 Mitcham Road",
+                                 STREET_DESCRIPTION = "",
+                                TOWN_NAME = "Croydon"
+                            }
                         }
-                    }
-                })
-                .RegisterWith(httpRequestInterceptor);
-
+                   }
+               })
+               .RegisterWith(httpRequestInterceptor);
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
@@ -252,18 +222,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
             // Act
-            var result = await service.GetById($"XX2 00X::660 Mitcham Road");
+            var result = await service.GetById($"XX2 00X::1");
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal("660 Mitcham Road", result.Line1);
-            Assert.Equal("", result.Line2);
-            Assert.Equal("", result.Line3);
-            Assert.Equal("", result.Line4);
+            //Assert.Equal("", result.Line2);
+            //Assert.Equal("", result.Line3);
+            //Assert.Equal("", result.Line4);
             Assert.Equal("Croydon", result.PostTown);
-            Assert.Equal("Surrey", result.County);
+            //Assert.Equal("Surrey", result.County);
             Assert.Equal("XX2 00X", result.Postcode);
-            Assert.Equal("England", result.CountryName);
+            //Assert.Equal("England", result.CountryName);
         }
 
         [Fact]
@@ -307,7 +277,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHttps()
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
+                .ForQuery("key=key")
                 .IgnoringQuery()
                 .Responds()
                 .WithStatus(HttpStatusCode.InternalServerError)
@@ -321,7 +291,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(() => service.GetById("XX2 00X::660 Mitcham Road"));
+            await Assert.ThrowsAsync<HttpRequestException>(() => service.GetById("XX2 00X::1"));
         }
     }
 }
+
