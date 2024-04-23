@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHttps()
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&dataset=DPA,LPI")
+                .ForQuery("key=key")
                 .Responds()
                 .WithStatus(HttpStatusCode.NotFound)
                 .RegisterWith(httpRequestInterceptor);
@@ -100,7 +100,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var httpClient = httpRequestInterceptor.CreateHttpClient();
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}&dataset=DPA,LPI", ApiKey = "key" });
+            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHttps()
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
+                .ForQuery("key=key")
                 .Responds()
                 .WithStatus(HttpStatusCode.BadRequest)
                 .RegisterWith(httpRequestInterceptor);
@@ -247,7 +247,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHttps()
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
+                .ForQuery("key=key")
                 .Responds()
                 .WithStatus(HttpStatusCode.NotFound)
                 .RegisterWith(httpRequestInterceptor);
@@ -260,7 +260,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var service = new GetAddressAddressSearchService(httpClient, options.Object);
 
             // Act
-            var result = await service.GetById("XX2 00X::660 Mitcham Road");
+            var result = await service.GetById("XX2 00X::1");
 
             // Assert
             Assert.Null(result);
