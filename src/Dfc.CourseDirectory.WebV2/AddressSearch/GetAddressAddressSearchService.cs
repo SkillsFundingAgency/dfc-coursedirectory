@@ -161,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 
             using (var response = await _httpClient.GetAsync(url))
             {
-                if (response.StatusCode == HttpStatusCode.NotFound || response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.InternalServerError)
+                if (response.StatusCode == HttpStatusCode.NotFound || response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     return null;
                 }
