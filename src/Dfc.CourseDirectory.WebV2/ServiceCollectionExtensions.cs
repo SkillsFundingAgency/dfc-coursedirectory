@@ -147,7 +147,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IMptxStateProvider, SessionMptxStateProvider>();
             services.AddSingleton<MptxInstanceContextFactory>();
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
-            services.AddSingleton(new AddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
+            //services.AddSingleton(new AddressSearch.Options() { Key = configuration["PostCodeSearchSettings:Key"] });
             services.Configure<GetAddressAddressSearchServiceOptions>(configuration.GetSection("GetAddressSettings"));
             services.AddTransient<UkrlpSyncHelper>();
             services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
