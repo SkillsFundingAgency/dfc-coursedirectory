@@ -302,6 +302,7 @@
     <Build Include="Pttcd\Tables\NonLarsSubType.sql" />
     <Build Include="Pttcd\Tables\ProviderNonLarsSubType.sql" />
     <Build Include="Pttcd\Tables\Sectors.sql" />
+    <Build Include="Pttcd\StoredProcedures\RemoveRedundantRecords.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
