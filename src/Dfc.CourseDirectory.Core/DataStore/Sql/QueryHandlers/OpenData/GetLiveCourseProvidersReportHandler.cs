@@ -31,9 +31,8 @@ AND         p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                and [OfferingType]=1
+                and ([OfferingType]=1 or [OfferingType]=2)
             )
-AND         p.ProviderType IN({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
 ORDER BY    p.Ukprn ASC";
 
 
