@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public Task<int> Execute(SqlTransaction transaction, DeleteArchivedCourses query)
         {
-            var sql = $@"EXEC Pttcd.DeleteArchivedCourses @RetentionDate";
+            var sql = $@"EXEC [Pttcd].[RemoveRedundantRecords] @RetentionDate";
 
             return transaction.Connection.QuerySingleAsync<int>(
                 sql,

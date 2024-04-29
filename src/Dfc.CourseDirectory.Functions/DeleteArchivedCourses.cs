@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName("DeleteArchivedCourses")]
-        public async Task Run([TimerTrigger("0 0 3 * * *")]TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("3 * * * * *")]TimerInfo timer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
@@ -32,10 +32,8 @@ namespace Dfc.CourseDirectory.Functions
 
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-            //call stored procedure here
-            await dispatcher.ExecuteQuery(new SqlQueries.DeleteArchivedCourses());            
-
-
+            log.LogInformation($"Calling stored procedure to remove redundant records");
+            await dispatcher.ExecuteQuery(new SqlQueries.DeleteArchivedCourses() { RetentionDate = DateTime.Now.AddDays(-30)});
         }
     }
 }

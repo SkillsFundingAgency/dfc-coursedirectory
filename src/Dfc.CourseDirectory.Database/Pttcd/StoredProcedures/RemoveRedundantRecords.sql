@@ -34,7 +34,7 @@ AS
 		AND UpdatedOn < @RetentionDate
 
 
-	-- Some of the records in tables are archived but updatedon fields are not set. Below statements set UpdatedOn field so that these records can also be deleted.
+	-- Some of the records in tables are archived but UpdatedOn fields are not set. Below statements set UpdatedOn field so that these records can also be deleted.
 	UPDATE 
 		Pttcd.Courses 
 	SET 
