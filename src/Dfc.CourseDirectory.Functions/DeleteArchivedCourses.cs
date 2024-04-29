@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Functions
 
         [FunctionName("DeleteArchivedCourses")]
         [Singleton]
-        public async Task Run([TimerTrigger("0 10 * * * *")]TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("0 */10 * * * *")]TimerInfo timer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
