@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using MediatR;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport
 {
@@ -39,13 +40,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string CourseDescription { get; set; }
 
         [Name("DELIVER_MODE")]
-        public int? DeliveryMode { get; set; }
+        public string? DeliveryMode { get; set; }
 
         [Name("STUDY_MODE")]
-        public int? StudyMode { get; set; }
+        public string? StudyMode { get; set; }
 
         [Name("ATTENDANCE_PATTERN")]
-        public int? AttendancePattern { get; set; }
+        public string? AttendancePattern { get; set; }
 
         [Name("FLEXIBLE_STARTDATE")]
         public bool IsFlexible { get; set; }
@@ -54,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string StartDate { get; set; }
 
         [Name("DURATION_UNIT")]
-        public int? DurationUnit { get; set; }
+        public string? DurationUnit { get; set; }
 
         [Name("DURATION_VALUE")]
         public int? DurationValue { get; set; }
@@ -163,12 +164,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             CourseDescription = record.CourseDescription,
                             CourseUrl = record.CourseWebsite,
                             LarsId = record.LearnAimRef,
-                            DeliveryMode = record.DeliveryMode,
-                            AttendancePattern = record.AttendancePattern,
-                            StudyMode = record.StudyMode,
+                            DeliveryMode = ((CourseDeliveryMode?)record.DeliveryMode)?.ToDescription() ?? string.Empty,
+                            AttendancePattern = ((CourseAttendancePattern?)record.AttendancePattern)?.ToDescription() ?? string.Empty,
+                            StudyMode = ((CourseStudyMode?)record.StudyMode)?.ToDescription() ?? string.Empty,
                             IsFlexible = record.FlexibleStartDate,
                             StartDate = ParsedCsvCourseRow.MapStartDate(record.StartDate),
-                            DurationUnit = record.DurationUnit,
+                            DurationUnit = ((CourseDurationUnit?)record.DurationUnit)?.ToString() ?? string.Empty,
                             DurationValue = record.DurationValue,
                             Cost = ParsedCsvCourseRow.MapCost(record.Cost),
                             CostDescription = record.CostDescription,
