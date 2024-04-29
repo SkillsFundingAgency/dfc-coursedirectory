@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
@@ -18,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 {
                     query.RetentionDate
                 },
-                commandTimeout: 180,
+                commandTimeout: 600,
                 transaction: transaction);
         }
     }
