@@ -40,13 +40,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string CourseDescription { get; set; }
 
         [Name("DELIVER_MODE")]
-        public string? DeliveryMode { get; set; }
+        public string DeliveryMode { get; set; }
 
         [Name("STUDY_MODE")]
-        public string? StudyMode { get; set; }
+        public string StudyMode { get; set; }
 
         [Name("ATTENDANCE_PATTERN")]
-        public string? AttendancePattern { get; set; }
+        public string AttendancePattern { get; set; }
 
         [Name("FLEXIBLE_STARTDATE")]
         public bool IsFlexible { get; set; }
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         public string StartDate { get; set; }
 
         [Name("DURATION_UNIT")]
-        public string? DurationUnit { get; set; }
+        public string DurationUnit { get; set; }
 
         [Name("DURATION_VALUE")]
         public int? DurationValue { get; set; }
