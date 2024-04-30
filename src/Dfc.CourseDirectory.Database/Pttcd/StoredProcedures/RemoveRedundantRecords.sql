@@ -21,8 +21,7 @@ AS
 		INNER JOIN Pttcd.CourseRunRegions crr ON crr.CourseRunId = cr.CourseRunId
 	WHERE 
 		cr.CourseRunStatus = @ArchivedStatus 
-		AND UpdatedOn < @RetentionDate
-		
+		AND UpdatedOn < @RetentionDate			
 
 	DELETE 
 		crsr
@@ -33,6 +32,14 @@ AS
 		CourseRunStatus = @ArchivedStatus 
 		AND UpdatedOn < @RetentionDate
 
+	DELETE 
+		crbue 
+	FROM 
+		Pttcd.CourseRuns cr
+		INNER JOIN Pttcd.CourseRunBulkUploadErrors crbue on crbue.CourseRunId = cr.CourseRunId
+	WHERE 
+		cr.CourseRunStatus = @ArchivedStatus
+
 
 	DELETE 		
 	FROM 
@@ -42,6 +49,14 @@ AS
 		AND UpdatedOn < @RetentionDate
 		AND CourseRunId NOT IN (Select Distinct CourseRunId From Pttcd.CourseRunRegions)
 		AND CourseRunId NOT IN (Select Distinct CourseRunId From Pttcd.CourseRunSubRegions)
+
+	DELETE 
+		cbue 
+	FROM 
+		Pttcd.Courses c
+		INNER JOIN Pttcd.CourseBulkUploadErrors cbue on cbue.CourseId = c.CourseId
+	WHERE 
+		c.CourseStatus = @ArchivedStatus
 
 	DELETE 		
 	FROM 
@@ -56,28 +71,6 @@ AS
 		Pttcd.Venues 
 	WHERE 
 		VenueStatus = @ArchivedStatus 
-		AND UpdatedOn < @RetentionDate
-
-
-	-- Some of the records in tables are archived but UpdatedOn fields are not set. Below statements set UpdatedOn field so that these records can also be deleted.
-
-	UPDATE 		
-		Pttcd.Courses 
-	SET 
-		UpdatedOn = GETDATE(),
-		UpdatedBy = @UpdatedBy
-	WHERE 
-		CourseStatus = @ArchivedStatus 
-		AND UpdatedOn IS NULL
-
-	
-	UPDATE 		
-		Pttcd.CourseRuns 
-	SET 
-		UpdatedOn = GETDATE(),
-		UpdatedBy = @UpdatedBy
-	WHERE 
-		CourseRunStatus = @ArchivedStatus
-		AND UpdatedOn IS NULL
+		AND UpdatedOn < @RetentionDate	
 
 RETURN 1
