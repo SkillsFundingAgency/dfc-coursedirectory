@@ -36,7 +36,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public bool? NationalDelivery { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
         public string CourseWebPage { get; set; }
-        public bool IsSecureWebsite { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
         public int? Duration { get; set; }
@@ -117,7 +116,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         {
             NormalizeCommand();
             var allRegions = await _regionCache.GetAllRegions();
-            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.CourseWebPage);
             var validator = new CommandValidator(_clock, allRegions, _webRiskService);
 
             var validationResult = await validator.ValidateAsync(request);
