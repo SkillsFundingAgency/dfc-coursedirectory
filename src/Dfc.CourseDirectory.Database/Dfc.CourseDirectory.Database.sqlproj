@@ -303,6 +303,9 @@
     <Build Include="Pttcd\Tables\ProviderNonLarsSubType.sql" />
     <Build Include="Pttcd\Tables\Sectors.sql" />
     <Build Include="Pttcd\StoredProcedures\RemoveRedundantRecords.sql" />
+    <Build Include="Pttcd\Indexes\IX_CourseRuns_CourseRunStatus_UpdatedOn.sql" />
+    <Build Include="Pttcd\Indexes\IX_Courses_CourseStatus_UpdatedOn.sql" />
+    <Build Include="Pttcd\Indexes\IX_FindACourseIndex_Live_LastSynced.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

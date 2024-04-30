@@ -3,15 +3,7 @@
 AS
 	DECLARE @NonLiveStatus int = 0
 	DECLARE @ArchivedStatus int = 4
-	DECLARE @UpdatedBy varchar(100) = 'RemoveRedundantRecordsStoredProc'
-	DECLARE @MaxNoOfRecordsToRemove int = 2
-	
-	DELETE 		
-	FROM 
-		Pttcd.FindACourseIndex 
-	WHERE 
-		Live = @NonLiveStatus 
-		AND LastSynced < @RetentionDate
+	DECLARE @UpdatedBy varchar(100) = 'RemoveRedundantRecordsStoredProc'	
 
 
 	DELETE 
@@ -67,10 +59,34 @@ AS
 		and CourseId NOT IN (Select Distinct CourseId From Pttcd.CourseRuns)
 
 	DELETE 
+		tll
+	FROM 
+		Pttcd.Venues v
+		INNER JOIN Pttcd.TLevelLocations tll ON tll.VenueId = v.VenueId
+	WHERE 
+		VenueStatus = @ArchivedStatus 
+		AND UpdatedOn < @RetentionDate
+
+	DELETE 
 	FROM 
 		Pttcd.Venues 
 	WHERE 
 		VenueStatus = @ArchivedStatus 
-		AND UpdatedOn < @RetentionDate	
+		AND UpdatedOn < @RetentionDate
+
+
+	DELETE 		
+	FROM 
+		Pttcd.FindACourseIndex 
+	WHERE 
+		Live = @NonLiveStatus 
+		AND LastSynced < @RetentionDate
+
+	UPDATE 
+		STATISTICS [Pttcd].[FindACourseIndex]  
+	WITH
+		FULLSCAN
+
+	EXEC sp_recompile N'[Pttcd].[FindACourseIndex]'
 
 RETURN 1
