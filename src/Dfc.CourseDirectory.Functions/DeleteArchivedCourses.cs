@@ -2,7 +2,6 @@ using System;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using System.Threading.Tasks;
@@ -22,7 +21,7 @@ namespace Dfc.CourseDirectory.Functions
 
         [FunctionName("DeleteArchivedCourses")]
         [Singleton]
-        public async Task Run([TimerTrigger("0 */10 * * * *")]TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 3 * * *")]TimerInfo timer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 

@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 {
                     query.RetentionDate
                 },
-                commandTimeout: 600,
+                commandTimeout: 1200,
                 transaction: transaction);
         }
     }
