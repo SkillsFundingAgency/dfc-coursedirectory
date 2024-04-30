@@ -17,25 +17,19 @@ using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.Services
 {
-    /*
     public class WebRiskServiceTests
     {
-        
+
         [Fact]
-        public async void SecureWebsite_WithMalware_FailsValidation()
+        public async void CheckForSecureUri_WithKnownThreat_FailsValidation()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskOptions { ApiKey = "X" });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
-            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-            httpMessageHandlerMock.Protected().Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>()).ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = System.Net.HttpStatusCode.OK,
-                Content = new StringContent(expectedData)
-            });
-            httpClientFactoryMock.Setup(factory => factory.CreateClient()).Returns(new HttpClient(httpMessageHandlerMock.Object));
+            var namedClient = new HttpClient(new FakeHttpMessageHandler(expectedData)); // Create a named client
+            httpClientFactoryMock.Setup(factory => factory.CreateClient("namedClient")).Returns(namedClient); // Use the named client
 
             var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object);
             var website = "https://testsafebrowsing.appspot.com/s/malware.html";
@@ -48,24 +42,24 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         }
 
         [Fact]
-        public async void CheckForSecureUri_WithKnownThreat_FailsValidation()
+        public async void CheckForSecureUri_WithoutKnownThreat_PassesValidation()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskOptions { ApiKey = "X" });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X" });
 
-            var expectedData = "threat";
+            var expectedData = "{}";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
             var namedClient = new HttpClient(new FakeHttpMessageHandler(expectedData)); // Create a named client
-            httpClientFactoryMock.Setup(factory => factory.CreateClient("myNamedClient")).Returns(namedClient); // Use the named client
+            httpClientFactoryMock.Setup(factory => factory.CreateClient("namedClient")).Returns(namedClient); // Use the named client
 
             var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object);
-            var website = "https://testsafebrowsing.appspot.com/s/malware.html";
+            var website = "https://www.google.com";
 
             // Act
-            var result = await webRiskService.CheckForSecureUri(website); //inside this method, client is null so there is an error
+            var result = await webRiskService.CheckForSecureUri(website);
 
             // Assert
-            Assert.False(result);
+            Assert.True(result);
         }
     }
 
@@ -89,5 +83,4 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             return await Task.FromResult(response);
         }
     }
-    */
 }

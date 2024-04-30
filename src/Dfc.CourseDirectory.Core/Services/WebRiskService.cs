@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Core.Services
 
         public async Task<bool> CheckForSecureUri(string url)
         {
-            using (var client = _factory.CreateClient())
+            using (var client = _factory.CreateClient("namedClient"))
             {
                 try
                 {
