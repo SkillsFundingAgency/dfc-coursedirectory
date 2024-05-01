@@ -26,18 +26,15 @@
                val-regex="@regex"
                val-regex-message="The format of URL is incorrect" />
 
-        @if (@Model.SecureWebsiteHintShown == true)
-        {
+        <div secure-website-message-hint-text style="display:none">
             <span class="govuk-hint govuk-!-margin-top-3">
-            This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
+                This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
             </span>
             <span class="govuk-hint govuk-!-margin-top-3">
-            Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
+                Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
+                You cannot upload this URL to the course directory until it can pass this security check.
             </span>
-            <span class="govuk-hint govuk-!-margin-top-3">
-            You cannot upload this URL to the course directory until it can pass this security check.
-            </span>
-        }
+        </div>
     </div>
 
 <script>
