@@ -5,7 +5,7 @@ BEGIN
 
 	DECLARE @NonLiveStatus int = 0
 	DECLARE @ArchivedStatus int = 4
-	DECLARE @MaxNoOfRecordsToDelete int = 10000
+	DECLARE @MaxNoOfRecordsToDelete int = 50000
 
 
 	DELETE TOP (@MaxNoOfRecordsToDelete)
