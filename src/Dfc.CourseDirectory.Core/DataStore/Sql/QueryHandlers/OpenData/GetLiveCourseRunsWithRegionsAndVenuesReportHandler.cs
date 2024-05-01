@@ -76,6 +76,55 @@ LEFT JOIN [Pttcd].[Venues] v ON cr.VenueId = v.VenueId
 LEFT JOIN cte_course_run_regions r ON cr.CourseRunId = r.CourseRunId
 WHERE p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels},{(int)ProviderType.FE + (int)ProviderType.NonLARS},{(int)ProviderType.NonLARS + (int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
     AND cr.CourseRunId IN (SELECT CourseRunId FROM cte_CourseRunIds)
+UNION 
+SELECT
+    p.Ukprn AS ProviderUkprn,
+    p.ProviderName,
+    tl.TLevelLocationId AS CourseRunId,
+    t.TLevelId AS CourseId,
+    c.LearnAimRef,
+    c.CourseName,
+    t.WhatYoullLearn AS CourseDescription, 
+    t.Website AS CourseWebsite,
+    c.Cost AS Cost,
+    c.CostDescription,
+    c.FlexibleStartDate,
+    t.StartDate,        
+    t.EntryRequirements,
+    t.HowYoullBeAssessed,
+    c.DeliveryMode,
+    c.AttendancePattern,
+    c.StudyMode,
+    c.DurationUnit,
+    c.DurationValue,                
+    ISNULL(c.[National], 0) AS [National],
+    c.RegionName AS Regions,
+    v.VenueName,
+    v.AddressLine1 AS VenueAddress1,
+    v.AddressLine2 AS VenueAddress2,
+    v.County AS VenueCounty,
+    v.Postcode AS VenuePostcode,
+    v.Town AS VenueTown,
+    v.Position.Lat AS VenueLatitude,
+    v.Position.Long AS VenueLongitude,
+    v.Telephone AS VenueTelephone,
+    v.Email AS VenueEmail,
+    t.CreatedOn,
+    v.Website AS VenueWebsite,
+    t.UpdatedOn,    
+	c.CourseType,
+    c.SectorId,
+    c.EducationLevel, 
+    c.AwardingBody
+FROM [Pttcd].[TLevels] t
+INNER JOIN [Pttcd].[TLevelLocations] tl ON t.TLevelId = tl.TLevelId
+INNER JOIN [Pttcd].[Providers] p ON p.ProviderId = t.ProviderId 
+INNER JOIN [Pttcd].[FindACourseIndex] c ON c.TLevelId = t.TLevelId
+LEFT JOIN [Pttcd].[Venues] v ON tl.VenueId = v.VenueId
+WHERE p.ProviderType IN ({(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels},{(int)ProviderType.TLevels + (int)ProviderType.NonLARS}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
+AND c.OfferingType = 2
+AND c.Live = 1
+AND (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
 ";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
