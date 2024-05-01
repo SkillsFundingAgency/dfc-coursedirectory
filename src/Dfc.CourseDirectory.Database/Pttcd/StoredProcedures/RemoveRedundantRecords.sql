@@ -1,21 +1,24 @@
 ﻿CREATE PROCEDURE [Pttcd].[RemoveRedundantRecords]
 	@RetentionDate datetime
 AS
+BEGIN
+
 	DECLARE @NonLiveStatus int = 0
 	DECLARE @ArchivedStatus int = 4
-	DECLARE @UpdatedBy varchar(100) = 'RemoveRedundantRecordsStoredProc'	
+	DECLARE @MaxNoOfRecordsToDelete int = 10000
 
 
-	DELETE 
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 		crr 
 	FROM 
 		Pttcd.CourseRuns cr
 		INNER JOIN Pttcd.CourseRunRegions crr ON crr.CourseRunId = cr.CourseRunId
 	WHERE 
 		cr.CourseRunStatus = @ArchivedStatus 
-		AND UpdatedOn < @RetentionDate			
+		AND UpdatedOn < @RetentionDate
 
-	DELETE 
+
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 		crsr
 	FROM 
 		Pttcd.CourseRuns cr
@@ -24,7 +27,8 @@ AS
 		CourseRunStatus = @ArchivedStatus 
 		AND UpdatedOn < @RetentionDate
 
-	DELETE 
+
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 		crbue 
 	FROM 
 		Pttcd.CourseRuns cr
@@ -33,7 +37,7 @@ AS
 		cr.CourseRunStatus = @ArchivedStatus
 
 
-	DELETE 		
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 	FROM 
 		Pttcd.CourseRuns 
 	WHERE 
@@ -42,7 +46,8 @@ AS
 		AND CourseRunId NOT IN (Select Distinct CourseRunId From Pttcd.CourseRunRegions)
 		AND CourseRunId NOT IN (Select Distinct CourseRunId From Pttcd.CourseRunSubRegions)
 
-	DELETE 
+
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 		cbue 
 	FROM 
 		Pttcd.Courses c
@@ -50,7 +55,8 @@ AS
 	WHERE 
 		c.CourseStatus = @ArchivedStatus
 
-	DELETE 		
+
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 	FROM 
 		Pttcd.Courses 
 	WHERE 
@@ -58,35 +64,12 @@ AS
 		and UpdatedOn < @RetentionDate
 		and CourseId NOT IN (Select Distinct CourseId From Pttcd.CourseRuns)
 
-	DELETE 
-		tll
-	FROM 
-		Pttcd.Venues v
-		INNER JOIN Pttcd.TLevelLocations tll ON tll.VenueId = v.VenueId
-	WHERE 
-		VenueStatus = @ArchivedStatus 
-		AND UpdatedOn < @RetentionDate
 
-	DELETE 
-	FROM 
-		Pttcd.Venues 
-	WHERE 
-		VenueStatus = @ArchivedStatus 
-		AND UpdatedOn < @RetentionDate
-
-
-	DELETE 		
+	DELETE TOP (@MaxNoOfRecordsToDelete)
 	FROM 
 		Pttcd.FindACourseIndex 
 	WHERE 
 		Live = @NonLiveStatus 
 		AND LastSynced < @RetentionDate
 
-	UPDATE 
-		STATISTICS [Pttcd].[FindACourseIndex]  
-	WITH
-		FULLSCAN
-
-	EXEC sp_recompile N'[Pttcd].[FindACourseIndex]'
-
-RETURN 1
+END

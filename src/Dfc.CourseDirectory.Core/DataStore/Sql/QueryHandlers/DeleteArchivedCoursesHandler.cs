@@ -2,16 +2,17 @@
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class DeleteArchivedCoursesHandler : ISqlQueryHandler<DeleteArchivedCourses, int>
+    public class DeleteArchivedCoursesHandler : ISqlQueryHandler<DeleteArchivedCourses, Success>
     {
-        public Task<int> Execute(SqlTransaction transaction, DeleteArchivedCourses query)
+        public async Task<Success> Execute(SqlTransaction transaction, DeleteArchivedCourses query)
         {
             var sql = $@"EXEC [Pttcd].[RemoveRedundantRecords] @RetentionDate";
 
-            return transaction.Connection.QuerySingleAsync<int>(
+            await transaction.Connection.ExecuteAsync(
                 sql,
                 new
                 {
@@ -19,6 +20,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 },
                 commandTimeout: 1200,
                 transaction: transaction);
+            
+                return new Success();
         }
     }
 }
