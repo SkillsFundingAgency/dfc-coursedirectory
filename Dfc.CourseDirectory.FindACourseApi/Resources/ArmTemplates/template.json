@@ -71,7 +71,7 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "webAppName": "[concat(parameters('webAppPrefix'),'-as',parameters('webAppSuffix'))]",
+    "webAppName": "[concat(parameters('webAppPrefix'),'-as-',parameters('webAppSuffix'))]",
     "appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
   },
   "resources": [
