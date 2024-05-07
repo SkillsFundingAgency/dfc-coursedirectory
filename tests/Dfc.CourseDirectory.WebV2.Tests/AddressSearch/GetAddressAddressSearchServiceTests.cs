@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                     {
                         new
                         {
-                            LPI = new
+                            DPA = new
                             {
                                 UPRN = 1,
                                 USRN = 1,
@@ -55,6 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                                 //PAO_START_NUMBER = 1,
                                 Address = "658 Mitcham Road",
                                 STREET_DESCRIPTION = "",
+                                POST_TOWN= "Croydon",
                                 TOWN_NAME = "Croydon"
                             }
                         } 
@@ -200,15 +201,20 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                    {
                         new
                         {
-                            LPI = new
+                            DPA = new
                             {
                                 UPRN = 1,
                                 USRN = 1,
                                 LPI_KEY = "",
                                 //PAO_START_NUMBER = 1,
-                                PAO_TEXT="660 Mitcham Road",
+                                ADDRESS="660 Mitcham Road",
+                                THOROUGHFARE_NAME="660 Mitcham Road",
+                                 BUILDING_NUMBER="660",
                                  STREET_DESCRIPTION = "",
+                                 POST_TOWN = "Croydon",
+                              
                                 TOWN_NAME = "Croydon"
+
                             }
                         }
                    }
@@ -226,14 +232,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal("660 Mitcham Road", result.Line1);
-            //Assert.Equal("", result.Line2);
-            //Assert.Equal("", result.Line3);
-            //Assert.Equal("", result.Line4);
+            Assert.Equal("660 Mitcham Road", result.Line2);
             Assert.Equal("Croydon", result.PostTown);
-            //Assert.Equal("Surrey", result.County);
             Assert.Equal("XX2 00X", result.Postcode);
-            //Assert.Equal("England", result.CountryName);
         }
 
         [Fact]

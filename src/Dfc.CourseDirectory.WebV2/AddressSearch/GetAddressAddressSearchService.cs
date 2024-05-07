@@ -69,7 +69,11 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 
             if (result.FirstOrDefault() != null)
             {
-                _line1 = result.FirstOrDefault()?.Dpa.ORGANISATION_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
+                if (result.FirstOrDefault()?.Dpa.ORGANISATION_NAME != null && (result.FirstOrDefault()?.Dpa.BuildingNumber != 0 || result.FirstOrDefault()?.Dpa.BUILDING_NAME != null))
+                    _line1 = result.FirstOrDefault()?.Dpa.BuildingNumber + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
+                else
+                    _line1 = result.FirstOrDefault()?.Dpa.ORGANISATION_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
+
                 _line2 =  (result.FirstOrDefault()?.Dpa.ThoroughfareName ?? string.Empty);
                 _postTown = result.FirstOrDefault()?.Dpa.PostTown;
             }
