@@ -5,6 +5,9 @@
     "webAppPrefix": {
       "value": "__webAppPrefix__"
     },
+    "webAppSuffix": {
+      "value": "__webAppSuffix__"
+    },
     "appServicePlanName": {
       "value": "__providerPortalAppServicePlan__"
     },
