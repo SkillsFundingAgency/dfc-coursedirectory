@@ -64,15 +64,21 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
             var _line1 = "";
             var _line2 = "";
             var _postTown = "";
+            var _buildingNumber = "";
 
-
+            if (result.FirstOrDefault()?.Dpa.BuildingNumber != 0)
+            {
+                long? buildingNumber = result.FirstOrDefault()?.Dpa.BuildingNumber;
+                _buildingNumber = buildingNumber.ToString();
+            }
 
             if (result.FirstOrDefault() != null)
             {
+
                 if (result.FirstOrDefault()?.Dpa.ORGANISATION_NAME != null && (result.FirstOrDefault()?.Dpa.BuildingNumber != 0 || result.FirstOrDefault()?.Dpa.BUILDING_NAME != null))
-                    _line1 = result.FirstOrDefault()?.Dpa.BuildingNumber + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
+                    _line1 = _buildingNumber + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
                 else
-                    _line1 = result.FirstOrDefault()?.Dpa.ORGANISATION_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
+                    _line1 = result.FirstOrDefault()?.Dpa.ORGANISATION_NAME?.ToString() + " " + _buildingNumber +" "+ result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
 
                 _line2 =  (result.FirstOrDefault()?.Dpa.ThoroughfareName ?? string.Empty);
                 _postTown = result.FirstOrDefault()?.Dpa.PostTown;
