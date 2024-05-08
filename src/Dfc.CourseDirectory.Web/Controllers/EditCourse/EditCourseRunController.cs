@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
+            _log.LogInformation($" EditCourseRunController AddNewVenue");
 
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
@@ -106,18 +107,18 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CostDescription = model.CostDescription,
                 AttendanceMode = model.AttendanceMode,
             };
-
-          
+                      
             Session.SetObject("EditCourseRunObject", vm);
                                                
      
-            var returnurl= Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
+            var returnurl= new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
-                .ToString());
+                .ToString();
 
             _log.LogInformation($" EditCourseRunController AddNewVenue [{returnurl}]");
+            //return RedirectToAction("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") });
 
-            return returnurl;
+            return Json(returnurl);
         }
 
         [HttpGet]
