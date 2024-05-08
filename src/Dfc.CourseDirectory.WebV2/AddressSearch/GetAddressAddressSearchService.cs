@@ -127,8 +127,8 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
                 };
               
             })
-            .Where(resultItem => resultItem != null).DistinctBy(resultItem => resultItem.Id)
-            .OrderBy(resultItem => resultItem.Id)
+            .Where(resultItem => resultItem != null)
+            .OrderBy(resultItem => resultItem.Id).DistinctBy(resultItem => resultItem.StreetAddress)
             .ToArray() ?? Array.Empty<PostcodeSearchResult>();
 
         }
