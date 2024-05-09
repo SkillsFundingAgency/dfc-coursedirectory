@@ -835,7 +835,6 @@
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
-                alert(qs);
                 $.get("/EditCourseRun/AddNewVenue?" + qs, success);
             };
 
@@ -845,8 +844,7 @@
 
             $addNewVenueButton.on("click", function (e) {
                 e.preventDefault();
-                alert("$addNewVenueButton");
-                debugger;
+                 debugger;
                 makeRequestWithPayload({
                     LearnAimRefTitle: $learnAimRefTitle.val(),
                     NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
