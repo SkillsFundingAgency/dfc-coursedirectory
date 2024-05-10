@@ -248,6 +248,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
+            _log.LogInformation($" EditCourseRunController Index");
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
@@ -286,6 +287,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 if (courseRun != null)
                 {
+                    _log.LogInformation($" EditCourseRunController Index courseRun !=null");
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -372,11 +374,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
-
+                    _log.LogInformation($" EditCourseRunController Index EditCourseRun");
                     return View("EditCourseRun", vm);
                 }
             }
-
+            _log.LogInformation($" EditCourseRunController Index error "+ Activity.Current?.Id ?? HttpContext.TraceIdentifier);
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 

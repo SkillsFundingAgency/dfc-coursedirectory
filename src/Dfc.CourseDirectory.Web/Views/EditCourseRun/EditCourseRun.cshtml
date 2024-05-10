@@ -835,10 +835,12 @@
                 console.log(payload);
                 var qs = $.param(payload);
                 qs = replaceAll(qs, "%5B%5D", "");
+                alert(qs);
                 $.get("/EditCourseRun/AddNewVenue?" + qs, success);
             };
 
             var onSucess = function (data) {
+                alert("sucess"+ data);
                 window.location.href = data;
             };
 
