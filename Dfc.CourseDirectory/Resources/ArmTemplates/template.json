@@ -8,6 +8,12 @@
         "description": "Prefix for all resources created for the project (except storage account, see below). Should be in the format dfc-env-proj"
       }
     },
+    "projectSuffix": {
+      "type": "string",
+      "metadata": {
+        "description": "Suffix for all resources created for the project (except storage account, see below). Should be in the format dfc-env-proj"
+      }
+    },
     "storageAccountName": {
       "type": "string",
       "metadata": {
@@ -262,8 +268,8 @@
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "appInsightsName": "[concat(variables('appServiceName'),'-ai')]",
-    "appServiceName": "[concat(parameters('projectPrefix'),'-as')]",
-    "functionAppName": "[concat(parameters('projectPrefix'),'-fa')]",
+    "appServiceName": "[concat(parameters('projectPrefix'),'-as',parameters('projectSuffix'))]",
+    "functionAppName": "[concat(parameters('projectPrefix'),'-fa',parameters('projectSuffix'))]",
     "functionAppInsightsName": "[concat(variables('functionAppName'),'-ai')]"
   },
   "resources": [
