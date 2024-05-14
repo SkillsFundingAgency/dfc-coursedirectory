@@ -5,6 +5,9 @@
     "projectPrefix": {
       "value": "__providerPortalPrefix__"
     },
+    "projectSuffix": {
+      "value": "__providerPortalSuffix__"
+    },
     "storageAccountName": {
       "value": "__providerPortalStorgeAccName__"
     },
@@ -116,11 +119,11 @@
     "ProviderPortalSharedResourceGroupName": {
       "value": "__providerPortalResourceGroup__"
     },
-    
+
     "RedisCacheName": {
       "value": "__providerPortalRedisCacheName__"
     },
-    
+
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"
     },
@@ -132,6 +135,9 @@
     },
     "workspaceResourceGroup": {
         "value": "__sharedLogAnalyticsResourceGroup__"
+    },
+    "GoogleWebRiskApiKey": {
+      "value": "__GoogleWebRiskApiKey__"
     }
   }
 }

@@ -5,6 +5,9 @@
     "webAppPrefix": {
       "value": "dfc-foo-prov-api"
     },
+    "webAppSuffix": {
+      "value": "vernum"
+    },
     "appServicePlanName": {
       "value": "dfc-dev-prov-asp"
     },
