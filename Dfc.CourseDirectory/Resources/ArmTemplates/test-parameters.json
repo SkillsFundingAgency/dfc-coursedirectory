@@ -5,6 +5,9 @@
     "projectPrefix": {
       "value": "dfc-foo-cd"
     },
+    "projectSuffix": {
+      "value": "vernum"
+    },
     "storageAccountName": {
       "value": "dfcfoocdstr"
     },
