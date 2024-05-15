@@ -109,8 +109,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             };
                       
             Session.SetObject("EditCourseRunObject", vm);
-                                               
-     
+   
             var returnurl= new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
                 .ToString();
