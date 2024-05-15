@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CourseConstants = Dfc.CourseDirectory.Core.Validation.CourseValidation.Constants;
 using VenueConstants = Dfc.CourseDirectory.Core.Validation.VenueValidation.Constants;
+using TLevelConstants = Dfc.CourseDirectory.Core.Validation.TLevelValidation.Constants;
 namespace Dfc.CourseDirectory.Core.Validation
 {
     public static class ErrorRegistry
@@ -80,6 +81,7 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("COURSE_AWARDING_BODY_REQUIRED"),
             new Error("COURSE_AWARDING_BODY_MAXLENGTH",CourseConstants.AwardingBodyMaxLength),
             new Error("COURSE_EDUCATION_LEVEL_REQUIRED"),
+            new Error("GENERIC_WEBSITE_INSECURE"),
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 

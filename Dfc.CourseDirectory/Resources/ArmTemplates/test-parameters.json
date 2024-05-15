@@ -5,6 +5,9 @@
     "projectPrefix": {
       "value": "dfc-foo-cd"
     },
+    "projectSuffix": {
+      "value": "vernum"
+    },
     "storageAccountName": {
       "value": "dfcfoocdstr"
     },
@@ -130,6 +133,9 @@
     },
     "workspaceResourceGroup": {
         "value": "aResourceGroup"
+    },
+    "GoogleWebRiskApiKey": {
+      "value": "not-a-real-key"
     }
   }
 }
