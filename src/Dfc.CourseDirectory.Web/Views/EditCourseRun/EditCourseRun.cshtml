@@ -29,7 +29,7 @@
 
     if (newVenueDescription != null)
     {
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
             NotificationTitle = "New location added:",
             NotificationMessage = newVenueDescription,
@@ -289,7 +289,6 @@
             return event.key != "Enter";
         });
         $(function () {
-
             var $addNewVenueButton = $("#addNewVenue");
             var $courseId = $("#@nameof(Model.CourseId)");
             var $courseRunId = $("#@nameof(Model.CourseRunId)");
@@ -835,14 +834,6 @@
                 }
             });
 
-
-
-
-
-
-
-
-
             var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
@@ -854,15 +845,12 @@
                 $.get("/EditCourseRun/AddNewVenue?" + qs, success);
             };
 
-
-
             var onSucess = function (data) {
                 window.location.href = data;
             };
 
             $addNewVenueButton.on("click", function (e) {
                 e.preventDefault();
-
                 makeRequestWithPayload({
                     LearnAimRefTitle: $learnAimRefTitle.val(),
                     NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
@@ -887,8 +875,6 @@
                     DurationLength: $duration.find("input").val(),
                     StudyMode: $studyMode.find("input[type='radio']:checked").val(),
                     AttendanceMode: $attendance.find("input[type='radio']:checked").val()
-
-
                 },
                     onSucess);
 
