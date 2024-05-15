@@ -82,23 +82,23 @@ SELECT
     p.ProviderName,
     tl.TLevelLocationId AS CourseRunId,
     t.TLevelId AS CourseId,
-    c.LearnAimRef,
-    c.CourseName,
+    NULL AS LearnAimRef,
+    tld.[Name] AS CourseName,
     t.WhatYoullLearn AS CourseDescription, 
     t.Website AS CourseWebsite,
-    c.Cost AS Cost,
-    c.CostDescription,
-    c.FlexibleStartDate,
+    NULL AS Cost,
+    'T Levels are currently only available to 16-19 year olds. Contact us for details of other suitable courses.' CostDescription,
+    CAST(0 AS bit) FlexibleStartDate,
     t.StartDate,        
     t.EntryRequirements,
     t.HowYoullBeAssessed,
-    c.DeliveryMode,
-    c.AttendancePattern,
-    c.StudyMode,
-    c.DurationUnit,
-    c.DurationValue,                
-    ISNULL(c.[National], 0) AS [National],
-    c.RegionName AS Regions,
+    1 DeliveryMode,  -- Classroom based
+    1 AttendancePattern, -- Day time
+	1 StudyMode,  -- Full time
+    4 DurationUnit,  -- Years
+    2 DurationValue,                
+    NULL [National],
+    NULL Regions,
     v.VenueName,
     v.AddressLine1 AS VenueAddress1,
     v.AddressLine2 AS VenueAddress2,
@@ -112,19 +112,18 @@ SELECT
     t.CreatedOn,
     v.Website AS VenueWebsite,
     t.UpdatedOn,    
-	c.CourseType,
-    c.SectorId,
-    c.EducationLevel, 
-    c.AwardingBody
+	2 AS CourseType,
+    NULL SectorId,
+    NULL EducationLevel, 
+    NULL AwardingBody
 FROM [Pttcd].[TLevels] t
 INNER JOIN [Pttcd].[TLevelLocations] tl ON t.TLevelId = tl.TLevelId
-INNER JOIN [Pttcd].[Providers] p ON p.ProviderId = t.ProviderId 
-INNER JOIN [Pttcd].[FindACourseIndex] c ON c.TLevelId = t.TLevelId
-LEFT JOIN [Pttcd].[Venues] v ON tl.VenueId = v.VenueId
-WHERE p.ProviderType IN ({(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels},{(int)ProviderType.TLevels + (int)ProviderType.NonLARS}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
-AND c.OfferingType = 2
-AND c.Live = 1
-AND (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
+INNER JOIN Pttcd.TLevelDefinitions tld ON t.TLevelDefinitionId = tld.TLevelDefinitionId
+INNER JOIN [Pttcd].[Providers] p ON p.ProviderId = t.ProviderId
+INNER JOIN [Pttcd].[Venues] v ON tl.VenueId = v.VenueId
+WHERE t.TLevelStatus = 1 
+AND tl.TLevelLocationStatus = 1 
+AND p.ProviderType IN ({(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels}, {(int)ProviderType.TLevels + (int)ProviderType.NonLARS}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
 ";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
