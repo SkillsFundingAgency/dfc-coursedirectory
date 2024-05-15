@@ -46,10 +46,10 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 
         public async Task<IReadOnlyCollection<PostcodeSearchResult>> SearchByPostcode(string postcode)
         {
-            var url = new Url(FindByPostcodeBaseUrl)
-                .SetQueryParam("Key", _options.Key)
-                .SetQueryParam("Postcode", postcode)
-                .SetQueryParam("SearchFor", "PostalCodes");
+            var url = new Url(FindByPostcodeBaseUrl);
+                //.SetQueryParam("Key", _options.Key)
+                //.SetQueryParam("Postcode", postcode)
+                //.SetQueryParam("SearchFor", "PostalCodes");
 
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();

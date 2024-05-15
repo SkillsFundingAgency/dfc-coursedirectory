@@ -420,4 +420,7 @@
   <data name="ERROR_COURSE_SECTOR_REQUIRED" xml:space="preserve">
     <value>Select a sector</value>
   </data>
+  <data name="ERROR_GENERIC_WEBSITE_INSECURE" xml:space="preserve">
+    <value>Website has been reported as having a security issue</value>
+  </data>
 </root>

@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         private readonly IRegionCache _regionCache;
         private readonly IBackgroundWorkScheduler _backgroundWorkScheduler;
         private readonly ICourseTypeService _courseTypeService;
+        private readonly IWebRiskService _webRiskService;
 
         public FileUploadProcessor(
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
@@ -35,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             IClock clock,
             IRegionCache regionCache,
             IBackgroundWorkScheduler backgroundWorkScheduler,
-            ICourseTypeService courseTypeService)
+            ICourseTypeService courseTypeService, IWebRiskService webRiskService)
         {
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.ContainerName);
@@ -43,6 +44,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             _regionCache = regionCache;
             _backgroundWorkScheduler = backgroundWorkScheduler;
             _courseTypeService = courseTypeService;
+            _webRiskService = webRiskService;
         }
 
         protected internal async Task<bool> FileIsEmpty(Stream stream)

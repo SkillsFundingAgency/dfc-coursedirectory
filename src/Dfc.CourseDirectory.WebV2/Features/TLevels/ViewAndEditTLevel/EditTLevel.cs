@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.TLevelValidation;
 using FluentValidation;
@@ -28,6 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
         public DateInput StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
+        public bool IsSecureWebsite { get; set; }
         public string WhoFor { get; set; }
         public string EntryRequirements { get; set; }
         public string WhatYoullLearn { get; set; }
@@ -55,13 +57,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
     {
         private readonly JourneyInstance<EditTLevelJourneyModel> _journeyInstance;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             JourneyInstance<EditTLevelJourneyModel> journeyInstance,
-            ISqlQueryDispatcher sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IWebRiskService webRiskService)
         {
             _journeyInstance = journeyInstance;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _webRiskService = webRiskService;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -84,9 +89,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                 _journeyInstance.State.TLevelId,
                 _journeyInstance.State.ProviderId,
                 _journeyInstance.State.TLevelDefinitionId,
-                _sqlQueryDispatcher);
+                _sqlQueryDispatcher,
+                _webRiskService);
 
             var validationResult = await validator.ValidateAsync(request);
+            request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
 
             if (!validationResult.IsValid)
             {
@@ -146,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher)
+            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
@@ -157,7 +164,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                     .NotEmpty()
                         .WithMessage("Select a T Level venue");
 
-                RuleFor(c => c.Website).Website();
+                RuleFor(c => c.Website).Website(webRiskService);
 
                 RuleFor(c => c.WhoFor).WhoFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();

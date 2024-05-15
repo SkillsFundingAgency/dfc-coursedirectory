@@ -42,6 +42,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         private readonly Mock<ICurrentUserProvider> _mockCurrentUserProvider;
         private readonly Mock<IProviderContextProvider> _mockProviderContextProvider;
         private readonly Mock<ICourseTypeService> _mockCourseTypeService;
+        private readonly Mock<IWebRiskService> _mockWebRiskService;
 
         public AddCourseControllerTests()
         {
@@ -51,6 +52,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockCurrentUserProvider = new Mock<ICurrentUserProvider>();
             _mockProviderContextProvider = new Mock<IProviderContextProvider>();
             _mockCourseTypeService = new Mock<ICourseTypeService>();
+            _mockWebRiskService = new Mock<IWebRiskService>();
         }
 
         #region Tests for AddCourse action method
@@ -857,7 +859,8 @@ namespace Dfc.CourseDirectory.Web.Tests
                             _mockSqlQueryDispatcher.Object,
                             _mockCurrentUserProvider.Object,
                             _mockProviderContextProvider.Object,
-                            _mockCourseTypeService.Object);
+                            _mockCourseTypeService.Object,
+                            _mockWebRiskService.Object);
             addCourseController.ControllerContext = new ControllerContext();
             addCourseController.ControllerContext.HttpContext = new DefaultHttpContext { Session = _mockSession.Object };
             return addCourseController;

@@ -41,19 +41,22 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICourseTypeService _courseTypeService;
+        private readonly IWebRiskService _webRiskService;
 
         public AddCourseController(
             ICourseService courseService,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider,
-            ICourseTypeService courseTypeService) : base(sqlQueryDispatcher)
+            ICourseTypeService courseTypeService,
+            IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _currentUserProvider = currentUserProvider ?? throw new ArgumentNullException(nameof(currentUserProvider));
             _providerContextProvider = providerContextProvider;
             _courseTypeService = courseTypeService;
+            _webRiskService = webRiskService;
         }
 
         [Authorize]
