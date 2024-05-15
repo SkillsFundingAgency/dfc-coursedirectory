@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -64,19 +65,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
         private readonly MptxInstanceContext<FlowModel> _flow;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
             IRegionCache regionCache,
-            MptxInstanceContext<FlowModel> flow)
+            MptxInstanceContext<FlowModel> flow,
+            IWebRiskService webRiskService)
         {
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _regionCache = regionCache;
             _flow = flow;
+            _webRiskService = webRiskService;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -112,7 +116,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         {
             NormalizeCommand();
             var allRegions = await _regionCache.GetAllRegions();
-            var validator = new CommandValidator(_clock, allRegions);
+            var validator = new CommandValidator(_clock, allRegions, _webRiskService);
+
             var validationResult = await validator.ValidateAsync(request);
             if (validationResult.IsValid)
             {
@@ -205,7 +210,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions)
+            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, IWebRiskService webRiskService)
             {
                 {
                     RuleFor(c => c.CourseName).CourseName();
@@ -213,7 +218,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
                     RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
                     RuleFor(c => c.NationalDelivery).NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
-                    RuleFor(c => c.CourseWebPage).CourseWebPage();
+                    RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
                     RuleFor(c => c.Cost)
                         .Transform(v => decimal.TryParse(v, out var parsed) ? parsed : (decimal?)null)
                         .Cost(costWasSpecified: c => !string.IsNullOrWhiteSpace(c.Cost), getCostDescription: c => c.CostDescription);
