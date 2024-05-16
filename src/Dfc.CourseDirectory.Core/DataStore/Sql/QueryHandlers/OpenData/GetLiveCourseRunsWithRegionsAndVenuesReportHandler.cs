@@ -124,6 +124,7 @@ INNER JOIN [Pttcd].[Venues] v ON tl.VenueId = v.VenueId
 WHERE t.TLevelStatus = 1 
 AND tl.TLevelLocationStatus = 1 
 AND p.ProviderType IN ({(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels}, {(int)ProviderType.TLevels + (int)ProviderType.NonLARS}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
+AND t.StartDate >= '{query.FromDate:MM-dd-yyyy}'
 ";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
