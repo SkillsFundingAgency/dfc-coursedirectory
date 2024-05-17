@@ -35,7 +35,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveList
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly IWebRiskService _webRiskService;
 
         public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
         {
