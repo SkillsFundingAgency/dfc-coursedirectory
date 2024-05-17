@@ -144,10 +144,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
-        public async Task LiveCourseProviderReport_Get_ProviderTypeTLevelOnly_ReturnsEmptyCsv(TestUserType userType)
+        public async Task LiveCourseProviderReport_Get_ProviderTypeTLevelOnly_ReturnsExpectedCsv(TestUserType userType)
         {
             //Arrange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.TLevels, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.TLevels, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
@@ -168,7 +168,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
             var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCourseProvidersReport.Csv>().ToArray();
-            records.Length.Should().Be(0);
+            records.Length.Should().Be(1);
         }
 
         [Theory]
