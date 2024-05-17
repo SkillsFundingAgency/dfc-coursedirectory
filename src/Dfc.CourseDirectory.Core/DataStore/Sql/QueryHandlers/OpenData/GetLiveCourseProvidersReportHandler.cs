@@ -26,7 +26,7 @@ SELECT
             ISNULL(pc.Email, '') AS Email
 FROM        Pttcd.Providers p with(nolock)
 LEFT JOIN   Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
-WHERE       p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
+WHERE       p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
 AND         p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
@@ -34,8 +34,6 @@ AND         p.ProviderId IN(
                 and ([OfferingType]=1 or [OfferingType]=2)
             )
 ORDER BY    p.Ukprn ASC";
-
-
 
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
