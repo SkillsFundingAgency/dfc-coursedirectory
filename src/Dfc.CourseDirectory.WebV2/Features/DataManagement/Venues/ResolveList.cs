@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using MediatR;
 using OneOf;
 
@@ -34,6 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveList
     {
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IProviderContextProvider _providerContextProvider;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider)
         {

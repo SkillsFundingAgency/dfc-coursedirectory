@@ -421,16 +421,6 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Course webpage has been reported as having a security issue.
-        ///Check the URL you have entered is correct. If the URL is correct, you&apos;ll need to review the security of your website. You cannot upload this URL to the course directory until it can pass this security check..
-        /// </summary>
-        public static string ERROR_COURSE_WEBSITE_INSECURE {
-            get {
-                return ResourceManager.GetString("ERROR_COURSE_WEBSITE_INSECURE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to What you can do next must be {0} characters or fewer.
         /// </summary>
         public static string ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH {
@@ -562,6 +552,16 @@ namespace Dfc.CourseDirectory.Core {
         public static string ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT {
             get {
                 return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Course webpage has been reported as having a security issue.
+        ///Check the URL you have entered is correct. If the URL is correct, you&apos;ll need to review the security of your website. You cannot upload this URL to the course directory until it can pass this security check..
+        /// </summary>
+        public static string ERROR_COURSERUN_COURSE_WEB_PAGE_INSECURE {
+            get {
+                return ResourceManager.GetString("ERROR_COURSERUN_COURSE_WEB_PAGE_INSECURE", resourceCulture);
             }
         }
         

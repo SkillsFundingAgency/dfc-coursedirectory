@@ -77,8 +77,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Course name";
                 case "COURSERUN_COURSE_WEB_PAGE_REQUIRED":
                 case "COURSERUN_COURSE_WEB_PAGE_FORMAT":
-                case "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH":
-                case "COURSE_WEBSITE_INSECURE":
+                case "COURSERUN_COURSE_WEB_PAGE_INSECURE":
                     return "Course webpage";
                 case "COURSERUN_DELIVERY_MODE_REQUIRED":
                     return "Delivery mode";
