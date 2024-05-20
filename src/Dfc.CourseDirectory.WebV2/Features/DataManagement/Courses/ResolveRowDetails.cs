@@ -12,7 +12,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
-using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -42,7 +41,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public bool? NationalDelivery { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
         public string CourseWebPage { get; set; }
-        public bool IsSecureWebsite { get; set; }
         public string Cost { get; set; }
         public string CostDescription { get; set; }
         public int? Duration { get; set; }
@@ -74,22 +72,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
-        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             IFileUploadProcessor fileUploadProcessor,
             IProviderContextProvider providerContextProvider,
             ISqlQueryDispatcher sqlQueryDispatcher,
             IClock clock,
-            IRegionCache regionCache,
-            IWebRiskService webRiskService)
+            IRegionCache regionCache)
         {
             _fileUploadProcessor = fileUploadProcessor;
             _providerContextProvider = providerContextProvider;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _clock = clock;
             _regionCache = regionCache;
-            _webRiskService = webRiskService;
         }
 
         public async Task<ModelWithErrors<ViewModel>> Handle(Query request, CancellationToken cancellationToken)
@@ -100,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars, _webRiskService);
+            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars);
             var validationResult = await validator.ValidateAsync(vm);
 
             return new ModelWithErrors<ViewModel>(vm, validationResult);
@@ -142,7 +137,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
             var allRegions = await _regionCache.GetAllRegions();
 
-            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars, _webRiskService);
+            var validator = new CommandValidator(_clock, allRegions, request.IsNonLars);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -275,7 +270,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, bool isNonLars, IWebRiskService webRiskService)
+            public CommandValidator(IClock clock, IReadOnlyCollection<Region> allRegions, bool isNonLars)
             {
                 if (isNonLars)
                 {
@@ -290,7 +285,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
                 RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.NationalDelivery).NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
-                RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
+                RuleFor(c => c.CourseWebPage).CourseWebPage();
                 RuleFor(c => c.Cost)
                     .Transform(v => decimal.TryParse(v, out var parsed) ? parsed : (decimal?)null)
                     .Cost(costWasSpecified: c => !string.IsNullOrWhiteSpace(c.Cost), getCostDescription: c => c.CostDescription);

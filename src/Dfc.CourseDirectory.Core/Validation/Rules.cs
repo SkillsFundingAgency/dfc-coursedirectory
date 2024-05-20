@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.Validation
@@ -76,36 +75,25 @@ namespace Dfc.CourseDirectory.Core.Validation
             field
                 .Must(v => v == null || Models.Postcode.TryParse(v, out _));
 
-        public static Func<IRuleBuilder<T, string>, IRuleBuilderOptions<T, string>> SecureWebsite<T>(IWebRiskService webRiskService) => (IRuleBuilder<T, string> field) => field
-                .MustAsync(async (url, cancellation) =>
+        public static IRuleBuilderOptions<T, string> Website<T>(IRuleBuilder<T, string> field) =>
+            field
+                .Must(url =>
                 {
                     if (string.IsNullOrEmpty(url))
                     {
                         return true;
                     }
 
-                    return await webRiskService.CheckForSecureUri(url);
-                });
+                    var withPrefix = !url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                        ? $"https://{url}"
+                        : url;
 
-        public static IRuleBuilderOptions<T, string> Website<T>(IRuleBuilder<T, string> field) =>
-            field
-                .Must(url =>
-                {
-                if (string.IsNullOrEmpty(url))
-                {
-                    return true;
-                }
-
-                var withPrefix = !url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-                    ? $"https://{url}"
-                    : url;
-
-                return Uri.IsWellFormedUriString(withPrefix, UriKind.Absolute)
-                    && Uri.TryCreate(withPrefix, UriKind.Absolute, out var uri)
-                    && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
-                    && uri.Host.Contains('.')
-                    && !uri.Host.StartsWith('.')
-                    && !uri.Host.EndsWith('.');
+                    return Uri.IsWellFormedUriString(withPrefix, UriKind.Absolute)
+                        && Uri.TryCreate(withPrefix, UriKind.Absolute, out var uri)
+                        && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+                        && uri.Host.Contains('.')
+                        && !uri.Host.StartsWith('.')
+                        && !uri.Host.EndsWith('.');
                 });
     }
 }

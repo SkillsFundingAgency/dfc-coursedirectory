@@ -1324,40 +1324,6 @@
 
 (function ($) {
 
-    function Plugin() {
-        this.init();
-    }
-
-    Plugin.prototype.init = function () {
-    };
-
-    Plugin.prototype.validate = function (input) {
-        var isValid = false;
-        $.ajax({
-            url: '/api/securewebsite?url=' + input,
-            method: 'GET',
-            async: false,
-            success: async function (response) {
-                isValid = response;
-            },
-            error: function (xhr, status, error) {
-                console.error('Error occurred while attempting to validate URL, could not validate the URL:', error);
-            }
-        });
-        return isValid;
-    };
-
-    $.extend({
-        secureWebsiteValidate: function (input) {
-            var plugin = new Plugin();
-            return plugin.validate(input);
-        }
-    });
-
-}(jQuery, window, document));
-
-(function ($) {
-
     function Plugin(options) {
         this.options = $.extend({}, options);
         this.init();

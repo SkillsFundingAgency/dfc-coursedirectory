@@ -23,7 +23,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_RowHasVenueIdHint_ReturnsVenueMatchingHint()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -49,7 +58,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_RefProvidedButDoesNotMatch_ReturnsNull()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -74,7 +92,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_RefProvidedAndMatches_ReturnsVenueId()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -99,7 +126,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_RefProvidedAndMatchedButNameProvidedAndDoesNotMatch_ReturnsNull()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -125,7 +161,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_RefProvidedAndMatchedAndNameProvidedAndMatches_ReturnsVenueId()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -151,7 +196,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_NameProvidedButDoesNotMatch_ReturnsNull()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -176,7 +230,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FindVenue_NameProvidedAndMatches_ReturnsVenueId()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -201,7 +264,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetCourseUploadRowsRequiringRevalidation_MatchedVenueUpdatedSinceRowLastValidated_ReturnsRow()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -241,7 +313,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetCourseUploadRowsRequiringRevalidation_MatchedVenueNotUpdatedSinceRowLastValidated_DoesNotReturnRow()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -276,7 +357,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetCourseUploadRowsRequiringRevalidation_MatchedVenueNotUpdatedSinceRowLastValidatedButOtherVenuesAmended_DoesNotReturnRow()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -314,7 +404,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task GetCourseUploadRowsRequiringRevalidation_NoMatchedVenueAndProviderVenuesAmendedSinceRowLastValidated_ReturnsRow()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -351,7 +450,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessCourseFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -380,7 +488,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessNonLarsCourseFile_AllRecordsValid_SetStatusToProcessedSuccessfully()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -412,7 +529,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessNonLarsCourseFile_CorrectSectorWithLowerCase_SetStatusToProcessedSuccessfully()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -445,7 +571,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessCourseFile_RowHasErrors_SetStatusToProcessedWithErrors()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -478,7 +613,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessNonLarsCourseFile_SectorFieldIsEmpty_SetStatusToProcessedWithErrors()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -508,7 +652,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessNonLarsCourseFile_RowHasErrors_SetStatusToProcessedWithErrors()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -540,7 +693,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessCourseFile_EmptyCourseName_GetsCourseNameFromLearningDelivery()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -571,7 +733,16 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ProcessCourseFile_LearnAimRefWithMissingLeadingZero_HasLeadingZeroAdded()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
+
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                blobServiceClient.Object,
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
@@ -610,7 +781,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 createdBy: user,
                 UploadStatus.ProcessedWithErrors);
 
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false  );
@@ -631,7 +808,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 createdBy: user,
                 UploadStatus.ProcessedWithErrors,null,true);
 
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, true);
@@ -678,7 +861,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeletedOn = Clock.UtcNow
             }));
 
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false  );
@@ -725,7 +914,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeletedOn = Clock.UtcNow
             }));
 
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             // Act
             var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, true);
@@ -750,7 +945,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null);
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var rows = DataManagementFileHelper.CreateCourseUploadRows(learnAimRef, rowCount: 2).ToArray();
             rows[0].LearnAimRef = string.Empty;
@@ -778,9 +979,15 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
             var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null,null,null,null,null,true);
+           
 
-
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var rows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 2).ToArray();
             rows[0].CourseType = string.Empty;

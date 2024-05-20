@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Http;
 using Azure.Storage.Blobs;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Configuration;
@@ -75,10 +74,6 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
-
-            services.Configure<GoogleWebRiskSettings>(
-                Configuration.GetSection(nameof(GoogleWebRiskSettings)));
-            services.AddScoped<IWebRiskService, WebRiskService>();
 
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();

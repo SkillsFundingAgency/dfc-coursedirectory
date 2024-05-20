@@ -8,7 +8,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
@@ -36,7 +35,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
         public string Email { get; set; }
         public string Telephone { get; set; }
         public string Website { get; set; }
-        public bool IsSecureWebsite { get; set; }
     }
 
     public class Handler :
@@ -46,18 +44,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
             IFileUploadProcessor fileUploadProcessor,
-            ISqlQueryDispatcher sqlQueryDispatcher,
-            IWebRiskService webRiskService)
+            ISqlQueryDispatcher sqlQueryDispatcher)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _webRiskService = webRiskService;
         }
 
         public async Task<OneOf<NotFound, ModelWithErrors<Command>>> Handle(Query request, CancellationToken cancellationToken)
@@ -83,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = postcode }) :
                 null;
 
-            var validator = new CommandValidator(otherRows, postcodeInfo, _webRiskService);
+            var validator = new CommandValidator(otherRows, postcodeInfo);
             var validationResult = await validator.ValidateAsync(command);
 
             return new ModelWithErrors<Command>(command, validationResult);
@@ -97,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 await _sqlQueryDispatcher.ExecuteQuery(new GetPostcodeInfo() { Postcode = postcode }) :
                 null;
 
-            var validator = new CommandValidator(otherRows, postcodeInfo, _webRiskService);
+            var validator = new CommandValidator(otherRows, postcodeInfo);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -153,8 +148,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
         {
             public CommandValidator(
                 IEnumerable<VenueUploadRow> otherRows,
-                PostcodeInfo postcodeInfo,
-                IWebRiskService webRiskService)
+                PostcodeInfo postcodeInfo)
             {
                 RuleFor(c => c.ProviderVenueRef)
                     .ProviderVenueRef(_ => Task.FromResult(otherRows.Select(r => r.ProviderVenueRef)));
@@ -169,7 +163,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErr
                 RuleFor(c => c.Postcode).Postcode(_ => postcodeInfo);
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
-                RuleFor(c => c.Website).Website(webRiskService);
+                RuleFor(c => c.Website).Website();
             }
         }
     }

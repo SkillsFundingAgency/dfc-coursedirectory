@@ -2,8 +2,6 @@
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.Services;
-using Moq;
 using Xunit;
 using static Dfc.CourseDirectory.Core.DataManagement.FileUploadProcessor;
 
@@ -28,7 +26,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMode = "classroom based"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -51,7 +49,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMode = "blended learning"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -76,7 +74,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMode = deliveryMode
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -101,7 +99,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 DeliveryMode = deliveryMode
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -124,7 +122,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 CostDescription = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -147,7 +145,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 Duration = "10"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -170,7 +168,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -195,7 +193,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 NationalDelivery = nationalDelivery
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -220,7 +218,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ProviderVenueRef = "venue"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -244,7 +242,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ProviderVenueRef = "venue"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -267,7 +265,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -290,7 +288,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -322,7 +320,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ProviderVenueRef = "VENUE2"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -346,7 +344,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "venue"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -369,7 +367,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 FlexibleStartDate = "no"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -392,7 +390,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 FlexibleStartDate = "yes"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -415,7 +413,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StudyMode = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -437,7 +435,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StudyMode = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -462,7 +460,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StudyMode = "full time"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -487,7 +485,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 StudyMode = "full time"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -511,7 +509,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -538,7 +536,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = string.Empty
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -562,7 +560,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "Warwickshire"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -586,7 +584,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "x"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -610,7 +608,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "Warwickshire; Derbyshire"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -634,7 +632,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = ""
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -659,7 +657,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 SubRegions = "xxx"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -685,7 +683,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "venue"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -710,7 +708,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "venue"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -742,7 +740,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = "bad venue"
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -776,7 +774,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 VenueName = venue.VenueName
             };
 
-            var validator = CreateCourseUploadRowValidator();
+            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null);
 
             // Act
             var validationResult = validator.Validate(ParsedCsvCourseRow.FromCsvCourseRow(row, allRegions));
@@ -785,14 +783,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             Assert.Contains(
                 validationResult.Errors,
                 error => error.ErrorCode == "COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF");
-        }
-
-        private CourseUploadRowValidator CreateCourseUploadRowValidator()
-        {
-            var mockedWebRiskService = new Mock<IWebRiskService>();
-            mockedWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
-            var validator = new CourseUploadRowValidator(Clock, matchedVenueId: null, mockedWebRiskService.Object);
-            return validator;
         }
     }
 }

@@ -46,7 +46,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FileIsEmpty_ReturnsExpectedResult(string base64Content, bool expectedResult)
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var stream = new MemoryStream(Convert.FromBase64String(base64Content));
             stream.Seek(0L, SeekOrigin.Begin);
@@ -63,7 +69,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task LooksLikeCsv_ReturnsExpectedResult(byte[] content, bool expectedResult)
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var stream = new MemoryStream(content);
             stream.Seek(0L, SeekOrigin.Begin);
@@ -79,7 +91,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FileMatchesSchema_HeaderHasMissingColumn_ReturnsInvalidHeaderResult()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var stream = DataManagementFileHelper.CreateCsvStream(csvWriter =>
             {
@@ -113,7 +131,13 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task FileMatchesSchema_RowHasIncorrectColumnCount_ReturnsInvalidRows(int columnCount)
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
+                Mock.Of<ICourseTypeService>());
 
             var stream = DataManagementFileHelper.CreateVenueUploadCsvStream(csvWriter =>
             {
@@ -136,7 +160,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
         public async Task ValidateLearnAimRefs_ReturnsExpectedResult()
         {
             // Arrange
-            var fileUploadProcessor = this.CreateUploadProcessor();
+            var fileUploadProcessor = new FileUploadProcessor(
+                SqlQueryDispatcherFactory,
+                Mock.Of<BlobServiceClient>(),
+                Clock,
+                new RegionCache(SqlQueryDispatcherFactory),
+                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory), Mock.Of<ICourseTypeService>());
 
             // Add missing lars
             var learnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
@@ -174,25 +203,6 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 ( expiredLearnAimRef, 7),
                 (expiredOperationalEndDate, 9)
             });
-        }
-
-        private FileUploadProcessor CreateUploadProcessor()
-        {
-            var blobServiceClient = new Mock<BlobServiceClient>();
-            blobServiceClient.Setup(mock => mock.GetBlobContainerClient(It.IsAny<string>())).Returns(Mock.Of<BlobContainerClient>());
-
-            var mockWebRiskService = new Mock<IWebRiskService>();
-            mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
-
-            var fileUploadProcessor = new FileUploadProcessor(
-                SqlQueryDispatcherFactory,
-                blobServiceClient.Object,
-                Clock,
-                new RegionCache(SqlQueryDispatcherFactory),
-                new ExecuteImmediatelyBackgroundWorkScheduler(Fixture.ServiceScopeFactory),
-                Mock.Of<ICourseTypeService>(), mockWebRiskService.Object);
-
-            return fileUploadProcessor;
         }
     }
 }

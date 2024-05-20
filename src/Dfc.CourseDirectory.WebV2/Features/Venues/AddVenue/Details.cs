@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
@@ -29,7 +28,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         public string Email { get; set; }
         public string Telephone { get; set; }
         public string Website { get; set; }
-        public bool IsSecureWebsite { get; set; }
     }
 
     public class ViewModel : Command
@@ -43,16 +41,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly JourneyInstanceProvider _journeyInstanceProvider;
-        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             ISqlQueryDispatcher sqlQueryDispatcher,
-            JourneyInstanceProvider journeyInstanceProvider,
-            IWebRiskService webRiskService)
+            JourneyInstanceProvider journeyInstanceProvider)
         {
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _journeyInstanceProvider = journeyInstanceProvider;
-            _webRiskService = webRiskService;
         }
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -66,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         {
             ThrowIfFlowStateNotValid();
 
-            var validator = new CommandValidator(request.ProviderId, _sqlQueryDispatcher, _webRiskService);
+            var validator = new CommandValidator(request.ProviderId, _sqlQueryDispatcher);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -130,8 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
         {
             public CommandValidator(
                 Guid providerId,
-                ISqlQueryDispatcher sqlQueryDispatcher,
-                IWebRiskService webRiskService)
+                ISqlQueryDispatcher sqlQueryDispatcher)
             {
                 RuleFor(c => c.ProviderVenueRef)
                     .ProviderVenueRef(providerId, venueId: null, sqlQueryDispatcher);
@@ -139,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
                     .VenueName(providerId, venueId: null, sqlQueryDispatcher);
                 RuleFor(c => c.Email).Email();
                 RuleFor(c => c.Telephone).PhoneNumber();
-                RuleFor(c => c.Website).Website(webRiskService);
+                RuleFor(c => c.Website).Website();
             }
         }
     }

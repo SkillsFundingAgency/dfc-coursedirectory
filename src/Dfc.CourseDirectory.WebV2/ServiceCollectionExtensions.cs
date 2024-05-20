@@ -135,7 +135,6 @@ namespace Dfc.CourseDirectory.WebV2
                     new ModelBinding.DateInputModelConverter()
                 }
             });
-            services.AddHttpClient();
             services.AddMediatR(typeof(ServiceCollectionExtensions));
             services.AddTransient<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
@@ -164,7 +163,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
             services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
-            services.Configure<GoogleWebRiskSettings>(configuration.GetSection("GoogleWebRisk"));
             services.AddScoped<RouteValuesHelper>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();

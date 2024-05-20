@@ -781,15 +781,6 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Website has been reported as having a security issue.
-        /// </summary>
-        public static string ERROR_GENERIC_WEBSITE_INSECURE {
-            get {
-                return ResourceManager.GetString("ERROR_GENERIC_WEBSITE_INSECURE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Address line 1 must only include letters, numbers, hyphens and spaces.
         /// </summary>
         public static string ERROR_VENUE_ADDRESS_LINE1_FORMAT {
@@ -973,8 +964,7 @@ namespace Dfc.CourseDirectory.Core {
         ///   Looks up a localized string similar to Enter a website in the correct format.
         /// </summary>
         public static string ERROR_VENUE_WEBSITE_FORMAT {
-            get
-            {
+            get {
                 return ResourceManager.GetString("ERROR_VENUE_WEBSITE_FORMAT", resourceCulture);
             }
         }

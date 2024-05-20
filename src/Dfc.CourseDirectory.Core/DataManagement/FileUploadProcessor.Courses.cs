@@ -15,7 +15,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -1032,7 +1031,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseType = await _courseTypeService.GetCourseType(parsedRow.LearnAimRef, providerId);
 
-                var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
+                var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -1122,7 +1121,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
 
-                var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
+                var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -1318,8 +1317,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             public CourseUploadRowValidator(
                 IClock clock,
-                Guid? matchedVenueId,
-                IWebRiskService webRiskService)
+                Guid? matchedVenueId)
             {
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
@@ -1342,7 +1340,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegions),
                     c => c.ResolvedDeliveryMode,
                     c => c.ResolvedNationalDelivery);
-                RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
+                RuleFor(c => c.CourseWebPage).CourseWebPage();
                 RuleFor(c => c.ResolvedCost).Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), c => c.CostDescription);
                 RuleFor(c => c.CostDescription).CostDescription();
                 RuleFor(c => c.ResolvedDuration).Duration();
@@ -1359,8 +1357,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             public NonLarsCourseUploadRowValidator(
                 IClock clock,
-                Guid? matchedVenueId,
-                IWebRiskService webRiskService)
+                Guid? matchedVenueId)
             {
                 RuleFor(c => c.ResolvedCourseType).CourseType();
                 RuleFor(c => c.ResolvedSector).Sector();
@@ -1387,7 +1384,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegions),
                     c => c.ResolvedDeliveryMode,
                     c => c.ResolvedNationalDelivery);
-                RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
+                RuleFor(c => c.CourseWebPage).CourseWebPage();
                 RuleFor(c => c.ResolvedCost).Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), c => c.CostDescription);
                 RuleFor(c => c.CostDescription).CostDescription();
                 RuleFor(c => c.ResolvedDuration).Duration();
