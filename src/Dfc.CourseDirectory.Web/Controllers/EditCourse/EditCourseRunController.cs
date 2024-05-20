@@ -56,16 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-<<<<<<< HEAD
-<<<<<<< HEAD
-            IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log ,
-=======
             IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log) : base(sqlQueryDispatcher)
->>>>>>> parent of 48bb9a6ff (correcting the controller params)
-            IWebRiskService webRiskService) : base(sqlQueryDispatcher)
-=======
-            IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log) : base(sqlQueryDispatcher)
->>>>>>> parent of d273bcda1 (Merge branch 'AD-176537' of https://github.com/SkillsFundingAgency/dfc-coursedirectory into AD-176537)
         {
             if (courseService == null)
             {
