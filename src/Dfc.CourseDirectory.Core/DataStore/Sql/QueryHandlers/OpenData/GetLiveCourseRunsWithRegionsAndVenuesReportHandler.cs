@@ -10,11 +10,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
         : ISqlAsyncEnumerableQueryHandler<GetLiveCoursesWithRegionsAndVenuesReport, LiveCoursesWithRegionsAndVenuesReportItem>
     {
         public async IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> Execute(SqlTransaction transaction, GetLiveCoursesWithRegionsAndVenuesReport query)
-        {
-            //Note about CourseDescription column in below SQL query            
-            //In Database, CourseDescription column of Course table maps with Add/Edit Course form field @WhoThisCourseIsFor
-            //In Report, COURSE_DESCRIPTION column maps with 'c.WhatYoullLearn as CourseDescription' column of below SQL query which maps with Add/Edit Course form field @WhatYoullLearn. 
-            //This is done as part of working on Jira ID NCSLT-1099 ticket
+        {            
             var sql = @$"
 WITH cte_CourseRunIds AS (
     SELECT DISTINCT c.CourseRunId 
@@ -37,7 +33,7 @@ SELECT
     c.CourseId,
     c.LearnAimRef,
     cr.CourseName,
-    c.WhatYoullLearn AS CourseDescription, 
+    c.CourseDescription, 
     cr.CourseWebsite,
     CONVERT(DECIMAL(10,2), cr.Cost) AS Cost,
     cr.CostDescription,
