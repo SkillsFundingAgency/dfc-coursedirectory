@@ -741,7 +741,7 @@
             "value": "[parameters('keyVaultName')]"
           },
           "servicePrincipalObjectId": {
-            "value": "[reference(variables('functionAppName'),'2018-11-30').principalId]"
+            "value": "[reference(variables('functionAppName'),'2024-03-01').principalId]"
           },
           "keyPermissions": {
             "value": [
