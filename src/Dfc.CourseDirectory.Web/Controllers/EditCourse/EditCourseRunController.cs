@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -31,6 +33,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
@@ -44,7 +47,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly IRegionCache _regionCache;        
+        private readonly IRegionCache _regionCache;
+        private readonly ILogger<BlobStorageBinaryStorageProvider> _log;
 
         public EditCourseRunController(
             ICourseService courseService,
@@ -52,7 +56,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache): base(sqlQueryDispatcher)
+            IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -65,11 +69,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _regionCache = regionCache;
+            _log = log;
         }
 
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
+            _log.LogInformation($" EditCourseRunController AddNewVenue");
 
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
@@ -101,16 +107,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CostDescription = model.CostDescription,
                 AttendanceMode = model.AttendanceMode,
             };
-
-          
+                      
             Session.SetObject("EditCourseRunObject", vm);
-
-
-            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
+   
+            var returnurl= new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
-                .ToString());
+                .ToString();
 
+            _log.LogInformation($" EditCourseRunController AddNewVenue [{returnurl}]");
+            //return RedirectToAction("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") });
 
+            return Json(returnurl);
         }
 
         [HttpGet]
@@ -240,6 +247,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
+            _log.LogInformation($" EditCourseRunController Index");
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
@@ -278,6 +286,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 if (courseRun != null)
                 {
+                    _log.LogInformation($" EditCourseRunController Index courseRun !=null");
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -364,11 +373,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
-
+                    _log.LogInformation($" EditCourseRunController Index EditCourseRun");
                     return View("EditCourseRun", vm);
                 }
             }
-
+            _log.LogInformation($" EditCourseRunController Index error "+ Activity.Current?.Id ?? HttpContext.TraceIdentifier);
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
