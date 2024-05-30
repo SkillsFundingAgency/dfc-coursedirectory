@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
@@ -52,13 +53,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
             {
                 RowNumber = request.RowNumber,
                 IsNonLars = request.IsNonLars,
-                WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(row.WhoThisCourseIsFor),
-                EntryRequirements = ASCIICodeHelper.RemoveASCII(row.EntryRequirements),
-                WhatYouWillLearn = ASCIICodeHelper.RemoveASCII(row.WhatYouWillLearn),
-                HowYouWillLearn = ASCIICodeHelper.RemoveASCII(row.HowYouWillLearn),
-                WhatYouWillNeedToBring = ASCIICodeHelper.RemoveASCII(row.WhatYouWillNeedToBring),
-                HowYouWillBeAssessed = ASCIICodeHelper.RemoveASCII(row.HowYouWillBeAssessed),
-                WhereNext = ASCIICodeHelper.RemoveASCII(row.WhereNext)
+                WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(row.WhoThisCourseIsFor),
+                EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(row.EntryRequirements),
+                WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(row.WhatYouWillLearn),
+                HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(row.HowYouWillLearn),
+                WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(row.WhatYouWillNeedToBring),
+                HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(row.HowYouWillBeAssessed),
+                WhereNext = ASCIICodeHelper.ReplaceHexCodes(row.WhereNext)
             };
 
             var validator = new CommandValidator();
@@ -97,13 +98,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 row.CourseId,
                 new CourseUploadRowGroupUpdate()
                 {
-                    WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(formattedRequest.WhoThisCourseIsFor),
-                    EntryRequirements = ASCIICodeHelper.RemoveASCII(formattedRequest.EntryRequirements),
-                    WhatYouWillLearn = ASCIICodeHelper.RemoveASCII(formattedRequest.WhatYouWillLearn),
-                    HowYouWillLearn = ASCIICodeHelper.RemoveASCII(formattedRequest.HowYouWillLearn),
-                    WhatYouWillNeedToBring = ASCIICodeHelper.RemoveASCII(formattedRequest.WhatYouWillNeedToBring),
-                    HowYouWillBeAssessed = ASCIICodeHelper.RemoveASCII(formattedRequest.HowYouWillBeAssessed),
-                    WhereNext = ASCIICodeHelper.RemoveASCII(formattedRequest.WhereNext)
+                    WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.WhoThisCourseIsFor),
+                    EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.EntryRequirements),
+                    WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.WhatYouWillLearn),
+                    HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.HowYouWillLearn),
+                    WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.WhatYouWillNeedToBring),
+                    HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.HowYouWillBeAssessed),
+                    WhereNext = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.WhereNext)
                 },request.IsNonLars);
         }
 
