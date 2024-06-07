@@ -178,9 +178,31 @@ INSERT INTO [Pttcd].[NonLarsSubType]
            ,'2023-12-27 13:16:33.797'
            ,1)
 
---------------------------------------------------------------------------------------
+-------Script will set UpdatedOn fields in Pttcd.Courses and Pttcd.CourseRuns tables so that the archived records be deleted after 30 days from these tables ----------------
+-------This is a one time script so it should be removed for the next release --------- 
+	DECLARE @ArchivedStatus int = 4
+	DECLARE @UpdatedBy varchar(100) = 'RemoveRedundantRecordsRelease'
 
+	UPDATE 		
+		Pttcd.Courses 
+	SET 
+		UpdatedOn = GETDATE(),
+		UpdatedBy = @UpdatedBy
+	WHERE 
+		CourseStatus = @ArchivedStatus 
+		AND UpdatedOn IS NULL
 
+	
+	UPDATE 		
+		Pttcd.CourseRuns 
+	SET 
+		UpdatedOn = GETDATE(),
+		UpdatedBy = @UpdatedBy
+	WHERE 
+		CourseRunStatus = @ArchivedStatus
+		AND UpdatedOn IS NULL
+
+------------------------------------------------------------------------------------
 
 DECLARE @Regions TABLE (
 	RegionId VARCHAR(12),
