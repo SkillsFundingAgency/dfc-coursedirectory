@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 SELECT
             p.Ukprn,
             p.ProviderName,
-            ISNULL(p.TradingName, ''),
+            ISNULL(p.TradingName, '') AS [TradingName],
             ISNULL(CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription), '') AS[ContactAddress1],
             ISNULL(pc.AddressLocality, '') AS[ContactAddress2],
             ISNULL(pc.AddressPostTown, ISNULL(pc.AddressItems, '')) AS [AddressPostTown],
@@ -26,14 +26,13 @@ SELECT
             ISNULL(pc.Email, '') AS Email
 FROM        Pttcd.Providers p with(nolock)
 LEFT JOIN   Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
-WHERE       p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
+WHERE       p.ProviderType IN ({(int)ProviderType.FE},{(int)ProviderType.NonLARS},{(int)ProviderType.FE + (int)ProviderType.NonLARS}, {(int)ProviderType.FE + (int)ProviderType.TLevels},{(int)ProviderType.NonLARS + (int)ProviderType.TLevels},{(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
 AND         p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
                 and [OfferingType]=1
             )
-AND         p.ProviderType IN({(int)ProviderType.FE}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
 ORDER BY    p.Ukprn ASC";
 
 
