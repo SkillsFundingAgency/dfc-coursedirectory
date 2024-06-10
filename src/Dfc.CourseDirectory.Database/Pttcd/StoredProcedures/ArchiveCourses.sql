@@ -20,8 +20,7 @@ BEGIN
 			INNER JOIN Pttcd.FindACourseIndex fac ON fac.CourseRunId = cr.CourseRunId
 		WHERE 
 			cr.StartDate < DATEADD(MONTH, -15, GETUTCDATE()) AND cr.CourseRunStatus <> @ArchivedCourseRunStatus and fac.Live = @LiveCourseStatus
-
-		--Select * from #TempTable
+		
 
 		UPDATE 
 			Pttcd.CourseRuns
@@ -32,8 +31,10 @@ BEGIN
 		WHERE 
 			CourseRunId IN (SELECT DISTINCT CourseRunId FROM #TempTable)
 
-
-
+		-- CourseStatus 
+		-- 1 - Live
+		-- 4 - Archived
+		-- 5 - Indicates that the course has at least one CourseRun record with a CourseRunStatus of 1 and also at least one CourseRun record with a CourseRunStatus of 4.
 		SELECT 
 			c.CourseId, SUM(DISTINCT(cr.CourseRunStatus)) as CourseStatus
 		INTO #TempCourseStatus
@@ -44,11 +45,9 @@ BEGIN
 		WHERE 
 			cr.CourseRunId IN (SELECT DISTINCT CourseRunId FROM #TempTable)	
 		GROUP BY c.CourseId
+		
 
-		--Select * from #TempCourseStatus
-
-		-- Also update courses status. 
-		-- Remember, Course status 5 indicates that the course has at least one CourseRun record with a CourseRunStatus of 1 and at least one CourseRun record with a CourseRunStatus of 4.
+		-- Also update courses status. 		
 		UPDATE 
 			c
 		SET 

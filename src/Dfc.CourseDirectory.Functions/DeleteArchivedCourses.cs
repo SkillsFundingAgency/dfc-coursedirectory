@@ -32,7 +32,10 @@ namespace Dfc.CourseDirectory.Functions
 
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-            log.LogInformation($"Calling stored procedure to remove redundant records");
+            log.LogInformation($"Calling stored procedure to archive courses so that they can be delete after 30 days");
+            await dispatcher.ExecuteQuery(new SqlQueries.ArchiveCourses() { });
+
+            log.LogInformation($"Calling stored procedure to remove redundant/archived records");
             await dispatcher.ExecuteQuery(new SqlQueries.DeleteArchivedCourses() { RetentionDate = DateTime.Now.AddDays(-30)});
         }
     }
