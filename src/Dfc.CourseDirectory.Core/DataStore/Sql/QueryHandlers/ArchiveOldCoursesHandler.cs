@@ -6,15 +6,18 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class ArchiveCoursesHandler : ISqlQueryHandler<ArchiveCourses, Success>
+    public class ArchiveOldCoursesHandler : ISqlQueryHandler<ArchiveOldCourses, Success>
     {
-        public async Task<Success> Execute(SqlTransaction transaction, ArchiveCourses query)
+        public async Task<Success> Execute(SqlTransaction transaction, ArchiveOldCourses query)
         {
-            var sql = $@"EXEC [Pttcd].[ArchiveCourses]";
+            var sql = $@"EXEC [Pttcd].[ArchiveOldCourses] @RetentionDate";
 
             await transaction.Connection.ExecuteAsync(
-                sql, 
-                null,
+                sql,
+                new
+                {
+                    query.RetentionDate
+                },
                 commandTimeout: 300,
                 transaction: transaction);
             
