@@ -37,6 +37,8 @@ namespace Dfc.CourseDirectory.Functions
 
             log.LogInformation($"Calling stored procedure to remove redundant/archived records");
             await dispatcher.ExecuteQuery(new SqlQueries.DeleteArchivedCourses() { RetentionDate = DateTime.Now.AddDays(-30)});
+
+            await dispatcher.Commit();
         }
     }
 }
