@@ -32,13 +32,13 @@ namespace Dfc.CourseDirectory.Functions
 
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-            var oneMonthOldDate = _clock.UtcNow.AddMonths(-1);            
+            var fourWeeksOldDate = _clock.UtcNow.AddDays(-28);           
             var fifteenMonthsOldDate = _clock.UtcNow.AddMonths(-15);
             var thirtyDaysOldDate = _clock.UtcNow.AddDays(-30);
 
 
-            log.LogInformation($"Calling the stored procedure to archive courses for providers with a type of 'None' that have remained unchanged for the past month as of {oneMonthOldDate.ToShortDateString()}");
-            await dispatcher.ExecuteQuery(new SqlQueries.ArchiveProviderCourses() { RetentionDate = oneMonthOldDate });
+            log.LogInformation($"Calling the stored procedure to archive courses for providers with a type of 'None' that have remained unchanged for the past month as of {fourWeeksOldDate.ToShortDateString()}");
+            await dispatcher.ExecuteQuery(new SqlQueries.ArchiveProviderCourses() { RetentionDate = fourWeeksOldDate });
 
             log.LogInformation($"Calling stored procedure to archive courses with a start date older than 15 months as of {fifteenMonthsOldDate.ToShortDateString()}");
             await dispatcher.ExecuteQuery(new SqlQueries.ArchiveOldCourses() { RetentionDate = fifteenMonthsOldDate });
