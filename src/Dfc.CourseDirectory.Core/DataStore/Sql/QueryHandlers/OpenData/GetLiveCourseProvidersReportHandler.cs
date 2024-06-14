@@ -26,7 +26,8 @@ SELECT
             ISNULL(pc.Email, '') AS Email
 FROM        Pttcd.Providers p with(nolock)
 LEFT JOIN   Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
-WHERE       p.ProviderType != ({(int)ProviderType.None})
+WHERE       p.ProviderType IN ({(int)ProviderType.FE}, {(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels})
+
 AND         p.ProviderId IN(
                 SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
                 WHERE       c.Live = 1
