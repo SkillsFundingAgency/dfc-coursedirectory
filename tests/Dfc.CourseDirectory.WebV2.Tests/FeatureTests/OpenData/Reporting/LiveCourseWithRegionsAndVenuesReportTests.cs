@@ -178,6 +178,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         [Theory]
         [InlineData(TestUserType.Developer)]
         [InlineData(TestUserType.Helpdesk)]
+        public async Task LiveCoursesWithRegionsAndVenuesReport_Get_ProviderHasNonLarsCourses_ReturnsExpectedCsv(TestUserType userType)
+        {
+            //Arange
+            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.NonLARS, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            await TestData.AddSectors();
+            await TestData.CreateNonLarsCourse(provider.ProviderId, createdBy: User.ToUserInfo());
+            await User.AsTestUser(userType);
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                LiveCoursesWithRegionsAndVenuesReportUrl);
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCoursesWithRegionsAndVenuesReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
+
+            using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
+            using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+            await csvReader.ReadAsync();
+            csvReader.ReadHeader().Should().BeTrue();
+            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            records.Length.Should().Be(1);
+        }
+
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
         public async Task LiveCoursesWithRegionsAndVenuesReport_Get_ProviderHasNoLiveCourses_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arange

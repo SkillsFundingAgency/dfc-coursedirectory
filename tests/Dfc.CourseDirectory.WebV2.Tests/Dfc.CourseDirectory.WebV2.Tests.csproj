@@ -29,8 +29,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FeatureTests\Providers\Reporting\" />
-  </ItemGroup>
-
 </Project>
