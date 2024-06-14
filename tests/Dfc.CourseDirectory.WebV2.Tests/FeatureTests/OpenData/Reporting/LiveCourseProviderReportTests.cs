@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,19 +8,21 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
 {
-    public class OpenDataLiveCourseProviderReportTests : MvcTestBase
+    public class LiveCourseProviderReportTests : MvcTestBase
     {
-        public OpenDataLiveCourseProviderReportTests(CourseDirectoryApplicationFactory factory)
+        private const string LiveCourseProviderReportUrl = "/opendata/reports/live-course-providers-report";
+        private const string LiveCourseProviderReportNamePrefix = "LiveCourseProvidersReport-";
+        public LiveCourseProviderReportTests(CourseDirectoryApplicationFactory factory)
             : base(factory)
         {
         }
 
+        
         [Theory]
         [InlineData(TestUserType.ProviderUser)]
         [InlineData(TestUserType.ProviderSuperUser)]
@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -49,13 +49,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_WithAdminUser_ReturnsExpectedCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -63,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveCourseProvidersReport-{Clock.UtcNow:yyyyMMdd}.csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCourseProviderReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
 
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -79,13 +79,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_CsvHeaderIsCorrect(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveCourseProvidersReport-{Clock.UtcNow:yyyyMMdd}.csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCourseProviderReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
 
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -118,12 +118,12 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderHasNoLiveCourses_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await User.AsTestUser(userType);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveCourseProvidersReport-{Clock.UtcNow:yyyyMMdd}.csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCourseProviderReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
 
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -147,13 +147,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderTypeTLevelOnly_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arrange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.TLevels, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.TLevels, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.CreateCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             //Act
             var response = await HttpClient.SendAsync(request);
@@ -161,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             //Assert
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveCourseProvidersReport-{Clock.UtcNow:yyyyMMdd}.csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCourseProviderReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
 
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -185,7 +185,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             //Act
             var response = await HttpClient.SendAsync(request);
@@ -193,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             //Assert
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveCourseProvidersReport-{Clock.UtcNow:yyyyMMdd}.csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCourseProviderReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
 
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderHasOutOfDateCourse_ReturnsEmptyCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.FE, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
 
             var course1 = await TestData.CreateCourse(
                 provider.ProviderId,
@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                $"/opendata/reports/live-course-providers-report");
+                LiveCourseProviderReportUrl);
 
             // Act
             var response = await HttpClient.SendAsync(request);
@@ -231,7 +231,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             // Assert
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
-            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveCourseProvidersReport-{Clock.UtcNow:yyyyMMdd}.csv");
+            response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename={LiveCourseProviderReportNamePrefix}{Clock.UtcNow:yyyyMMdd}.csv");
 
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -240,6 +240,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCourseProvidersReport.Csv>().ToArray();
             records.Length.Should().Be(0);
         }
+        
 
         private ProviderContact CreateContact(string postcode, string addressSaonDescription, string addressPaonDescription, string addressStreetDescription)
         {

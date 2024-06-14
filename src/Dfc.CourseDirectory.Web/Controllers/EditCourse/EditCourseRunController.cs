@@ -11,6 +11,7 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
@@ -58,7 +59,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log ,
+            IRegionCache regionCache, 
+            ILogger<BlobStorageBinaryStorageProvider> log ,
             IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
@@ -290,7 +292,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 if (courseRun != null)
                 {
-            _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -456,7 +459,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 DurationUnit = model.DurationUnit,
                 DeliveryMode = model.DeliveryMode,
                 Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
-                CostDescription = ASCIICodeHelper.RemoveASCII(model.CostDescription) ?? "",
+                CostDescription = ASCIICodeHelper.ReplaceHexCodes(model.CostDescription) ?? "",
                 CourseName = model.CourseName,
                 CourseUrl = model.Url,
                 DurationValue = Convert.ToInt32(model.DurationLength),

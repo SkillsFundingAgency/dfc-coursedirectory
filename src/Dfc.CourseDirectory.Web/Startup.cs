@@ -269,7 +269,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-                context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
+                context.Response.Headers["X-Xss-Protection"] = "0";
                 context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
 
