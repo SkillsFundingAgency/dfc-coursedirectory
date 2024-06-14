@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers.OpenData
 SELECT
             p.Ukprn,
             p.ProviderName,
-            ISNULL(p.TradingName, ''),
+            ISNULL(p.TradingName, '') AS [TradingName],
             ISNULL(CONCAT_WS(', ', pc.AddressSaonDescription, pc.AddressPaonDescription, pc.AddressStreetDescription), '') AS[ContactAddress1],
             ISNULL(pc.AddressLocality, '') AS[ContactAddress2],
             ISNULL(pc.AddressPostTown, ISNULL(pc.AddressItems, '')) AS [AddressPostTown],

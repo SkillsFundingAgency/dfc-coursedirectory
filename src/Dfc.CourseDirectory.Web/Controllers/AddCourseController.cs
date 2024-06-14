@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -603,13 +604,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             var addCourseSection2 = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
             var addCourseSection1 = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
-            var courseFor = ASCIICodeHelper.RemoveASCII(addCourseSection1.CourseFor);
-            var entryRequirements = ASCIICodeHelper.RemoveASCII(addCourseSection1.EntryRequirements);
-            var whatWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatWillLearn);
-            var howYouWillLearn = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowYouWillLearn);
-            var whatYouNeed = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhatYouNeed);
-            var howAssessed = ASCIICodeHelper.RemoveASCII(addCourseSection1.HowAssessed);
-            var whereNext = ASCIICodeHelper.RemoveASCII(addCourseSection1.WhereNext);
+            var courseFor = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.CourseFor);
+            var entryRequirements = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.EntryRequirements);
+            var whatWillLearn = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.WhatWillLearn);
+            var howYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.HowYouWillLearn);
+            var whatYouNeed = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.WhatYouNeed);
+            var howAssessed = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.HowAssessed);
+            var whereNext = ASCIICodeHelper.ReplaceHexCodes(addCourseSection1.WhereNext);
 
             if (addCourseSection2.DeliveryMode == CourseDeliveryMode.ClassroomBased || addCourseSection2.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
@@ -669,7 +670,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                         StartDate = specifiedStartDate,
                         CourseUrl = addCourseSection2.Url,
                         Cost = addCourseSection2.Cost,
-                        CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
+                        CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                         DurationUnit = addCourseSection2.DurationUnit.Value,
                         DurationValue = addCourseSection2.DurationLength,
                         StudyMode = addCourseSection2.StudyMode,
@@ -692,7 +693,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StartDate = specifiedStartDate,
                     CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
+                    CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
                 };                
@@ -726,7 +727,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     StartDate = specifiedStartDate,
                     CourseUrl = addCourseSection2.Url,
                     Cost = addCourseSection2.Cost,
-                    CostDescription = ASCIICodeHelper.RemoveASCII(addCourseSection2.CostDescription) ?? "",
+                    CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
                 };
