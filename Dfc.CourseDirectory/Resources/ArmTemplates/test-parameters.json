@@ -133,6 +133,9 @@
     },
     "workspaceResourceGroup": {
         "value": "aResourceGroup"
+    },
+    "GoogleWebRiskApiKey": {
+      "value": "not-a-real-key"
     }
   }
 }

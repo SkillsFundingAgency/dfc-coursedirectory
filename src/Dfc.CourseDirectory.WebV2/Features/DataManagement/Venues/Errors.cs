@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using MediatR;
@@ -53,13 +54,16 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors
     {
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly IFileUploadProcessor _fileUploadProcessor;
+        private readonly IWebRiskService _webRiskService;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
-            IFileUploadProcessor fileUploadProcessor)
+            IFileUploadProcessor fileUploadProcessor,
+            IWebRiskService webRiskService)
         {
             _providerContextProvider = providerContextProvider;
             _fileUploadProcessor = fileUploadProcessor;
+            _webRiskService = webRiskService;
         }
 
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)

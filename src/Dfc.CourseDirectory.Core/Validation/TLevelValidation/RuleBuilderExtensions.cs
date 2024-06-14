@@ -3,6 +3,7 @@ using System.Linq;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
@@ -57,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
                 });
         }
 
-        public static void Website<T>(this IRuleBuilderInitial<T, string> field)
+        public static void Website<T>(this IRuleBuilderInitial<T, string> field, IWebRiskService webRiskService)
         {
             field
                 .NotEmpty()
@@ -65,7 +66,9 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
                 .Apply(Rules.Website)
                     .WithMessage("Website must be a real webpage")
                 .MaximumLength(Constants.WebsiteMaxLength)
-                    .WithMessage($"T Level webpage must be {Constants.WebsiteMaxLength} characters or fewer");
+                    .WithMessage($"T Level webpage must be {Constants.WebsiteMaxLength} characters or fewer")        
+                .Apply(Rules.SecureWebsite<T>(webRiskService))
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_INSECURE");
         }
 
         public static void WhatYouCanDoNext<T>(this IRuleBuilderInitial<T, string> field)
