@@ -256,7 +256,7 @@
       }
     },
     "workspaceName": {
-        "type": "string"
+      "type": "string"
     },
     "workspaceResourceGroup": {
         "type": "string"
@@ -700,6 +700,10 @@
               {
                 "name": "WEBSITE_RUN_FROM_PACKAGE",
                 "value": "1"
+              },
+              {
+                "name": "GoogleWebRiskSettings:ApiKey",
+                "value": "[concat('@Microsoft.KeyVault(VaultName=', parameters('keyVaultName'), ';SecretName=GoogleWebRiskApiKey)')]"
               }
             ]
           },
@@ -717,6 +721,40 @@
       "dependsOn": [
         "[variables('functionAppInsightsName')]"
       ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "resourceGroup": "[parameters('keyVaultResourceGroup')]",
+      "name": "[concat(variables('functionAppName'), 'KeyVaultAccessPolicy')]",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "[variables('functionAppName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'KeyVault/keyvault-access-policy.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "servicePrincipalObjectId": {
+            "value": "[reference(variables('functionAppName')).outputs.identityPrincipalId.value]"
+          },
+          "keyPermissions": {
+            "value": [
+              "get"
+            ]
+          },
+          "secretPermissions": {
+            "value": [
+              "get"
+            ]
+          }
+        }
+      }
     }
   ],
   "outputs": {

@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             IRegionCache regionCache, 
-            ILogger<BlobStorageBinaryStorageProvider> log ,
+            ILogger<BlobStorageBinaryStorageProvider> log,
             IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
             if (courseService == null)

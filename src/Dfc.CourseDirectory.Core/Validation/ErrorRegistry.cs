@@ -82,6 +82,7 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("COURSE_AWARDING_BODY_MAXLENGTH",CourseConstants.AwardingBodyMaxLength),
             new Error("COURSE_EDUCATION_LEVEL_REQUIRED"),
             new Error("GENERIC_WEBSITE_INSECURE"),
+            new Error("COURSERUN_COURSE_WEB_PAGE_INSECURE"),
         }.ToDictionary(e => e.ErrorCode, e => e);
     }
 
