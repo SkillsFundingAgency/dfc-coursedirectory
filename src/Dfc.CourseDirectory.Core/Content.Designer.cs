@@ -792,7 +792,6 @@ namespace Dfc.CourseDirectory.Core {
         
         /// <summary>
         ///   Looks up a localized string similar to Website has been reported as having a security issue.
-        ///Check the URL you have entered is correct. If the URL is correct, you&apos;ll need to review the security of your website. You cannot upload this URL to the course directory until it can pass this security check..
         /// </summary>
         public static string ERROR_GENERIC_WEBSITE_INSECURE {
             get {
@@ -984,7 +983,8 @@ namespace Dfc.CourseDirectory.Core {
         ///   Looks up a localized string similar to Enter a website in the correct format.
         /// </summary>
         public static string ERROR_VENUE_WEBSITE_FORMAT {
-            get {
+            get
+            {
                 return ResourceManager.GetString("ERROR_VENUE_WEBSITE_FORMAT", resourceCulture);
             }
         }

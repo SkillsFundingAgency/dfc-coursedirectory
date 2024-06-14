@@ -87,6 +87,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             .Apply(Rules.Website)
                 .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_FORMAT")
             .Apply(Rules.SecureWebsite<T>(webRiskService))
+                .WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE")
                 .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_INSECURE");
         }
 

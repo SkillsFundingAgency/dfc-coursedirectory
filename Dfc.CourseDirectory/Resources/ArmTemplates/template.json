@@ -259,7 +259,7 @@
       "type": "string"
     },
     "workspaceResourceGroup": {
-      "type": "string"
+        "type": "string"
     },
     "googleWebRiskApiKey": {
       "type": "securestring"

@@ -59,7 +59,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log ,
+            IRegionCache regionCache, 
+            ILogger<BlobStorageBinaryStorageProvider> log,
             IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
@@ -292,6 +293,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 if (courseRun != null)
                 {
                     _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
