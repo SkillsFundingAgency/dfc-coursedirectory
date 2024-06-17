@@ -1,0 +1,9 @@
+{
+    "FilterPredicate": "SELECT c.id FROM c WHERE c.PreferredContactMethod = 'NotKnown'",
+    "Operations": [
+        {
+            "Field": "/PreferredContactMethod",
+            "Value": 99
+        }
+    ]
+}
