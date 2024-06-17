@@ -1871,6 +1871,7 @@ namespace UkrlpService
         {
             if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
             {
+                //return new System.ServiceModel.EndpointAddress("https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6");
                 return new System.ServiceModel.EndpointAddress("https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
