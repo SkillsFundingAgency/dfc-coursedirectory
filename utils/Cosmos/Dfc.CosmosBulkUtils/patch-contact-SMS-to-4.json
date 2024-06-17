@@ -1,0 +1,9 @@
+{
+    "FilterPredicate": "SELECT c.id FROM c WHERE c.PreferredContactMethod = 'SMS'",
+    "Operations": [
+        {
+            "Field": "/PreferredContactMethod",
+            "Value": 4
+        }
+    ]
+}
