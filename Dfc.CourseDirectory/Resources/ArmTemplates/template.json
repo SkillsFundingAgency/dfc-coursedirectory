@@ -260,6 +260,18 @@
     },
     "workspaceResourceGroup": {
         "type": "string"
+    },
+    "ProviderQueryPort": {
+      "type": "string"
+    },
+    "geoportal_url": {
+      "type": "string"
+    },
+    "arcgisurl": {
+      "type": "string"
+    },
+    "checkForSecureUri": {
+      "type": "string"
     }
   },
   "variables": {
@@ -589,6 +601,22 @@
               {
                 "name": "WEBSITE_RUN_FROM_PACKAGE",
                 "value": "1"
+              },
+              {
+                "name": "ProviderQueryPort", 
+                "value": "[parameters('ProviderQueryPort')]"
+              },
+              {
+                "name": "geoportal_url", 
+                "value": "[parameters('geoportal_url')]"
+              },
+              {
+                "name": "arcgisurl", 
+                "value": "[parameters('arcgisurl')]"
+              },
+              {
+                "name": "checkForSecureUri", 
+                "value": "[parameters('checkForSecureUri')]"
               }
             ]
           },

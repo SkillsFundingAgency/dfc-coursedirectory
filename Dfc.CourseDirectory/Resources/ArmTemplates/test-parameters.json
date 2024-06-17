@@ -133,6 +133,18 @@
     },
     "workspaceResourceGroup": {
         "value": "aResourceGroup"
+    },
+    "ProviderQueryPort": {
+      "value": "urlToUkrlpWebservice"
+    },
+    "geoportal_url": {
+      "value": "urlToGovUkGeoPortalStatistics"
+    },
+    "arcgisurl": {
+      "value": "urlToArcGIS"
+    },
+    "checkForSecureUri": {
+      "value": "urlToGoogleWebRiskApi"
     }
   }
 }

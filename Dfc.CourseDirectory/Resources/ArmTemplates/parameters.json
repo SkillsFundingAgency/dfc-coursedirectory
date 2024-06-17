@@ -135,6 +135,18 @@
     },
     "workspaceResourceGroup": {
         "value": "__sharedLogAnalyticsResourceGroup__"
+    },
+    "ProviderQueryPort": {
+      "value": "__ProviderQueryPort__"
+    },
+    "geoportal_url": {
+      "value": "__geoportal_url__"
+    },
+    "arcgisurl": {
+      "value": "__arcgisurl__"
+    },
+    "checkForSecureUri": {
+      "value": "__checkForSecureUri__"
     }
   }
 }
