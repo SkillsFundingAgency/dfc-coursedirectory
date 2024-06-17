@@ -124,7 +124,7 @@ namespace Dfc.CosmosBulkUtils.Services
             for (int i = 0; i < results.Count; i++)
             {
                 var item = results[i];
-                _logger.LogInformation("Patched Id:" + results[i].Id);
+                _logger.LogInformation("Patched Contact Id:" + results[i].Id);
 
                 var result = await _container.PatchItemAsync<object>(
                     id: item.Id,
