@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Functions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Host;
@@ -43,6 +44,9 @@ namespace Dfc.CourseDirectory.Functions
             builder.Services.AddTransient<UkrlpSyncHelper>();
             builder.Services.AddTransient<OnspdDataImporter>();
             builder.Services.AddSingleton<IRegionCache, RegionCache>();
+            builder.Services.Configure<GoogleWebRiskSettings>(
+                configuration.GetSection(nameof(GoogleWebRiskSettings)));
+            builder.Services.AddScoped<IWebRiskService, WebRiskService>();
             builder.Services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
             builder.Services.AddSingleton<CampaignDataImporter>();
 
