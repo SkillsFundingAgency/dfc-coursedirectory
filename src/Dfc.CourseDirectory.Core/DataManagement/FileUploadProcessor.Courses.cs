@@ -14,7 +14,9 @@ using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -674,21 +676,21 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                    new CsvNonLarsCourseRow()
                    {
                        CourseType = ParsedCsvNonLarsCourseRow.MapCourseType(update.CourseType),
-                       Sector = RemoveASCII(update.Sector),
-                       AwardingBody = RemoveASCII(update.AwardingBody),
+                       Sector = ASCIICodeHelper.ReplaceHexCodes(update.Sector),
+                       AwardingBody = ASCIICodeHelper.ReplaceHexCodes(update.AwardingBody),
                        EducationLevel = ParsedCsvNonLarsCourseRow.MapEducationLevel(update.EducationLevel),
                        AttendancePattern = ParsedCsvNonLarsCourseRow.MapAttendancePattern(update.AttendancePattern),
                        Cost = ParsedCsvNonLarsCourseRow.MapCost(update.Cost),
-                       CostDescription = RemoveASCII(update.CostDescription),
+                       CostDescription = ASCIICodeHelper.ReplaceHexCodes(update.CostDescription),
                        CourseName = update.CourseName,
                        CourseWebPage = update.CourseWebPage,
                        DeliveryMode = ParsedCsvNonLarsCourseRow.MapDeliveryMode(update.DeliveryMode),
                        Duration = ParsedCsvNonLarsCourseRow.MapDuration(update.Duration),
                        DurationUnit = ParsedCsvNonLarsCourseRow.MapDurationUnit(update.DurationUnit),
-                       EntryRequirements = RemoveASCII(row.EntryRequirements),
+                       EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(row.EntryRequirements),
                        FlexibleStartDate = ParsedCsvNonLarsCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
-                       HowYouWillBeAssessed = RemoveASCII(row.HowYouWillBeAssessed),
-                       HowYouWillLearn = RemoveASCII(row.HowYouWillLearn),
+                       HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(row.HowYouWillBeAssessed),
+                       HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(row.HowYouWillLearn),
                        NationalDelivery = ParsedCsvNonLarsCourseRow.MapNationalDelivery(update.NationalDelivery),
                        ProviderCourseRef = update.ProviderCourseRef,
                        ProviderVenueRef = venue?.ProviderVenueRef,
@@ -696,10 +698,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                        StudyMode = ParsedCsvNonLarsCourseRow.MapStudyMode(update.StudyMode),
                        SubRegions = ParsedCsvNonLarsCourseRow.MapSubRegions(update.SubRegionIds, allRegions),
                        VenueName = venue?.VenueName,
-                       WhatYouWillLearn = RemoveASCII(row.WhatYouWillLearn),
-                       WhatYouWillNeedToBring = RemoveASCII(row.WhatYouWillNeedToBring),
-                       WhereNext = RemoveASCII(row.WhereNext),
-                       WhoThisCourseIsFor = RemoveASCII(row.WhoThisCourseIsFor)
+                       WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(row.WhatYouWillLearn),
+                       WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(row.WhatYouWillNeedToBring),
+                       WhereNext = ASCIICodeHelper.ReplaceHexCodes(row.WhereNext),
+                       WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(row.WhoThisCourseIsFor)
                    },
                    row.RowNumber,
                    row.CourseId,
@@ -716,16 +718,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                    {
                        AttendancePattern = ParsedCsvCourseRow.MapAttendancePattern(update.AttendancePattern),
                        Cost = ParsedCsvCourseRow.MapCost(update.Cost),
-                       CostDescription = RemoveASCII(update.CostDescription),
+                       CostDescription = ASCIICodeHelper.ReplaceHexCodes(update.CostDescription),
                        CourseName = update.CourseName,
                        CourseWebPage = update.CourseWebPage,
                        DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(update.DeliveryMode),
                        Duration = ParsedCsvCourseRow.MapDuration(update.Duration),
                        DurationUnit = ParsedCsvCourseRow.MapDurationUnit(update.DurationUnit),
-                       EntryRequirements = RemoveASCII(row.EntryRequirements),
+                       EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(row.EntryRequirements),
                        FlexibleStartDate = ParsedCsvCourseRow.MapFlexibleStartDate(update.FlexibleStartDate),
-                       HowYouWillBeAssessed = RemoveASCII(row.HowYouWillBeAssessed),
-                       HowYouWillLearn = RemoveASCII(row.HowYouWillLearn),
+                       HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(row.HowYouWillBeAssessed),
+                       HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(row.HowYouWillLearn),
                        LearnAimRef = row.LearnAimRef,
                        NationalDelivery = ParsedCsvCourseRow.MapNationalDelivery(update.NationalDelivery),
                        ProviderCourseRef = update.ProviderCourseRef,
@@ -734,10 +736,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                        StudyMode = ParsedCsvCourseRow.MapStudyMode(update.StudyMode),
                        SubRegions = ParsedCsvCourseRow.MapSubRegions(update.SubRegionIds, allRegions),
                        VenueName = venue?.VenueName,
-                       WhatYouWillLearn = RemoveASCII(row.WhatYouWillLearn),
-                       WhatYouWillNeedToBring = RemoveASCII(row.WhatYouWillNeedToBring),
-                       WhereNext = RemoveASCII(row.WhereNext),
-                       WhoThisCourseIsFor = RemoveASCII(row.WhoThisCourseIsFor)
+                       WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(row.WhatYouWillLearn),
+                       WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(row.WhatYouWillNeedToBring),
+                       WhereNext = ASCIICodeHelper.ReplaceHexCodes(row.WhereNext),
+                       WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(row.WhoThisCourseIsFor)
                    },
                    row.RowNumber,
                    row.CourseId,
@@ -802,10 +804,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                            DeliveryMode = r.DeliveryMode,
                            Duration = r.Duration,
                            DurationUnit = r.DurationUnit,
-                           EntryRequirements = RemoveASCII(update.EntryRequirements),
+                           EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(update.EntryRequirements),
                            FlexibleStartDate = r.FlexibleStartDate,
-                           HowYouWillBeAssessed = RemoveASCII(update.HowYouWillBeAssessed),
-                           HowYouWillLearn = RemoveASCII(update.HowYouWillLearn),
+                           HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(update.HowYouWillBeAssessed),
+                           HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(update.HowYouWillLearn),
                            CourseType = r.CourseType,
                            NationalDelivery = r.NationalDelivery,
                            ProviderCourseRef = r.ProviderCourseRef,
@@ -814,10 +816,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                            StudyMode = r.StudyMode,
                            SubRegions = r.SubRegions,
                            VenueName = r.VenueName,
-                           WhatYouWillLearn = RemoveASCII(update.WhatYouWillLearn),
-                           WhatYouWillNeedToBring = RemoveASCII(update.WhatYouWillNeedToBring),
-                           WhereNext = RemoveASCII(update.WhereNext),
-                           WhoThisCourseIsFor = RemoveASCII(update.WhoThisCourseIsFor)
+                           WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(update.WhatYouWillLearn),
+                           WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(update.WhatYouWillNeedToBring),
+                           WhereNext = ASCIICodeHelper.ReplaceHexCodes(update.WhereNext),
+                           WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(update.WhoThisCourseIsFor)
                        },
                        r.RowNumber,
                        courseId)));
@@ -839,10 +841,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             DeliveryMode = r.DeliveryMode,
                             Duration = r.Duration,
                             DurationUnit = r.DurationUnit,
-                            EntryRequirements = RemoveASCII(update.EntryRequirements),
+                            EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(update.EntryRequirements),
                             FlexibleStartDate = r.FlexibleStartDate,
-                            HowYouWillBeAssessed = RemoveASCII(update.HowYouWillBeAssessed),
-                            HowYouWillLearn = RemoveASCII(update.HowYouWillLearn),
+                            HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(update.HowYouWillBeAssessed),
+                            HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(update.HowYouWillLearn),
                             LearnAimRef = r.LearnAimRef,
                             NationalDelivery = r.NationalDelivery,
                             ProviderCourseRef = r.ProviderCourseRef,
@@ -851,10 +853,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                             StudyMode = r.StudyMode,
                             SubRegions = r.SubRegions,
                             VenueName = r.VenueName,
-                            WhatYouWillLearn = RemoveASCII(update.WhatYouWillLearn),
-                            WhatYouWillNeedToBring = RemoveASCII(update.WhatYouWillNeedToBring),
-                            WhereNext = RemoveASCII(update.WhereNext),
-                            WhoThisCourseIsFor = RemoveASCII(update.WhoThisCourseIsFor)
+                            WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(update.WhatYouWillLearn),
+                            WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(update.WhatYouWillNeedToBring),
+                            WhereNext = ASCIICodeHelper.ReplaceHexCodes(update.WhereNext),
+                            WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(update.WhoThisCourseIsFor)
                         },
                         r.RowNumber,
                         courseId)));
@@ -1031,7 +1033,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var courseType = await _courseTypeService.GetCourseType(parsedRow.LearnAimRef, providerId);
 
-                var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId);
+                var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -1046,14 +1048,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     CourseId = row.CourseId,
                     CourseRunId = courseRunId,
                     LearnAimRef = parsedRow.LearnAimRef,
-                    WhoThisCourseIsFor = RemoveASCII(parsedRow.WhoThisCourseIsFor),
-                    EntryRequirements = RemoveASCII(parsedRow.EntryRequirements),
-                    WhatYouWillLearn = RemoveASCII(parsedRow.WhatYouWillLearn),
-                    HowYouWillLearn = RemoveASCII(parsedRow.HowYouWillLearn),
-                    WhatYouWillNeedToBring = RemoveASCII(parsedRow.WhatYouWillNeedToBring),
-                    HowYouWillBeAssessed = RemoveASCII(parsedRow.HowYouWillBeAssessed),
-                    WhereNext = RemoveASCII(parsedRow.WhereNext),
-                    CostDescription = RemoveASCII(parsedRow.CostDescription),
+                    WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhoThisCourseIsFor),
+                    EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(parsedRow.EntryRequirements),
+                    WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhatYouWillLearn),
+                    HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(parsedRow.HowYouWillLearn),
+                    WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhatYouWillNeedToBring),
+                    HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(parsedRow.HowYouWillBeAssessed),
+                    WhereNext = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhereNext),
+                    CostDescription = ASCIICodeHelper.ReplaceHexCodes(parsedRow.CostDescription),
                     CourseName = parsedRow.CourseName,
                     ProviderCourseRef = parsedRow.ProviderCourseRef,
                     DeliveryMode = ParsedCsvCourseRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode) ?? parsedRow.DeliveryMode,
@@ -1121,7 +1123,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
 
-                var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId);
+                var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
 
                 var rowValidationResult = validator.Validate(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
@@ -1135,14 +1137,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     Errors = errors,
                     CourseId = row.CourseId,
                     CourseRunId = courseRunId,
-                    WhoThisCourseIsFor = RemoveASCII(parsedRow.WhoThisCourseIsFor),
-                    EntryRequirements = RemoveASCII(parsedRow.EntryRequirements),
-                    WhatYouWillLearn = RemoveASCII(parsedRow.WhatYouWillLearn),
-                    HowYouWillLearn = RemoveASCII(parsedRow.HowYouWillLearn),
-                    WhatYouWillNeedToBring = RemoveASCII(parsedRow.WhatYouWillNeedToBring),
-                    HowYouWillBeAssessed = RemoveASCII(parsedRow.HowYouWillBeAssessed),
-                    WhereNext = RemoveASCII(parsedRow.WhereNext),
-                    CostDescription = RemoveASCII(parsedRow.CostDescription),
+                    WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhoThisCourseIsFor),
+                    EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(parsedRow.EntryRequirements),
+                    WhatYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhatYouWillLearn),
+                    HowYouWillLearn = ASCIICodeHelper.ReplaceHexCodes(parsedRow.HowYouWillLearn),
+                    WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhatYouWillNeedToBring),
+                    HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(parsedRow.HowYouWillBeAssessed),
+                    WhereNext = ASCIICodeHelper.ReplaceHexCodes(parsedRow.WhereNext),
+                    CostDescription = ASCIICodeHelper.ReplaceHexCodes(parsedRow.CostDescription),
                     CourseName = parsedRow.CourseName,
                     ProviderCourseRef = parsedRow.ProviderCourseRef,
                     DeliveryMode = ParsedCsvNonLarsCourseRow.MapDeliveryMode(parsedRow.ResolvedDeliveryMode) ?? parsedRow.DeliveryMode,
@@ -1317,7 +1319,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             public CourseUploadRowValidator(
                 IClock clock,
-                Guid? matchedVenueId)
+                Guid? matchedVenueId,
+                IWebRiskService webRiskService)
             {
                 RuleFor(c => c.WhoThisCourseIsFor).WhoThisCourseIsFor();
                 RuleFor(c => c.EntryRequirements).EntryRequirements();
@@ -1340,7 +1343,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegions),
                     c => c.ResolvedDeliveryMode,
                     c => c.ResolvedNationalDelivery);
-                RuleFor(c => c.CourseWebPage).CourseWebPage();
+                RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
                 RuleFor(c => c.ResolvedCost).Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), c => c.CostDescription);
                 RuleFor(c => c.CostDescription).CostDescription();
                 RuleFor(c => c.ResolvedDuration).Duration();
@@ -1357,7 +1360,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         {
             public NonLarsCourseUploadRowValidator(
                 IClock clock,
-                Guid? matchedVenueId)
+                Guid? matchedVenueId,
+                IWebRiskService webRiskService)
             {
                 RuleFor(c => c.ResolvedCourseType).CourseType();
                 RuleFor(c => c.ResolvedSector).Sector();
@@ -1384,7 +1388,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     subRegionsWereSpecified: c => !string.IsNullOrEmpty(c.SubRegions),
                     c => c.ResolvedDeliveryMode,
                     c => c.ResolvedNationalDelivery);
-                RuleFor(c => c.CourseWebPage).CourseWebPage();
+                RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
                 RuleFor(c => c.ResolvedCost).Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), c => c.CostDescription);
                 RuleFor(c => c.CostDescription).CostDescription();
                 RuleFor(c => c.ResolvedDuration).Duration();
@@ -1396,13 +1400,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     attendancePatternWasSpecified: t => !string.IsNullOrEmpty(t.AttendancePattern),
                     c => c.ResolvedDeliveryMode);
             }
-        }
-        private static string RemoveASCII(string src)
-        {
-            string returnstring = string.Empty;
-            if (src != null)
-                returnstring = Regex.Replace(src, @"[^\u0000-\u007F]", "");
-            return returnstring;
         }
     }
 }
