@@ -613,11 +613,8 @@
               {
                 "name": "arcgisurl", 
                 "value": "[parameters('arcgisurl')]"
-              },
-              {
-                "name": "checkForSecureUri", 
-                "value": "[parameters('checkForSecureUri')]"
               }
+       
             ]
           },
           "appServiceConnectionStrings": {

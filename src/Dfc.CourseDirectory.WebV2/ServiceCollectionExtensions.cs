@@ -42,6 +42,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 
 namespace Dfc.CourseDirectory.WebV2
 {
@@ -63,11 +64,6 @@ namespace Dfc.CourseDirectory.WebV2
                     options.Conventions.Add(new V2ActionModelConvention());
 
                     options.Filters.Add(new RedirectToProviderSelectionActionFilter());
-                    options.Filters.Add(new DeactivatedProviderErrorActionFilter());
-                    options.Filters.Add(new NotAuthorizedExceptionFilter());
-                    options.Filters.Add(new InvalidStateExceptionFilter());
-                    options.Filters.Add(new LocalUrlActionFilter());
-                    options.Filters.Add(new MptxResourceFilter());
                     options.Filters.Add(new ContentSecurityPolicyActionFilter());
                     options.Filters.Add(new MptxControllerActionFilter());
                     options.Filters.Add(new InvalidMptxInstanceContextActionFilter());
@@ -78,6 +74,11 @@ namespace Dfc.CourseDirectory.WebV2
                     Debug.Assert(options.ModelBinderProviders[0].GetType() == typeof(BinderTypeModelBinderProvider));
                     options.ModelBinderProviders.Insert(1, new MptxInstanceContextModelBinderProvider());
                     options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
+                    options.Filters.Add(new DeactivatedProviderErrorActionFilter());
+                    options.Filters.Add(new NotAuthorizedExceptionFilter());
+                    options.Filters.Add(new InvalidStateExceptionFilter());
+                    options.Filters.Add(new LocalUrlActionFilter());
+                    options.Filters.Add(new MptxResourceFilter());
                 })
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
@@ -163,6 +164,13 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IAuthorizationHandler, ProviderTypeAuthorizationHandler>();
             services.Configure<GoogleAnalyticsOptions>(configuration.GetSection("GoogleAnalytics"));
             services.Configure<GoogleTagManagerOptions>(configuration.GetSection("GoogleTagManager"));
+
+            services.Configure<DataImporterConfig>(configuration.GetSection("arcgisurl"));
+            services.Configure<DataImporterConfig>(configuration.GetSection("geoportal_url"));
+            services.Configure<DataImporterConfig>(configuration.GetSection("ProviderQueryPort"));
+            services.Configure<DataImporterConfig>(configuration.GetSection("checkForSecureUri"));
+
+
             services.AddScoped<RouteValuesHelper>();
             services.AddTransient<Features.TLevels.ViewAndEditTLevel.EditTLevelJourneyModelFactory>();
             services.AddSingleton<IRegionCache, RegionCache>();
