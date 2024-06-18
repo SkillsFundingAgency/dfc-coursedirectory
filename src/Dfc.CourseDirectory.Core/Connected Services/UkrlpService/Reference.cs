@@ -7,6 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Configuration;
+
 namespace UkrlpService
 {
     
@@ -1869,10 +1872,10 @@ namespace UkrlpService
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
+            string providerQueryPorturl = Environment.GetEnvironmentVariable("ProviderQueryPort");
             if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
             {
-                //return new System.ServiceModel.EndpointAddress("https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6");
-                return new System.ServiceModel.EndpointAddress("https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6");
+                return new System.ServiceModel.EndpointAddress(providerQueryPorturl);
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

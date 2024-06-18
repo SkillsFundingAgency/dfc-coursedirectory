@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 {
@@ -30,18 +31,24 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ILogger<OnspdDataImporter> _logger;
-
+        private readonly IConfiguration _configuration;
+        private string arcgisurl;
+        private string geoportal_url;
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            ILogger<OnspdDataImporter> logger)
+            ILogger<OnspdDataImporter> logger,
+            IConfiguration configuration)
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _logger = logger;
+            _configuration = configuration;
+            arcgisurl = _configuration.GetSection("arcgisurl").Get<string>();
+            geoportal_url = _configuration.GetSection("geoportal_url").Get<string>();
         }
 
-        public async Task ImportData()
+            public async Task ImportData()
         {
             var blobClient = _blobContainerClient.GetBlobClient(FileName);
 
@@ -81,8 +88,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         public async Task AutomatedImportData()
         {
-            string geoportal_url = "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-(month)-(year)(extra)/about";
-
             string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
             _logger.LogInformation($"Automated process generate request url at: {requesturl}");
@@ -111,7 +116,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 
                 // Read the content.
                 string responseFromServer = await response.Content.ReadAsStringAsync();
-                string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
+                //string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
+         
                 if (responseFromServer.Contains(arcgisurl))
                 {
                     int findindex = responseFromServer.IndexOf(arcgisurl);
@@ -151,8 +157,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 month = 8;
             }
             string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month).ToLower();
-            string returnstring = geoportal_url.Replace("(month)", monthName);
-            returnstring = returnstring.Replace("(year)", year.ToString());
+            string returnstring = geoportal_url.Replace("{month}", monthName);
+
+            returnstring = returnstring.Replace("{year}", year.ToString());
             returnstring = await CheckURLContainsExtraAsync(returnstring);
             return returnstring;
         }
