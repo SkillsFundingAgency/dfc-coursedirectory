@@ -68,8 +68,7 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
                 .MaximumLength(Constants.WebsiteMaxLength)
                     .WithMessage($"T Level webpage must be {Constants.WebsiteMaxLength} characters or fewer")        
                 .Apply(Rules.SecureWebsite<T>(webRiskService))
-                    .WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE")
-                    .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_INSECURE");
+                    .WithMessageFromErrorCode("GENERIC_WEBSITE_INSECURE");
         }
 
         public static void WhatYouCanDoNext<T>(this IRuleBuilderInitial<T, string> field)
