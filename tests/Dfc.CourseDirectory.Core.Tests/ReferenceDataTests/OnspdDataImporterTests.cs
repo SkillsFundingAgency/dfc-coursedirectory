@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Azure;
@@ -62,13 +63,23 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
             blobServiceClient
                 .Setup(mock => mock.GetBlobContainerClient(OnspdDataImporter.ContainerName))
                 .Returns(blobContainerClient.Object);
-            var configuration = new Mock<IConfiguration>();
+
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "arcgisurl", "arcgisurl"},
+                {"geoportal_url", "geoportal_url" }
+            };
+            
+            IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+
 
             var importer = new OnspdDataImporter(
                 blobServiceClient.Object,
                 sqlDispatcher,
                 new NullLogger<OnspdDataImporter>(),
-                configuration.Object);
+                configuration);
 
             // Act
             await importer.ImportData();
