@@ -52,6 +52,7 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
                 .ReturnsAsync(downloadResponse.Object);
 
             var blobContainerClient = new Mock<BlobContainerClient>();
+            var dataImporterConfig = new Mock<DataImporterConfig>();
 
             blobContainerClient
                 .Setup(mock => mock.GetBlobClient(OnspdDataImporter.FileName))
@@ -62,13 +63,14 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
             blobServiceClient
                 .Setup(mock => mock.GetBlobContainerClient(OnspdDataImporter.ContainerName))
                 .Returns(blobContainerClient.Object);
+
             var configuration = new Mock<IConfiguration>();
 
             var importer = new OnspdDataImporter(
                 blobServiceClient.Object,
                 sqlDispatcher,
                 new NullLogger<OnspdDataImporter>(),
-                configuration.Object);
+               dataImporterConfig.Object);
 
             // Act
             await importer.ImportData();

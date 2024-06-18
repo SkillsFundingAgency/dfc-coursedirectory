@@ -16,6 +16,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 {
@@ -31,21 +32,21 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ILogger<OnspdDataImporter> _logger;
-        private readonly IConfiguration _configuration;
         private string arcgisurl;
         private string geoportal_url;
+      
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
             ISqlQueryDispatcher sqlQueryDispatcher,
             ILogger<OnspdDataImporter> logger,
-            IConfiguration configuration)
+            DataImporterConfig dataImporterConfig
+            )
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcher = sqlQueryDispatcher;
-            _logger = logger;
-            _configuration = configuration;
-            arcgisurl = _configuration.GetSection("arcgisurl").Get<string>();
-            geoportal_url = _configuration.GetSection("geoportal_url").Get<string>();
+            _logger = logger;           
+            arcgisurl = dataImporterConfig.arcgisurl;
+            geoportal_url = dataImporterConfig.geoportal_url;
         }
 
             public async Task ImportData()
