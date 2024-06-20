@@ -8621,3 +8621,60 @@ WHEN NOT MATCHED
 	)
 WHEN NOT MATCHED BY SOURCE
 	THEN DELETE;
+
+--- FIND INVALID CHARS AND REPLACE WITH VALID CHARS ----------------
+WHILE (EXISTS( Select CourseId,CourseRunId 
+	from Pttcd.CourseRuns 
+	where CourseName like '%&#%' and CourseRunStatus = 1))
+BEGIN
+	With cte as (
+		Select coursename,courseid,courserunid,  
+		patindex('%&#%',CourseName) as [FirstPosition],
+		substring(CourseName,patindex('%&#%',CourseName),1) as [FirstInvalidCharacter],
+		ascii(substring(CourseName,patindex('%&#%',CourseName),1)) as [FirstASCIICode]
+		from Pttcd.CourseRuns 
+		where CourseName like '%&#%' and CourseRunStatus = 1),
+
+	cte2 as(
+		Select *,
+		substring(CourseName,FirstPosition,len(CourseName)-1) as PartialCourseName
+		from cte),
+
+	DataWithPos as (
+		Select *, patindex('%;%',PartialCourseName) as [LastPosition],
+		substring(PartialCourseName,patindex('%;%',PartialCourseName),1) as [LastInvalidCharacter],
+		ascii(substring(PartialCourseName,patindex('%;%',PartialCourseName),1)) as [LastASCIICode]
+		from cte2),
+
+	DataWithIs as (
+		Select *,substring(CourseName,FirstPosition,LastPosition) AS [InvalidString]   from DataWithPos),
+
+	DatawithChar as (Select *, 
+		CASE WHEN InvalidString = '&#x2013;' OR InvalidString = '&#8211;' THEN
+			'-'
+		WHEN InvalidString = '&#x2019;' OR InvalidString = '&#x27;' OR InvalidString = '&#8217;' OR InvalidString = '&#39;' THEN
+			''''
+		WHEN InvalidString = '&#038;' THEN
+			'&'
+		WHEN InvalidString = '&#x2B;' THEN
+			'+'
+		WHEN InvalidString = '&#x9;' THEN
+			''
+		WHEN InvalidString = '&#xA0;' THEN
+			' '
+		END AS CharToReplace
+	from DataWithIs)
+	UPDATE CR
+		SET CR.COURSENAME = REPLACE(CR.CourseName,DC.InvalidString,DC.CharToReplace)
+		FROM Pttcd.CourseRuns as CR
+		JOIN DataWithChar as DC ON CR.CourseId = DC.CourseId AND CR.CourseRunId = DC.CourseRunId
+END
+
+
+UPDATE FC
+	SET FC.COURSENAME = CR.COURSENAME
+	FROM Pttcd.FindACourseIndex AS FC
+	JOIN Pttcd.CourseRuns as CR ON CR.CourseId = FC.CourseId AND CR.CourseRunId = FC.CourseRunId
+	WHERE FC.CourseName != CR.CourseName    
+
+
