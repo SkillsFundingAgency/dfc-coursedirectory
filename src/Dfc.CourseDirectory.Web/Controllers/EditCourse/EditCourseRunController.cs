@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -50,6 +51,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
         private readonly ILogger<BlobStorageBinaryStorageProvider> _log;
+        private readonly IWebRiskService _webRiskService;
 
         public EditCourseRunController(
             ICourseService courseService,
@@ -57,7 +59,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache, ILogger<BlobStorageBinaryStorageProvider> log) : base(sqlQueryDispatcher)
+            IRegionCache regionCache, 
+            ILogger<BlobStorageBinaryStorageProvider> log,
+            IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -71,6 +75,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             _clock = clock;
             _regionCache = regionCache;
             _log = log;
+            _webRiskService = webRiskService;
         }
 
         [Authorize]
@@ -288,6 +293,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 if (courseRun != null)
                 {
                     _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -422,7 +428,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             model.FlexibleStartDate = flexibleStartDate;
 
-            var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
+            var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).Validate(model);
             if (!validationResult.IsValid)
             {
                 return BadRequest();
@@ -562,7 +568,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         private class EditCourseRunSaveViewModelValidator : AbstractValidator<EditCourseRunSaveViewModel>
         {
-            public EditCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock)
+            public EditCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.AttendanceMode)
                     .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
@@ -614,7 +620,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 RuleFor(c => c.StudyMode)
                     .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
 
-                RuleFor(c => c.Url).CourseWebPage();
+                RuleFor(c => c.Url).CourseWebPage(webRiskService);
 
                 RuleFor(c => c.VenueId)
                     .Transform(v => v == default ? (Guid?)null : v)

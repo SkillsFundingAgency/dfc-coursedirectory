@@ -669,6 +669,8 @@
                     urlToValidate = $url.val();
                 }
 
+                $("[secure-website-message-hint-text]").hide();
+
                 if (!$.requiredValidate($url.val())) {
                     $url.govUkInput("invalidState", $url.attr("val-required-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
@@ -688,6 +690,14 @@
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
+                } else if (
+                    !$.secureWebsiteValidate(urlToValidate)) {
+                    $url.govUkInput("invalidState", $url.attr("val-secure-website-message"));
+                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                    $("[secure-website-message-hint-text]").show();
                 } else {
                     $url.govUkInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $url[0].id);

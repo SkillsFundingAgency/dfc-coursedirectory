@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         [Name("COURSE_NAME")]
         public string CourseName { get; set; }
 
-        [Name("COURSE_DESCRIPTION")]
+        [Name("WHO_THIS_COURSE_IS_FOR")]
         public string CourseDescription { get; set; }
 
         [Name("DELIVER_MODE")]

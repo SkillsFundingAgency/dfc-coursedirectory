@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "VENUE_TELEPHONE_FORMAT":
                     return "Phone";
                 case "VENUE_WEBSITE_FORMAT":
+                case "GENERIC_WEBSITE_INSECURE":
                     return "Website";
             }
 
@@ -76,7 +77,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     return "Course name";
                 case "COURSERUN_COURSE_WEB_PAGE_REQUIRED":
                 case "COURSERUN_COURSE_WEB_PAGE_FORMAT":
-                case "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH":
+                case "COURSERUN_COURSE_WEB_PAGE_INSECURE":
                     return "Course webpage";
                 case "COURSERUN_DELIVERY_MODE_REQUIRED":
                     return "Delivery mode";
