@@ -1872,10 +1872,9 @@ namespace UkrlpService
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            string providerQueryPorturl = Environment.GetEnvironmentVariable("ProviderQueryPort");
-            if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
+           if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
             {
-                return new System.ServiceModel.EndpointAddress(providerQueryPorturl);
+                return new System.ServiceModel.EndpointAddress("https://websevices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }
