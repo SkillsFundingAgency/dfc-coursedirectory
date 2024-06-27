@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 SELECT TOP 1 CourseUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
 ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn
 FROM Pttcd.CourseUploads
-WHERE ProviderId = @ProviderId AND IsNonLars = @IsNonLars
+WHERE ProviderId = @ProviderId AND (IsNonLars Is NULL OR IsNonLars = @IsNonLars)
 AND UploadStatus IN ({string.Join(", ", UploadStatusExtensions.UnpublishedStatuses.Cast<int>())})
 ORDER BY CreatedOn DESC";
 
