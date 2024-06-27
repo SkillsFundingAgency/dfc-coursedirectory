@@ -147,6 +147,9 @@
     },
     "checkForSecureUri": {
       "value": "__checkForSecureUri__"
+    },
+    "GoogleWebRiskApiKey": {
+      "value": "__GoogleWebRiskApiKey__"
     }
   }
 }

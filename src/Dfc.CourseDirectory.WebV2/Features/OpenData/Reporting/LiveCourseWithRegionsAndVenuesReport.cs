@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using MediatR;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Helpers;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport
 {
@@ -35,7 +36,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
         [Name("COURSE_NAME")]
         public string CourseName { get; set; }
 
-        [Name("COURSE_DESCRIPTION")]
+        [Name("WHO_THIS_COURSE_IS_FOR")]
         public string CourseDescription { get; set; }
 
         [Name("DELIVER_MODE")]
@@ -159,8 +160,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             ProviderUkprn = record.ProviderUkprn.ToString(),
                             CourseId = record.CourseId.ToString(),
                             CourseRunId = record.CourseRunId.ToString(),
-                            CourseName = record.CourseName,
-                            CourseDescription = record.CourseDescription,
+                            CourseName = ASCIICodeHelper.ReplaceHexCodes(record.CourseName),
+                            CourseDescription = ASCIICodeHelper.ReplaceHexCodes(record.CourseDescription),
                             CourseUrl = record.CourseWebsite,
                             LarsId = record.LearnAimRef,
                             DeliveryMode = record.DeliveryMode,
@@ -171,7 +172,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             DurationUnit = record.DurationUnit,
                             DurationValue = record.DurationValue,
                             Cost = ParsedCsvCourseRow.MapCost(record.Cost),
-                            CostDescription = record.CostDescription,
+                            CostDescription = ASCIICodeHelper.ReplaceHexCodes(record.CostDescription),
                             IsNational = record.National,
                             Regions = record.Regions,
                             LocationName = record.VenueName,
@@ -186,8 +187,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
                             LocationPhone = record.VenueTelephone,
                             LocationWebsite = record.VenueWebsite,
                             UpdatedDate = ParsedCsvCourseRow.MapStartDate(record.UpdatedOn),
-                            EntryRequirements = record.EntryRequirements,
-                            HowYouWillBeAssessed = record.HowYouWillBeAssessed,
+                            EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(record.EntryRequirements),
+                            HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(record.HowYouWillBeAssessed),
                             CourseType = record.CourseType,
                             Sector = ParsedCsvNonLarsCourseRow.MapSectorIdToCode(record.SectorId, sectors),
                             AwardingBody = record.AwardingBody,

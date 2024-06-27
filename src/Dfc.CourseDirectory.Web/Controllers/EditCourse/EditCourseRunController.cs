@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.CourseService;
@@ -31,6 +35,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
@@ -44,7 +49,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
-        private readonly IRegionCache _regionCache;        
+        private readonly IRegionCache _regionCache;
+        private readonly ILogger<BlobStorageBinaryStorageProvider> _log;
+        private readonly IWebRiskService _webRiskService;
 
         public EditCourseRunController(
             ICourseService courseService,
@@ -52,7 +59,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache): base(sqlQueryDispatcher)
+            IRegionCache regionCache, 
+            ILogger<BlobStorageBinaryStorageProvider> log,
+            IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -65,11 +74,14 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _regionCache = regionCache;
+            _log = log;
+            _webRiskService = webRiskService;
         }
 
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
+            _log.LogInformation($" EditCourseRunController AddNewVenue");
 
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
@@ -101,16 +113,17 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CostDescription = model.CostDescription,
                 AttendanceMode = model.AttendanceMode,
             };
-
-          
+                      
             Session.SetObject("EditCourseRunObject", vm);
-
-
-            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
+   
+            var returnurl= new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
-                .ToString());
+                .ToString();
 
+            _log.LogInformation($" EditCourseRunController AddNewVenue [{returnurl}]");
+            //return RedirectToAction("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") });
 
+            return Json(returnurl);
         }
 
         [HttpGet]
@@ -240,6 +253,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
+            _log.LogInformation($" EditCourseRunController Index");
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
@@ -278,6 +292,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 if (courseRun != null)
                 {
+                    _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -364,11 +380,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
-
+                    _log.LogInformation($" EditCourseRunController Index EditCourseRun");
                     return View("EditCourseRun", vm);
                 }
             }
-
+            _log.LogInformation($" EditCourseRunController Index error "+ Activity.Current?.Id ?? HttpContext.TraceIdentifier);
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
@@ -412,7 +428,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             model.FlexibleStartDate = flexibleStartDate;
 
-            var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock).Validate(model);
+            var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).Validate(model);
             if (!validationResult.IsValid)
             {
                 return BadRequest();
@@ -443,7 +459,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 DurationUnit = model.DurationUnit,
                 DeliveryMode = model.DeliveryMode,
                 Cost = !string.IsNullOrEmpty(model.Cost) ? Convert.ToDecimal(model.Cost) : (decimal?)null,
-                CostDescription = ASCIICodeHelper.RemoveASCII(model.CostDescription) ?? "",
+                CostDescription = ASCIICodeHelper.ReplaceHexCodes(model.CostDescription) ?? "",
                 CourseName = model.CourseName,
                 CourseUrl = model.Url,
                 DurationValue = Convert.ToInt32(model.DurationLength),
@@ -552,7 +568,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         private class EditCourseRunSaveViewModelValidator : AbstractValidator<EditCourseRunSaveViewModel>
         {
-            public EditCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock)
+            public EditCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.AttendanceMode)
                     .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
@@ -604,7 +620,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 RuleFor(c => c.StudyMode)
                     .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
 
-                RuleFor(c => c.Url).CourseWebPage();
+                RuleFor(c => c.Url).CourseWebPage(webRiskService);
 
                 RuleFor(c => c.VenueId)
                     .Transform(v => v == default ? (Guid?)null : v)

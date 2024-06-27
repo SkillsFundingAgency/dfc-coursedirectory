@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using Azure.Storage.Blobs;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Configuration;
@@ -74,6 +75,10 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
+
+            services.Configure<GoogleWebRiskSettings>(
+                Configuration.GetSection(nameof(GoogleWebRiskSettings)));
+            services.AddScoped<IWebRiskService, WebRiskService>();
 
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
@@ -264,7 +269,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-                context.Response.Headers["X-Xss-Protection"] = "1; mode=block";
+                context.Response.Headers["X-Xss-Protection"] = "0";
                 context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
                 context.Response.Headers["Feature-Policy"] = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
 

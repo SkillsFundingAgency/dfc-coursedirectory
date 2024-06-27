@@ -13,6 +13,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
 
@@ -455,7 +456,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var allPostcodeInfo = await GetPostcodeInfoForRows(sqlQueryDispatcher, rows);
 
             var uploadIsValid = true;
-            var validator = new VenueUploadRowValidator(rows, allPostcodeInfo);
+            var validator = new VenueUploadRowValidator(rows, allPostcodeInfo, _webRiskService);
 
             var upsertRecords = new List<SetVenueUploadRowsRecord>();
 
@@ -665,7 +666,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             private readonly VenueDataUploadRowInfoCollection _allRows;
             private readonly IDictionary<Postcode, PostcodeInfo> _postcodeInfo;
 
-            public VenueUploadRowValidator(VenueDataUploadRowInfoCollection allRows, IDictionary<Postcode, PostcodeInfo> postcodeInfo)
+            public VenueUploadRowValidator(VenueDataUploadRowInfoCollection allRows, IDictionary<Postcode, PostcodeInfo> postcodeInfo, IWebRiskService webRiskService)
             {
                 _allRows = allRows;
                 _postcodeInfo = postcodeInfo;
@@ -694,7 +695,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(r => r.Postcode).Postcode(postcode => _postcodeInfo.TryGetValue(postcode, out var pc) ? pc : null);
                 RuleFor(r => r.Email).Email();
                 RuleFor(r => r.Telephone).PhoneNumber();
-                RuleFor(r => r.Website).Website();
+                RuleFor(r => r.Website).Website(webRiskService);
             }
         }
     }

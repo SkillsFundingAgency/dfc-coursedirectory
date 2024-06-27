@@ -29,7 +29,7 @@
 
     if (newVenueDescription != null)
     {
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
             NotificationTitle = "New location added:",
             NotificationMessage = newVenueDescription,
@@ -289,7 +289,6 @@
             return event.key != "Enter";
         });
         $(function () {
-
             var $addNewVenueButton = $("#addNewVenue");
             var $courseId = $("#@nameof(Model.CourseId)");
             var $courseRunId = $("#@nameof(Model.CourseRunId)");
@@ -680,6 +679,9 @@
                 else {
                     urlToValidate = $url.val();
                 }
+
+                $("[secure-website-message-hint-text]").hide();
+
                 if (!$.requiredValidate($url.val())) {
                     $url.govUkInput("invalidState", $url.attr("val-required-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
@@ -700,6 +702,14 @@
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
+                } else if (
+                    !$.secureWebsiteValidate(urlToValidate)) {
+                    $url.govUkInput("invalidState", $url.attr("val-secure-website-message"));
+                    var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");
+                    $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
+                    $errorSummary.govUkErrorSummary("show");
+                    validStates.push(false);
+                    $("[secure-website-message-hint-text]").show();
                 } else {
                     $url.govUkInput("validState");
                     $errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $url[0].id);
@@ -828,14 +838,6 @@
                 }
             });
 
-
-
-
-
-
-
-
-
             var replaceAll = function (search, find, replace) {
                 return search.split(find).join(replace);
             };
@@ -847,15 +849,12 @@
                 $.get("/EditCourseRun/AddNewVenue?" + qs, success);
             };
 
-
-
             var onSucess = function (data) {
                 window.location.href = data;
             };
 
             $addNewVenueButton.on("click", function (e) {
                 e.preventDefault();
-
                 makeRequestWithPayload({
                     LearnAimRefTitle: $learnAimRefTitle.val(),
                     NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
@@ -880,8 +879,6 @@
                     DurationLength: $duration.find("input").val(),
                     StudyMode: $studyMode.find("input[type='radio']:checked").val(),
                     AttendanceMode: $attendance.find("input[type='radio']:checked").val()
-
-
                 },
                     onSucess);
 
