@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -176,13 +177,13 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             var updateResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
             {
                 CourseId = courseId,
-                WhoThisCourseIsFor = ASCIICodeHelper.RemoveASCII(model.CourseFor),
-                EntryRequirements = ASCIICodeHelper.RemoveASCII(model.EntryRequirements),
-                WhatYoullLearn = ASCIICodeHelper.RemoveASCII(model.WhatWillLearn),
-                HowYoullLearn = ASCIICodeHelper.RemoveASCII(model.HowYouWillLearn),
-                WhatYoullNeed = ASCIICodeHelper.RemoveASCII(model.WhatYouNeed),
-                HowYoullBeAssessed = ASCIICodeHelper.RemoveASCII(model.HowAssessed),
-                WhereNext = ASCIICodeHelper.RemoveASCII(model.WhereNext),
+                WhoThisCourseIsFor = ASCIICodeHelper.ReplaceHexCodes(model.CourseFor),
+                EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(model.EntryRequirements),
+                WhatYoullLearn = ASCIICodeHelper.ReplaceHexCodes(model.WhatWillLearn),
+                HowYoullLearn = ASCIICodeHelper.ReplaceHexCodes(model.HowYouWillLearn),
+                WhatYoullNeed = ASCIICodeHelper.ReplaceHexCodes(model.WhatYouNeed),
+                HowYoullBeAssessed = ASCIICodeHelper.ReplaceHexCodes(model.HowAssessed),
+                WhereNext = ASCIICodeHelper.ReplaceHexCodes(model.WhereNext),
                 UpdatedBy = _currentUserProvider.GetCurrentUser(),
                 UpdatedOn = _clock.UtcNow,
                 CourseType = course.CourseType,

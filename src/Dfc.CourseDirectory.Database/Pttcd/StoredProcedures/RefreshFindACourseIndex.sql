@@ -51,7 +51,7 @@ BEGIN
 				END AS float) AS ScoreBoost,
 
 			v.VenueId,
-			cc.CampaignCodesJson CampaignCodes,
+			NULL AS CampaignCodes,
 			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
 			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded,
 			c.CourseType,
@@ -66,7 +66,6 @@ BEGIN
 		INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
 		INNER JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 		LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
-		LEFT JOIN Pttcd.FindACourseIndexCampaignCodes cc ON p.ProviderId = cc.ProviderId AND c.LearnAimRef = cc.LearnAimRef
 		WHERE cr.CourseRunStatus = 1  -- Live
 		UNION ALL
 		SELECT
@@ -115,7 +114,7 @@ BEGIN
 				END AS float) AS ScoreBoost,
 
 			v.VenueId,
-			cc.CampaignCodesJson CampaignCodes,
+			NULL AS CampaignCodes,
 			c.DataIsHtmlEncoded CourseDataIsHtmlEncoded,
 			cr.DataIsHtmlEncoded CourseRunDataIsHtmlEncoded,
 			c.CourseType,
@@ -129,7 +128,6 @@ BEGIN
 		LEFT JOIN Pttcd.Regions r ON crr.RegionId = r.RegionId
 		INNER JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn AND p.ProviderType IN (2,3,6,7)
 		LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
-		LEFT JOIN Pttcd.FindACourseIndexCampaignCodes cc ON p.ProviderId = cc.ProviderId AND c.LearnAimRef = cc.LearnAimRef
 		WHERE cr.CourseRunStatus = 1  -- Live
 
 	)

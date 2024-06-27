@@ -145,6 +145,9 @@
     },
     "checkForSecureUri": {
       "value": "urlToGoogleWebRiskApi"
+    },
+    "GoogleWebRiskApiKey": {
+      "value": "not-a-real-key"
     }
   }
 }
