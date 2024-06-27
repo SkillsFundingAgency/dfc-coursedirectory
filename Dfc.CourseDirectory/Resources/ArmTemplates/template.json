@@ -607,30 +607,30 @@
               },
               {
                 "name": "ProviderQueryPort",
-                "value": "https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6"
+                "value": "[parameters('ProviderQueryPort')]"
               },
               {
                 "name": "geoportal_url",
-                "value": "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-{month}-{year}(extra)/about"
+                "value": "[parameters('geoportal_url')]"
               },
               {
                 "name": "arcgisurl",
-                "value": "https://www.arcgis.com/sharing/rest/content/items/"
-               },
+                "value": "[parameters('arcgisurl')]"
+              },
               {
                 "name": "GoogleWebRiskSettings__ApiKey",
-                "value": "[parameters('googleWebRiskApiKey')]"
+                "value": "[parameters('googleWebRiskApiKey)]"
               }
        
             ]
           },
           "appServiceConnectionStrings": {
-            "value": [
-              {
-                "name": "DefaultConnection",
-                "type": "SQLServer",
-                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
-              }
+            "value": "googleWebRiskApiKey",
+            {
+              "name": "DefaultConnection",
+              "type": "SQLServer",
+              "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
+            }
             ]
           }
         }
