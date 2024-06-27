@@ -603,16 +603,16 @@
                 "value": "1"
               },
               {
-                "name": "ProviderQueryPort", 
-                "value": "[parameters('ProviderQueryPort')]"
+                "name": "ProviderQueryPort",
+                "value": "https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6"
               },
               {
-                "name": "geoportal_url", 
-                "value": "[parameters('geoportal_url')]"
+                "name": "geoportal_url",
+                "value": "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-{month}-{year}(extra)/about"
               },
               {
-                "name": "arcgisurl", 
-                "value": "[parameters('arcgisurl')]"
+                "name": "arcgisurl",
+                "value": "https://www.arcgis.com/sharing/rest/content/items/"
               }
        
             ]
