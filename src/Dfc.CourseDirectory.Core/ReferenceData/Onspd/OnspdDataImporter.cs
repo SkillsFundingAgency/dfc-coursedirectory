@@ -117,8 +117,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 
                 // Read the content.
                 string responseFromServer = await response.Content.ReadAsStringAsync();
-                //string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
-         
+                    
                 if (responseFromServer.Contains(arcgisurl))
                 {
                     int findindex = responseFromServer.IndexOf(arcgisurl);
