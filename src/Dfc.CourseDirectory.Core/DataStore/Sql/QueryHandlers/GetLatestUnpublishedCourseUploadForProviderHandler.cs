@@ -13,13 +13,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public Task<CourseUpload> Execute(SqlTransaction transaction, GetLatestUnpublishedCourseUploadForProvider query)
         {
+            var nonLarsClause = query.IsNonLars ? "IsNonLars = 1" : "(IsNonLars Is NULL OR IsNonLars = 0)";            
+
             var sql = $@"
-SELECT TOP 1 CourseUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
-ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn
-FROM Pttcd.CourseUploads
-WHERE ProviderId = @ProviderId AND (IsNonLars Is NULL OR IsNonLars = @IsNonLars)
-AND UploadStatus IN ({string.Join(", ", UploadStatusExtensions.UnpublishedStatuses.Cast<int>())})
-ORDER BY CreatedOn DESC";
+                    SELECT TOP 1 CourseUploadId, ProviderId, UploadStatus, CreatedOn, CreatedByUserId,
+                    ProcessingStartedOn, ProcessingCompletedOn, PublishedOn, AbandonedOn
+                    FROM Pttcd.CourseUploads
+                    WHERE ProviderId = @ProviderId AND {nonLarsClause}
+                    AND UploadStatus IN ({string.Join(", ", UploadStatusExtensions.UnpublishedStatuses.Cast<int>())})
+                    ORDER BY CreatedOn DESC";
 
             return transaction.Connection.QuerySingleOrDefaultAsync<CourseUpload>(
                 sql,
