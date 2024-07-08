@@ -1,4 +1,34 @@
-﻿---------------- UPDATE COURSETYPE TO 2 FOR EXISTING T LEVEL COURSES--------------------------------
+﻿--------------- DELETE ABANDONED T LEVEL LOCAITON RECORDS WHICH CAUSES ERROR WHEN DELETING VENUES ATTACHED TO THEM (BUG 185775)-----------------------------------
+IF EXISTS (
+	SELECT t1.providerid,p.Ukprn 
+		FROM Pttcd.TLevelLocations tll
+		JOIN Pttcd.TLevels t1 ON tll.TLevelId = t1.TLevelId
+		JOIN Pttcd.Venues v ON tll.VenueId = v.VenueId
+		JOIN Pttcd.Providers p on p.ProviderId = t1.ProviderId
+	WHERE TLevelLocationStatus = 1 AND NOT EXISTS (SELECT
+		t.TLevelId, 
+		d.TLevelDefinitionId
+	FROM Pttcd.TLevels t
+	JOIN Pttcd.TLevelDefinitions d ON t.TLevelDefinitionId = d.TLevelDefinitionId
+	WHERE t.ProviderId = t1.ProviderId  AND t.TLevelStatus = 1 )
+	GROUP BY T1.ProviderId,p.Ukprn
+	)
+BEGIN
+	DELETE tll
+	FROM Pttcd.TLevelLocations tll
+		JOIN Pttcd.TLevels t1 ON tll.TLevelId = t1.TLevelId
+		JOIN Pttcd.Venues v ON tll.VenueId = v.VenueId
+		JOIN Pttcd.Providers p on p.ProviderId = t1.ProviderId
+	WHERE TLevelLocationStatus = 1 AND 
+	NOT EXISTS (SELECT
+			t.TLevelId, 
+			d.TLevelDefinitionId
+		FROM Pttcd.TLevels t
+		JOIN Pttcd.TLevelDefinitions d ON t.TLevelDefinitionId = d.TLevelDefinitionId
+		WHERE t.ProviderId = t1.ProviderId  AND t.TLevelStatus = 1 )
+END
+
+---------------- UPDATE COURSETYPE TO 2 FOR EXISTING T LEVEL COURSES--------------------------------
 IF (EXISTS (SELECT TLevelId FROM [Pttcd].[FindACourseIndex] Where TLevelId IS NOT NULL AND TLevelLocationId IS NOT NULL AND  Live = 1 AND CourseType IS NULL))
 BEGIN
 	UPDATE fac
