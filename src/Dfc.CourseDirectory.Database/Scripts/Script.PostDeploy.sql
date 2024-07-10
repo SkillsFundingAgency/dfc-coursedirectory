@@ -14,7 +14,8 @@ IF EXISTS (
 	GROUP BY T1.ProviderId,p.Ukprn
 	)
 BEGIN
-	DELETE tll
+	UPDATE tll
+		SET tll.TLevelLocationStatus = 2
 	FROM Pttcd.TLevelLocations tll
 		JOIN Pttcd.TLevels t1 ON tll.TLevelId = t1.TLevelId
 		JOIN Pttcd.Venues v ON tll.VenueId = v.VenueId
