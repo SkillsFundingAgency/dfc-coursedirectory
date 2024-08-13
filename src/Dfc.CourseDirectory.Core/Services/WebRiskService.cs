@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using CsvHelper;
+using System.Web;
 
 namespace Dfc.CourseDirectory.Core.Services
 {
@@ -34,7 +35,7 @@ namespace Dfc.CourseDirectory.Core.Services
                     string key = _WebRiskSettings.ApiKey;
                     string threat_types = "&threatTypes=MALWARE&threatTypes=SOCIAL_ENGINEERING&threatTypes=UNWANTED_SOFTWARE";
 
-                    string query = $"{prefix}key={key}{threat_types}&uri={url}";
+                    string query = $"{prefix}key={key}{threat_types}&uri={HttpUtility.UrlEncode(url)}";
                     var result = await client.GetAsync(query);       
                     var json = await result.Content.ReadAsStringAsync();
 
