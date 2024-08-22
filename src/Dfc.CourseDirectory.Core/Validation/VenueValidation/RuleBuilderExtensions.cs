@@ -29,7 +29,8 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void AddressLine1<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .MaximumLength(Constants.AddressLine1MaxLength)
@@ -41,7 +42,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void AddressLine2<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
                 .MaximumLength(Constants.AddressLine2MaxLength)
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE2_MAXLENGTH")
                 .Matches(AddressLinePattern)
@@ -51,7 +51,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void County<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
                 .MaximumLength(Constants.CountyMaxLength)
                     .WithMessageFromErrorCode("VENUE_COUNTY_MAXLENGTH")
                 .Matches(_countyPattern)
@@ -63,7 +62,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
             const string emailRegex = @"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-||_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+([a-z]+|\d|-|\.{0,1}|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])?([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$";
 
             field
-                .NormalizeWhitespace()
                 .Matches(emailRegex, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture)
                     .WithMessageFromErrorCode("VENUE_EMAIL_FORMAT");
         }
@@ -71,7 +69,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void PhoneNumber<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
                 .Apply(Rules.PhoneNumber)
                     .WithMessageFromErrorCode("VENUE_TELEPHONE_FORMAT");
         }
@@ -79,7 +76,8 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void Postcode<T>(this IRuleBuilderInitial<T, string> field, Func<Postcode, PostcodeInfo> getPostcodeInfo)
         {
             field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
                 // i.e. Postcode must exist in our Postcode info table (so we can resolve a lat/lng)
@@ -114,7 +112,8 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
             Func<T, Task<IEnumerable<string>>> getOtherVenueProviderVenueRefs)
         {
             field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("VENUE_PROVIDER_VENUE_REF_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_PROVIDER_VENUE_REF_REQUIRED")
                 .MaximumLength(Constants.ProviderVenueRefMaxLength)
@@ -141,7 +140,8 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void Town<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("VENUE_TOWN_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_TOWN_REQUIRED")
                 .MaximumLength(Constants.TownMaxLength)
@@ -177,7 +177,8 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
             Func<T, Task<IEnumerable<string>>> getOtherVenueNames)
         {
             return field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("VENUE_NAME_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_NAME_REQUIRED")
                 .MaximumLength(Constants.NameMaxLength)

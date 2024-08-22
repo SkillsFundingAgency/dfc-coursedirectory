@@ -1333,7 +1333,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode();
                 RuleFor(c => c.ResolvedStartDate)
-                    .Transform(d => d.HasValue ? new DateInput(d.Value) : null)
                     .StartDate(clock.UtcNow, c => c.ResolvedFlexibleStartDate);
                 RuleFor(c => c.ResolvedFlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMode, c => c.ProviderVenueRef, matchedVenueId);
@@ -1378,7 +1377,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode();
                 RuleFor(c => c.ResolvedStartDate)
-                    .Transform(d => d.HasValue ? new DateInput(d.Value) : null)
                     .StartDate(clock.UtcNow, c => c.ResolvedFlexibleStartDate);
                 RuleFor(c => c.ResolvedFlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMode, c => c.ProviderVenueRef, matchedVenueId);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
@@ -67,7 +68,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void CourseName<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_REQUIRED")
                 .MaximumLength(Constants.CourseNameMaxLength)
@@ -80,6 +82,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
+            .NotNull()
+                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
             .NotEmpty()
                 .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
             .MaximumLength(Constants.CourseWebPageMaxLength)
@@ -202,7 +206,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void ProviderCourseRef<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
+                //.NormalizeWhitespace()
                 .MaximumLength(Constants.ProviderCourseRefMaxLength)
                     .WithMessageFromErrorCode("COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH")
                 .Matches(@"^[a-zA-Z0-9/\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$")
@@ -217,7 +221,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
-                .NormalizeWhitespace()
                 .Custom((v, ctx) =>
                 {
                     var obj = (T)ctx.InstanceToValidate;
@@ -238,7 +241,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     }
 
                     // If not specified and Venue Name isn't specified then it's required
-                    if (!isSpecified && string.IsNullOrEmpty(getVenueName(obj)))
+                    if (!isSpecified && (string.IsNullOrEmpty(getVenueName(obj)) || string.IsNullOrWhiteSpace(getVenueName(obj))))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_REQUIRED"));
                         return;
@@ -256,12 +259,51 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 });
         }
 
-        public static void StartDate<T>(this IRuleBuilderInitial<T, DateInput> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
+        public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
         {
             field
                 .Cascade(CascadeMode.Stop)
                 // Must be valid
-                .Apply(builder => Rules.Date(builder, displayName: "Start date"))
+                .Custom((v, ctx) => {
+                    var date = new DateInput(v.Value);
+                    if (v == null || date.IsValid)
+                    {
+                        return;
+                    }
+                    var displayName = "Start date";
+                    Debug.Assert(date.InvalidReasons != InvalidDateInputReasons.None);
+
+                    // A date was provided but it's invalid; figure out an appropriate message.
+                    // We expect to have InvalidReasons to be either: InvalidDate OR
+                    // 1-2 of MissingDay, MissingMonth and MissingYear.
+
+                    if ((date.InvalidReasons & InvalidDateInputReasons.InvalidDate) != 0)
+                    {
+                        ctx.AddFailure($"{displayName} must be a real date");
+                        return;
+                    }
+
+                    var missingFields = EnumHelper.SplitFlags(date.InvalidReasons)
+                        .Aggregate(
+                            Enumerable.Empty<string>(),
+                            (acc, r) =>
+                            {
+                                var elementName = r switch
+                                {
+                                    InvalidDateInputReasons.MissingDay => "day",
+                                    InvalidDateInputReasons.MissingMonth => "month",
+                                    InvalidDateInputReasons.MissingYear => "year",
+                                    _ => throw new NotSupportedException($"Unexpected {nameof(InvalidDateInputReasons)}: '{r}'.")
+                                };
+
+                                return acc.Append(elementName);
+                            })
+                        .ToArray();
+
+                    Debug.Assert(missingFields.Length <= 2 && missingFields.Length > 0);
+
+                    ctx.AddFailure($"{displayName} must include a {string.Join(" and ", missingFields)}");
+                })
                 // Required if flexible start date is false
                 .NotEmpty()
                     .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
@@ -273,7 +315,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 // Must be in the future
                 .Must(v => v.Value >= now.Date)
                     .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID");
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID")
+                ;
         }
 
         public static void StudyMode<T>(
@@ -380,7 +423,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             Guid? matchedVenueId)
         {
             field
-                .NormalizeWhitespace()
                 .Custom((v, ctx) =>
                 {
                     var obj = (T)ctx.InstanceToValidate;
@@ -404,7 +446,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     {
                         // We don't want both a ref and a name but if the ref resolves a venue and that venue's name
                         // matches this name then we let it go. If it doesn't match then yield an error.
-                        if (!string.IsNullOrEmpty(getProviderVenueRef(obj)))
+                        if (!string.IsNullOrEmpty(getProviderVenueRef(obj)) && !string.IsNullOrWhiteSpace(getProviderVenueRef(obj)))
                         {
                             ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF"));
                             return;
