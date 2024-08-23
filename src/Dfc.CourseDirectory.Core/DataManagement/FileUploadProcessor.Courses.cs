@@ -1035,7 +1035,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
 
-                var rowValidationResult = validator.Validate(parsedRow);
+                var rowValidationResult = await validator.ValidateAsync(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;
@@ -1125,7 +1125,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
 
-                var rowValidationResult = validator.Validate(parsedRow);
+                var rowValidationResult = await validator.ValidateAsync(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;

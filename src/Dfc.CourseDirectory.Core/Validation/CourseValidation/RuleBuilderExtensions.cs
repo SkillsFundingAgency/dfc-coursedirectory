@@ -265,8 +265,10 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .Cascade(CascadeMode.Stop)
                 // Must be valid
                 .Custom((v, ctx) => {
+                    if (v == null)
+                        return;
                     var date = new DateInput(v.Value);
-                    if (v == null || date.IsValid)
+                    if (date.IsValid)
                     {
                         return;
                     }
