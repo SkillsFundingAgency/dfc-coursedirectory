@@ -1028,6 +1028,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var courseRunId = Guid.NewGuid();
 
                 var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data, allRegions);
+                parsedRow.ProviderCourseRef = string.IsNullOrWhiteSpace(parsedRow.ProviderCourseRef) ? null : parsedRow.ProviderCourseRef;
 
                 var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
 
