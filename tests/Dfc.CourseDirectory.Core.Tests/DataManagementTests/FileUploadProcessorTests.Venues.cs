@@ -577,7 +577,9 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     Telephone = row.Telephone,
                     Town = row.Town,
                     VenueName = row.VenueName,
-                    Website = row.Website
+                    Website = row.Website,
+                    OutsideOfEngland = false
+                    
                 }, config => config.Excluding(r => r.IsValid).Excluding(r => r.Errors).Excluding(r => r.VenueId));
             });
         }
@@ -756,6 +758,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = this.CreateUploadProcessor();
 
             var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToDataUploadRowCollection();
+            uploadRows[0].Data.Postcode = Faker.Address.UkPostCode();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -785,6 +788,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = this.CreateUploadProcessor();
 
             var uploadRows = DataManagementFileHelper.CreateVenueUploadRows(rowCount: 1).ToDataUploadRowCollection();
+            uploadRows[0].Data.Postcode = Faker.Address.UkPostCode();
 
             await WithSqlQueryDispatcher(async dispatcher =>
             {
@@ -874,6 +878,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
 
             // Name is missing
             AddSingleErrorTestCase(row => row.VenueName = null, "VENUE_NAME_REQUIRED");
+            // Name is Empty
+            AddSingleErrorTestCase(row => row.VenueName = string.Empty, "VENUE_NAME_REQUIRED");
 
             // Name is too long
             AddSingleErrorTestCase(row => row.VenueName = new string('x', 251), "VENUE_NAME_MAXLENGTH");

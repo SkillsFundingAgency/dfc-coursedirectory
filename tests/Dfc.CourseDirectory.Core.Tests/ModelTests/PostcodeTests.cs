@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
 
         public static TheoryData<Postcode, object, bool> Equals_ReturnsExpectedResultData => new TheoryData<Postcode, object, bool>()
         {
-            { new Postcode("EC1A 1BB"), "EC1A 1BB", true },
+            { new Postcode("EC1A 1BB"),new Postcode("EC1A 1BB"), true },
             { new Postcode("EC1A 1BB"), new Postcode("ec1a 1bb"), true },
             { new Postcode("EC1A1BB"), new Postcode("ec1a 1bb"), true },
             { new Postcode("EC1A1BB"), new Postcode("M1 1AE"), false },

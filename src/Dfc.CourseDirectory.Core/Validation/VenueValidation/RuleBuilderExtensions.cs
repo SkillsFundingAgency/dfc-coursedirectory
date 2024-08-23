@@ -29,8 +29,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void AddressLine1<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NotNull()
-                    .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_ADDRESS_LINE1_REQUIRED")
                 .MaximumLength(Constants.AddressLine1MaxLength)
@@ -75,13 +73,11 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
 
         public static void Postcode<T>(this IRuleBuilderInitial<T, string> field, Func<Postcode, PostcodeInfo> getPostcodeInfo)
         {
-            field
-                .NotNull()
-                    .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
+            field                
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_POSTCODE_REQUIRED")
                 // i.e. Postcode must exist in our Postcode info table (so we can resolve a lat/lng)
-                .Must(postcode => postcode == null || (Models.Postcode.TryParse(postcode, out var pc) && getPostcodeInfo(pc) != null))
+                .Must(postcode =>(postcode == null || Models.Postcode.TryParse(postcode, out var pc) && getPostcodeInfo(pc) != null))
                     .WithMessageFromErrorCode("VENUE_POSTCODE_FORMAT");
         }
 
@@ -140,8 +136,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
         public static void Town<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NotNull()
-                    .WithMessageFromErrorCode("VENUE_TOWN_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_TOWN_REQUIRED")
                 .MaximumLength(Constants.TownMaxLength)
@@ -177,8 +171,6 @@ namespace Dfc.CourseDirectory.Core.Validation.VenueValidation
             Func<T, Task<IEnumerable<string>>> getOtherVenueNames)
         {
             return field
-                .NotNull()
-                    .WithMessageFromErrorCode("VENUE_NAME_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("VENUE_NAME_REQUIRED")
                 .MaximumLength(Constants.NameMaxLength)
