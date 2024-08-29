@@ -577,8 +577,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     Telephone = row.Telephone,
                     Town = row.Town,
                     VenueName = row.VenueName,
-                    Website = row.Website,
-                    OutsideOfEngland = false
+                    Website = row.Website
                     
                 }, config => config.Excluding(r => r.IsValid).Excluding(r => r.Errors).Excluding(r => r.VenueId));
             });
@@ -632,12 +631,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     VenueId = venue.VenueId,
                     IsDeletable = false,
                     AddressLine1 = venue.AddressLine1,
-                    AddressLine2 = venue.AddressLine2,
-                    County = venue.County,
-                    Email = venue.Email,
+                    AddressLine2 = null,
+                    County = null,
+                    Email = null,
                     Postcode = venue.Postcode,
                     ProviderVenueRef = venue.ProviderVenueRef,
-                    Telephone = venue.Telephone,
+                    Telephone = null,
                     Town = venue.Town,
                     VenueName = venue.VenueName,
                     Website = venue.Website

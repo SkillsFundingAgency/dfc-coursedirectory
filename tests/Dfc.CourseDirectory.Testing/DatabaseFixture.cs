@@ -6,9 +6,9 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using Respawn;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Testing
         private const string LockName = "Tests";
         private const int LockTimeoutSeconds = 15 * 60;
 
-        //private readonly Checkpoint _sqlCheckpoint;
+        private readonly Checkpoint _sqlCheckpoint;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _services;
         private readonly IMessageSink _messageSink;
@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Testing
                 throw;
             }
 
-            //_sqlCheckpoint = CreateCheckpoint();
+            _sqlCheckpoint = CreateCheckpoint();
         }
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.Testing
         public async Task OnTestStartingAsync()
         {
             // Clear out all data from SQL database
-            //await _sqlCheckpoint.Reset(ConnectionString);
+            await _sqlCheckpoint.Reset(ConnectionString);
         }
 
         public Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
@@ -130,11 +130,11 @@ namespace Dfc.CourseDirectory.Testing
             }
         }
 
-        //private Checkpoint CreateCheckpoint() => new Checkpoint()
-        //{
-        //    SchemasToInclude = new[] { "Pttcd", "LARS" },
-        //    TablesToIgnore = new[] { "Regions" }
-        //};
+        private Checkpoint CreateCheckpoint() => new Checkpoint()
+        { 
+            SchemasToInclude = new[] { "Pttcd", "LARS" },
+            TablesToIgnore = new[] { "Regions" }
+        };
 
         private void DeploySqlDb()
         {
