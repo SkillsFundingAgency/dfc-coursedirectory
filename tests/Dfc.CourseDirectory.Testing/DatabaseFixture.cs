@@ -6,10 +6,9 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using Respawn;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using Respawn;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -132,7 +131,7 @@ namespace Dfc.CourseDirectory.Testing
         }
 
         private Checkpoint CreateCheckpoint() => new Checkpoint()
-        {
+        { 
             SchemasToInclude = new[] { "Pttcd", "LARS" },
             TablesToIgnore = new[] { "Regions" }
         };
