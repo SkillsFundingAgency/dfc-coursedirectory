@@ -205,8 +205,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 
         public static void ProviderCourseRef<T>(this IRuleBuilderInitial<T, string> field)
         {
-            field
-                //.NormalizeWhitespace()
+            field                
                 .MaximumLength(Constants.ProviderCourseRefMaxLength)
                     .WithMessageFromErrorCode("COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH")
                 .Matches(@"^[a-zA-Z0-9/\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$")
