@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -14,8 +14,7 @@ namespace Dfc.CourseDirectory.Functions
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
-        [FunctionName(nameof(AddMissingProviderIdForeignKeys))]
-        [NoAutomaticTrigger]
+        [Function(nameof(AddMissingProviderIdForeignKeys))]        
         public async Task Execute(string input)
         {
             await ExecuteBatchedStatement(@"

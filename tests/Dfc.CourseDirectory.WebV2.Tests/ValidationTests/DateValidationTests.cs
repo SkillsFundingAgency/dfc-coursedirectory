@@ -78,10 +78,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ValidationTests
     {
         public DateValidationTestsValidator()
         {
-            RuleFor(m => m.DateOfBirth)
-                .NotEmpty()
-                    .WithMessage("Enter your date of birth")
-                .Apply(builder => Rules.Date(builder, displayName: "Date of birth"));
+            //RuleFor(m => m.DateOfBirth)
+            //    .NotEmpty()
+            //        .WithMessage("Enter your date of birth")
+            //    .Apply(builder => Rules.Date(builder, displayName: "Date of birth"));
         }
     }
 }

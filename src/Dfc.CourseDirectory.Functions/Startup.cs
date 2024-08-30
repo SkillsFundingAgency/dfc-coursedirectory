@@ -13,7 +13,6 @@ using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Functions;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,11 +34,10 @@ namespace Dfc.CourseDirectory.Functions
                 configuration.GetSection(nameof(LarsDataset)));
             builder.Services.AddTransient<IUkrlpWcfClientFactory, UkrlpWcfClientFactory>();
             builder.Services.AddTransient<IClock, SystemClock>();
-            builder.Services.Decorate<IJobActivator, FunctionInstanceServicesCatalog>();
-            builder.Services.AddSingleton(sp => (FunctionInstanceServicesCatalog)sp.GetRequiredService<IJobActivator>());
-#pragma warning disable CS0618 // Type or member is obsolete
-            builder.Services.AddSingleton<IFunctionFilter, CommitSqlTransactionFunctionInvocationFilter>();
-#pragma warning restore CS0618 // Type or member is obsolete
+            builder.Services.AddSingleton<FunctionInstanceServicesCatalog>();            
+
+            builder.Services.AddSingleton<CommitSqlTransactionMiddleware>();           
+
             builder.Services.AddTransient<IUkrlpService, Core.ReferenceData.Ukrlp.UkrlpService>();
             builder.Services.AddTransient<UkrlpSyncHelper>();
             builder.Services.AddTransient<OnspdDataImporter>();
@@ -66,9 +64,9 @@ namespace Dfc.CourseDirectory.Functions
             builder.ConfigurationBuilder.AddInMemoryCollection(new Dictionary<string, string>()
             {
                 { "CampaignDataContainerName", "campaign-data" },
-                { "DataUploadsContainerName", Core.DataManagement.Constants.ContainerName },
-                { "CourseUploadsFolderName", Core.DataManagement.Constants.CoursesFolder },
-                { "VenueUploadsFolderName", Core.DataManagement.Constants.VenuesFolder }
+                { "DataUploadsContainerName", Constants.ContainerName },
+                { "CourseUploadsFolderName", Constants.CoursesFolder },
+                { "VenueUploadsFolderName", Constants.VenuesFolder }
             });
         }
     }

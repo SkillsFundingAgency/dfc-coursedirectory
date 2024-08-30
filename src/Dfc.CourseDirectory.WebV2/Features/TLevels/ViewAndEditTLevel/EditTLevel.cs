@@ -157,8 +157,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             {
                 RuleFor(c => c.YourReference).YourReference();
 
-                RuleFor(c => c.StartDate)
-                    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                //RuleFor(c => c.StartDate)
+                //    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()

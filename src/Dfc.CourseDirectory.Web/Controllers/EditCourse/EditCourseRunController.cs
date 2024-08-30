@@ -573,9 +573,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 RuleFor(c => c.AttendanceMode)
                     .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
 
-                RuleFor(c => c.Cost)
-                    .Transform(v => decimal.TryParse(v, out var d) ? d : (decimal?)null)
-                    .Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), getCostDescription: c => c.CostDescription);
+                //RuleFor(c => c.Cost)
+                //    .Transform(v => decimal.TryParse(v, out var d) ? d : (decimal?)null)
+                //    .Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), getCostDescription: c => c.CostDescription);
 
                 RuleFor(c => c.CostDescription)
                     .CostDescription();
@@ -586,45 +586,45 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 RuleFor(c => c.DeliveryMode).IsInEnum();
 
-                RuleFor(c => c.DurationLength)
-                    .Transform(v => int.TryParse(v, out var i) ? i : (int?)i)
-                    .Duration();
+                //RuleFor(c => c.DurationLength)
+                //    .Transform(v => int.TryParse(v, out var i) ? i : (int?)i)
+                //    .Duration();
 
                 RuleFor(c => c.DurationUnit).IsInEnum();
 
-                RuleFor(c => c.FlexibleStartDate)
-                    .Transform(v => (bool?)v)
-                    .FlexibleStartDate();
+                //RuleFor(c => c.FlexibleStartDate)
+                //    .Transform(v => (bool?)v)
+                //    .FlexibleStartDate();
 
-                RuleFor(c => c.National)
-                    .Transform(v => (bool?)v)
-                    .NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
+                //RuleFor(c => c.National)
+                //    .Transform(v => (bool?)v)
+                //    .NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
 
-                RuleFor(c => c.SelectedRegions)
-                    .Transform(v =>
-                    {
-                        if (v == null)
-                        {
-                            return null;
-                        }
+                //RuleFor(c => c.SelectedRegions)
+                //    .Transform(v =>
+                //    {
+                //        if (v == null)
+                //        {
+                //            return null;
+                //        }
 
-                        var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
-                        return v.Select(id => allSubRegions[id]).ToArray();
-                    })
-                    .SubRegions(subRegionsWereSpecified: c => c.SelectedRegions?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.National);
+                //        var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
+                //        return v.Select(id => allSubRegions[id]).ToArray();
+                //    })
+                //    .SubRegions(subRegionsWereSpecified: c => c.SelectedRegions?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.National);
 
-                RuleFor(c => c.StartDate)
-                    .Transform(v => (DateInput)v)
-                    .StartDate(clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
+                //RuleFor(c => c.StartDate)
+                //    .Transform(v => (DateInput)v)
+                //    .StartDate(clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
 
                 RuleFor(c => c.StudyMode)
                     .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
 
                 RuleFor(c => c.Url).CourseWebPage(webRiskService);
 
-                RuleFor(c => c.VenueId)
-                    .Transform(v => v == default ? (Guid?)null : v)
-                    .VenueId(getDeliveryMode: c => c.DeliveryMode);
+                //RuleFor(c => c.VenueId)
+                //    .Transform(v => v == default ? (Guid?)null : v)
+                //    .VenueId(getDeliveryMode: c => c.DeliveryMode);
             }
         }        
     }

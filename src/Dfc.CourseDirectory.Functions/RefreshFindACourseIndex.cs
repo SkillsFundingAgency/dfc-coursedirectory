@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -18,8 +18,7 @@ namespace Dfc.CourseDirectory.Functions
             _clock = clock;
         }
 
-        [FunctionName("RefreshFindACourseIndex")]
-        [Singleton]
+        [Function("RefreshFindACourseIndex")]        
         public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer, CancellationToken cancellationToken)
         {
             // This function exists to ensure any courses added via Data Management are added to the FAC API index.

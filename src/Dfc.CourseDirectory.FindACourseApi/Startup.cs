@@ -75,8 +75,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
 
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
-            services
-                .AddMediatR(typeof(Startup).Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
 
             if (Environment.EnvironmentName != "Testing")
             {

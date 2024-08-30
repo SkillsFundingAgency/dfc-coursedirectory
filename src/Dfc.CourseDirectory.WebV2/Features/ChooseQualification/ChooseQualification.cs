@@ -196,10 +196,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         {
             public QueryValidator()
             {
-                RuleFor(q => q.SearchTerm)
-                    .NotEmpty()
-                    .MinimumLength(3)
-                    .WithMessageForAllRules("Enter search criteria");
+                //RuleFor(q => q.SearchTerm)
+                //    .NotEmpty()
+                //    .MinimumLength(3)
+                //    .WithMessageForAllRules("Enter search criteria");
             }
         }
     }

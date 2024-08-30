@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -20,7 +19,7 @@ namespace Dfc.CourseDirectory.Functions
             _logger = logger;
         }
 
-        [FunctionName("AutomatedImportONSPD")]
+        [Function("AutomatedImportONSPD")]
         public async Task Run([TimerTrigger("0 0 20 27 * *", RunOnStartup = true)] TimerInfo myTimer)
         {
             await _onspdDataImporter.AutomatedImportData();

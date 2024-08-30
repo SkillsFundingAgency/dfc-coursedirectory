@@ -1,31 +1,27 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Azure.WebJobs.Host.Executors;
+﻿using System.Collections.Concurrent;
 
-namespace Dfc.CourseDirectory.Functions
+public class FunctionInstanceServicesCatalog
 {
-    public class FunctionInstanceServicesCatalog : IJobActivatorEx
+    private readonly ConcurrentDictionary<Guid, IServiceProvider> _instanceServices;
+
+    public FunctionInstanceServicesCatalog()
     {
-        private readonly ConditionalWeakTable<IFunctionInstanceEx, IServiceProvider> _instanceServices;
-        private readonly IJobActivatorEx _innerActivator;
+        _instanceServices = new ConcurrentDictionary<Guid, IServiceProvider>();
+    }
 
-        public FunctionInstanceServicesCatalog(IJobActivator innerActivator)
-        {
-            _instanceServices = new ConditionalWeakTable<IFunctionInstanceEx, IServiceProvider>();
-            _innerActivator = (IJobActivatorEx)innerActivator;
-        }
+    public IServiceProvider GetFunctionServices(Guid instanceId)
+    {
+        _instanceServices.TryGetValue(instanceId, out var serviceProvider);
+        return serviceProvider;
+    }
 
-        public IServiceProvider GetFunctionServices(Guid instanceId) =>
-            _instanceServices.SingleOrDefault(k => k.Key.Id == instanceId).Value;
+    public void AddFunctionInstance(Guid instanceId, IServiceProvider serviceProvider)
+    {
+        _instanceServices.TryAdd(instanceId, serviceProvider);
+    }
 
-        T IJobActivatorEx.CreateInstance<T>(IFunctionInstanceEx functionInstance)
-        {
-            _instanceServices.Add(functionInstance, functionInstance.InstanceServices);
-            return _innerActivator.CreateInstance<T>(functionInstance);
-        }
-
-        T IJobActivator.CreateInstance<T>() => _innerActivator.CreateInstance<T>();
+    public void RemoveFunctionInstance(Guid instanceId)
+    {
+        _instanceServices.TryRemove(instanceId, out _);
     }
 }
