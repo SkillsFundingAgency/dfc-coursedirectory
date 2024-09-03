@@ -15,9 +15,9 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
-        {            
+        {
             await next(context);
-            
+
             var instanceServices = _functionInstanceServicesCatalog.GetFunctionServices(new Guid(context.InvocationId));
 
             var sqlTransactionMarker = instanceServices.GetRequiredService<SqlTransactionMarker>();

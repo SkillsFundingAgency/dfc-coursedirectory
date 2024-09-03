@@ -1,6 +1,6 @@
 ﻿using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Functions
             _logger = logger;
         }
 
-        [Function("SyncUkrlpChanges")]        
+        [Function("SyncUkrlpChanges")]
         public async Task RunNightly([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
             // Only get records updated in the past week.
@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Functions
             _logger.LogInformation("Function App completed successfully");
         }
 
-        [Function("SyncKnownProviders")]        
+        [Function("SyncKnownProviders")]
         public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
 
         [Function("SyncAllKnownProvidersData")]

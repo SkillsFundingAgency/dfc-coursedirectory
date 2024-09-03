@@ -5,8 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -327,7 +325,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.EnsureSuccessStatusCode();
             CapturedQuery.GenerateSearchQuery().Options.Filter.Should().Contain(
-                $"{nameof(FindACourseOffering.StartDate)} ne null and { nameof(FindACourseOffering.StartDate)} ge {outOfDate:o}");
+                $"{nameof(FindACourseOffering.StartDate)} ne null and {nameof(FindACourseOffering.StartDate)} ge {outOfDate:o}");
         }
 
         [Fact]

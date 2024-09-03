@@ -1,10 +1,8 @@
-using System;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -21,8 +19,8 @@ namespace Dfc.CourseDirectory.Functions
             _logger = logger;
         }
 
-        [Function("DeleteArchivedCourses")]        
-        public async Task Run([TimerTrigger("0 0 3 * * *")]TimerInfo timer)
+        [Function("DeleteArchivedCourses")]
+        public async Task Run([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
             _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
@@ -33,7 +31,7 @@ namespace Dfc.CourseDirectory.Functions
 
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-            var fourWeeksOldDate = _clock.UtcNow.AddDays(-28);           
+            var fourWeeksOldDate = _clock.UtcNow.AddDays(-28);
             var fifteenMonthsOldDate = _clock.UtcNow.AddMonths(-15);
             var thirtyDaysOldDate = _clock.UtcNow.AddDays(-30);
 

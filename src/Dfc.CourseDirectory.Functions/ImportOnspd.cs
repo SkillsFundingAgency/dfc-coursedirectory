@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
+﻿using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
@@ -13,7 +12,7 @@ namespace Dfc.CourseDirectory.Functions
             _onspdDataImporter = onspdDataImporter;
         }
 
-        [Function("ImportOnspd")]                
+        [Function("ImportOnspd")]
         public Task RunNightly(string input) => _onspdDataImporter.ImportData();
     }
 }

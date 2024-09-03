@@ -5,7 +5,6 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -51,17 +50,17 @@ namespace Dfc.CourseDirectory.FindACourseApi
                     {
                         return $"TLevelDefinitions{nameof(Features.TLevelDefinitions.ViewModel)}";
                     }
-                    
+
                     if (type == typeof(Features.TLevels.ViewModel))
                     {
                         return $"TLevels{nameof(Features.TLevels.ViewModel)}";
                     }
-                    
+
                     if (type == typeof(Features.TLevels.QualificationViewModel))
                     {
                         return $"TLevel{nameof(Features.TLevels.QualificationViewModel)}";
                     }
-                    
+
                     if (type == typeof(Features.TLevels.ProviderViewModel))
                     {
                         return $"TLevel{nameof(Features.TLevels.ProviderViewModel)}";

@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWebApplication()    
+    .ConfigureFunctionsWebApplication()
     .ConfigureServices((context, services) =>
     {
         var configuration = context.Configuration;

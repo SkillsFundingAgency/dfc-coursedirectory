@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataManagement;
+﻿using Dfc.CourseDirectory.Core.DataManagement;
 using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions

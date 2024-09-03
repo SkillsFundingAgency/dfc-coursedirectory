@@ -1,8 +1,5 @@
-﻿using System;
-using Dapper;
-using System.Threading.Tasks;
+﻿using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Functions;
 using Microsoft.Azure.Functions.Worker;
 
 public class UpdateFindACourseIndexExpiredFreeCourses
@@ -10,11 +7,11 @@ public class UpdateFindACourseIndexExpiredFreeCourses
     private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
 
     public UpdateFindACourseIndexExpiredFreeCourses(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory)
-	{
+    {
         _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
     }
 
-    [Function(nameof(UpdateFindACourseIndexExpiredFreeCourses))]    
+    [Function(nameof(UpdateFindACourseIndexExpiredFreeCourses))]
     public async Task RunAsync([TimerTrigger("0 0 5 * * *")] TimerInfo myTimer)
     {
         using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
