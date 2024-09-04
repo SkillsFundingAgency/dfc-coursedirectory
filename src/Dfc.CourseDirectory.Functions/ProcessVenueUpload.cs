@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataManagement;
-using Microsoft.Azure.WebJobs;
+﻿using Dfc.CourseDirectory.Core.DataManagement;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -15,7 +12,7 @@ namespace Dfc.CourseDirectory.Functions
             _fileUploadProcessor = fileUploadProcessor;
         }
 
-        [FunctionName(nameof(ProcessVenueUpload))]
+        [Function(nameof(ProcessVenueUpload))]
         public Task Execute(
             [BlobTrigger("%DataUploadsContainerName%/%VenueUploadsFolderName%/{venueUploadId}.csv")] Stream file,
             Guid venueUploadId)

@@ -233,9 +233,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         {
             public CommandValidator()
             {
-                RuleFor(c => c.WhatNext)
-                    .NotEmpty().IsInEnum()
-                        .WithMessageForAllRules("Select what you want to do");
+                //RuleFor(c => c.WhatNext)
+                //    .NotEmpty().IsInEnum()
+                //        .WithMessageForAllRules("Select what you want to do");
             }
         }
     }

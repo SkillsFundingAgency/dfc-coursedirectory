@@ -83,27 +83,27 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 .Setup(d => d.ExecuteQuery(It.Is<GetTLevel>(q => q.TLevelId == tLevelId)))
                 .ReturnsAsync(new TLevel()
                 {
-                     TLevelId = tLevelId,
-                     TLevelStatus = TLevelStatus.Live,
-                     TLevelDefinition = new TLevelDefinition()
-                     {
-                         TLevelDefinitionId = tLevelDefinitionId,
-                         Name = tLevelDefinitionName,
-                         FrameworkCode = tLevelDefinitionFrameworkCode,
-                         ProgType = tLevelDefinitionProgType,
-                         QualificationLevel = tLevelDefinitionQualificationLevel
-                     },
-                     ProviderId = providerId,
-                     ProviderName = providerName,
-                     WhoFor = whoFor,
-                     EntryRequirements = entryRequirements,
-                     WhatYoullLearn = whatYoullLearn,
-                     HowYoullLearn = howYoullLearn,
-                     HowYoullBeAssessed = howYoullBeAssessed,
-                     WhatYouCanDoNext = whatYouCanDoNext,
-                     YourReference = yourReference,
-                     StartDate = startDate,
-                     Locations = new[]
+                    TLevelId = tLevelId,
+                    TLevelStatus = TLevelStatus.Live,
+                    TLevelDefinition = new TLevelDefinition()
+                    {
+                        TLevelDefinitionId = tLevelDefinitionId,
+                        Name = tLevelDefinitionName,
+                        FrameworkCode = tLevelDefinitionFrameworkCode,
+                        ProgType = tLevelDefinitionProgType,
+                        QualificationLevel = tLevelDefinitionQualificationLevel
+                    },
+                    ProviderId = providerId,
+                    ProviderName = providerName,
+                    WhoFor = whoFor,
+                    EntryRequirements = entryRequirements,
+                    WhatYoullLearn = whatYoullLearn,
+                    HowYoullLearn = howYoullLearn,
+                    HowYoullBeAssessed = howYoullBeAssessed,
+                    WhatYouCanDoNext = whatYouCanDoNext,
+                    YourReference = yourReference,
+                    StartDate = startDate,
+                    Locations = new[]
                      {
                          new TLevelLocation()
                          {
@@ -113,9 +113,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                              VenueName = venueName
                          }
                      },
-                     Website = website,
-                     CreatedOn = now,
-                     UpdatedOn = now
+                    Website = website,
+                    CreatedOn = now,
+                    UpdatedOn = now
                 });
 
             SqlQueryDispatcher
