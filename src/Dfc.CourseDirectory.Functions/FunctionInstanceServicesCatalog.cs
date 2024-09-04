@@ -13,15 +13,5 @@ public class FunctionInstanceServicesCatalog
     {
         _instanceServices.TryGetValue(instanceId, out var serviceProvider);
         return serviceProvider;
-    }
-
-    public void AddFunctionInstance(Guid instanceId, IServiceProvider serviceProvider)
-    {
-        _instanceServices.TryAdd(instanceId, serviceProvider);
-    }
-
-    public void RemoveFunctionInstance(Guid instanceId)
-    {
-        _instanceServices.TryRemove(instanceId, out _);
-    }
+    }    
 }
