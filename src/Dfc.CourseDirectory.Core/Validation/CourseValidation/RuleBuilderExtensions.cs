@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 // Required for classroom based delivery modes
                 .Must((t, v) => attendancePatternWasSpecified(t) && v.HasValue)
-                    .When(t => IsCRorBL(getDeliveryMode(t)) , ApplyConditionTo.CurrentValidator)
+                    .When(t => IsCRorBL(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
                     .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED")
                 // Not allowed for delivery modes other than classroom based or blended learning
                 .Must((t, v) => !attendancePatternWasSpecified(t))
@@ -205,7 +205,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 
         public static void ProviderCourseRef<T>(this IRuleBuilderInitial<T, string> field)
         {
-            field                
+            field
                 .MaximumLength(Constants.ProviderCourseRefMaxLength)
                     .WithMessageFromErrorCode("COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH")
                 .Matches(@"^[a-zA-Z0-9/\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$")
@@ -263,7 +263,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .Cascade(CascadeMode.Stop)
                 // Must be valid
-                .Custom((v, ctx) => {
+                .Custom((v, ctx) =>
+                {
                     if (v == null)
                         return;
                     var date = new DateInput(v.Value);
@@ -349,42 +350,88 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             Func<T, bool?> getNationalDelivery)
         {
             field
-                .Custom((v, ctx) =>
+                .Custom((selectedRegions, context) =>
                 {
-                    var obj = (T)ctx.InstanceToValidate;
+                    var instance = (T)context.InstanceToValidate;
+                    var deliveryMode = getDeliveryMode(instance);
+                    var isSpecified = subRegionsWereSpecified(instance);
+                    var nationalDelivery = getNationalDelivery(instance);
 
-                    var deliveryMode = getDeliveryMode(obj);
-                    var isSpecified = subRegionsWereSpecified(obj);
-                    var nationalDelivery = getNationalDelivery(obj);
-
-                    // Not allowed when delivery mode is not work based or national is true
-                    if (isSpecified && (deliveryMode != CourseDeliveryMode.WorkBased || nationalDelivery == true))
+                    if (AreSubRegionsNotAllowed(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_NOT_ALLOWED"));
-                        return;
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
                     }
-
-                    if (deliveryMode != CourseDeliveryMode.WorkBased)
+                    else if (AreSubRegionsRequired(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        return;
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_REQUIRED"));
                     }
-
-                    // Required when national delivery is false and delivery mode is work based
-                    if (!isSpecified && nationalDelivery == false)
+                    else if (isSpecified && (selectedRegions == null || selectedRegions.Count == 0))
                     {
-                        ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_REQUIRED"));
-                        return;
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_INVALID"));
                     }
-
-                    // All sub regions specified must be valid and there should be at least one
-                    if (isSpecified && (v == null || v.Count == 0))
-                    {
-                        ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_INVALID"));
-                    }
-
-                    ValidationFailure CreateFailure(string errorCode) =>
-                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                 });
+        }
+
+        public static void SubRegions<T>(
+            this IRuleBuilderInitial<T, IReadOnlyCollection<string>> field,
+            IReadOnlyCollection<Region> allRegions,
+            Func<T, bool> subRegionsWereSpecified,
+            Func<T, CourseDeliveryMode?> getDeliveryMode,
+            Func<T, bool?> getNationalDelivery)
+        {
+            field
+                .Custom((selectedRegionIds, context) =>
+                {
+                    var instance = (T)context.InstanceToValidate;
+                    var deliveryMode = getDeliveryMode(instance);
+                    var isSpecified = subRegionsWereSpecified(instance);
+                    var nationalDelivery = getNationalDelivery(instance);
+
+                    var validSubRegions = selectedRegionIds != null
+                        ? GetValidSubRegions(selectedRegionIds, allRegions)
+                        : new List<Region>();
+
+                    if (AreSubRegionsNotAllowed(isSpecified, deliveryMode, nationalDelivery))
+                    {
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
+                    }                    
+                    else if (AreSubRegionsRequired(isSpecified, deliveryMode, nationalDelivery))
+                    {
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_REQUIRED"));
+                    }
+                    else if (HasInvalidSubRegions(selectedRegionIds, validSubRegions))
+                    {
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_INVALID"));
+                    }
+                });
+        }
+
+        private static bool AreSubRegionsNotAllowed(bool isSpecified, CourseDeliveryMode? deliveryMode, bool? nationalDelivery)
+        {
+            // Not allowed when delivery mode is not work based or national is true
+            return isSpecified && (deliveryMode != CourseDeliveryMode.WorkBased || nationalDelivery == true);
+        }
+
+        private static bool AreSubRegionsRequired(bool isSpecified, CourseDeliveryMode? deliveryMode, bool? nationalDelivery)
+        {
+            // Required when national delivery is false and delivery mode is work based
+            return !isSpecified && deliveryMode == CourseDeliveryMode.WorkBased && nationalDelivery == false;
+        }
+
+        private static bool HasInvalidSubRegions(IReadOnlyCollection<string> selectedRegionIds, List<Region> validSubRegions)
+        {
+            // All sub regions specified must be valid and there should be at least one
+            return selectedRegionIds != null && selectedRegionIds.Any() && selectedRegionIds.Count != validSubRegions.Count;
+        }        
+
+        private static List<Region> GetValidSubRegions(IReadOnlyCollection<string> selectedRegionIds, IReadOnlyCollection<Region> allRegions)
+        {
+            var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
+            return selectedRegionIds.Where(allSubRegions.ContainsKey).Select(id => allSubRegions[id]).ToList();
+        }
+        private static ValidationFailure CreateFailure(string propertyName, string errorCode)
+        {
+            return ValidationFailureEx.CreateFromErrorCode(propertyName, errorCode);
         }
 
         public static void VenueId<T>(
@@ -397,7 +444,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var obj = (T)ctx.InstanceToValidate;
 
                     var deliveryMode = getDeliveryMode(obj);
-                    var isSpecified = v.HasValue;
+                    var isSpecified = v.HasValue && v != default(Guid);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
                     if (isSpecified && IsValidDM(deliveryMode))
