@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public IEnumerable<string> SubRegionIds { get; set; }
         public string CourseWebPage { get; set; }
         public bool IsSecureWebsite { get; set; }
-        public string Cost { get; set; }
+        public string Cost { get; set; }        
         public string CostDescription { get; set; }
         public int? Duration { get; set; }
         public CourseDurationUnit? DurationUnit { get; set; }
@@ -287,13 +287,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 
                 RuleFor(c => c.CourseName).CourseName();
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
-                //RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
+                RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
                 RuleFor(c => c.FlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.NationalDelivery).NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
                 RuleFor(c => c.CourseWebPage).CourseWebPage(webRiskService);
-                //RuleFor(c => c.Cost)
-                //    .Transform(v => decimal.TryParse(v, out var parsed) ? parsed : (decimal?)null)
-                //    .Cost(costWasSpecified: c => !string.IsNullOrWhiteSpace(c.Cost), getCostDescription: c => c.CostDescription);
+                RuleFor(c => c.Cost)
+                    .Cost(costWasSpecified: c => !string.IsNullOrWhiteSpace(c.Cost), getCostDescription: c => c.CostDescription);
                 RuleFor(c => c.CostDescription).CostDescription();
                 RuleFor(c => c.Duration).Duration();
                 RuleFor(c => c.DurationUnit).DurationUnit();
@@ -305,20 +304,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
                 RuleFor(c => c.AttendancePattern).AttendancePattern(
                     attendancePatternWasSpecified: c => c.AttendancePattern.HasValue,
-                    getDeliveryMode: c => c.DeliveryMode);
+                    getDeliveryMode: c => c.DeliveryMode);                
 
-                //RuleFor(c => c.SubRegionIds)
-                //    .Transform(ids =>
-                //    {
-                //        return allRegions
-                //            .SelectMany(r => r.SubRegions)
-                //            .Join(ids ?? Array.Empty<string>(), sr => sr.Id, id => id, (sr, id) => sr)
-                //            .ToArray();
-                //    })
-                //    .SubRegions(
-                //        subRegionsWereSpecified: c => c.SubRegionIds?.Count() > 0,
-                //        getDeliveryMode: c => c.DeliveryMode,
-                //        getNationalDelivery: c => c.NationalDelivery);
+                RuleFor(c => c.SubRegionIds.ToArray())
+                .SubRegions(allRegions: allRegions, subRegionsWereSpecified: c => c.SubRegionIds?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.NationalDelivery);
+
             }
         }
     }

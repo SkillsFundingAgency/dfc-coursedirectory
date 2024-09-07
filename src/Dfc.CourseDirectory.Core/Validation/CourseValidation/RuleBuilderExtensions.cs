@@ -58,6 +58,23 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED");
         }
 
+        public static void Cost<T>(
+            this IRuleBuilderInitial<T, string> field,
+            Func<T, bool> costWasSpecified,
+            Func<T, string> getCostDescription)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                // Must be a valid decimal if specified
+                .Must(v => decimal.TryParse(v, out var d) ? true : false)
+                    .When(t => costWasSpecified(t), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_COST_INVALID")
+                // Required if cost description is not specified
+                .NotNull()
+                    .When(t => string.IsNullOrWhiteSpace(getCostDescription(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED");
+        }
+
         public static void CostDescription<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
@@ -258,6 +275,68 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 });
         }
 
+        public static void StartDate<T>(this IRuleBuilderInitial<T, DateInput> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                // Must be valid
+                .Custom((v, ctx) =>
+                {
+                    if (v == null)
+                        return;
+                    var date = new DateInput(v.Value);
+                    if (date.IsValid)
+                    {
+                        return;
+                    }
+                    var displayName = "Start date";
+                    Debug.Assert(date.InvalidReasons != InvalidDateInputReasons.None);
+
+                    // A date was provided but it's invalid; figure out an appropriate message.
+                    // We expect to have InvalidReasons to be either: InvalidDate OR
+                    // 1-2 of MissingDay, MissingMonth and MissingYear.
+
+                    if ((date.InvalidReasons & InvalidDateInputReasons.InvalidDate) != 0)
+                    {
+                        ctx.AddFailure($"{displayName} must be a real date");
+                        return;
+                    }
+
+                    var missingFields = EnumHelper.SplitFlags(date.InvalidReasons)
+                        .Aggregate(
+                            Enumerable.Empty<string>(),
+                            (acc, r) =>
+                            {
+                                var elementName = r switch
+                                {
+                                    InvalidDateInputReasons.MissingDay => "day",
+                                    InvalidDateInputReasons.MissingMonth => "month",
+                                    InvalidDateInputReasons.MissingYear => "year",
+                                    _ => throw new NotSupportedException($"Unexpected {nameof(InvalidDateInputReasons)}: '{r}'.")
+                                };
+
+                                return acc.Append(elementName);
+                            })
+                        .ToArray();
+
+                    Debug.Assert(missingFields.Length <= 2 && missingFields.Length > 0);
+
+                    ctx.AddFailure($"{displayName} must include a {string.Join(" and ", missingFields)}");
+                })
+                // Required if flexible start date is false
+                .NotEmpty()
+                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_REQUIRED")
+                // Not allowed if flexible start date is not false
+                .Empty()
+                    .When(t => getFlexibleStartDate(t) == true, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_NOT_ALLOWED")
+                // Must be in the future
+                .Must(v => v.Value >= now.Date)
+                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID");
+        }
+
         public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
         {
             field
@@ -317,8 +396,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 // Must be in the future
                 .Must(v => v.Value >= now.Date)
                     .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID")
-                ;
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID");
         }
 
         public static void StudyMode<T>(
@@ -373,7 +451,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         }
 
         public static void SubRegions<T>(
-            this IRuleBuilderInitial<T, IReadOnlyCollection<string>> field,
+            this IRuleBuilderInitial<T, IEnumerable<string>> field,
             IReadOnlyCollection<Region> allRegions,
             Func<T, bool> subRegionsWereSpecified,
             Func<T, CourseDeliveryMode?> getDeliveryMode,
@@ -418,16 +496,16 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             return !isSpecified && deliveryMode == CourseDeliveryMode.WorkBased && nationalDelivery == false;
         }
 
-        private static bool HasInvalidSubRegions(IReadOnlyCollection<string> selectedRegionIds, List<Region> validSubRegions)
+        private static bool HasInvalidSubRegions(IEnumerable<string> selectedRegionIds, List<Region> validSubRegions)
         {
             // All sub regions specified must be valid and there should be at least one
-            return selectedRegionIds != null && selectedRegionIds.Any() && selectedRegionIds.Count != validSubRegions.Count;
+            return selectedRegionIds != null && selectedRegionIds.Any() && selectedRegionIds.Count() != validSubRegions.Count;
         }        
 
-        private static List<Region> GetValidSubRegions(IReadOnlyCollection<string> selectedRegionIds, IReadOnlyCollection<Region> allRegions)
+        private static List<Region> GetValidSubRegions(IEnumerable<string> selectedRegionIds, IReadOnlyCollection<Region> allRegions)
         {
             var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
-            return selectedRegionIds.Where(allSubRegions.ContainsKey).Select(id => allSubRegions[id]).ToList();
+            return selectedRegionIds.Where(r => r != null && allSubRegions.ContainsKey(r)).Select(id => allSubRegions[id]).ToList();
         }
         private static ValidationFailure CreateFailure(string propertyName, string errorCode)
         {

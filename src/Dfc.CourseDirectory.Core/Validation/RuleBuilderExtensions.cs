@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Internal;
 
 namespace Dfc.CourseDirectory.Core.Validation
 {
