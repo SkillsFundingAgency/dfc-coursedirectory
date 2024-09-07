@@ -306,8 +306,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     attendancePatternWasSpecified: c => c.AttendancePattern.HasValue,
                     getDeliveryMode: c => c.DeliveryMode);                
 
-                RuleFor(c => c.SubRegionIds.ToArray())
-                .SubRegions(allRegions: allRegions, subRegionsWereSpecified: c => c.SubRegionIds?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.NationalDelivery);
+                RuleFor(c => c.SubRegionIds)
+                    .SubRegions(allRegions: allRegions, subRegionsWereSpecified: c => c.SubRegionIds?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.NationalDelivery);
 
             }
         }
