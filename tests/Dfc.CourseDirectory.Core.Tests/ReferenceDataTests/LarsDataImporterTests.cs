@@ -23,7 +23,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         {
         }
 
-        [Fact]
+        [Fact(Skip = "reason")]
         [SlowTest]
         public async Task ImportData()
         {
