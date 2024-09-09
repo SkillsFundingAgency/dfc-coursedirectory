@@ -19,7 +19,7 @@ resources:
     type: github
     name: SkillsFundingAgency/dfc-devops
     endpoint: 'GitHub (ESFA)'
-    ref: refs/tags/v1.14.0
+    ref: refs/tags/v1.16.2
 
 trigger:
   batch: true
@@ -77,6 +77,14 @@ steps:
   parameters:
     ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
     SolutionBaseName: '${{ variables.SolutionBaseName }}'
+
+- template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
+  parameters:
+    SolutionBaseName: '${{ variables.SolutionBaseName }}'
+    BuildPlatform: 'any cpu'
+    BuildConfiguration: 'release'
+    GitVersionVersion: 5.12.x
+    DotNetCoreVersion: 8.x
 
 - task: CopyFiles@2
   displayName: 'Copy Files: AzureSearch'
