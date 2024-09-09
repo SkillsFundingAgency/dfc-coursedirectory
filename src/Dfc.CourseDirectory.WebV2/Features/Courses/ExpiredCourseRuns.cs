@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
     {
         public bool IsNonLars { get; set; }
     }
-    
+
     public class ViewModel
     {
         public int Total { get; set; }

@@ -42,13 +42,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DownloadErro
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerContext.ProviderInfo.ProviderId,request.IsNonLars);
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerContext.ProviderInfo.ProviderId, request.IsNonLars);
 
             if (uploadStatus != UploadStatus.ProcessedWithErrors)
             {
                 throw new InvalidUploadStatusException(uploadStatus, UploadStatus.ProcessedWithErrors);
             }
-            if(request.IsNonLars)
+            if (request.IsNonLars)
             {
                 var rows = uploadRows
                 .Select(CsvNonLarsCourseRowWithErrors.FromModel)
@@ -78,7 +78,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DownloadErro
                     Rows = rows
                 };
             }
-            
+
         }
     }
 }

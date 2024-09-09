@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
-    {        
+    {
         public CourseDeliveryMode DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
@@ -233,7 +233,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
                     RuleFor(c => c.AttendancePattern).AttendancePattern(
                         attendancePatternWasSpecified: c => c.AttendancePattern.HasValue,
                         getDeliveryMode: c => c.DeliveryMode);
-                    
+
                     RuleFor(c => c.SubRegionIds)
                     .SubRegions(allRegions: allRegions, subRegionsWereSpecified: c => c.SubRegionIds?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.NationalDelivery);
 

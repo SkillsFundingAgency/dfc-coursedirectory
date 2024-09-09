@@ -10,9 +10,9 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
-using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>
-    {        
+    {
         public CourseType? CourseType { get; set; }
         public string Sector { get; set; }
         public string AwardingBody { get; set; }
@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public IEnumerable<string> SubRegionIds { get; set; }
         public string CourseWebPage { get; set; }
         public bool IsSecureWebsite { get; set; }
-        public string Cost { get; set; }        
+        public string Cost { get; set; }
         public string CostDescription { get; set; }
         public int? Duration { get; set; }
         public CourseDurationUnit? DurationUnit { get; set; }
@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<ModelWithErrors<ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var row = await GetRow(request.RowNumber,request.IsNonLars);
+            var row = await GetRow(request.RowNumber, request.IsNonLars);
             var vm = await CreateViewModel(request.DeliveryMode, row, request.IsNonLars);
             NormalizeViewModel();
 
@@ -211,7 +211,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, CourseUploadRowDetail row, bool isNonLars)
         {
-            var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning )?
+            var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning) ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
                     .Select(v => new ViewModelProviderVenuesItem()
                     {
@@ -245,8 +245,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 ProviderVenues = providerVenues
             };
             if (isNonLars)
-            { 
-                vm.CourseType = row.ResolvedCourseType; 
+            {
+                vm.CourseType = row.ResolvedCourseType;
                 vm.EducationLevel = row.ResolvedEducationLevel;
                 vm.AwardingBody = row.AwardingBody;
                 vm.Sector = sectors.FirstOrDefault(s => s.Code.Equals(row.Sector, StringComparison.InvariantCultureIgnoreCase))?.Code ?? null;
@@ -284,7 +284,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     RuleFor(c => c.AwardingBody).AwardingBody();
                     RuleFor(c => c.EducationLevel).EducationLevel();
                 }
-                
+
                 RuleFor(c => c.CourseName).CourseName();
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.StartDate).StartDate(now: clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
@@ -304,7 +304,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
                 RuleFor(c => c.AttendancePattern).AttendancePattern(
                     attendancePatternWasSpecified: c => c.AttendancePattern.HasValue,
-                    getDeliveryMode: c => c.DeliveryMode);                
+                    getDeliveryMode: c => c.DeliveryMode);
 
                 RuleFor(c => c.SubRegionIds)
                     .SubRegions(allRegions: allRegions, subRegionsWereSpecified: c => c.SubRegionIds?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.NationalDelivery);
