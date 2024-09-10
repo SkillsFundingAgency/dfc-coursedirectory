@@ -342,7 +342,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "netVersion": "v8.0",
+          "netVersion": {
+            "value": "v8.0"
+          },
           "appServiceName": {
             "value": "[variables('appServiceName')]"
           },
