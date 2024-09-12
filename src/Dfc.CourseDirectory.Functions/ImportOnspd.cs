@@ -13,6 +13,6 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("ImportOnspd")]
-        public Task RunNightly(string input) => _onspdDataImporter.ImportData();
+        public Task RunNightly([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _onspdDataImporter.ImportData();
     }
 }

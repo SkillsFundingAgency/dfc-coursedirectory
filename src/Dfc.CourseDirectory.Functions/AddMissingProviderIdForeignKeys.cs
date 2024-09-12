@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function(nameof(AddMissingProviderIdForeignKeys))]
-        public async Task Execute(string input)
+        public async Task Execute([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input)
         {
             await ExecuteBatchedStatement(@"
 UPDATE Pttcd.Courses

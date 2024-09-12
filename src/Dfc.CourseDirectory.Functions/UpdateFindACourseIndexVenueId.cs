@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function(nameof(UpdateFindACourseIndexVenueId))]
-        public async Task Run(string input)
+        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {
