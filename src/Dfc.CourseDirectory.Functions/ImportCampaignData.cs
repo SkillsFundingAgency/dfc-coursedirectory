@@ -17,10 +17,6 @@ namespace Dfc.CourseDirectory.Functions
            [BlobTrigger("%CampaignDataContainerName%/{campaignCode}.csv")] Stream blob,
            string campaignCode)
         {
-            //using var stream = new MemoryStream();
-            //await blob.DownloadToStreamAsync(stream);
-            // stream.Seek(0L, SeekOrigin.Begin);
-
             await _campaignDataImporter.ImportCampaignData(campaignCode, blob);
             blob.Dispose();
         }

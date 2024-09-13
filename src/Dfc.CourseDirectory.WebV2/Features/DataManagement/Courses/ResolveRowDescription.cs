@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     WhatYouWillNeedToBring = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.WhatYouWillNeedToBring),
                     HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.HowYouWillBeAssessed),
                     WhereNext = ASCIICodeHelper.ReplaceHexCodes(formattedRequest.WhereNext)
-                },request.IsNonLars);
+                }, request.IsNonLars);
         }
 
         private async Task<CourseUploadRow> GetRow(int rowNumber, bool isNonLars)

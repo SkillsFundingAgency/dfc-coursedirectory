@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function(nameof(NormalizeClassroomBasedCourseRunFields))]
-        public async Task Execute(string input)
+        public async Task Execute([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input)
         {
             using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 

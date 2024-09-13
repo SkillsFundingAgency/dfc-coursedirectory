@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
                 YourReference = _journeyInstance.State.YourReference
             };
 
-        private  Task<IReadOnlyCollection<Venue>> GetVenuesForProvider(Guid providerId) =>
+        private Task<IReadOnlyCollection<Venue>> GetVenuesForProvider(Guid providerId) =>
             _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByProvider()
                 {
@@ -155,8 +155,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
             {
                 RuleFor(c => c.YourReference).YourReference();
 
-                //RuleFor(c => c.StartDate)
-                //    .StartDate(tLevelId: null, providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                RuleFor(c => c.StartDate)
+                    .StartDate(tLevelId: null, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()

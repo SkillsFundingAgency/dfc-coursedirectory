@@ -30,9 +30,9 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("SyncKnownProviders")]
-        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
+        public Task SyncKnownProviders([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
 
         [Function("SyncAllKnownProvidersData")]
-        public Task SyncAllKnownProvidersData(string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+        public Task SyncAllKnownProvidersData([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
     }
 }

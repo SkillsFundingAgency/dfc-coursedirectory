@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Configuration;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -15,7 +14,6 @@ using Mapster;
 using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
-using System.Globalization;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {
@@ -77,7 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         {
             _journeyInstanceProvider = journeyInstanceProvider;
             _searchClient = search;
-            _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings)); 
+            _larsSearchSettings = larsSearchSettings?.Value ?? throw new ArgumentNullException(nameof(larsSearchSettings));
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
@@ -137,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
                 EffectiveTo = x.Record.EffectiveTo.HasValue ? x.Record.EffectiveTo.Value.ToString("dd MMM yyyy") : string.Empty,
             })
             .OrderBy(x => x.CourseName);
-            
+
             var vmodel = new ViewModel()
             {
                 SearchWasDone = true,
@@ -196,10 +194,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         {
             public QueryValidator()
             {
-                //RuleFor(q => q.SearchTerm)
-                //    .NotEmpty()
-                //    .MinimumLength(3)
-                //    .WithMessageForAllRules("Enter search criteria");
+                var errorMessge = "Enter search criteria";
+                RuleFor(q => q.SearchTerm)
+                    .NotEmpty()
+                    .WithMessage(errorMessge)
+                    .MinimumLength(3)
+                    .WithMessage(errorMessge);
             }
         }
     }

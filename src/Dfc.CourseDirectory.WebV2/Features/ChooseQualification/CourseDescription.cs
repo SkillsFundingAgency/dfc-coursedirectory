@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
@@ -10,7 +11,6 @@ using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core.Services;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescription
 {
@@ -41,13 +41,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescripti
         IRequestHandler<Query, ViewModel>,
         IRequestHandler<Command, CommandResponse>
     {
-        private readonly MptxInstanceContext<FlowModel> _flow;        
+        private readonly MptxInstanceContext<FlowModel> _flow;
         private readonly ICourseTypeService _courseTypeService;
         private readonly IProviderContextProvider _providerContextProvider;
 
         public Handler(MptxInstanceContext<FlowModel> flow, ICourseTypeService courseTypeService, IProviderContextProvider providerContextProvider)
         {
-            _flow = flow;            
+            _flow = flow;
             _courseTypeService = courseTypeService;
             _providerContextProvider = providerContextProvider;
         }

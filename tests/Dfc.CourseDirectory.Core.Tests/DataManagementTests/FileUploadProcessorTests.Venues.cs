@@ -578,7 +578,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                     Town = row.Town,
                     VenueName = row.VenueName,
                     Website = row.Website
-                    
+
                 }, config => config.Excluding(r => r.IsValid).Excluding(r => r.Errors).Excluding(r => r.VenueId));
             });
         }
@@ -994,7 +994,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 IClock clock,
                 IRegionCache regionCache,
                 IBackgroundWorkScheduler backgroundWorkScheduler, IWebRiskService webRiskService)
-                : base(sqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), clock, regionCache, backgroundWorkScheduler, Mock.Of<ICourseTypeService>(),  webRiskService)
+                : base(sqlQueryDispatcherFactory, Mock.Of<BlobServiceClient>(), clock, regionCache, backgroundWorkScheduler, Mock.Of<ICourseTypeService>(), webRiskService)
             {
                 _subject = new ReplaySubject<UploadStatus>();
                 _venueUploadIdTcs = new TaskCompletionSource<Guid>();

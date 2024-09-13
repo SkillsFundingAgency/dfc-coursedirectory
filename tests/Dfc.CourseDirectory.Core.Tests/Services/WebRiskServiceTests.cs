@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
-using Moq.Protected;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.Services
@@ -21,7 +13,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
     {
 
         [Fact]
-        public async void CheckForSecureUri_WithKnownThreat_FailsValidation()
+        public async Task CheckForSecureUri_WithKnownThreat_FailsValidation()
         {
             // Arrange
             var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X" });
@@ -42,7 +34,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         }
 
         [Fact]
-        public async void CheckForSecureUri_WithoutKnownThreat_PassesValidation()
+        public async Task CheckForSecureUri_WithoutKnownThreat_PassesValidation()
         {
             // Arrange
             var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X" });

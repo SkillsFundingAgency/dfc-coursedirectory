@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
 
         public Handler()
         {
-         
+
         }
 
         public Handler(IFileUploadProcessor fileUploadProcessor, IProviderContextProvider providerContextProvider, MptxInstanceContext<FlowModel> flow)

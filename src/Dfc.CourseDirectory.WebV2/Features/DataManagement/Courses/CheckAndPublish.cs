@@ -81,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
         public async Task<OneOf<UploadHasErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId(),request.IsNonLars);
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(_providerContextProvider.GetProviderId(), request.IsNonLars);
 
             if (uploadStatus == UploadStatus.ProcessedWithErrors)
             {
@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
             if (!request.Confirm)
             {
-                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId,request.IsNonLars);
+                var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetCourseUploadRowsForProvider(providerId, request.IsNonLars);
 
                 var vm = await CreateViewModel(uploadRows, request.IsNonLars);
                 var validationResult = new ValidationResult(new[]
@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
             }
 
-            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser(),request.IsNonLars);
+            var publishResult = await _fileUploadProcessor.PublishCourseUploadForProvider(providerId, _currentUserProvider.GetCurrentUser(), request.IsNonLars);
 
             if (publishResult.Status == PublishResultStatus.Success)
             {
@@ -120,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
 
         private async Task<ViewModel> CreateViewModel(IReadOnlyCollection<CourseUploadRow> rows, bool isNonLars)
         {
-            if(isNonLars)
+            if (isNonLars)
             {
                 return new ViewModel()
                 {
@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                                     CourseType = r.CourseType,
                                     Sector = r.Sector,
                                     AwardingBody = r.AwardingBody,
-                                    EducationLevel = r.EducationLevel,                                    
+                                    EducationLevel = r.EducationLevel,
                                     CourseName = r.CourseName,
                                     StartDate = r.StartDate,
                                     DeliveryMode = r.DeliveryMode
@@ -178,7 +178,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.CheckAndPubl
                         .ToArray(),
                     RowCount = rows.Count
                 };
-            }            
+            }
         }
     }
 }

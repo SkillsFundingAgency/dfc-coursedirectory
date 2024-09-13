@@ -75,30 +75,30 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
             }
 
             var providerId = _providerContextProvider.GetProviderId();
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, request.RowNumber,request.IsNonLars);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, request.RowNumber, request.IsNonLars);
 
             if (row == null)
             {
                 throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, request.RowNumber);
             }
 
-            return await _fileUploadProcessor.DeleteCourseUploadRowGroupForProvider(providerId, row.CourseId,request.IsNonLars);
+            return await _fileUploadProcessor.DeleteCourseUploadRowGroupForProvider(providerId, row.CourseId, request.IsNonLars);
         }
 
         private async Task<ViewModel> CreateViewModel(int rowNumber, bool isNonLars)
         {
             var providerId = _providerContextProvider.GetProviderId();
 
-            var rootRow = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars) 
+            var rootRow = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars)
                             ?? throw new ResourceDoesNotExistException(ResourceType.CourseUploadRow, rowNumber);
-            var rowGroup = await _fileUploadProcessor.GetCourseUploadRowGroupForProvider(providerId, rootRow.CourseId,isNonLars);
+            var rowGroup = await _fileUploadProcessor.GetCourseUploadRowGroupForProvider(providerId, rootRow.CourseId, isNonLars);
 
             var deliveryModes = DeduceDeliveryModes();
 
             var groupErrors = rowGroup.First().Errors
                 .Where(e => Core.DataManagement.Errors.GetCourseErrorComponent(e) == CourseErrorComponent.Course)
                 .ToArray();
-            
+
             var rowViewModel = new ViewModel()
             {
                 DeliveryModes = deliveryModes,
@@ -113,8 +113,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRowGro
 
                 rowViewModel.LearnAimRef = learnAimRef;
                 rowViewModel.LearnAimRefTitle = learningDelivery.LearnAimRefTitle;
-            }     
-            
+            }
+
             return rowViewModel;
 
             IReadOnlyCollection<CourseDeliveryMode> DeduceDeliveryModes()
