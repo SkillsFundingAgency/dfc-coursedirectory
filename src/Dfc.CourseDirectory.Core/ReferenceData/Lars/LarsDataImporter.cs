@@ -73,6 +73,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             async Task DownloadFiles()
             {
+                _logger.LogInformation("Lars URL- " + _larsDataset.Url);
                 using var resultStream = await _httpClient.GetStreamAsync(_larsDataset.Url);
                 using var zip = new ZipArchive(resultStream);
 
