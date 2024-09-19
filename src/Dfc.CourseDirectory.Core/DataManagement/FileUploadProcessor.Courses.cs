@@ -625,9 +625,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 //    _containerIsKnownToExist = true;
                 //}
 
-                if (!await _blobContainerClient.ExistsAsync()) {
-                    await _blobContainerClient.CreateAsync();
-                }
+                //if (!_blobContainerClient.Exists()) {
+                //    await _blobContainerClient.CreateAsync();
+                //}
 
                 var blobName = $"{Constants.CoursesFolder}/{courseUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
