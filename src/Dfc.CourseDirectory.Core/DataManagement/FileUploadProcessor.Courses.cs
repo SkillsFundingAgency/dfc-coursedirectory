@@ -619,10 +619,14 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             async Task UploadToBlobStorage()
             {
-                if (!_containerIsKnownToExist)
-                {
-                    await _blobContainerClient.CreateIfNotExistsAsync();
-                    _containerIsKnownToExist = true;
+                //if (!_containerIsKnownToExist)
+                //{
+                //    await _blobContainerClient.CreateIfNotExistsAsync();
+                //    _containerIsKnownToExist = true;
+                //}
+
+                if (!await _blobContainerClient.ExistsAsync()) {
+                    await _blobContainerClient.CreateAsync();
                 }
 
                 var blobName = $"{Constants.CoursesFolder}/{courseUploadId}.csv";
