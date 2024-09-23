@@ -12,12 +12,12 @@ namespace Dfc.CourseDirectory.Functions
             _fileUploadProcessor = fileUploadProcessor;
         }
 
-        [Function(nameof(ProcessCourseUpload))]
-        public Task Run(
-            [BlobTrigger("%DataUploadsContainerName%/%CourseUploadsFolderName%/{courseUploadId}.csv")] Stream file,
-            Guid courseUploadId)
-        {
-            return _fileUploadProcessor.ProcessCourseFile(courseUploadId, file);
-        }
+        //[Function(nameof(ProcessCourseUpload))]
+        //public Task Run(
+        //    [BlobTrigger("data-uploads/courses/{courseUploadId}.csv")] Stream file,
+        //    Guid courseUploadId)
+        //{
+        //    return _fileUploadProcessor.ProcessCourseFile(courseUploadId, file);
+        //}
     }
 }
