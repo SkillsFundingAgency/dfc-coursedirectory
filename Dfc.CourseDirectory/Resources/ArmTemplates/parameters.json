@@ -138,18 +138,6 @@
     },
     "GoogleWebRiskApiKey": {
       "value": "__GoogleWebRiskApiKey__"
-    },
-    "CampaignDataContainerName": {
-      "value": "__CampaignDataContainerName__"
-    },
-    "DataUploadsContainerName": {
-      "value": "__DataUploadsContainerName__"
-    },
-    "CourseUploadsFolderName": {
-      "value": "__CourseUploadsFolderName__"
-    },
-    "VenueUploadsFolderName": {
-      "value": "__VenueUploadsFolderName__"
     }
   }
 }
