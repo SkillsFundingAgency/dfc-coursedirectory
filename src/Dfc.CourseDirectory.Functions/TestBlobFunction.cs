@@ -14,13 +14,13 @@ namespace Dfc.CourseDirectory.Functions
             _logger = logger;
         }
 
-        [Function(nameof(TestBlobFunction))]
-        public async Task Run([BlobTrigger("data-uploads/courses/{courseUploadId}.csv", Connection = "")] Stream file,
-            Guid courseUploadId)
-        {
-            using var blobStreamReader = new StreamReader(file);
-            var content = await blobStreamReader.ReadToEndAsync();
-            _logger.LogInformation($"C# Blob trigger function Processed blob\n Name: {courseUploadId} \n Data: {content}");
-        }
+        //[Function(nameof(TestBlobFunction))]
+        //public async Task Run([BlobTrigger("data-uploads/courses/{courseUploadId}.csv", Connection = "")] Stream file,
+        //    Guid courseUploadId)
+        //{
+        //    using var blobStreamReader = new StreamReader(file);
+        //    var content = await blobStreamReader.ReadToEndAsync();
+        //    _logger.LogInformation($"C# Blob trigger function Processed blob\n Name: {courseUploadId} \n Data: {content}");
+        //}
     }
 }
