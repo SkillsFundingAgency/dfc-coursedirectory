@@ -57,14 +57,6 @@ var host = new HostBuilder()
         {
             config.AddUserSecrets(typeof(Program).Assembly);
         }
-
-        config.AddInMemoryCollection(new Dictionary<string, string>()
-        {
-            { "CampaignDataContainerName", "campaign-data" },
-            { "DataUploadsContainerName", Constants.ContainerName },
-            { "CourseUploadsFolderName", Constants.CoursesFolder },
-            { "VenueUploadsFolderName", Constants.VenuesFolder }
-        });
     })
     .Build();
 

@@ -17,10 +17,10 @@
     "postcodeApiKey": {
       "value": "__postcodeApiKey__"
     },
-    "getAddressApiUrl":{
+    "getAddressApiUrl": {
       "value": "__getaddressApiUrl__"
     },
-    "getAddressApiKey":{
+    "getAddressApiKey": {
       "value": "__getaddressApiKey__"
     },
     "larsApiUrl": {
@@ -131,13 +131,25 @@
       "value": "__FindACourseUrl__"
     },
     "workspaceName": {
-        "value": "__sharedLogAnalyticsWorkspace__"
+      "value": "__sharedLogAnalyticsWorkspace__"
     },
     "workspaceResourceGroup": {
-        "value": "__sharedLogAnalyticsResourceGroup__"
+      "value": "__sharedLogAnalyticsResourceGroup__"
     },
     "GoogleWebRiskApiKey": {
       "value": "__GoogleWebRiskApiKey__"
+    },
+    "CampaignDataContainerName": {
+      "value": "__CampaignDataContainerName__"
+    },
+    "DataUploadsContainerName": {
+      "value": "__DataUploadsContainerName__"
+    },
+    "CourseUploadsFolderName": {
+      "value": "__CourseUploadsFolderName__"
+    },
+    "VenueUploadsFolderName": {
+      "value": "__VenueUploadsFolderName__"
     }
   }
 }
