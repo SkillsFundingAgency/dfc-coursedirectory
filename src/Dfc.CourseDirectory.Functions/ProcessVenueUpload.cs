@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function(nameof(ProcessVenueUpload))]
-        public Task Execute(
+        public Task Run(
             [BlobTrigger("%DataUploadsContainerName%/%VenueUploadsFolderName%/{venueUploadId}.csv")] Stream file,
             Guid venueUploadId)
         {

@@ -623,7 +623,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 {
                     await _blobContainerClient.CreateIfNotExistsAsync();
                     _containerIsKnownToExist = true;
-                }
+                }                
 
                 var blobName = $"{Constants.CoursesFolder}/{courseUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);

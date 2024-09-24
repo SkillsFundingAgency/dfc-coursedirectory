@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
@@ -31,6 +32,10 @@ var host = new HostBuilder()
 
         services.AddSingleton<CommitSqlTransactionMiddleware>();
 
+        services.AddSingleton<QueueBackgroundWorkScheduler>();
+        services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
+        services.AddHttpClient();
+
         services.AddTransient<IUkrlpService, Dfc.CourseDirectory.Core.ReferenceData.Ukrlp.UkrlpService>();
         services.AddTransient<UkrlpSyncHelper>();
         services.AddTransient<OnspdDataImporter>();
@@ -52,14 +57,6 @@ var host = new HostBuilder()
         {
             config.AddUserSecrets(typeof(Program).Assembly);
         }
-
-        config.AddInMemoryCollection(new Dictionary<string, string>()
-        {
-            { "CampaignDataContainerName", "campaign-data" },
-            { "DataUploadsContainerName", Constants.ContainerName },
-            { "CourseUploadsFolderName", Constants.CoursesFolder },
-            { "VenueUploadsFolderName", Constants.VenuesFolder }
-        });
     })
     .Build();
 

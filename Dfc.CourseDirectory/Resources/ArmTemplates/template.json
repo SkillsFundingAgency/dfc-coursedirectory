@@ -714,6 +714,22 @@
               {
                 "name": "GoogleWebRiskSettings:ApiKey",
                 "value": "[concat('@Microsoft.KeyVault(VaultName=', parameters('keyVaultName'), ';SecretName=GoogleWebRiskApiKey)')]"
+              },
+              {
+                "name": "CampaignDataContainerName",
+                "value": "campaign-data"
+              },
+              {
+                "name": "DataUploadsContainerName",
+                "value": "data-uploads"
+              },
+              {
+                "name": "CourseUploadsFolderName",
+                "value": "courses"
+              },
+              {
+                "name": "VenueUploadsFolderName",
+                "value": "venues"
               }
             ]
           },
