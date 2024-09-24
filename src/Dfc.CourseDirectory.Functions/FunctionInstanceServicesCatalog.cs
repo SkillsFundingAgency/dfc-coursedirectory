@@ -13,5 +13,5 @@ public class FunctionInstanceServicesCatalog
     {
         _instanceServices.TryGetValue(instanceId, out var serviceProvider);
         return serviceProvider;
-    }    
+    }
 }

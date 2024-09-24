@@ -1,4 +1,3 @@
-using System.Net;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
