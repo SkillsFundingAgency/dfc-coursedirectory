@@ -1,0 +1,10 @@
+{
+  "FilterPredicate": "SELECT c.id FROM c where c.DateandTimeOfInteraction >= '2019-02-28' AND c.DateandTimeOfInteraction < '2019-03-02' AND c.InteractionType = 3 AND c.AdviserDetailsId = null",
+  "PartionKeyValue": "/_partitionKey",
+  "Operations": [
+    {
+      "Field": "/InteractionType",
+      "Value": 3
+    }
+  ]
+}

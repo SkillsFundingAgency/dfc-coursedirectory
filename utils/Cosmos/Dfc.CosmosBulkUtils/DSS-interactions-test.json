@@ -1,0 +1,10 @@
+{
+  "FilterPredicate": "SELECT c.id FROM c where c.id = \"f86ce411-dd37-4dd0-8191-439dee9abde2\"",
+  "PartionKeyValue": "/_partitionKey",
+  "Operations": [
+    {
+      "Field": "/InteractionType",
+      "Value": 3
+    }
+  ]
+}
