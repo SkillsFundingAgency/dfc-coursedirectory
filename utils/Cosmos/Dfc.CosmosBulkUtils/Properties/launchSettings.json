@@ -2,7 +2,7 @@
   "profiles": {
     "Dfc.CosmosBulkUtils": {
       "commandName": "Project",
-      "commandLineArgs": "patch -u https://dss-test-shared-cdb.documents.azure.com:443/ -k VnYVyg5Yf1zRjdOrh4OtIfLoPWLEJWnoWBgrFxxxTW52RxgPZEN0z0wl2daRfGnd7HgoDch5WaLviHEXUdgEfg== -c interactions -d interactions -f 195165-TEST-targeted-test-3.json"
+      "commandLineArgs": "patch -u https://dss-prd-shared-cdb.documents.azure.com:443/ -k VnYVyg5Yf1zRjdOrh4OtIfLoPWLEJWnoWBgrFxxxTW52RxgPZEN0z0wl2daRfGnd7HgoDch5WaLviHEXUdgEfg== -c interactions -d interactions -f 195165-PRD-run-204.json"
     }
   }
 }
