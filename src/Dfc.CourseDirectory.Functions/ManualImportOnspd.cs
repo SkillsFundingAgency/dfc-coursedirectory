@@ -4,18 +4,18 @@ using Microsoft.Azure.WebJobs;
 
 namespace Dfc.CourseDirectory.Functions
 {
-    public class ImportOnspd
+    public class ManualImportONSPD
     {
         private readonly OnspdDataImporter _onspdDataImporter;
 
-        public ImportOnspd(OnspdDataImporter onspdDataImporter)
+        public ManualImportONSPD(OnspdDataImporter onspdDataImporter)
         {
             _onspdDataImporter = onspdDataImporter;
         }
 
-        [FunctionName("ImportOnspd")]
+        [FunctionName("ManualImportONSPD")]
         [Singleton]
         [NoAutomaticTrigger]
-        public Task RunNightly(string input) => _onspdDataImporter.ImportData();
+        public Task Run(string filename) => _onspdDataImporter.ManualDataImport(filename);
     }
 }
