@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     nameof(UpsertLarsValidityRecord.LearnAimRef),
                     nameof(UpsertLarsValidityRecord.LastNewStartDate)
                 },
-                "LARS.Validity");
+                "LARS.Validity", true);
 
             return new None();
         }
