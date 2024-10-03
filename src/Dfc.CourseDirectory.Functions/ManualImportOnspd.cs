@@ -19,8 +19,6 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName("ManualImportONSPD")]
-        [Singleton]
-        [NoAutomaticTrigger]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
 
         {
