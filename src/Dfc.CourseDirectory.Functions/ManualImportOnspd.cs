@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [FunctionName("ManualImportONSPD")]
-        public ActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
 
         {
             string filename = request.Query["filename"];
@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Functions
                 return new BadRequestObjectResult("Bad request: please indicate the target .csv filename using the filename parameter.");
             }
 
-            _onspdDataImporter.ManualDataImport(filename);
+            await _onspdDataImporter.ManualDataImport(filename);
 
             return new OkObjectResult($"Manual data import triggered for filename: {filename}");
         }
