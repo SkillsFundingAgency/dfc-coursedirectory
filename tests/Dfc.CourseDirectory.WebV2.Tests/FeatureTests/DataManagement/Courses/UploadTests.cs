@@ -331,9 +331,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
         {
             // Arrange
             var provider = await TestData.CreateProvider();
-            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;
-            var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
+            var expiredLearnAimRef = (await TestData.CreateLearningDelivery(effectiveTo: DateTime.Today.AddDays(-1))).LearnAimRef;            
             var expiredOperationalEndDate = (await TestData.CreateLearningDelivery(operationalEndDate: DateTime.Now.AddDays(-1))).LearnAimRef;
+            var validLearnAimRef = (await TestData.CreateLearningDelivery()).LearnAimRef;
 
             //Add missing lars
             List<CsvCourseRow> courseUploadRows = DataManagementFileHelper.CreateCourseUploadRows(validLearnAimRef, 1).ToList();
@@ -359,6 +359,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
             var doc = await response.GetDocument();
             doc.AssertHasError("File", "The file contains errors and could not be uploaded");
+
+            var missingLars = doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim());
+            var invalidLars = doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim());
+            var expiredLars = doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim());
+
             doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
             {
                 "Row 3",
