@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Newtonsoft.Json;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 
@@ -22,9 +21,7 @@ namespace Dfc.CourseDirectory.Functions
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
 
         {
-            string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            string filename = data?.filename;
+            string filename = request.Query["filename"];
 
             if (string.IsNullOrEmpty(filename))
             {
