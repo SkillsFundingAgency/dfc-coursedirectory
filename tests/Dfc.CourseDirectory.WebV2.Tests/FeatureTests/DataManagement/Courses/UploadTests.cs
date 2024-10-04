@@ -358,11 +358,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("File", "The file contains errors and could not be uploaded");
-
-            var missingLars = doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim());
-            var invalidLars = doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim());
-            var expiredLars = doc.GetAllElementsByTestId("InvalidLars").Select(e => e.TextContent.Trim());
+            doc.AssertHasError("File", "The file contains errors and could not be uploaded");            
 
             doc.GetAllElementsByTestId("MissingLars").Select(e => e.TextContent.Trim()).Should().BeEquivalentTo(new[]
             {
