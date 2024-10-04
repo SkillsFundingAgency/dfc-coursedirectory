@@ -10,6 +10,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
     public class UpsertLarsValidity : ISqlQuery<None>
     {
         public IEnumerable<UpsertLarsValidityRecord> Records { get; set; }
+        public bool DeleteIfNotInSource { get; set;}
     }
 
     public class UpsertLarsValidityRecord

@@ -202,7 +202,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsValidity
                 {
-                    Records = records
+                    Records = records, 
+                    DeleteIfNotInSource = true
                 }));
             }
         }
