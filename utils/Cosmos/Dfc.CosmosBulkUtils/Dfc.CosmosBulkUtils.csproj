@@ -29,6 +29,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="delete-outcomes-199697-prd.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="delete-outcomes-199697-pp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="delete-outcomes-199697-sit.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
