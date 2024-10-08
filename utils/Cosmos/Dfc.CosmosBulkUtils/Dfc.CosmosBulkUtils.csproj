@@ -29,6 +29,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="delete-outcomes-199697-sit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="delete-outcomes-199697-dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="patch-provider-types-2-to-0.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
