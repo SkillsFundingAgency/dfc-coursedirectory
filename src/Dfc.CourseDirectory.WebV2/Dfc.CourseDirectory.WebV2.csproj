@@ -31,6 +31,7 @@
     <None Remove="Content\components\cookie-banner.js" />
     <None Remove="Content\components\dm-errors.css" />
     <None Remove="Content\components\dm-publish-summary.css" />
+    <None Remove="Content\components\govuk-footer.css" />
     <None Remove="Content\components\inset-text.css" />
     <None Remove="Content\components\link-button.css" />
     <None Remove="Content\components\list.css" />

@@ -3153,7 +3153,7 @@
   display: inline-block;
   min-width: 125px;
   padding-top: 112px;
-  background-image: url("/assets/images/govuk-crest-tudor-crown.png");
+  background-image: url("/assets/images/govuk-crest.png");
   background-repeat: no-repeat;
   background-position: 50% 0%;
   background-size: 125px 102px;
@@ -3164,7 +3164,7 @@
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
   .govuk-footer__copyright-logo {
-    background-image: url("/assets/images/govuk-crest-tudor-crown-2x.png");
+    background-image: url("/assets/images/govuk-crest-2x.png");
   }
 }
 
