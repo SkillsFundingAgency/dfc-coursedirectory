@@ -92,15 +92,6 @@
     "appHostName": {
       "value": "some.host.name"
     },
-    "keyVaultName": {
-      "value": "a-keyvault"
-    },
-    "keyVaultResourceGroup": {
-      "value": "keyvault-rg"
-    },
-    "certificateName": {
-      "value": "certificate-name"
-    },
     "appServicePlanName": {
       "value": "dfc-foo-prov-shared-asp"
     },
