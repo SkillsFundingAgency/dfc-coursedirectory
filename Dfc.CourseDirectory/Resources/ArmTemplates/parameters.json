@@ -92,15 +92,6 @@
     "appHostName": {
       "value": "__appHostName__"
     },
-    "keyVaultName": {
-      "value": "__SharedKeyVaultName__"
-    },
-    "keyVaultResourceGroup": {
-      "value": "__SharedResourceGroup__"
-    },
-    "certificateName": {
-      "value": "__certificateName__"
-    },
     "appServicePlanName": {
       "value": "__providerPortalAppServicePlan__"
     },
