@@ -8,7 +8,7 @@ var gulp = require("gulp"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
     uglify = require("gulp-uglify"),
-    sass = require("gulp-sass"),
+    sass = require("sass"),
     eslint = require("gulp-eslint"),
     merge = require("merge-stream");
 
