@@ -10,6 +10,9 @@ variables:
   SolutionBaseName: 'Dfc.CourseDirectory'
   GitVersionConfigFilePath: Dfc.CourseDirectory/Resources/AzureDevOps/GitVersion.yml
   group: dfc-findacourse-build
+  azureSubscription: '$(AzureSubscriptionId)'
+  appName: '$(functionappName)'
+  resourceGroupName: '$(sharedResourceGroup)'
 
 resources:
   repositories:
@@ -159,9 +162,9 @@ steps:
 - task: AzureAppServiceSettings@1
   displayName: Disable certain Dfc.CourseDirectory.Functions
   inputs:
-    azureSubscription: '$(AzureSubscriptionId)'
-    appName: '$(functionappName)'
-    resourceGroupName: '$(sharedResourceGroup)'
+    azureSubscription: '$(azureSubscription)'
+    appName: '$(appName)'
+    resourceGroupName: '$(resourceGroupName)'
     appSettings: |
       AzureWebJobs.ImportLarsData.Disabled=true
 
