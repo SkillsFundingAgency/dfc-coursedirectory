@@ -159,6 +159,9 @@ steps:
 - task: AzureAppServiceSettings@1
   displayName: Disable certain Dfc.CourseDirectory.Functions
   inputs:
+    azureSubscription: '$(AzureSubscriptionId)'
+    appName: '$(functionappName)'
+    resourceGroupName: '$(sharedResourceGroup)'
     appSettings: |
       AzureWebJobs.ImportLarsData.Disabled=true
 
