@@ -156,6 +156,12 @@ steps:
     publishWebProjects: false
     zipAfterPublish: True
 
+- task: AzureAppServiceSettings@1
+  displayName: Disable certain Dfc.CourseDirectory.Functions
+  inputs:
+    appSettings: |
+      AzureWebJobs.ImportLarsData.Disabled=true
+
 - task: CopyFiles@2
   displayName: 'Copy files: database'
   inputs:
