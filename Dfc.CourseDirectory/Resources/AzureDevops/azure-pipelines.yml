@@ -10,9 +10,6 @@ variables:
   SolutionBaseName: 'Dfc.CourseDirectory'
   GitVersionConfigFilePath: Dfc.CourseDirectory/Resources/AzureDevOps/GitVersion.yml
   group: dfc-findacourse-build
-  azureSubscription: '$(AzureSubscriptionId)'
-  appName: '$(functionappName)'
-  resourceGroupName: '$(sharedResourceGroup)'
 
 resources:
   repositories:
@@ -158,15 +155,6 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
-
-- task: AzureAppServiceSettings@1
-  displayName: Disable certain Dfc.CourseDirectory.Functions
-  inputs:
-    azureSubscription: '$(azureSubscription)'
-    appName: '$(appName)'
-    resourceGroupName: '$(resourceGroupName)'
-    appSettings: |
-      AzureWebJobs.ImportLarsData.Disabled=true
 
 - task: CopyFiles@2
   displayName: 'Copy files: database'
