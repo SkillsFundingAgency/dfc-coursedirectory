@@ -32,8 +32,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var larsDataSetOption = Options.Create(new LarsDataset
             {
-                Url =
-                    "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F008%2FLearningDelivery_V008_CSV.Zip"
+                Url = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F010%2FLearningDelivery_V010_CSV.Zip"
             });
 
             var importer = new LarsDataImporter(

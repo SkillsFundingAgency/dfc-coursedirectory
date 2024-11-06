@@ -98,9 +98,6 @@
     "keyVaultResourceGroup": {
       "value": "__SharedResourceGroup__"
     },
-    "certificateName": {
-      "value": "__certificateName__"
-    },
     "appServicePlanName": {
       "value": "__providerPortalAppServicePlan__"
     },
