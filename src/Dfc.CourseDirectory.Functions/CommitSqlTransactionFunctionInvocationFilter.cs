@@ -1,25 +1,24 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Microsoft.Azure.WebJobs.Host;
+﻿using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Middleware;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Functions
 {
-#pragma warning disable CS0618 // Type or member is obsolete
-    // IFunctionInvocationFilter is not obsolete just not complete - https://github.com/Azure/azure-webjobs-sdk/issues/1284
-    public class CommitSqlTransactionFunctionInvocationFilter : IFunctionInvocationFilter
+    public class CommitSqlTransactionMiddleware : IFunctionsWorkerMiddleware
     {
         private readonly FunctionInstanceServicesCatalog _functionInstanceServicesCatalog;
 
-        public CommitSqlTransactionFunctionInvocationFilter(FunctionInstanceServicesCatalog functionInstanceServicesCatalog)
+        public CommitSqlTransactionMiddleware(FunctionInstanceServicesCatalog functionInstanceServicesCatalog)
         {
             _functionInstanceServicesCatalog = functionInstanceServicesCatalog;
         }
 
-        public Task OnExecutedAsync(FunctionExecutedContext executedContext, CancellationToken cancellationToken)
+        public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
         {
-            var instanceServices = _functionInstanceServicesCatalog.GetFunctionServices(executedContext.FunctionInstanceId);
+            await next(context);
+
+            var instanceServices = _functionInstanceServicesCatalog.GetFunctionServices(new Guid(context.InvocationId));
 
             var sqlTransactionMarker = instanceServices.GetRequiredService<SqlTransactionMarker>();
             if (sqlTransactionMarker.GotTransaction)
@@ -27,12 +26,6 @@ namespace Dfc.CourseDirectory.Functions
                 sqlTransactionMarker.Transaction.Commit();
                 sqlTransactionMarker.OnTransactionCompleted();
             }
-
-            return Task.CompletedTask;
         }
-
-        public Task OnExecutingAsync(FunctionExecutingContext executingContext, CancellationToken cancellationToken) =>
-            Task.CompletedTask;
     }
-#pragma warning restore CS0618 // Type or member is obsolete
 }

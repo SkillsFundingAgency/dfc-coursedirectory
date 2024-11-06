@@ -7,7 +7,6 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;
-using FluentValidation.Results;
 using FormFlow;
 using MediatR;
 using OneOf;

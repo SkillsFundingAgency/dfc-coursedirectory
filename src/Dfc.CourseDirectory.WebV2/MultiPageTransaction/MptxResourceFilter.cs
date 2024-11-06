@@ -44,12 +44,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                     };
                     return;
                 }
-                
+
                 var feature = new MptxInstanceFeature(instance);
                 context.HttpContext.Features.Set(feature);
             }
 
-            await next();            
+            await next();
         }
     }
 }

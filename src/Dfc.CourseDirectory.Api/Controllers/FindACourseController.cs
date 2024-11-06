@@ -62,13 +62,16 @@ namespace Dfc.CourseDirectory.Api.Controllers
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
-                    _log.LogWarning($"Failed to retrieve CourseRun Details with given search criteria.Response Code [NOT FOUND]"); 
+                _ =>
+                {
+                    _log.LogWarning($"Failed to retrieve CourseRun Details with given search criteria.Response Code [NOT FOUND]");
                     return NotFound();
                 },
-                r => {
+                r =>
+                {
                     _log.LogInformation($"CourseRun Details found. Returning data in Json format. Response Code [OK]");
-                    return Ok(r); });
+                    return Ok(r);
+                });
         }
 
         [HttpGet("~/public/fac/tleveldetail")]
@@ -82,11 +85,13 @@ namespace Dfc.CourseDirectory.Api.Controllers
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
+                _ =>
+                {
                     _log.LogWarning($"Failed to retrieve TLevel Details with given T-Level ID.Response Code [NOT FOUND]");
                     return NotFound();
                 },
-                r => {
+                r =>
+                {
                     _log.LogInformation($"T-Level Details found. Returning data in Json format. Response Code [OK]");
                     return Ok(r);
                 });

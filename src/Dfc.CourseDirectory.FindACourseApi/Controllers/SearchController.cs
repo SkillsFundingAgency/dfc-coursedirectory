@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
@@ -50,7 +49,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
                         StatusCode = p.Status ?? StatusCodes.Status400BadRequest
                     };
                 },
-                r => {
+                r =>
+                {
                     _log.LogInformation($"Successfully retrieved Course Detail. Response Code [OK]");
                     return Ok(r);
                 }
