@@ -223,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 null;
 
             var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
-
+                
             var vm = new ViewModel()
             {
                 DeliveryMode = deliveryMode,
