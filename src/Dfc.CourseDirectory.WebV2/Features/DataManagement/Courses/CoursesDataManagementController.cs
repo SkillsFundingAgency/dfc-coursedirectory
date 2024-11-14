@@ -553,7 +553,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
            result => new CsvResult<CsvNonLarsCourseRowWithErrors>(result.FileName, result.NonLarsRows));
 
         [HttpGet("nonlars-errors")]
-        public async Task<IActionResult> NonLarsErrors() =>
+        public async Task<IActionResult> NonLarsErrors(bool isNonLars) =>
            await _mediator.SendAndMapResponse(
                new Errors.Query() { IsNonLars = true },
                result => result.Match<IActionResult>(
