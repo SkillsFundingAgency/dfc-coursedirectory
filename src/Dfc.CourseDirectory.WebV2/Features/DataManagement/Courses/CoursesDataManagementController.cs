@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             await _mediator.SendAndMapResponse(
                 new ResolveList.Query() { IsNonLars = false },
                 result => result.Match<IActionResult>(
-                    noErrors => RedirectToAction(nameof(CheckAndPublish), false).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpGet("nonlars-resolve")]
@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             await _mediator.SendAndMapResponse(
                 new ResolveList.Query() { IsNonLars = true },
                 result => result.Match<IActionResult>(
-                    noErrors => RedirectToAction(nameof(NonLarsCheckAndPublish), true).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    noErrors => RedirectToAction(nameof(NonLarsCheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpGet("resolve/{rowNumber}/delivery")]
@@ -577,11 +577,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                     }).WithProviderContext(_providerContextProvider.GetProviderContext())));
         }
         [HttpGet("errors")]
-        public async Task<IActionResult> Errors(bool isNonLars) =>
+        public async Task<IActionResult> Errors() =>
             await _mediator.SendAndMapResponse(
-                new Errors.Query() { IsNonLars = isNonLars},
+                new Errors.Query() { IsNonLars = false },
                 result => result.Match<IActionResult>(
-                    noErrors => RedirectToAction(nameof(CheckAndPublish),isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpPost("errors")]
