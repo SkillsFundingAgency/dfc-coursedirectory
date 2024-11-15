@@ -25,6 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public int RowNumber { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public bool IsNonLars { get; set; }
+        public List<Sector> Sectors { get; set; }
     }
 
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, UploadStatus>>

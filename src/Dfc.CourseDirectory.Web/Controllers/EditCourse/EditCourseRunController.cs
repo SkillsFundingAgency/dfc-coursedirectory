@@ -437,6 +437,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             }
 
             var course = await GetCourse(courseId);
+
             var updateCourseResult = await _sqlQueryDispatcher.ExecuteQuery(new UpdateCourse()
             {
                 CourseId = courseId,
