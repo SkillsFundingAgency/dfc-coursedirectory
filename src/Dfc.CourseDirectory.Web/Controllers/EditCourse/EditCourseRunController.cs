@@ -293,7 +293,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 if (courseRun != null)
                 {
                     _log.LogInformation($" EditCourseRunController Index courseRun !=null");
-                    
+
+                    var sectors = await GetSectors();
+
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -333,7 +335,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         NonLarsCourse = nonLarsCourse,
                         CourseType = course.CourseType,
                         SectorId = course.SectorId,
-                        Sectors = await GetSectors(),
+                        Sectors = sectors,
                         EducationLevel = course.EducationLevel,
                         AwardingBody = course.AwardingBody
                     };
