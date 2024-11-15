@@ -244,7 +244,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 VenueId = row.VenueId,
                 ProviderVenues = providerVenues
             };
-            if (isNonLars)
+            if (true)
             { 
                 vm.CourseType = row.ResolvedCourseType; 
                 vm.EducationLevel = row.ResolvedEducationLevel;
