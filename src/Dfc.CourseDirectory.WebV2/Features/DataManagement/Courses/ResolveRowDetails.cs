@@ -246,7 +246,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 StudyMode = row.ResolvedStudyMode,
                 AttendancePattern = row.ResolvedAttendancePattern,
                 VenueId = row.VenueId,
-                ProviderVenues = providerVenues
+                ProviderVenues = providerVenues,
+                IsNonLars = isNonLars
             };
             if (isNonLars)
             { 
