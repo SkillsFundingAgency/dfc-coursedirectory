@@ -224,7 +224,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 null;
 
             var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
-                
+            Console.WriteLine("begin sectors");
+            Console.WriteLine(sectors);
+            Console.WriteLine("end sectors");
+
             var vm = new ViewModel()
             {
                 DeliveryMode = deliveryMode,
@@ -253,6 +256,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                 vm.Sector = sectors.FirstOrDefault(s => s.Code.Equals(row.Sector, StringComparison.InvariantCultureIgnoreCase))?.Code ?? null;
                 vm.Sectors = sectors;
             }
+
+            Console.WriteLine("isNonLars = " + isNonLars);
+            Console.WriteLine("vm.Sector = " + vm.Sector);
+
             return vm;
         }
 
