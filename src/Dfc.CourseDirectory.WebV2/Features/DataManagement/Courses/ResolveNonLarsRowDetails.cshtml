@@ -79,12 +79,9 @@
                 <govuk-radios-hint>
                     Select one option.
                 </govuk-radios-hint>
-                @if (Model.Sectors != null && Model.Sectors.Any())
+                @foreach (var sector in Model.Sectors)
                 {
-                    @foreach (var sector in Model.Sectors)
-                    {
-                        <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
-                    }
+                    <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
                 }
             </govuk-radios>
             <input type="hidden" name="testing" value="@Model.Sector" />
