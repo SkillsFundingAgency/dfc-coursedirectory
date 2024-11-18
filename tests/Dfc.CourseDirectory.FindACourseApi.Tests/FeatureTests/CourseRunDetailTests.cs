@@ -126,9 +126,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 ProviderId = provider.ProviderId,
                 ProviderName = "TestProviderAlias",
-                DisplayNameSource = ProviderDisplayNameSource.ProviderName,
-                EmployerSatisfaction = 1.2M,
-                LearnerSatisfaction = 3.4M
+                DisplayNameSource = ProviderDisplayNameSource.ProviderName
             };
 
             SqlQueryDispatcher.Setup(s => s.ExecuteQuery(It.IsAny<GetCourse>()))
@@ -171,8 +169,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 resultJson["provider"]["providerName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
                 resultJson["provider"]["tradingName"].ToObject<string>().Should().Be(sqlProvider.DisplayName);
                 resultJson["provider"]["email"].ToObject<string>().Should().Be(providerContact.Email);
-                resultJson["provider"]["learnerSatisfaction"].ToObject<decimal>().Should().Be(sqlProvider.LearnerSatisfaction);
-                resultJson["provider"]["employerSatisfaction"].ToObject<decimal>().Should().Be(sqlProvider.EmployerSatisfaction);
                 resultJson["course"].ToObject<object>().Should().NotBeNull();
                 resultJson["course"]["courseId"].ToObject<Guid>().Should().Be(course.CourseId);
                 resultJson["venue"].ToObject<object>().Should().NotBeNull();
