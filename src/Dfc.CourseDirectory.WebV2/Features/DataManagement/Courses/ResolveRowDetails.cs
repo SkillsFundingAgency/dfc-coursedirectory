@@ -51,12 +51,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public CourseAttendancePattern? AttendancePattern { get; set; }
         public Guid? VenueId { get; set; }
         public bool IsNonLars { get; set; }
-        public List<Sector> Sectors { get; set; }
     }
 
     public class ViewModel : Command
     {
         public IReadOnlyCollection<ViewModelProviderVenuesItem> ProviderVenues { get; set; }
+        public List<Sector> Sectors { get; set; }
     }
 
     public class ViewModelProviderVenuesItem
