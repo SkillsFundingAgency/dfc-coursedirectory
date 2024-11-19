@@ -5,7 +5,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    var regex = RegexPattern.AllowValidCharactersRelaxed;
+    var regex = RegexPattern.DisallowHTMLTags;
 }
 
     <div class="govuk-form-group">
@@ -24,7 +24,7 @@
                val-max-length="255"
                val-max-length-message="The maximum length of Awarding body is 255 characters"
                val-regex="@regex"
-               val-regex-message="Awarding body contains invalid characters" />
+               val-regex-message="Adding HTML tags is not possible in this section for security reasons." />
 
     </div>
 

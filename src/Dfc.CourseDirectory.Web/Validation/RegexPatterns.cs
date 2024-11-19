@@ -7,7 +7,7 @@
         public const string AllowValidCharactersRelaxed =
             @"^[a-zA-Z0-9/\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" +"\"" + "\\\\]+$";
             
-        public const string DisallowHTMLTags = @"^(\<.*?\>).*?(\<\/.*?\>)"; //Not tested.
+        public const string DisallowHTMLTags = @"^((?!<[^>]+>).)*$";
 
         public const string BlackListHTMLTags = @"^([^<>]*(<(?!\/?(script|style|iframe|embed|object|applet|link|meta|base|form|input|label|select|option|textarea|img|a)\b)[^>]*>)*[^<>]*)*$|^[^<]*$";
 
