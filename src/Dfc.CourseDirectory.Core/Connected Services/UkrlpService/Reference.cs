@@ -7,6 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Configuration;
+
 namespace UkrlpService
 {
     
@@ -1869,7 +1872,7 @@ namespace UkrlpService
         
         private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
         {
-            if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
+           if ((endpointConfiguration == EndpointConfiguration.ProviderQueryPort))
             {
                 return new System.ServiceModel.EndpointAddress("https://webservices.ukrlp.co.uk/UkrlpProviderQueryWS/ProviderQueryServiceV6");
             }
