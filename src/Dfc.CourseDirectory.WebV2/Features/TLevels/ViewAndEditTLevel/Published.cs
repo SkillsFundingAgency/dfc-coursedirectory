@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Published
             {
                 TLevelId = _journeyInstance.State.TLevelId,
                 YourReference = _journeyInstance.State.YourReference,
-                TLevelName=_journeyInstance.State.TLevelName
+                TLevelName = _journeyInstance.State.TLevelName
             });
     }
 }

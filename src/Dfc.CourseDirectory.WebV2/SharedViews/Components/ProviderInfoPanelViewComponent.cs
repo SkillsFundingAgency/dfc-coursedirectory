@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.WebV2.SharedViews.Components;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features
             var providerContact = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = providerId });
 
 
-         
+
             ProviderInfoPanelViewModel vm;
 
             if (providerContact == null)

@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
 
         public async Task<OneOf<NotFound, Command>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var rowStatus = await GetRowStatus(request.RowNumber,request.IsNonLars);
+            var rowStatus = await GetRowStatus(request.RowNumber, request.IsNonLars);
 
             if (rowStatus == RowStatus.DoesNotExist)
             {
@@ -91,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         private async Task<RowStatus> GetRowStatus(int rowNumber, bool isNonLars)
         {
             var providerId = _providerContextProvider.GetProviderId();
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber,isNonLars);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(providerId, rowNumber, isNonLars);
 
             if (row == null)
             {

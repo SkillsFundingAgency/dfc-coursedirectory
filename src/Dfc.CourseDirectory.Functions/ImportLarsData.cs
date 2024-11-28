@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -13,8 +12,7 @@ namespace Dfc.CourseDirectory.Functions
             _dataImporter = dataImporter;
         }
 
-        [FunctionName("ImportLarsData")]
-        [Singleton]
+        [Function("ImportLarsData")]
         public Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo timer) => _dataImporter.ImportData();
     }
 }

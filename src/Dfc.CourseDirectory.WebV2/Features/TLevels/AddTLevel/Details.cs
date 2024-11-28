@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
                 YourReference = _journeyInstance.State.YourReference
             };
 
-        private  Task<IReadOnlyCollection<Venue>> GetVenuesForProvider(Guid providerId) =>
+        private Task<IReadOnlyCollection<Venue>> GetVenuesForProvider(Guid providerId) =>
             _sqlQueryDispatcher.ExecuteQuery(
                 new GetVenuesByProvider()
                 {
