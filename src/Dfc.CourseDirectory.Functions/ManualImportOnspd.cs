@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.Functions
 
             if (string.IsNullOrEmpty(filename))
             {
-                return new BadRequestObjectResult("Bad request: please indicate the target .csv filename using the filename parameter.");
+                return new BadRequestObjectResult("Bad request: Please indicate the target .csv filename using the filename parameter.");
             }
 
             await _onspdDataImporter.ManualDataImport(filename);
