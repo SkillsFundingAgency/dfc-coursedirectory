@@ -23,6 +23,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class CourseSummaryController : BaseController
     {
+        private const string FindACourseUrlConfigName = "FindACourse:Url";
+
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -134,8 +136,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             //Get live service link from the Environment and add in the unique ids
-            string findACourseUrl = _configuration["FindACourse:Url"];
-            findACourseUrl = string.Format(findACourseUrl, vm.CourseId, vm.CourseInstanceId);
+            string findACourseUrl = string.Format(_configuration[FindACourseUrlConfigName], vm.CourseId, vm.CourseInstanceId);
 
             ViewBag.LiveServiceURL = findACourseUrl;
 
