@@ -21,7 +21,6 @@
         "applicationUrl": "https://localhost:44345;http://localhost:54034",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "FindACourse__Url": "https://dev-beta.nationalcareersservice.org.uk/find-a-course/details?courseId={0}&runId={1}"
       }
     }
   }
