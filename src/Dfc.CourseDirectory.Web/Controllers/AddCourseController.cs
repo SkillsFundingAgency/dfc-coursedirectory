@@ -835,10 +835,8 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     : RedirectToAction("ProviderSearch", "ProviderSearch");
             }
 
-            //Generate Live service URL accordingly based on current host
-            string host = HttpContext.Request.Host.ToString();
-            string commonurl = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + commonurl;
+            //Extract Live service URL from the environment variable
+            ViewBag.LiveServiceURL = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
 
             Session.Remove(SessionPublishedCourse);
 
