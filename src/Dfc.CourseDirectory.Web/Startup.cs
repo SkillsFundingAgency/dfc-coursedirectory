@@ -83,8 +83,6 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
 
-            services.Configure<FindACourse>(Configuration.GetSection("FindACourse:Url"));
-
             services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));
 
             services.AddSingleton<QueueBackgroundWorkScheduler>();
