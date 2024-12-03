@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
@@ -25,11 +26,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        
+        private readonly IConfiguration _configuration;
+
 
         public CourseSummaryController(
             ICourseService courseService,
-            ISqlQueryDispatcher sqlQueryDispatcher) : base(sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IConfiguration configuration) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -38,6 +41,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _courseService = courseService;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _configuration = configuration;
         }
         public async Task<IActionResult> Index(Guid? courseId, Guid? courseRunId)
         {
@@ -130,7 +134,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             //Get live service link from the Environment and add in the unique ids
-            string findACourseUrl = Environment.GetEnvironmentVariable("FindACourse__Url");
+            string findACourseUrl = _configuration["FindACourse:Url"];
             findACourseUrl = string.Format(findACourseUrl, vm.CourseId, vm.CourseInstanceId);
 
             ViewBag.LiveServiceURL = findACourseUrl;
