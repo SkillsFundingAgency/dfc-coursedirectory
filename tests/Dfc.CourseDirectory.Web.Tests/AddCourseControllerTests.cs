@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 using Dfc.CourseDirectory.Web.Controllers;
@@ -43,6 +44,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         private readonly Mock<IProviderContextProvider> _mockProviderContextProvider;
         private readonly Mock<ICourseTypeService> _mockCourseTypeService;
         private readonly Mock<IWebRiskService> _mockWebRiskService;
+        private readonly Mock<IConfiguration> _mockConfiguration;
 
         public AddCourseControllerTests()
         {
@@ -53,6 +55,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockProviderContextProvider = new Mock<IProviderContextProvider>();
             _mockCourseTypeService = new Mock<ICourseTypeService>();
             _mockWebRiskService = new Mock<IWebRiskService>();
+            _mockConfiguration = new Mock<IConfiguration>();
         }
 
         #region Tests for AddCourse action method
@@ -860,7 +863,8 @@ namespace Dfc.CourseDirectory.Web.Tests
                             _mockCurrentUserProvider.Object,
                             _mockProviderContextProvider.Object,
                             _mockCourseTypeService.Object,
-                            _mockWebRiskService.Object);
+                            _mockWebRiskService.Object,
+                            _mockConfiguration.Object);
             addCourseController.ControllerContext = new ControllerContext();
             addCourseController.ControllerContext.HttpContext = new DefaultHttpContext { Session = _mockSession.Object };
             return addCourseController;

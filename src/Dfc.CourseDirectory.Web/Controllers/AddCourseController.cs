@@ -31,11 +31,14 @@ using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class AddCourseController : BaseController
-    {        
+    {
+        private const string FindACourseUrlConfigName = "FindACourse:Url";
+
         private readonly ICourseService _courseService;
         private ISession Session => HttpContext.Session;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -43,6 +46,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly IProviderContextProvider _providerContextProvider;
         private readonly ICourseTypeService _courseTypeService;
         private readonly IWebRiskService _webRiskService;
+        private readonly IConfiguration _configuration;
 
         public AddCourseController(
             ICourseService courseService,
@@ -50,7 +54,9 @@ namespace Dfc.CourseDirectory.Web.Controllers
             ICurrentUserProvider currentUserProvider,
             IProviderContextProvider providerContextProvider,
             ICourseTypeService courseTypeService,
-            IWebRiskService webRiskService) : base(sqlQueryDispatcher)
+            IWebRiskService webRiskService,
+            IConfiguration configuration) : base(sqlQueryDispatcher)
+
         {
             _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _sqlQueryDispatcher = sqlQueryDispatcher;
@@ -58,6 +64,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             _providerContextProvider = providerContextProvider;
             _courseTypeService = courseTypeService;
             _webRiskService = webRiskService;
+            _configuration = configuration;
         }
 
         [Authorize]
@@ -830,7 +837,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
-            string commonurl = "find-a-course/course-details?CourseId=" + publishedCourse.CourseId + "&r=" + publishedCourse.CourseRunId;
+            string commonurl = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + commonurl;
 
             Session.Remove(SessionPublishedCourse);
