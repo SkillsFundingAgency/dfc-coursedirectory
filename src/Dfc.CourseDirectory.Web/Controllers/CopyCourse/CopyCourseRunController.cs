@@ -610,9 +610,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _session.Remove(CopyCourseRunPublishedCourseSessionKey);
 
             //Generate Live service URL accordingly based on current host
-            string host = HttpContext.Request.Host.ToString();
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) +
-                string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
+            ViewBag.LiveServiceURL = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
 
             return View(publishedCourse);
         }
