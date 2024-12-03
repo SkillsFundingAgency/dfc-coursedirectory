@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
 using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Dfc.CourseDirectory.Web.Controllers
@@ -128,10 +129,11 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.Regions = FormattedRegionsByIds(allRegions, courseRun.SubRegionIds);
             }
 
-            //Generate Live service URL accordingly based on current host
-            string host = HttpContext.Request.Host.ToString();
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) +
-                "find-a-course/course-details?CourseId=" + vm.CourseId + "&r=" + vm.CourseInstanceId;
+            //Get live service link from the Environment and add in the unique ids
+            string findACourseUrl = Environment.GetEnvironmentVariable("FindACourse__Url");
+            findACourseUrl = string.Format(findACourseUrl, vm.CourseId, vm.CourseInstanceId);
+
+            ViewBag.LiveServiceURL = findACourseUrl;
 
             return View(vm);
         }
