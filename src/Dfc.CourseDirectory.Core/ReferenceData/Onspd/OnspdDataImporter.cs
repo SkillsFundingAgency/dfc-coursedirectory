@@ -22,7 +22,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
     {
         // internal for testing
         internal const string ContainerName = "onspd";
-        internal const string FileName = "ONSPD_MAY_2023_UK.csv";
         internal const string EnglandCountryId = "E92000001";
 
         private const int ChunkSize = 200;
@@ -41,9 +40,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             _logger = logger;
         }
 
-        public async Task ImportData()
+        public async Task ManualDataImport(string filename)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(FileName);
+            var blobClient = _blobContainerClient.GetBlobClient(filename);
 
             var blob = await blobClient.DownloadAsync();
 
@@ -79,7 +78,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             _logger.LogInformation($"Processed {rowCount} rows, imported {importedCount} postcodes.");
         }
 
-        public async Task AutomatedImportData()
+        public async Task AutomatedDataImport()
         {
             string geoportal_url = "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-(month)-(year)(extra)/about";
 

@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -20,9 +22,7 @@ namespace Dfc.CourseDirectory.Functions
         [Function("AutomatedImportONSPD")]
         public async Task<IActionResult> Run([TimerTrigger("0 0 20 27 * *")] TimerInfo myTimer)
         {
-            await _onspdDataImporter.AutomatedImportData();
-
-            return new OkResult();
+            await _onspdDataImporter.AutomatedDataImport();
         }
     }
 }
