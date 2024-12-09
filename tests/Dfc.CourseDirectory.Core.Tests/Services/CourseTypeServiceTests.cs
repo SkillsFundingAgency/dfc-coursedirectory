@@ -1,26 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.Models;
-using Moq;
-using Dfc.CourseDirectory.Core.Services;
-using Xunit;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using System;
-using Bogus;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Services;
+using Moq;
+using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.Services
 {
     public class CourseTypeServiceTests
-    {        
+    {
         private readonly Mock<ISqlQueryDispatcher> _mockSqlQueryDispatcher;
 
         public CourseTypeServiceTests()
-        {            
-            _mockSqlQueryDispatcher = new Mock<ISqlQueryDispatcher>();            
+        {
+            _mockSqlQueryDispatcher = new Mock<ISqlQueryDispatcher>();
         }
 
         [Fact]
@@ -497,6 +496,6 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var larsCourseTypesReadOnlyList = new ReadOnlyCollection<LarsCourseType>(larsCourseTypesList.Where(l => l.LearnAimRef == learnAimRef).ToList());
             _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetLarsCourseType>()))
                 .ReturnsAsync(larsCourseTypesReadOnlyList);
-        }        
+        }
     }
 }

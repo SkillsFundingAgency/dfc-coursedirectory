@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -14,9 +13,8 @@ namespace Dfc.CourseDirectory.Functions
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
-        [FunctionName(nameof(UpdateFindACourseIndexVenueId))]
-        [NoAutomaticTrigger]
-        public async Task Run(string input)
+        [Function(nameof(UpdateFindACourseIndexVenueId))]
+        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher())
             {

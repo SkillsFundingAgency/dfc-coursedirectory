@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
         {
             if (isNonLars)
             {
-                Session.SetString(SessionNonLarsCourse,"true");
+                Session.SetString(SessionNonLarsCourse, "true");
             }
             else
             {
@@ -30,6 +30,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             }
             return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query() { IsNonLars = isNonLars }, vm => View("ExpiredCourseRuns", vm));
         }
-            
+
     }
 }

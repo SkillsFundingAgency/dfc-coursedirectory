@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
@@ -26,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 // Required for classroom based delivery modes
                 .Must((t, v) => attendancePatternWasSpecified(t) && v.HasValue)
-                    .When(t => IsCRorBL(getDeliveryMode(t)) , ApplyConditionTo.CurrentValidator)
+                    .When(t => IsCRorBL(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
                     .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED")
                 // Not allowed for delivery modes other than classroom based or blended learning
                 .Must((t, v) => !attendancePatternWasSpecified(t))
@@ -57,6 +58,23 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED");
         }
 
+        public static void Cost<T>(
+            this IRuleBuilderInitial<T, string> field,
+            Func<T, bool> costWasSpecified,
+            Func<T, string> getCostDescription)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                // Must be a valid decimal if specified
+                .Must(v => decimal.TryParse(v, out var d) ? true : false)
+                    .When(t => costWasSpecified(t), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_COST_INVALID")
+                // Required if cost description is not specified
+                .NotNull()
+                    .When(t => string.IsNullOrWhiteSpace(getCostDescription(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_COST_REQUIRED");
+        }
+
         public static void CostDescription<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
@@ -67,7 +85,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void CourseName<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
+                .NotNull()
+                    .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_REQUIRED")
                 .NotEmpty()
                     .WithMessageFromErrorCode("COURSERUN_COURSE_NAME_REQUIRED")
                 .MaximumLength(Constants.CourseNameMaxLength)
@@ -80,6 +99,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
+            .NotNull()
+                .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
             .NotEmpty()
                 .WithMessageFromErrorCode("COURSERUN_COURSE_WEB_PAGE_REQUIRED")
             .MaximumLength(Constants.CourseWebPageMaxLength)
@@ -202,7 +223,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         public static void ProviderCourseRef<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
-                .NormalizeWhitespace()
                 .MaximumLength(Constants.ProviderCourseRefMaxLength)
                     .WithMessageFromErrorCode("COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH")
                 .Matches(@"^[a-zA-Z0-9/\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$")
@@ -217,7 +237,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .Cascade(CascadeMode.Stop)
-                .NormalizeWhitespace()
                 .Custom((v, ctx) =>
                 {
                     var obj = (T)ctx.InstanceToValidate;
@@ -238,7 +257,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     }
 
                     // If not specified and Venue Name isn't specified then it's required
-                    if (!isSpecified && string.IsNullOrEmpty(getVenueName(obj)))
+                    if (!isSpecified && (string.IsNullOrEmpty(getVenueName(obj)) || string.IsNullOrWhiteSpace(getVenueName(obj))))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_REQUIRED"));
                         return;
@@ -261,7 +280,111 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .Cascade(CascadeMode.Stop)
                 // Must be valid
-                .Apply(builder => Rules.Date(builder, displayName: "Start date"))
+                .Custom((v, ctx) =>
+                {
+                    if (v == null)
+                        return;
+                    var date = new DateInput(v.Value);
+                    if (date.IsValid)
+                    {
+                        return;
+                    }
+                    var displayName = "Start date";
+                    Debug.Assert(date.InvalidReasons != InvalidDateInputReasons.None);
+
+                    // A date was provided but it's invalid; figure out an appropriate message.
+                    // We expect to have InvalidReasons to be either: InvalidDate OR
+                    // 1-2 of MissingDay, MissingMonth and MissingYear.
+
+                    if ((date.InvalidReasons & InvalidDateInputReasons.InvalidDate) != 0)
+                    {
+                        ctx.AddFailure($"{displayName} must be a real date");
+                        return;
+                    }
+
+                    var missingFields = EnumHelper.SplitFlags(date.InvalidReasons)
+                        .Aggregate(
+                            Enumerable.Empty<string>(),
+                            (acc, r) =>
+                            {
+                                var elementName = r switch
+                                {
+                                    InvalidDateInputReasons.MissingDay => "day",
+                                    InvalidDateInputReasons.MissingMonth => "month",
+                                    InvalidDateInputReasons.MissingYear => "year",
+                                    _ => throw new NotSupportedException($"Unexpected {nameof(InvalidDateInputReasons)}: '{r}'.")
+                                };
+
+                                return acc.Append(elementName);
+                            })
+                        .ToArray();
+
+                    Debug.Assert(missingFields.Length <= 2 && missingFields.Length > 0);
+
+                    ctx.AddFailure($"{displayName} must include a {string.Join(" and ", missingFields)}");
+                })
+                // Required if flexible start date is false
+                .NotEmpty()
+                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_REQUIRED")
+                // Not allowed if flexible start date is not false
+                .Empty()
+                    .When(t => getFlexibleStartDate(t) == true, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_NOT_ALLOWED")
+                // Must be in the future
+                .Must(v => v.Value >= now.Date)
+                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID");
+        }
+
+        public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                // Must be valid
+                .Custom((v, ctx) =>
+                {
+                    if (v == null)
+                        return;
+                    var date = new DateInput(v.Value);
+                    if (date.IsValid)
+                    {
+                        return;
+                    }
+                    var displayName = "Start date";
+                    Debug.Assert(date.InvalidReasons != InvalidDateInputReasons.None);
+
+                    // A date was provided but it's invalid; figure out an appropriate message.
+                    // We expect to have InvalidReasons to be either: InvalidDate OR
+                    // 1-2 of MissingDay, MissingMonth and MissingYear.
+
+                    if ((date.InvalidReasons & InvalidDateInputReasons.InvalidDate) != 0)
+                    {
+                        ctx.AddFailure($"{displayName} must be a real date");
+                        return;
+                    }
+
+                    var missingFields = EnumHelper.SplitFlags(date.InvalidReasons)
+                        .Aggregate(
+                            Enumerable.Empty<string>(),
+                            (acc, r) =>
+                            {
+                                var elementName = r switch
+                                {
+                                    InvalidDateInputReasons.MissingDay => "day",
+                                    InvalidDateInputReasons.MissingMonth => "month",
+                                    InvalidDateInputReasons.MissingYear => "year",
+                                    _ => throw new NotSupportedException($"Unexpected {nameof(InvalidDateInputReasons)}: '{r}'.")
+                                };
+
+                                return acc.Append(elementName);
+                            })
+                        .ToArray();
+
+                    Debug.Assert(missingFields.Length <= 2 && missingFields.Length > 0);
+
+                    ctx.AddFailure($"{displayName} must include a {string.Join(" and ", missingFields)}");
+                })
                 // Required if flexible start date is false
                 .NotEmpty()
                     .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
@@ -305,42 +428,88 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             Func<T, bool?> getNationalDelivery)
         {
             field
-                .Custom((v, ctx) =>
+                .Custom((selectedRegions, context) =>
                 {
-                    var obj = (T)ctx.InstanceToValidate;
+                    var instance = (T)context.InstanceToValidate;
+                    var deliveryMode = getDeliveryMode(instance);
+                    var isSpecified = subRegionsWereSpecified(instance);
+                    var nationalDelivery = getNationalDelivery(instance);
 
-                    var deliveryMode = getDeliveryMode(obj);
-                    var isSpecified = subRegionsWereSpecified(obj);
-                    var nationalDelivery = getNationalDelivery(obj);
-
-                    // Not allowed when delivery mode is not work based or national is true
-                    if (isSpecified && (deliveryMode != CourseDeliveryMode.WorkBased || nationalDelivery == true))
+                    if (AreSubRegionsNotAllowed(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_NOT_ALLOWED"));
-                        return;
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
                     }
-
-                    if (deliveryMode != CourseDeliveryMode.WorkBased)
+                    else if (AreSubRegionsRequired(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        return;
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_REQUIRED"));
                     }
-
-                    // Required when national delivery is false and delivery mode is work based
-                    if (!isSpecified && nationalDelivery == false)
+                    else if (isSpecified && (selectedRegions == null || selectedRegions.Count == 0))
                     {
-                        ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_REQUIRED"));
-                        return;
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_INVALID"));
                     }
-
-                    // All sub regions specified must be valid and there should be at least one
-                    if (isSpecified && (v == null || v.Count == 0))
-                    {
-                        ctx.AddFailure(CreateFailure("COURSERUN_SUBREGIONS_INVALID"));
-                    }
-
-                    ValidationFailure CreateFailure(string errorCode) =>
-                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
                 });
+        }
+
+        public static void SubRegions<T>(
+            this IRuleBuilderInitial<T, IEnumerable<string>> field,
+            IReadOnlyCollection<Region> allRegions,
+            Func<T, bool> subRegionsWereSpecified,
+            Func<T, CourseDeliveryMode?> getDeliveryMode,
+            Func<T, bool?> getNationalDelivery)
+        {
+            field
+                .Custom((selectedRegionIds, context) =>
+                {
+                    var instance = (T)context.InstanceToValidate;
+                    var deliveryMode = getDeliveryMode(instance);
+                    var isSpecified = subRegionsWereSpecified(instance);
+                    var nationalDelivery = getNationalDelivery(instance);
+
+                    var validSubRegions = selectedRegionIds != null
+                        ? GetValidSubRegions(selectedRegionIds, allRegions)
+                        : new List<Region>();
+
+                    if (AreSubRegionsNotAllowed(isSpecified, deliveryMode, nationalDelivery))
+                    {
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
+                    }                    
+                    else if (AreSubRegionsRequired(isSpecified, deliveryMode, nationalDelivery))
+                    {
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_REQUIRED"));
+                    }
+                    else if (HasInvalidSubRegions(selectedRegionIds, validSubRegions))
+                    {
+                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_INVALID"));
+                    }
+                });
+        }
+
+        private static bool AreSubRegionsNotAllowed(bool isSpecified, CourseDeliveryMode? deliveryMode, bool? nationalDelivery)
+        {
+            // Not allowed when delivery mode is not work based or national is true
+            return isSpecified && (deliveryMode != CourseDeliveryMode.WorkBased || nationalDelivery == true);
+        }
+
+        private static bool AreSubRegionsRequired(bool isSpecified, CourseDeliveryMode? deliveryMode, bool? nationalDelivery)
+        {
+            // Required when national delivery is false and delivery mode is work based
+            return !isSpecified && deliveryMode == CourseDeliveryMode.WorkBased && nationalDelivery == false;
+        }
+
+        private static bool HasInvalidSubRegions(IEnumerable<string> selectedRegionIds, List<Region> validSubRegions)
+        {
+            // All sub regions specified must be valid and there should be at least one
+            return selectedRegionIds != null && selectedRegionIds.Any() && selectedRegionIds.Count() != validSubRegions.Count;
+        }        
+
+        private static List<Region> GetValidSubRegions(IEnumerable<string> selectedRegionIds, IReadOnlyCollection<Region> allRegions)
+        {
+            var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
+            return selectedRegionIds.Where(r => r != null && allSubRegions.ContainsKey(r)).Select(id => allSubRegions[id]).ToList();
+        }
+        private static ValidationFailure CreateFailure(string propertyName, string errorCode)
+        {
+            return ValidationFailureEx.CreateFromErrorCode(propertyName, errorCode);
         }
 
         public static void VenueId<T>(
@@ -353,7 +522,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var obj = (T)ctx.InstanceToValidate;
 
                     var deliveryMode = getDeliveryMode(obj);
-                    var isSpecified = v.HasValue;
+                    var isSpecified = v.HasValue && v != default(Guid);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
                     if (isSpecified && IsValidDM(deliveryMode))
@@ -380,7 +549,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             Guid? matchedVenueId)
         {
             field
-                .NormalizeWhitespace()
                 .Custom((v, ctx) =>
                 {
                     var obj = (T)ctx.InstanceToValidate;
@@ -404,7 +572,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     {
                         // We don't want both a ref and a name but if the ref resolves a venue and that venue's name
                         // matches this name then we let it go. If it doesn't match then yield an error.
-                        if (!string.IsNullOrEmpty(getProviderVenueRef(obj)))
+                        if (!string.IsNullOrEmpty(getProviderVenueRef(obj)) && !string.IsNullOrWhiteSpace(getProviderVenueRef(obj)))
                         {
                             ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF"));
                             return;
