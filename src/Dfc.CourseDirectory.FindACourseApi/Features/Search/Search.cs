@@ -135,9 +135,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 longitude = coords.Value.lng;
             }
 
-            if (request.StartDateFrom.HasValue 
-                || request.StartDateTo.HasValue 
-                || request.HideOutOfDateCourses.HasValue 
+            if (request.StartDateFrom.HasValue
+                || request.StartDateTo.HasValue
+                || request.HideOutOfDateCourses.HasValue
                 || request.HideFlexiCourses.HasValue)
             {
                 var dateFilter = TryGetDateFilters(
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                             null,
                         VenueName = HtmlEncode(i.Record.VenueName),
                         VenueStudyMode = ((int?)i.Record.StudyMode)?.ToString(),
-                        VenueStudyModeDescription = (i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased || i.Record.DeliveryMode == CourseDeliveryMode.BlendedLearning) ? 
+                        VenueStudyModeDescription = (i.Record.DeliveryMode == CourseDeliveryMode.ClassroomBased || i.Record.DeliveryMode == CourseDeliveryMode.BlendedLearning) ?
                             i.Record.StudyMode?.ToDescription() :
                             null,
                         VenueTown = HtmlEncode(i.Record.VenueTown),
@@ -443,9 +443,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (requireTLevel)
             {
-                if(tLevelMatch1.Success)
+                if (tLevelMatch1.Success)
                     result = "\"T Level\"" + (terms.Any() ? $" AND ({result})" : "");
-                else if(tLevelMatch2.Success)
+                else if (tLevelMatch2.Success)
                     result = "\"T-Level\"" + (terms.Any() ? $" AND ({result})" : "");
             }
 
@@ -540,12 +540,12 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
 
             if (hideFlexiCourses.HasValue && hideFlexiCourses == true)
             {
-                dateFilters.Add($"{ nameof(FindACourseOffering.StartDate) } ne null");
+                dateFilters.Add($"{nameof(FindACourseOffering.StartDate)} ne null");
             }
 
             if (startDate != DateTime.MinValue)
             {
-                dateFilters.Add($"{ nameof(FindACourseOffering.StartDate)} ge {startDate:o}");
+                dateFilters.Add($"{nameof(FindACourseOffering.StartDate)} ge {startDate:o}");
             }
 
             if (endDate != DateTime.MaxValue)
@@ -554,10 +554,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
             }
 
             if (dateFilters.Any())
-            { 
+            {
                 return (hideFlexiCourses.HasValue && hideFlexiCourses == false)
-                    ? $"(({ string.Join(" and ", dateFilters) }) or { nameof(FindACourseOffering.StartDate) } eq null)"
-                    : $"({ string.Join(" and ", dateFilters) })";
+                    ? $"(({string.Join(" and ", dateFilters)}) or {nameof(FindACourseOffering.StartDate)} eq null)"
+                    : $"({string.Join(" and ", dateFilters)})";
             }
 
             return String.Empty;

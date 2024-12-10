@@ -33,10 +33,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public CourseType? CourseType { get; set; }
 
 
-        public void SetCourse(string larsCode, string courseName) {
+        public void SetCourse(string larsCode, string courseName)
+        {
             LarsCode = larsCode;
             CourseName = courseName;
-        } 
+        }
 
         public void SetCourseDescription(
           string whoThisCourseIsFor,
@@ -92,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
             DurationUnit = durationUnit;
             AttendancePattern = attendancePattern;
             StudyMode = studyMode;
-            VenueId = venueId;            
+            VenueId = venueId;
         }
     }
 }

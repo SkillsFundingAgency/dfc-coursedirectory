@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,11 +29,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
+                _ =>
+                {
                     _log.LogWarning($"Failed to get Course Run Detail for [{request.CourseRunId}] in course [{request.CourseId}]. Response Code [NOT FOUND]");
                     return NotFound();
                 },
-                r => {
+                r =>
+                {
                     _log.LogInformation($"Successfully retrieved Course Run Detail for [{request.CourseRunId}] in course [{request.CourseId}]. Response Code [OK]");
                     return Ok(r);
                 }

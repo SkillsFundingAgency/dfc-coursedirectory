@@ -481,7 +481,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     allPostcodeInfo.TryGetValue(postcode, out postcodeInfo);
                 }
 
-                var rowValidationResult = validator.Validate(row);
+                var rowValidationResult = await validator.ValidateAsync(row);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 uploadIsValid &= rowIsValid;
