@@ -20,9 +20,9 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("AutomatedImportONSPD")]
-        public async Task<IActionResult> Run([TimerTrigger("0 0 20 27 * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 20 27 * *")] TimerInfo myTimer)
         {
-            await _onspdDataImporter.AutomatedDataImport();
+            await _onspdDataImporter.AutomatedImportData();
         }
     }
 }
