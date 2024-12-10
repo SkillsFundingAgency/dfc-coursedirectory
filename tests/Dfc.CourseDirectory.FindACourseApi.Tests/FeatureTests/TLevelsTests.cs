@@ -140,8 +140,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     tLevel["provider"]["telephone"].ToObject<string>().Should().Be(providerContact?.Telephone1);
                     tLevel["provider"]["fax"].ToObject<string>().Should().Be(providerContact?.Fax);
                     tLevel["provider"]["website"].ToObject<string>().Should().Be($"http://{providerContact?.WebsiteAddress}");
-                    tLevel["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(provider?.LearnerSatisfaction);
-                    tLevel["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(provider?.EmployerSatisfaction);
                     tLevel["whoFor"].ToObject<string>().Should().Be(expectedTLevel.WhoFor);
                     tLevel["entryRequirements"].ToObject<string>().Should().Be(expectedTLevel.EntryRequirements);
                     tLevel["whatYoullLearn"].ToObject<string>().Should().Be(expectedTLevel.WhatYoullLearn);
@@ -189,9 +187,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             {
                 ProviderId = Guid.NewGuid(),
                 Ukprn = (1234 * seed),
-                ProviderName = $"TestProviderName{seed}",
-                LearnerSatisfaction = 1.23m * seed,
-                EmployerSatisfaction = 2.34m * seed,
+                ProviderName = $"TestProviderName{seed}"
 
             };
 
