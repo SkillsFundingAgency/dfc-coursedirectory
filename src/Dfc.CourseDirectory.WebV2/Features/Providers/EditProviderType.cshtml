@@ -17,6 +17,7 @@
             @Html.HiddenFor(m => m.ProviderId)
             <govuk-checkboxes asp-for="ProviderType">
                 <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend></govuk-checkboxes-fieldset-legend>
                     <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
                         @ProviderType.FE.ToDescription()
                     </govuk-checkboxes-item>
