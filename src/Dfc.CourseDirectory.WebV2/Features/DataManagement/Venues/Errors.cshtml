@@ -76,13 +76,13 @@
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         What do you want to do?
                     </govuk-radios-fieldset-legend>
+                    @if (Model.CanResolveOnScreen)
+                    {
+                        <govuk-radios-item value="@WhatNext.ResolveOnScreen" data-testid="ResolveOnScreenOption">Resolve the errors on screen</govuk-radios-item>
+                    }
+                    <govuk-radios-item value="@WhatNext.UploadNewFile">Upload a new data file</govuk-radios-item>
+                    <govuk-radios-item value="@WhatNext.DeleteUpload">Delete upload</govuk-radios-item>
                 </govuk-radios-fieldset>
-                @if (Model.CanResolveOnScreen)
-                {
-                    <govuk-radios-item value="@WhatNext.ResolveOnScreen" data-testid="ResolveOnScreenOption">Resolve the errors on screen</govuk-radios-item>
-                }
-                <govuk-radios-item value="@WhatNext.UploadNewFile">Upload a new data file</govuk-radios-item>
-                <govuk-radios-item value="@WhatNext.DeleteUpload">Delete upload</govuk-radios-item>
             </govuk-radios>
 
             <govuk-button type="submit">Continue</govuk-button>

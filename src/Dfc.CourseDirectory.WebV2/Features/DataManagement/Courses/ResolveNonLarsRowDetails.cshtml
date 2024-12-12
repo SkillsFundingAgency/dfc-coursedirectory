@@ -64,25 +64,25 @@
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         Course type
                     </govuk-radios-fieldset-legend>
+                    <govuk-radios-hint>
+                        Select one option.
+                    </govuk-radios-hint>
+                    <govuk-radios-item value="@CourseType.SkillsBootcamp">Skills Bootcamp</govuk-radios-item>
                 </govuk-radios-fieldset>
-                <govuk-radios-hint>
-                    Select one option.
-                </govuk-radios-hint>
-                <govuk-radios-item value="@CourseType.SkillsBootcamp">Skills Bootcamp</govuk-radios-item>
             </govuk-radios>
             <govuk-radios asp-for="Sector">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         Sector
                     </govuk-radios-fieldset-legend>
+                    <govuk-radios-hint>
+                        Select one option.
+                    </govuk-radios-hint>
+                    @foreach (var sector in Model.Sectors)
+                    {
+                        <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
+                    }
                 </govuk-radios-fieldset>
-                <govuk-radios-hint>
-                    Select one option.
-                </govuk-radios-hint>
-                @foreach(var sector in Model.Sectors)
-                {
-                    <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
-                }
             </govuk-radios>
             <input type="hidden" name="testing" value="@Model.Sector" />
             <govuk-radios asp-for="EducationLevel">
@@ -90,18 +90,18 @@
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         Education level
                     </govuk-radios-fieldset-legend>
+                    <govuk-radios-hint>
+                        Select one option.
+                    </govuk-radios-hint>
+                    <govuk-radios-item value="@EducationLevel.EntryLevel">Entry level</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.One">1</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.Two">2</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.Three">3</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.Four">4</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.Five">5</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.Six">6</govuk-radios-item>
+                    <govuk-radios-item value="@EducationLevel.Seven">7</govuk-radios-item>
                 </govuk-radios-fieldset>
-                <govuk-radios-hint>
-                    Select one option.
-                </govuk-radios-hint>
-                <govuk-radios-item value="@EducationLevel.EntryLevel">Entry level</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.One">1</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.Two">2</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.Three">3</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.Four">4</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.Five">5</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.Six">6</govuk-radios-item>
-                <govuk-radios-item value="@EducationLevel.Seven">7</govuk-radios-item>
             </govuk-radios>
             <govuk-input asp-for="AwardingBody">
                 <govuk-input-label class="govuk-label--m">Awarding body</govuk-input-label>
@@ -113,18 +113,18 @@
             <govuk-radios asp-for="FlexibleStartDate">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>
+                    <govuk-radios-item value="@false">
+                        Defined start date
+                        <govuk-radios-item-hint>For example, 30 9 2023</govuk-radios-item-hint>
+                        <govuk-radios-item-conditional>
+                            <govuk-date-input asp-for="StartDate">
+                            </govuk-date-input>
+                        </govuk-radios-item-conditional>
+                    </govuk-radios-item>
+                    <govuk-radios-item value="@true">
+                        Flexible start date
+                    </govuk-radios-item>
                 </govuk-radios-fieldset>
-                <govuk-radios-item value="@false">
-                    Defined start date
-                    <govuk-radios-item-hint>For example, 30 9 2023</govuk-radios-item-hint>
-                    <govuk-radios-item-conditional>
-                        <govuk-date-input asp-for="StartDate">
-                        </govuk-date-input>
-                    </govuk-radios-item-conditional>
-                </govuk-radios-item>
-                <govuk-radios-item value="@true">
-                    Flexible start date
-                </govuk-radios-item>
             </govuk-radios>
 
             @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
@@ -145,28 +145,27 @@
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                             Can you deliver this course anywhere in England?
                         </govuk-radios-fieldset-legend>
+                        <govuk-radios-hint>Yes will show you are a national provider.</govuk-radios-hint>
+
+                        <govuk-radios-item value="@true">Yes</govuk-radios-item>
+                        <govuk-radios-item value="@false">
+                            No
+
+                            <govuk-radios-item-conditional>
+                                <govuk-fieldset id="@Html.IdFor(m => m.SubRegionIds)">
+                                    <govuk-fieldset-legend class="govuk-fieldset__legend--s">
+                                        Where in England can you deliver this course?
+                                    </govuk-fieldset-legend>
+
+                                    <govuk-hint>Select all regions and areas that apply.</govuk-hint>
+
+                                    <govuk-error-message asp-for="SubRegionIds" />
+
+                                    <vc:sub-region-selector id="@Html.IdFor(m => m.SubRegionIds)-accordion" name="@Html.NameFor(m => m.SubRegionIds)" selected-sub-region-ids="@Model.SubRegionIds" />
+                                </govuk-fieldset>
+                            </govuk-radios-item-conditional>
+                        </govuk-radios-item>
                     </govuk-radios-fieldset>
-
-                    <govuk-radios-hint>Yes will show you are a national provider.</govuk-radios-hint>
-
-                    <govuk-radios-item value="@true">Yes</govuk-radios-item>
-                    <govuk-radios-item value="@false">
-                        No
-
-                        <govuk-radios-item-conditional>
-                            <govuk-fieldset id="@Html.IdFor(m => m.SubRegionIds)">
-                                <govuk-fieldset-legend class="govuk-fieldset__legend--s">
-                                    Where in England can you deliver this course?
-                                </govuk-fieldset-legend>
-
-                                <govuk-hint>Select all regions and areas that apply.</govuk-hint>
-
-                                <govuk-error-message asp-for="SubRegionIds" />
-
-                                <vc:sub-region-selector id="@Html.IdFor(m => m.SubRegionIds)-accordion" name="@Html.NameFor(m => m.SubRegionIds)" selected-sub-region-ids="@Model.SubRegionIds" />
-                            </govuk-fieldset>
-                        </govuk-radios-item-conditional>
-                    </govuk-radios-item>
                 </govuk-radios>
             }
 
@@ -215,13 +214,13 @@
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                             Course hours
                         </govuk-radios-fieldset-legend>
+                        <govuk-radios-hint>
+                            Select one option.
+                        </govuk-radios-hint>
+                        <govuk-radios-item value="@CourseStudyMode.FullTime">Full time</govuk-radios-item>
+                        <govuk-radios-item value="@CourseStudyMode.PartTime">Part time</govuk-radios-item>
+                        <govuk-radios-item value="@CourseStudyMode.Flexible">Flexible</govuk-radios-item>
                     </govuk-radios-fieldset>
-                    <govuk-radios-hint>
-                        Select one option.
-                    </govuk-radios-hint>
-                    <govuk-radios-item value="@CourseStudyMode.FullTime">Full time</govuk-radios-item>
-                    <govuk-radios-item value="@CourseStudyMode.PartTime">Part time</govuk-radios-item>
-                    <govuk-radios-item value="@CourseStudyMode.Flexible">Flexible</govuk-radios-item>
                 </govuk-radios>
 
                 <govuk-radios asp-for="AttendancePattern">
@@ -229,14 +228,14 @@
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                             Attendance pattern
                         </govuk-radios-fieldset-legend>
+                        <govuk-radios-hint>
+                            Select one option.
+                        </govuk-radios-hint>
+                        <govuk-radios-item value="@CourseAttendancePattern.Daytime">Daytime</govuk-radios-item>
+                        <govuk-radios-item value="@CourseAttendancePattern.Evening">Evening</govuk-radios-item>
+                        <govuk-radios-item value="@CourseAttendancePattern.Weekend">Weekend</govuk-radios-item>
+                        <govuk-radios-item value="@CourseAttendancePattern.DayOrBlockRelease">Day/Block Release</govuk-radios-item>
                     </govuk-radios-fieldset>
-                    <govuk-radios-hint>
-                        Select one option.
-                    </govuk-radios-hint>
-                    <govuk-radios-item value="@CourseAttendancePattern.Daytime">Daytime</govuk-radios-item>
-                    <govuk-radios-item value="@CourseAttendancePattern.Evening">Evening</govuk-radios-item>
-                    <govuk-radios-item value="@CourseAttendancePattern.Weekend">Weekend</govuk-radios-item>
-                    <govuk-radios-item value="@CourseAttendancePattern.DayOrBlockRelease">Day/Block Release</govuk-radios-item>
                 </govuk-radios>
             }
 
@@ -244,7 +243,6 @@
                 <govuk-button type="submit" class="cd-cancel-btn">Resolve errors</govuk-button>
                 <a asp-action="NonLarsResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
             </div>
-
         </form>
     </div>
 </div>
