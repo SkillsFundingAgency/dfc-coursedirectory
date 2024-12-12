@@ -125,15 +125,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             services.AddTransient<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
-            services.AddGovUkFrontend(new GovUkFrontendAspNetCoreOptions()
-            {
-                // Avoid import being added to old pages
-                AddImportsToHtml = false,
-                DateInputModelConverters =
-                {
-                    new ModelBinding.DateInputModelConverter()
-                }
-            });
+            services.AddGovUkFrontend();
             services.AddHttpClient();
             services.AddMediatR(typeof(ServiceCollectionExtensions));
             services.AddTransient<IClock, SystemClock>();

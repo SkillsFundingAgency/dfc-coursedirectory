@@ -5,16 +5,16 @@ using GovUk.Frontend.AspNetCore;
 
 namespace Dfc.CourseDirectory.WebV2.ModelBinding
 {
-    public class DateInputModelConverter : GovUk.Frontend.AspNetCore.DateInputModelConverter
+    public class DateInputModelConverter //: GovUk.Frontend.AspNetCore.ModelBinding.DateInputModelConverter
     {
-        public override bool CanConvertModelType(Type modelType) => modelType == typeof(DateInput);
+        /*public override bool CanConvertModelType(Type modelType) => modelType == typeof(DateInput);
 
         public override object CreateModelFromElements(Type modelType, (int Day, int Month, int Year) elements)
         {
             var dateTime = new DateTime(elements.Year, elements.Month, elements.Day);
             return new DateInput(dateTime);
         }
-
+        
         public override (int Day, int Month, int Year)? GetElementsFromModel(Type modelType, object model)
         {
             var dateInput = (DateInput)model;
@@ -43,6 +43,6 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
 
             model = new DateInput(invalidReasons);
             return true;
-        }
+        }*/
     }
 }
