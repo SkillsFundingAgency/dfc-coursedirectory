@@ -31,13 +31,13 @@
                                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
                                         What Non LARS Courses can this provider offer?
                                     </govuk-checkboxes-fieldset-legend>
+                                    @foreach (var providerNonLars in Model.ProviderNonLarsSubTypes)
+                                    {
+                                        <govuk-checkboxes-item value="@providerNonLars.NonLarsSubTypeId" checked="@providerNonLars.Selected" input-data-testid="@($"nonLarsSubtype-{providerNonLars.NonLarsSubTypeId}")">
+                                            @providerNonLars.Name
+                                        </govuk-checkboxes-item>
+                                    }
                                 </govuk-checkboxes-fieldset>
-                                @foreach (var providerNonLars in Model.ProviderNonLarsSubTypes)
-                                {
-                                    <govuk-checkboxes-item value="@providerNonLars.NonLarsSubTypeId" checked="@providerNonLars.Selected" input-data-testid="@($"nonLarsSubtype-{providerNonLars.NonLarsSubTypeId}")">
-                                        @providerNonLars.Name
-                                    </govuk-checkboxes-item>
-                                }
                             </govuk-checkboxes>                        
                         </govuk-checkboxes-item-conditional>
                     </govuk-checkboxes-item>
@@ -50,15 +50,13 @@
                                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
                                         What T Levels can this provider offer?
                                     </govuk-checkboxes-fieldset-legend>
+                                    @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
+                                    {
+                                        <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
+                                            @providerTLevelDefinition.Name
+                                        </govuk-checkboxes-item>
+                                    }
                                 </govuk-checkboxes-fieldset>
-
-                                @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
-                                {
-                                <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
-                                    @providerTLevelDefinition.Name
-                                </govuk-checkboxes-item>
-                                }
-
                             </govuk-checkboxes>
                         </govuk-checkboxes-item-conditional>
                     </govuk-checkboxes-item>
@@ -69,7 +67,6 @@
                 <govuk-button type="submit" class="cd-cancel-btn">Save</govuk-button>
                 <a asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
             </div>
-
         </form>
     </div>
 </div>
