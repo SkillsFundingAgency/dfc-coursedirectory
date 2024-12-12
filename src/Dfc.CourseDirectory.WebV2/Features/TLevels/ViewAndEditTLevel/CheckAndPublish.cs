@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.CheckAndP
         public string HowYoullBeAssessed { get; set; }
         public string WhatYouCanDoNext { get; set; }
         public string YourReference { get; set; }
-        public Date StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public IReadOnlyCollection<string> LocationVenueNames { get; set; }
         public string Website { get; set; }
     }
@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.CheckAndP
                 LocationVenueNames = _journeyInstance.State.LocationVenueIds
                     .Select(id => venues[id].VenueName)
                     .ToArray(),
-                StartDate = (Date)_journeyInstance.State.StartDate.Value,
+                StartDate = _journeyInstance.State.StartDate.Value,
                 Website = _journeyInstance.State.Website,
                 WhatYouCanDoNext = _journeyInstance.State.WhatYouCanDoNext,
                 WhatYoullLearn = _journeyInstance.State.WhatYoullLearn,
