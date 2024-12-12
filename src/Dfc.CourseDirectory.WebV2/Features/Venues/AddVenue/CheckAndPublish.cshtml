@@ -22,12 +22,16 @@
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Your venue reference</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.ProviderVenueRef</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.ProviderVenueRef)" visually-hidden-text="your venue reference">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.ProviderVenueRef)" visually-hidden-text="your venue reference">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Venue name</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Name</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Name)" visually-hidden-text="venue name">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Name)" visually-hidden-text="venue name">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Address</govuk-summary-list-row-key>
@@ -37,22 +41,30 @@
                             @part<br />
                         }
                     </govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Address" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" visually-hidden-text="address">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="Address" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" visually-hidden-text="address">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Email</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Email</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Email)" visually-hidden-text="email">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Email)" visually-hidden-text="email">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Telephone</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Telephone</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Telephone)" visually-hidden-text="phone number">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Telephone)" visually-hidden-text="phone number">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 </govuk-summary-list-row>
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>Website</govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>@Model.Website</govuk-summary-list-row-value>
-                    <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Website)" visually-hidden-text="website">Change</govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="Details" asp-all-route-data="@RouteValuesHelper.FromQueryString()" asp-route-fromPublishPage="true" asp-fragment="@Html.IdFor(m => m.Website)" visually-hidden-text="website">Change</govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 </govuk-summary-list-row>
             </govuk-summary-list>
 

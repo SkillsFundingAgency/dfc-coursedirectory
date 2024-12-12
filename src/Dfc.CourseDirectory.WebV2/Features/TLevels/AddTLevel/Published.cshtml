@@ -10,12 +10,14 @@
             <govuk-panel-title>
                 Your T Level has been published
             </govuk-panel-title>
-            <span data-testid="TLevelName">@Model.TLevelName</span>
-            @if (!string.IsNullOrWhiteSpace(Model.YourReference))
-            {
-                <br>
-                <strong data-testid="YourReference">@Model.YourReference</strong>
-            }
+            <govuk-panel-body>
+                <span data-testid="TLevelName">@Model.TLevelName</span>
+                @if (!string.IsNullOrWhiteSpace(Model.YourReference))
+                {
+                    <br>
+                    <strong data-testid="YourReference">@Model.YourReference</strong>
+                }
+            </govuk-panel-body>
         </govuk-panel>
 
         <p class="govuk-body">

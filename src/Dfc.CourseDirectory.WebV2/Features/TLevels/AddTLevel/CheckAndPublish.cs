@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.CheckAndPublish
         public string HowYoullBeAssessed { get; set; }
         public string WhatYouCanDoNext { get; set; }
         public string YourReference { get; set; }
-        public Date StartDate { get; set; }
+        public DateOnly StartDate { get; set; }
         public IReadOnlyCollection<string> LocationVenueNames { get; set; }
         public string Website { get; set; }
     }
