@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
     {
         public Guid ProviderId { get; set; }
         public string YourReference { get; set; }
-        public DateInput StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         // If any additional data is added here be sure to replicate in SaveDetails.Command
@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
 
             _journeyInstance.UpdateState(state => state.SetDetails(
                 request.YourReference,
-                request.StartDate.Value,
+                request.StartDate,
                 request.LocationVenueIds,
                 request.Website,
                 isComplete: true));
@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
                     })
                     .ToList(),
                 LocationVenueIds = new HashSet<Guid>(_journeyInstance.State.LocationVenueIds),
-                StartDate = _journeyInstance.State.StartDate,
+                StartDate = (DateTime)_journeyInstance.State.StartDate,
                 TLevelName = _journeyInstance.State.TLevelName,
                 Website = _journeyInstance.State.Website,
                 YourReference = _journeyInstance.State.YourReference
@@ -155,8 +155,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
             {
                 RuleFor(c => c.YourReference).YourReference();
 
-                RuleFor(c => c.StartDate)
-                    .StartDate(tLevelId: null, providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                //RuleFor(c => c.StartDate)
+                //    .StartDate(tLevelId: null, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()
