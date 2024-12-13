@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public string YourReference { get; set; }
-        public DateInput StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         public bool IsSecureWebsite { get; set; }
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             _journeyInstance.UpdateState(state =>
             {
                 state.YourReference = request.YourReference;
-                state.StartDate = request.StartDate.Value;
+                state.StartDate = request.StartDate;
                 state.LocationVenueIds = request.LocationVenueIds.ToList();
                 state.Website = request.Website;
                 state.WhoFor = request.WhoFor;
@@ -131,7 +131,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                 })
                 .ToList(),
             LocationVenueIds = new HashSet<Guid>(_journeyInstance.State.LocationVenueIds),
-            StartDate = _journeyInstance.State.StartDate,
+            StartDate = (DateTime)_journeyInstance.State.StartDate,
             Website = _journeyInstance.State.Website,
             YourReference = _journeyInstance.State.YourReference,
             EntryRequirements = _journeyInstance.State.EntryRequirements,
@@ -157,8 +157,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             {
                 RuleFor(c => c.YourReference).YourReference();
 
-                RuleFor(c => c.StartDate)
-                    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                //RuleFor(c => c.StartDate)
+                //    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()

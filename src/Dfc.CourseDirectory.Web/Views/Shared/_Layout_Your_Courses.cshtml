@@ -32,7 +32,7 @@
     <div class=" cd-fullwidth-container">
         @if (layoutModel.BackLink)
         {
-            <pttcd-back-link href="@layoutModel.BackLinkHref" text="@layoutModel.BackLinkText" class="govuk-!-margin-bottom-8 govuk-!-margin-top-0" />
+            <govuk-back-link href="@layoutModel.BackLinkHref" class="govuk-!-margin-bottom-8 govuk-!-margin-top-0 needs-js pttcd-c-back-link" aria-hidden="">@layoutModel.BackLinkText</govuk-back-link>
         }
         <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
             @RenderBody()

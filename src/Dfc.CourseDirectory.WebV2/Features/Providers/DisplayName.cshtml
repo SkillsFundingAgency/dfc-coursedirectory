@@ -4,7 +4,7 @@
 }
 
 @section BackLink {
-    <pttcd-back-link />
+    <govuk-back-link href="javascript:history.back()" class="govuk-!-margin-bottom-8 govuk-!-margin-top-0 needs-js pttcd-c-back-link" aria-hidden="">Back</govuk-back-link>
 }
 
 <div class="govuk-grid-row">
@@ -17,16 +17,16 @@
                             Display name
                         </h1>
                     </govuk-radios-fieldset-legend>
+                    <govuk-radios-hint>
+                        Select the name you would like displayed to learners.
+                    </govuk-radios-hint>
+                    <govuk-radios-item value="@(ProviderDisplayNameSource.ProviderName)" id="ProviderName">
+                        @Model.ProviderName
+                    </govuk-radios-item>
+                    <govuk-radios-item value="@(ProviderDisplayNameSource.TradingName)" id="TradingName">
+                        @Model.TradingName
+                    </govuk-radios-item>
                 </govuk-radios-fieldset>
-                <govuk-radios-hint>
-                    Select the name you would like displayed to learners.
-                </govuk-radios-hint>
-                <govuk-radios-item value="@(ProviderDisplayNameSource.ProviderName)" id="ProviderName">
-                    @Model.ProviderName
-                </govuk-radios-item>
-                <govuk-radios-item value="@(ProviderDisplayNameSource.TradingName)" id="TradingName">
-                    @Model.TradingName
-                </govuk-radios-item>
             </govuk-radios>
 
             <govuk-button type="submit">Save and continue</govuk-button>

@@ -1,4 +1,7 @@
-﻿@{
+﻿@using GovUk.Frontend.AspNetCore
+@inject GovUk.Frontend.AspNetCore.PageTemplateHelper PageTemplateHelper
+
+@{
     var title = (ViewBag.Title != null ? $"{ViewBag.Title} - " : "") + "Publish to the course directory";
 
     if (!ViewData.ModelState.IsValid)
@@ -18,7 +21,7 @@
     <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="~/assets/images/govuk-favicon-tudor-crown.ico" type="image/x-icon" />
     <link rel="mask-icon" href="~/assets/images/govuk-mask-icon-tudor-crown.svg" color="#0b0c0c">
     <link rel="apple-touch-icon" href="~/assets/images/govuk-icon-180.png">
-    @Html.Raw(GovUk.Frontend.AspNetCore.HtmlSnippets.StyleImports)
+    @PageTemplateHelper.GenerateStyleImports()
     <partial name="~/SharedViews/Partials/_V2Styles.cshtml" />
     @RenderSection("Head", required: false)
 </head>
@@ -109,7 +112,7 @@
         </div>
     </footer>
 
-    @Html.Raw(GovUk.Frontend.AspNetCore.HtmlSnippets.ScriptImports)
+    @PageTemplateHelper.GenerateScriptImports()
     <environment include="Development">
         <script src="~/vendor/jquery/jquery.min.js"></script>
     </environment>
