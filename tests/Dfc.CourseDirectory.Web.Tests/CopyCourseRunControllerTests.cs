@@ -15,6 +15,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Web.Controllers.CopyCourse;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Dfc.CourseDirectory.Services.Models.Regions;
@@ -34,6 +35,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         private readonly Mock<IProviderContextProvider> _mockProviderContextProvider;        
         private readonly Mock<IClock> _mockClock;
         private readonly Mock<IRegionCache> _mockRegionCache;
+        private readonly Mock<IConfiguration> _mockConfiguration;
         private readonly Mock<ISession> _mockSession;
 
         public CopyCourseRunControllerTests()
@@ -45,6 +47,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockCurrentUserProvider = new Mock<ICurrentUserProvider>();
             _mockClock = new Mock<IClock>();
             _mockRegionCache = new Mock<IRegionCache>();
+            _mockConfiguration = new Mock<IConfiguration>();
             _mockSession = new Mock<ISession>();
         }        
 
@@ -292,7 +295,8 @@ namespace Dfc.CourseDirectory.Web.Tests
                             _mockProviderContextProvider.Object,
                             _mockCurrentUserProvider.Object,
                             _mockClock.Object,
-                            _mockRegionCache.Object);
+                            _mockRegionCache.Object,
+                            _mockConfiguration.Object);
             addCourseController.ControllerContext = new ControllerContext();
             addCourseController.ControllerContext.HttpContext = new DefaultHttpContext { Session = _mockSession.Object };
             return addCourseController;
