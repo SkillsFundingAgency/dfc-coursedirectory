@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Save
     public class Command : IRequest
     {
         public string YourReference { get; set; }
-        public DateTime? StartDate { get; set; }
+        public DateOnly? StartDate { get; set; }
         public IList<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         public string WhoFor { get; set; }
@@ -40,7 +40,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Save
             _journeyInstance.UpdateState(state =>
             {
                 state.YourReference = request.YourReference;
-                state.StartDate = request.StartDate.Value;
+                state.StartDate = new DateTime(
+                    request.StartDate.Value.Year
+                    , request.StartDate.Value.Month
+                    , request.StartDate.Value.Day
+                );
                 state.LocationVenueIds = request.LocationVenueIds;
                 state.Website = request.Website;
                 state.WhoFor = request.WhoFor;

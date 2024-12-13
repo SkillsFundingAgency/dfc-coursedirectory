@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SaveDetails
     public class Command : IRequest
     {
         public string YourReference { get; set; }
-        public DateTime? StartDate { get; set; }
+        public DateOnly? StartDate { get; set; }
         public IList<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
     }
@@ -35,7 +35,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SaveDetails
             // to ensure the un-validated data cannot be submitted
             _journeyInstance.UpdateState(state => state.SetDetails(
                 request.YourReference,
-                request.StartDate,
+                new DateTime(
+                    request.StartDate.Value.Year
+                    , request.StartDate.Value.Month
+                    , request.StartDate.Value.Day
+                ),
                 request.LocationVenueIds,
                 request.Website,
                 isComplete: false));
