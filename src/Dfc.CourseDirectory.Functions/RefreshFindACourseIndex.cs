@@ -36,7 +36,8 @@ namespace Dfc.CourseDirectory.Functions
             var createdBefore = _clock.UtcNow.AddHours(-1);
 
             int updated;
-            int deleted;
+            int deletedCourseRuns;
+            int deletedCourses;
             int total = 0;
 
             do
@@ -55,20 +56,30 @@ namespace Dfc.CourseDirectory.Functions
 
                 total += updated;
 
-                //audits the index and purges index records where the course or courserun no longer exists:
+                //audits the index and purges index records where the courserun no longer exists:
 
-                deleted = await dispatcher.ExecuteQuery(new AuditAndSyncFindACourseIndex()
+                deletedCourseRuns = await dispatcher.ExecuteQuery(new AuditAndSyncCourseRunsToIndex()
                 {
                     MaxCourseRunCount = batchSize,
                     Now = _clock.UtcNow
                 });
 
-                total += deleted;
+                total += deletedCourseRuns;
+
+                //audits the index and purges index records where the course no longer exists:
+
+                deletedCourses = await dispatcher.ExecuteQuery(new AuditAndSyncCoursesToIndex()
+                {
+                    MaxCourseCount = batchSize,
+                    Now = _clock.UtcNow
+                });
+
+                total += deletedCourses;
 
                 await dispatcher.Commit();
             }
             while (
-                (updated + deleted) == batchSize &&
+                (updated + deletedCourseRuns + deletedCourses) == batchSize &&
                 (total + batchSize) <= maxRecordsPerInvocation &&
                 !cancellationToken.IsCancellationRequested);
         }

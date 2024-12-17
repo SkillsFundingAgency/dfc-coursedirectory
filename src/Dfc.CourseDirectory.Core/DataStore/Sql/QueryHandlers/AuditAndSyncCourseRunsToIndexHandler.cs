@@ -2,13 +2,12 @@
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class AuditAndSyncFindACourseIndexHandler : ISqlQueryHandler<AuditAndSyncFindACourseIndex, int>
+    public class AuditAndSyncCourseRunsToIndexHandler : ISqlQueryHandler<AuditAndSyncCourseRunsToIndex, int>
     {
-        public Task<int> Execute(SqlTransaction transaction, AuditAndSyncFindACourseIndex query)
+        public Task<int> Execute(SqlTransaction transaction, AuditAndSyncCourseRunsToIndex query)
         {
             var sql = $@"
 DECLARE @OrphanedCourseRunIds Pttcd.GuidIdTable

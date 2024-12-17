@@ -2,9 +2,9 @@
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class AuditAndSyncFindACourseIndex : ISqlQuery<int>
+    public class AuditAndSyncCoursesToIndex : ISqlQuery<int>
     {
-        public int MaxCourseRunCount { get; set; }
+        public int MaxCourseCount { get; set; }
         public DateTime Now { get; set; }
     }
 }
