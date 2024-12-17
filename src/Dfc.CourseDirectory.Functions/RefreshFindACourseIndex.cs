@@ -19,8 +19,6 @@ namespace Dfc.CourseDirectory.Functions
         [Function("RefreshFindACourseIndex")]
         public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer, CancellationToken cancellationToken)
         {
-            // This function exists to ensure any courses added via Data Management are added to the FAC API index.
-            // (Data Management is currently the only place that doesn't synchronously update the index.)
 
             if (timer.IsPastDue)
             {
@@ -38,11 +36,14 @@ namespace Dfc.CourseDirectory.Functions
             var createdBefore = _clock.UtcNow.AddHours(-1);
 
             int updated;
+            int deleted;
             int total = 0;
 
             do
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
+
+                //udpated records:
 
                 updated = await dispatcher.ExecuteQuery(new UpdateFindACourseIndexFromMissingCourses()
                 {
@@ -54,10 +55,20 @@ namespace Dfc.CourseDirectory.Functions
 
                 total += updated;
 
+                //audits the index and purges index records where the course or courserun no longer exists:
+
+                deleted = await dispatcher.ExecuteQuery(new AuditAndSyncFindACourseIndex()
+                {
+                    MaxCourseRunCount = batchSize,
+                    Now = _clock.UtcNow
+                });
+
+                total += deleted;
+
                 await dispatcher.Commit();
             }
             while (
-                updated == batchSize &&
+                (updated + deleted) == batchSize &&
                 (total + batchSize) <= maxRecordsPerInvocation &&
                 !cancellationToken.IsCancellationRequested);
         }

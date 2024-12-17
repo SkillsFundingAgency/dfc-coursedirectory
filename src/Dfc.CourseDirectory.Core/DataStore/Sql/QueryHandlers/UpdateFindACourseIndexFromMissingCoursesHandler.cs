@@ -11,9 +11,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public Task<int> Execute(SqlTransaction transaction, UpdateFindACourseIndexFromMissingCourses query)
         {
             var sql = $@"
-DECLARE @CourseRunIds Pttcd.GuidIdTable
+DECLARE @DeletedCourseRunIds Pttcd.GuidIdTable
 
-INSERT INTO @CourseRunIds
+INSERT INTO @DeletedCourseRunIds
 SELECT TOP {query.MaxCourseRunCount} cr.CourseRunId FROM Pttcd.CourseRuns cr
 LEFT JOIN Pttcd.FindACourseIndex i ON cr.CourseRunId = i.CourseRunId
 WHERE cr.CourseRunStatus = {(int)CourseStatus.Live}
