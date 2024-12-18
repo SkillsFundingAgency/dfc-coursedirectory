@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.Functions
             // Exclude course runs that have only just been created so we don't race with the background worker
             var createdBefore = _clock.UtcNow.AddHours(-1);
 
-            int updated;
+            int updatedCourseRuns;
             int deletedCourseRuns;
             int deletedCourses;
             int total = 0;
@@ -44,9 +44,9 @@ namespace Dfc.CourseDirectory.Functions
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-                //udpated records:
+                //updated records:
 
-                updated = await dispatcher.ExecuteQuery(new UpdateFindACourseIndexFromMissingCourses()
+                updatedCourseRuns = await dispatcher.ExecuteQuery(new UpdateFindACourseIndexFromMissingCourses()
                 {
                     MaxCourseRunCount = batchSize,
                     CreatedBefore = createdBefore,
@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.Functions
                     Now = _clock.UtcNow
                 });
 
-                total += updated;
+                total += updatedCourseRuns;
 
                 //audits the index and purges index records where the courserun no longer exists:
 
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Functions
                 await dispatcher.Commit();
             }
             while (
-                (updated + deletedCourseRuns + deletedCourses) == batchSize &&
+                (updatedCourseRuns + deletedCourseRuns + deletedCourses) == batchSize &&
                 (total + batchSize) <= maxRecordsPerInvocation &&
                 !cancellationToken.IsCancellationRequested);
         }
