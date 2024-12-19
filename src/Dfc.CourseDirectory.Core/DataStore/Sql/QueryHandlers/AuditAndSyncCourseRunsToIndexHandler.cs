@@ -18,7 +18,8 @@ FROM Pttcd.FindACourseIndex i
 LEFT JOIN Pttcd.CourseRuns cr ON i.CourseRunId = cr.CourseRunId
 WHERE cr.CourseRunId IS NULL
 
-DELETE FROM Pttcd.FindACourseIndex
+UPDATE Pttcd.FindACourseIndex
+SET Live = false
 WHERE CourseRunId IN (SELECT CourseRunId FROM @OrphanedCourseRunIds)
 
 SELECT COUNT(*) FROM @OrphanedCourseRunIds
