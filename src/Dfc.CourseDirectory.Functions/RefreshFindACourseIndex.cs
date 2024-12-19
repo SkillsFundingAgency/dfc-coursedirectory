@@ -19,8 +19,6 @@ namespace Dfc.CourseDirectory.Functions
         [Function("RefreshFindACourseIndex")]
         public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer, CancellationToken cancellationToken)
         {
-            // This function exists to ensure any courses added via Data Management are added to the FAC API index.
-            // (Data Management is currently the only place that doesn't synchronously update the index.)
 
             if (timer.IsPastDue)
             {
@@ -37,14 +35,18 @@ namespace Dfc.CourseDirectory.Functions
             // Exclude course runs that have only just been created so we don't race with the background worker
             var createdBefore = _clock.UtcNow.AddHours(-1);
 
-            int updated;
+            int updatedCourseRuns;
+            int deletedCourseRuns;
+            int deletedCourses;
             int total = 0;
 
             do
             {
                 using var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
-                updated = await dispatcher.ExecuteQuery(new UpdateFindACourseIndexFromMissingCourses()
+                //updated records:
+
+                updatedCourseRuns = await dispatcher.ExecuteQuery(new UpdateFindACourseIndexFromMissingCourses()
                 {
                     MaxCourseRunCount = batchSize,
                     CreatedBefore = createdBefore,
@@ -52,12 +54,32 @@ namespace Dfc.CourseDirectory.Functions
                     Now = _clock.UtcNow
                 });
 
-                total += updated;
+                total += updatedCourseRuns;
+
+                //audits the index and purges index records where the courserun no longer exists:
+
+                deletedCourseRuns = await dispatcher.ExecuteQuery(new AuditAndSyncCourseRunsToIndex()
+                {
+                    MaxCourseRunCount = batchSize,
+                    Now = _clock.UtcNow
+                });
+
+                total += deletedCourseRuns;
+
+                //audits the index and purges index records where the course no longer exists:
+
+                deletedCourses = await dispatcher.ExecuteQuery(new AuditAndSyncCoursesToIndex()
+                {
+                    MaxCourseCount = batchSize,
+                    Now = _clock.UtcNow
+                });
+
+                total += deletedCourses;
 
                 await dispatcher.Commit();
             }
             while (
-                updated == batchSize &&
+                (updatedCourseRuns + deletedCourseRuns + deletedCourses) == batchSize &&
                 (total + batchSize) <= maxRecordsPerInvocation &&
                 !cancellationToken.IsCancellationRequested);
         }
