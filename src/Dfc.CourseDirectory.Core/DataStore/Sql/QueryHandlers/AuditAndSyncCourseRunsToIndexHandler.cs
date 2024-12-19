@@ -19,7 +19,7 @@ LEFT JOIN Pttcd.CourseRuns cr ON i.CourseRunId = cr.CourseRunId
 WHERE cr.CourseRunId IS NULL
 
 UPDATE Pttcd.FindACourseIndex
-SET Live = false
+SET Live = 0
 WHERE CourseRunId IN (SELECT CourseRunId FROM @OrphanedCourseRunIds)
 
 SELECT COUNT(*) FROM @OrphanedCourseRunIds
