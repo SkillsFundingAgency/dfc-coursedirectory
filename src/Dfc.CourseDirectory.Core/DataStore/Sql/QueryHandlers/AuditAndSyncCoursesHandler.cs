@@ -16,7 +16,7 @@ INSERT INTO @OrphanedCourseIds
 SELECT TOP {query.MaxCourseCount} i.CourseId
 FROM Pttcd.FindACourseIndex i
 LEFT JOIN Pttcd.Courses cr ON i.CourseId = cr.CourseId
-WHERE cr.CourseId IS NULL AND i.Live <> 0
+WHERE cr.CourseId IS NULL AND i.Live <> 0 AND i.CourseId IS NOT NULL
 
 UPDATE Pttcd.FindACourseIndex
 SET Live = 0
