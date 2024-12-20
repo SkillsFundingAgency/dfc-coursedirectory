@@ -5,10 +5,10 @@
         public const string CampaignContainerName = "campaign-data";
         public const string ContainerName = "data-uploads";
         public const string VenuesFolder = "venues";
-        public const int VenueFileMaxSizeBytes = 1048576;
-        public const string VenueFileMaxSizeLabel = "1MB";
+        public const int VenueFileMaxSizeBytes = 10485760;
+        public const string VenueFileMaxSizeLabel = "10 MB";
         public const string CoursesFolder = "courses";
-        public const int CourseFileMaxSizeBytes = 5242880;
-        public const string CourseFileMaxSizeLabel = "5MB";
+        public const int CourseFileMaxSizeBytes = 157286400;
+        public const string CourseFileMaxSizeLabel = "150 MB";
     }
 }
