@@ -11,7 +11,8 @@
             "query":  null
         },
         "dataChangeDetectionPolicy":  {
-            "@odata.type":  "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"
+            "@odata.type":  "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+            "highWaterMarkColumnName":  "Version"
         }
     }
 ]
