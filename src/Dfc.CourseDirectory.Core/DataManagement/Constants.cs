@@ -8,7 +8,7 @@
         public const int VenueFileMaxSizeBytes = 10485760;
         public const string VenueFileMaxSizeLabel = "10 MB";
         public const string CoursesFolder = "courses";
-        public const int CourseFileMaxSizeBytes = 157286400;
-        public const string CourseFileMaxSizeLabel = "150 MB";
+        public const int CourseFileMaxSizeBytes = 104857600;
+        public const string CourseFileMaxSizeLabel = "100 MB";
     }
 }
