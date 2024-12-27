@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -36,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Theory]
@@ -76,7 +77,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Content.Headers.ContentType.ToString().Should().Be("text/csv");
             response.Content.Headers.ContentDisposition.ToString().Should().Be($"attachment; filename=LiveTLevelsReport-{Clock.UtcNow:yyyyMMddHHmmss}.csv");
 
