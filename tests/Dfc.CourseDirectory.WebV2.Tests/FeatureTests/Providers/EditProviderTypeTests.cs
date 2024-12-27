@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Http;
 using Moq;
 using OneOf;
 using OneOf.Types;
