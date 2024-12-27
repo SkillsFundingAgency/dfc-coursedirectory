@@ -16,12 +16,6 @@ namespace Dfc.CourseDirectory.Web
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .ConfigureLogging((context, builder) =>
-                {
-                    builder.AddConfiguration(context.Configuration.GetSection("Logging"));
-                    var appInsightsKey = context.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
-                    builder.AddApplicationInsights(appInsightsKey);
-                })
                 .ConfigureAppConfiguration(builder =>
                 {
                     var environmentName = Environment.GetEnvironmentVariable("EnvironmentSettings__EnvironmentName");

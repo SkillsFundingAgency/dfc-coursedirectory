@@ -14,8 +14,6 @@ namespace Dfc.CourseDirectory.Api
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(builder =>
                 {
-                    builder.AddApplicationInsightsSettings();
-
                     var environmentName = Environment.GetEnvironmentVariable("EnvironmentSettings__EnvironmentName");
 
                     if (!string.IsNullOrEmpty(environmentName))
