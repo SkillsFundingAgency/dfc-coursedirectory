@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(csv).ToList();
 
                 var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRefType);
-                _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc)})");
+                _logger.LogInformation("{csv} - Excluded {LearnAimRefType}s: {excluded} (T Level detected in {LearnAimRefTypeDesc})", csv, nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType), string.Join(",", excluded), nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc));
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                 {
@@ -157,7 +157,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var validRecords = records.Where(r =>
                     categoriesRefs.Contains(r.CategoryRef) && learningDeliveryRefs.Contains(r.LearnAimRef));
 
-                _logger.LogInformation($"{csv} - Excluded {records.Count() - validRecords.Count()} of {records.Count()} rows due to referential integrity violations");
+                _logger.LogInformation("{csv} - Excluded {Count} of {ActualCount} rows due to referential integrity violations",csv, records.Count() - validRecords.Count(), records.Count());
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveryCategories()
                 {
@@ -196,10 +196,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             Task ImportValidityToSql()
             {
-                _logger.LogInformation($"Start import validity.csv");
+                _logger.LogInformation("Start import validity.csv");
                 var records = ReadCsv<UpsertLarsValidityRecord>("Validity.csv");
 
-                _logger.LogInformation($"Start import validity.csv records count - "+records.Count());
+                _logger.LogInformation("Start import validity.csv records count - {Count} ",records.Count());
 
                 return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsValidity
                 {

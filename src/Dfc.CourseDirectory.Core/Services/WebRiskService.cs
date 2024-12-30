@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Core.Services
         {
             _WebRiskSettings = options.Value;
             _factory = factory;
-            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>(); ;
+            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>();
         }
 
         public async Task<bool> CheckForSecureUri(string url)
