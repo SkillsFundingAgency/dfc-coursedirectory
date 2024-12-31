@@ -258,11 +258,12 @@ namespace Dfc.CourseDirectory.WebV2
 
                     // When we expire the session, ensure user is prompted to sign in again at DfE Sign In
                     options.MaxAge = overallSessionTimeout;
-
+                    
                     options.SaveTokens = true;
                     options.CallbackPath = settings.CallbackPath;
                     options.SignedOutCallbackPath = settings.SignedOutCallbackPath;
-                    options.TokenHandler = new JwtSecurityTokenHandler()
+                    options.UseSecurityTokenValidator = true;
+                    options.SecurityTokenValidator = new JwtSecurityTokenHandler()
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),
                         TokenLifetimeInMinutes = 90,
