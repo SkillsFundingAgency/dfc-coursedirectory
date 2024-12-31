@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Functions
     {
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly IClock _clock;
-        private readonly ILogger _logger;
+        private readonly ILogger<DeleteArchivedCourses> _logger;
 
         public DeleteArchivedCourses(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock, ILogger<DeleteArchivedCourses> logger)
         {

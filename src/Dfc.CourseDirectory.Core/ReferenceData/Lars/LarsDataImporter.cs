@@ -22,19 +22,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private readonly LarsDataset _larsDataset;
         private readonly HttpClient _httpClient;
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
-        private readonly IClock _clock;
         private readonly ILogger<LarsDataImporter> _logger;
 
         public LarsDataImporter(
             HttpClient httpClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            IClock clock,
             ILogger<LarsDataImporter> logger,
             IOptions<LarsDataset> larsDatasetOption)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
-            _clock = clock;
             _logger = logger;
             _larsDataset = larsDatasetOption.Value;
         }
@@ -130,7 +127,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
 
                 var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
-                _logger.LogInformation($"{csv} - Excluded {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef)}s: {string.Join(",", excluded)} (T Level detected in {nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle)})");
+                _logger.LogInformation("{csv} - Excluded {LearnAimRef}s: {Excluded} (T Level detected in {LearnAimRefTitle})", csv, nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef), string.Join(", ", excluded), nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle));
 
                 var includedRecords = records.Where(r => !IsTLevel(r)).ToList();
                 await WithSqlQueryDispatcher(dispatcher =>
