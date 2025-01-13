@@ -1,6 +1,6 @@
 ﻿@model Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details.ViewModel
 @{
-    ViewContext.SetLayoutData(title: "T Level details");
+    ViewContext.SetLayoutData(title: "T Level details");     
 }
 
 <govuk-error-summary>
@@ -59,14 +59,26 @@
                 </govuk-button>
             </div>
 
-            <govuk-input asp-for="Website">
+            @* <govuk-input asp-for="Website">
                 <govuk-input-label class="govuk-label--m">
                     T Level webpage
                 </govuk-input-label>
                 <govuk-input-hint>
                     The webpage for this T Level. For example, https://www.provider.com/tlevelname.
-                </govuk-input-hint>
-            </govuk-input>
+                </govuk-input-hint>                
+            </govuk-input> *@
+
+           
+
+            <website-input 
+                asp-for="Website" 
+                id="Website" 
+                name="Website"                
+                label="Website" 
+                hint="The webpage for this T Level. For example, https://www.provider.com/tlevelname."
+                model-state-entry="@ViewContext.ModelState["Website"]"
+                value="@Model.Website"> 
+            </website-input>            
 
             <govuk-button>Continue</govuk-button>
         </form>
