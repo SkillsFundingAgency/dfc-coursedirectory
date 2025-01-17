@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTLevelDefinitions()
         {
-           return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
+            return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
         }
 
         [HttpGet("~/tlevels")]
@@ -49,11 +49,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
+                _ =>
+                {
                     _log.LogWarning($"Failed to get T-Level Details for [{request.TLevelId}]. Response Code [NOT FOUND]");
                     return NotFound();
                 },
-                r => {
+                r =>
+                {
                     _log.LogInformation($"Successfully retrieved T-Level Details for [{request.TLevelId}]. Response Code [OK]");
                     return Ok(r);
                 }

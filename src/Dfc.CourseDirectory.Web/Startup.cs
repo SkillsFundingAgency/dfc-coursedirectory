@@ -20,14 +20,14 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
+using Azure.Storage;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Azure.Storage.Sas;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -163,31 +163,45 @@ namespace Dfc.CourseDirectory.Web
 
             var dfeSettings = new DfeSignInSettings();
             Configuration.GetSection("DFESignInSettings").Bind(dfeSettings);
-            services.AddDfeSignIn(dfeSettings);
+            services.AddDfeSignIn(dfeSettings);            
 
             Uri GetDataProtectionBlobToken()
             {
-                var cloudStorageAccount = new CloudStorageAccount(
-                    new Microsoft.Azure.Storage.Auth.StorageCredentials(
-                        Configuration["BlobStorageSettings:AccountName"],
-                        Configuration["BlobStorageSettings:AccountKey"]),
-                    useHttps: true);
+                // Create the StorageSharedKeyCredential using the account name and key
+                var storageCredentials = new StorageSharedKeyCredential(
+                    Configuration["BlobStorageSettings:AccountName"],
+                    Configuration["BlobStorageSettings:AccountKey"]);
 
-                var blobClient = cloudStorageAccount.CreateCloudBlobClient();
+                // Create the BlobServiceClient using the storage credentials
+                var blobServiceClient = new BlobServiceClient(
+                    new Uri($"https://{Configuration["BlobStorageSettings:AccountName"]}.blob.core.windows.net"),
+                    storageCredentials);
 
-                var container = blobClient.GetContainerReference(Configuration["DataProtection:ContainerName"]);
+                // Get a reference to the container
+                var containerClient = blobServiceClient.GetBlobContainerClient(Configuration["DataProtection:ContainerName"]);
 
-                var blob = container.GetBlockBlobReference(Configuration["DataProtection:BlobName"]);
+                // Get a reference to the blob
+                var blobClient = containerClient.GetBlobClient(Configuration["DataProtection:BlobName"]);
 
-                var sharedAccessPolicy = new SharedAccessBlobPolicy()
+                // Create the SAS token builder
+                var sasBuilder = new BlobSasBuilder()
                 {
-                    SharedAccessExpiryTime = DateTime.UtcNow.AddYears(1),
-                    Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.Create
+                    BlobContainerName = Configuration["DataProtection:ContainerName"],
+                    BlobName = Configuration["DataProtection:BlobName"],
+                    Resource = "b",  // "b" stands for blob
+                    ExpiresOn = DateTimeOffset.UtcNow.AddYears(1)  // Set expiry time to 1 year from now
                 };
 
-                var sasToken = blob.GetSharedAccessSignature(sharedAccessPolicy);
+                // Set the permissions for the SAS token
+                sasBuilder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write | BlobSasPermissions.Create);
 
-                return new Uri(blob.Uri + sasToken);
+                // Generate the SAS token
+                var sasToken = sasBuilder.ToSasQueryParameters(storageCredentials).ToString();
+
+                // Combine the Blob URI and the SAS token
+                var sasUri = new Uri($"{blobClient.Uri}?{sasToken}");
+
+                return sasUri;
             }
         }
 

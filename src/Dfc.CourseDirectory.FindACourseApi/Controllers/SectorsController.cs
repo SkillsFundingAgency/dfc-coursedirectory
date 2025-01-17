@@ -28,6 +28,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             _log.LogInformation($"Start getting all sectors");
 
             return Ok(await _mediator.Send(new Features.Sectors.Query()));
-        }        
+        }
     }
 }

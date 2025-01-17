@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels
             var sqlProviders = await getSqlProviders;
             var venues = await getVenues;
 
-            
+
             return new ViewModel
             {
                 TLevels = tLevels.Select(t =>

@@ -1,7 +1,5 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
-using Microsoft.Azure.WebJobs;
+﻿using Dfc.CourseDirectory.Core.ReferenceData.Campaigns;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -14,15 +12,11 @@ namespace Dfc.CourseDirectory.Functions
             _campaignDataImporter = campaignDataImporter;
         }
 
-        [FunctionName(nameof(CampaignDataImporter))]
+        [Function(nameof(CampaignDataImporter))]
         public async Task Run(
            [BlobTrigger("%CampaignDataContainerName%/{campaignCode}.csv")] Stream blob,
            string campaignCode)
         {
-            //using var stream = new MemoryStream();
-            //await blob.DownloadToStreamAsync(stream);
-           // stream.Seek(0L, SeekOrigin.Begin);
-
             await _campaignDataImporter.ImportCampaignData(campaignCode, blob);
             blob.Dispose();
         }

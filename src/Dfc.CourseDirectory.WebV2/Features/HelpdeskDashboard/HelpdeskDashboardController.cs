@@ -1,8 +1,8 @@
-﻿using Dfc.CourseDirectory.WebV2.Security;
+﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Security;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using System.Threading.Tasks;
 
 namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
 {
