@@ -1,9 +1,8 @@
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
-using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace Dfc.CourseDirectory.Functions
 {

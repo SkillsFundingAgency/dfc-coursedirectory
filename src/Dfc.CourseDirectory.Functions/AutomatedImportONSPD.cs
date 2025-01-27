@@ -1,11 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Functions
@@ -31,7 +28,7 @@ namespace Dfc.CourseDirectory.Functions
         [FunctionName("AutomatedImportONSPD")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
         {
-            await _onspdDataImporter.AutomatedDataImport();
+            await _onspdDataImporter.AutomatedImportData();
             return new OkObjectResult($"Automated ONSPD data import triggered");
         }
     }
