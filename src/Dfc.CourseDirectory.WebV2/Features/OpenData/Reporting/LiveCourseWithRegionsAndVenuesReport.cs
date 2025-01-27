@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.DataManagement;
-using MediatR;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Helpers;
+using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport
 {
@@ -131,17 +131,17 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
+    {
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+
+        public Handler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+        }
 
-            public Handler(ISqlQueryDispatcher sqlQueryDispatcher)
-            {
-                _sqlQueryDispatcher = sqlQueryDispatcher;
-            }
+        public async Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
+        {
 
-            public async Task<IAsyncEnumerable<Csv>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                
             var sectors = (await _sqlQueryDispatcher.ExecuteQuery(new GetSectors())).ToList();
 
             var liveCoursesRecords = _sqlQueryDispatcher.ExecuteQuery(new GetLiveCoursesWithRegionsAndVenuesReport
@@ -152,50 +152,50 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithR
             return Process(liveCoursesRecords, sectors);
 
             static async IAsyncEnumerable<Csv> Process(IAsyncEnumerable<LiveCoursesWithRegionsAndVenuesReportItem> liveCoursesRecords, List<Sector> sectors)
+            {
+                await foreach (var record in liveCoursesRecords)
                 {
-                    await foreach (var record in liveCoursesRecords)
+                    yield return new Csv
                     {
-                        yield return new Csv
-                        {
-                            ProviderUkprn = record.ProviderUkprn.ToString(),
-                            CourseId = record.CourseId.ToString(),
-                            CourseRunId = record.CourseRunId.ToString(),
-                            CourseName = ASCIICodeHelper.ReplaceHexCodes(record.CourseName),
-                            CourseDescription = ASCIICodeHelper.ReplaceHexCodes(record.CourseDescription),
-                            CourseUrl = record.CourseWebsite,
-                            LarsId = record.LearnAimRef,
-                            DeliveryMode = record.DeliveryMode,
-                            AttendancePattern = record.AttendancePattern,
-                            StudyMode = record.StudyMode,
-                            IsFlexible = record.FlexibleStartDate,
-                            StartDate = ParsedCsvCourseRow.MapStartDate(record.StartDate),
-                            DurationUnit = record.DurationUnit,
-                            DurationValue = record.DurationValue,
-                            Cost = ParsedCsvCourseRow.MapCost(record.Cost),
-                            CostDescription = ASCIICodeHelper.ReplaceHexCodes(record.CostDescription),
-                            IsNational = record.National,
-                            Regions = record.Regions,
-                            LocationName = record.VenueName,
-                            LocationAddress1 = record.VenueAddress1,
-                            LocationAddress2 = record.VenueAddress2,
-                            LocationCounty = record.VenueCounty,
-                            LocationEmail = record.VenueEmail,
-                            LocationLat = record.VenueLatitude,
-                            LocationLon = record.VenueLongitude,
-                            LocationPostcode = record.VenuePostcode,
-                            LocationTown = record.VenueTown,
-                            LocationPhone = record.VenueTelephone,
-                            LocationWebsite = record.VenueWebsite,
-                            UpdatedDate = ParsedCsvCourseRow.MapStartDate(record.UpdatedOn),
-                            EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(record.EntryRequirements),
-                            HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(record.HowYouWillBeAssessed),
-                            CourseType = record.CourseType,
-                            Sector = ParsedCsvNonLarsCourseRow.MapSectorIdToCode(record.SectorId, sectors),
-                            AwardingBody = record.AwardingBody,
-                            EducationLevel = record.EducationLevel
-                        };
-                    }
+                        ProviderUkprn = record.ProviderUkprn.ToString(),
+                        CourseId = record.CourseId.ToString(),
+                        CourseRunId = record.CourseRunId.ToString(),
+                        CourseName = ASCIICodeHelper.ReplaceHexCodes(record.CourseName),
+                        CourseDescription = ASCIICodeHelper.ReplaceHexCodes(record.CourseDescription),
+                        CourseUrl = record.CourseWebsite,
+                        LarsId = record.LearnAimRef,
+                        DeliveryMode = record.DeliveryMode,
+                        AttendancePattern = record.AttendancePattern,
+                        StudyMode = record.StudyMode,
+                        IsFlexible = record.FlexibleStartDate,
+                        StartDate = ParsedCsvCourseRow.MapStartDate(record.StartDate),
+                        DurationUnit = record.DurationUnit,
+                        DurationValue = record.DurationValue,
+                        Cost = ParsedCsvCourseRow.MapCost(record.Cost),
+                        CostDescription = ASCIICodeHelper.ReplaceHexCodes(record.CostDescription),
+                        IsNational = record.National,
+                        Regions = record.Regions,
+                        LocationName = record.VenueName,
+                        LocationAddress1 = record.VenueAddress1,
+                        LocationAddress2 = record.VenueAddress2,
+                        LocationCounty = record.VenueCounty,
+                        LocationEmail = record.VenueEmail,
+                        LocationLat = record.VenueLatitude,
+                        LocationLon = record.VenueLongitude,
+                        LocationPostcode = record.VenuePostcode,
+                        LocationTown = record.VenueTown,
+                        LocationPhone = record.VenueTelephone,
+                        LocationWebsite = record.VenueWebsite,
+                        UpdatedDate = ParsedCsvCourseRow.MapStartDate(record.UpdatedOn),
+                        EntryRequirements = ASCIICodeHelper.ReplaceHexCodes(record.EntryRequirements),
+                        HowYouWillBeAssessed = ASCIICodeHelper.ReplaceHexCodes(record.HowYouWillBeAssessed),
+                        CourseType = record.CourseType,
+                        Sector = ParsedCsvNonLarsCourseRow.MapSectorIdToCode(record.SectorId, sectors),
+                        AwardingBody = record.AwardingBody,
+                        EducationLevel = record.EducationLevel
+                    };
                 }
             }
         }
+    }
 }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Http;

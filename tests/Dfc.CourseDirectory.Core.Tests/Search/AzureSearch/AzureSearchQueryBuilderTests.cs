@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Azure.Search.Documents.Models;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using FluentAssertions;

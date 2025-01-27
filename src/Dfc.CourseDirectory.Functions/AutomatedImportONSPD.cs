@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Functions
 {
-    
     public class AutomatedImportONSPD
     {
         private readonly OnspdDataImporter _onspdDataImporter;
@@ -26,7 +25,7 @@ namespace Dfc.CourseDirectory.Functions
         [FunctionName("AutomatedImportONSPD")]
         public async Task Run([TimerTrigger("0 0 20 27 * *", RunOnStartup = true)] TimerInfo myTimer)
         {
-            await _onspdDataImporter.AutomatedDataImport();
+            await _onspdDataImporter.AutomatedImportData();
         }
         */
         [FunctionName("AutomatedImportONSPD")]

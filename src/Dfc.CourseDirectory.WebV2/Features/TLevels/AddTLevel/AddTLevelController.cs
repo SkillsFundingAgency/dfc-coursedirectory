@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.WebV2.Filters;
 using Flurl;
 using FormFlow;
 using MediatR;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel

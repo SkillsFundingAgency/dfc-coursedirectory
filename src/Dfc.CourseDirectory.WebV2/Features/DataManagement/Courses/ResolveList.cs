@@ -70,13 +70,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
             var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
-                _providerContextProvider.GetProviderId(),request.IsNonLars);
+                _providerContextProvider.GetProviderId(), request.IsNonLars);
 
             if (errorRows.Count == 0)
             {
                 return new UploadHasNoErrors();
             }
-            if(request.IsNonLars)
+            if (request.IsNonLars)
             {
                 return new ViewModel()
                 {
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                         DeliveryMode = r.Row.DeliveryMode,
                                         ErrorFields = r.NonGroupErrorFields,
                                         HasDeliveryModeError = r.NonGroupErrorFields.Contains("Delivery mode"),
-                                        HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode"}).Any()
+                                        HasDetailErrors = r.NonGroupErrorFields.Except(new[] { "Delivery mode" }).Any()
                                     })
                                     .Where(r => r.ErrorFields.Count > 0)
                                     .OrderByDescending(r => r.ErrorFields.Contains("Delivery mode") ? 1 : 0)
@@ -124,7 +124,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                                     .ToArray(),
                                 ErrorFields = g.First().GroupErrorFields,
                                 HasDescriptionErrors = g.First().GroupErrorFields.Any(),
-                                HasDetailErrors =(g.First().GroupErrorFields.Contains("Course type") || g.First().GroupErrorFields.Contains("Awarding body") || g.First().GroupErrorFields.Contains("Education level") || g.First().GroupErrorFields.Contains("Sector")),
+                                HasDetailErrors = (g.First().GroupErrorFields.Contains("Course type") || g.First().GroupErrorFields.Contains("Awarding body") || g.First().GroupErrorFields.Contains("Education level") || g.First().GroupErrorFields.Contains("Sector")),
                             };
                         })
                         .OrderByDescending(g => g.CourseRows.Any(r => r.ErrorFields.Contains("Delivery mode")) ? 1 : 0)
@@ -194,7 +194,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveList
                         .ToArray()
                 };
             }
-            
+
         }
     }
 }

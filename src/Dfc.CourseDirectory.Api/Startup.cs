@@ -5,7 +5,6 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -77,8 +76,8 @@ namespace Dfc.CourseDirectory.Api
             services.TryAddSingleton<IFeatureFlagProvider, ConfigurationFeatureFlagProvider>();
 
             services
-                .AddMediatR(typeof(Startup).Assembly)
-                .AddMediatR(typeof(FindACourseApi.Startup).Assembly);
+                .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly))
+                .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FindACourseApi.Startup).Assembly));
 
             if (Environment.EnvironmentName != "Testing")
             {

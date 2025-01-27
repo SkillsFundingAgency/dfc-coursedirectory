@@ -46,13 +46,29 @@ namespace Dfc.CourseDirectory.WebV2.Security
             var ukprnClaim = principal.FindFirst("UKPRN");
             var ukprn = ukprnClaim != null ? int.Parse(ukprnClaim.Value) : (int?)null;
 
+            var schemaUrlString = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/";
+
+            var email = principal.FindFirst("email")?.Value ??
+                    principal.FindFirst($"{schemaUrlString}emailaddress")?.Value;
+
+            var firstName = principal.FindFirst("given_name")?.Value ??
+                    principal.FindFirst($"{schemaUrlString}givenname")?.Value;
+
+            var lastName = principal.FindFirst("family_name")?.Value ??
+                           principal.FindFirst($"{schemaUrlString}surname")?.Value;
+
+            var role = principal.FindFirst(ClaimTypes.Role)?.Value;
+
+            var userId = principal.FindFirst("sub")?.Value ??
+                         principal.FindFirst($"{schemaUrlString}nameidentifier")?.Value;
+
             return new AuthenticatedUserInfo()
             {
-                Email = principal.FindFirst("email").Value,
-                FirstName = principal.FindFirst("given_name").Value,
-                LastName = principal.FindFirst("family_name").Value,
-                Role = principal.FindFirst(ClaimTypes.Role)?.Value,
-                UserId = principal.FindFirst("sub").Value, // sub == subject of claim in JWT, i.e. userId. https://tools.ietf.org/html/rfc7519#section-4.1.2
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Role = role,
+                UserId = userId,
                 CurrentProviderId = providerId,
                 CurrentProviderUkprn = ukprn
             };

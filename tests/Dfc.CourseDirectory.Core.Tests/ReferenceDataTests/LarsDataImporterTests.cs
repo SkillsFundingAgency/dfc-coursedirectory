@@ -2,17 +2,15 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dapper;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Core.Configuration;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using JustEat.HttpClientInterception;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xunit;
-using Moq;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
@@ -34,8 +32,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var larsDataSetOption = Options.Create(new LarsDataset
             {
-                Url =
-                    "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F008%2FLearningDelivery_V008_CSV.Zip"
+                Url = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F010%2FLearningDelivery_V010_CSV.Zip"
             });
 
             var importer = new LarsDataImporter(

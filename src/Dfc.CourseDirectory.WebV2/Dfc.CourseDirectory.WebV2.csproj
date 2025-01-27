@@ -1,36 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
-
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
     <PackageReference Include="Flurl" Version="3.0.7" />
     <PackageReference Include="FormFlow" Version="0.4.4" />
     <PackageReference Include="GovUk.Frontend.AspNetCore" Version="0.5.1" />
     <PackageReference Include="JWT" Version="10.0.2" />
-	<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.14" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Content/**/*" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="Content\components\cancel-btn.css" />
     <None Remove="Content\components\cookie-banner.css" />
     <None Remove="Content\components\cookie-banner.js" />
     <None Remove="Content\components\dm-errors.css" />
     <None Remove="Content\components\dm-publish-summary.css" />
+    <None Remove="Content\components\govuk-footer.css" />
     <None Remove="Content\components\inset-text.css" />
     <None Remove="Content\components\link-button.css" />
     <None Remove="Content\components\list.css" />
@@ -60,9 +56,7 @@
     <None Remove="Content\utilities\typography.css" />
     <None Remove="Content\utilities\width.css" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
   </ItemGroup>
-
 </Project>
