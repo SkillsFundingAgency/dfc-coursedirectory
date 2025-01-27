@@ -79,7 +79,7 @@
                 <govuk-radios-hint>
                     Select one option.
                 </govuk-radios-hint>
-                @foreach(var sector in Model.Sectors)
+                @foreach (var sector in Model.Sectors)
                 {
                     <govuk-radios-item value="@sector.Code">@sector.Description</govuk-radios-item>
                 }
