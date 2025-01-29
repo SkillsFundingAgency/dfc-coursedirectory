@@ -45,13 +45,13 @@
                     <govuk-checkboxes-fieldset-legend class="govuk-label--m">
                         Venue
                     </govuk-checkboxes-fieldset-legend>
+                    @foreach (var item in Model.ProviderVenues)
+                    {
+                        <govuk-checkboxes-item value="@item.VenueId" checked="@(Model.LocationVenueIds.Contains(item.VenueId))" input-data-testid="LocationVenueIds-@(item.VenueId)">
+                            @item.VenueName
+                        </govuk-checkboxes-item>
+                    }
                 </govuk-checkboxes-fieldset>
-                @foreach (var item in Model.ProviderVenues)
-                {
-                    <govuk-checkboxes-item value="@item.VenueId" checked="@(Model.LocationVenueIds.Contains(item.VenueId))" input-data-testid="LocationVenueIds-@(item.VenueId)">
-                        @item.VenueName
-                    </govuk-checkboxes-item>
-                }
             </govuk-checkboxes>
 
             @* TODO move this inside the LocationVenueIds formgroup above when tag helper library supports it? *@
