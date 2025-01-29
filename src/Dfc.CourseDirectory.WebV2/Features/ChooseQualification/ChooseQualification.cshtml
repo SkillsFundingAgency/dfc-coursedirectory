@@ -66,12 +66,14 @@
                                         Select @filter.Title
                                     </legend>
                                     <govuk-checkboxes asp-for="NotionalNVQLevelv2" class="govuk-checkboxes--small" data-testid="NotionalNVQLevelv2Filters">
-                                        @foreach (var item in filter.Items)
-                                        {
-                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="NotionalNVQLevelv2FilterOption">
-                                                @item.Text
-                                            </govuk-checkboxes-item>
-                                        }
+                                        <govuk-checkboxes-fieldset>
+                                            @foreach (var item in filter.Items)
+                                            {
+                                                <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="NotionalNVQLevelv2FilterOption">
+                                                    @item.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
                                     </govuk-checkboxes>
                                 </fieldset>
 
@@ -89,12 +91,14 @@
                                         Select @filter.Title
                                     </legend>
                                     <govuk-checkboxes asp-for="AwardingOrganisation" class="govuk-checkboxes--small" data-testid="AwardingOrganisationFilters">
-                                        @foreach (var item in filter.Items)
-                                        {
-                                            <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="AwardingOrganisationFilterOption">
-                                                @item.Text
-                                            </govuk-checkboxes-item>
-                                        }
+                                        <govuk-checkboxes-fieldset>
+                                            @foreach (var item in filter.Items)
+                                            {
+                                                <govuk-checkboxes-item value=@item.Value checked=@item.IsSelected class="AwardingOrganisationFilterOption">
+                                                    @item.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
                                     </govuk-checkboxes>
                                 </fieldset>
 

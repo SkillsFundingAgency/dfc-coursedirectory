@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using Dfc.CourseDirectory.Core.Models;
+using GovUk.Frontend.AspNetCore.ModelBinding;
 using GovUk.Frontend.AspNetCore;
 
 namespace Dfc.CourseDirectory.WebV2.ModelBinding
-{
-    public class DateInputModelConverter : GovUk.Frontend.AspNetCore.DateInputModelConverter
+{/*
+    public class DateInputModelConverter : GovUk.Frontend.AspNetCore.TagHelpers.DateInputModelConverter
     {
         public override bool CanConvertModelType(Type modelType) => modelType == typeof(DateInput);
 
@@ -45,4 +46,4 @@ namespace Dfc.CourseDirectory.WebV2.ModelBinding
             return true;
         }
     }
-}
+*/}

@@ -35,7 +35,7 @@
                         Start date
                     </govuk-summary-list-row-key>
                     <govuk-summary-list-row-value>
-                        @Model.StartDate.ToDateTime().ToString("d MMMM yyyy")
+                        @Model.StartDate.ToString("d MMMM yyyy")
                     </govuk-summary-list-row-value>
                     <govuk-summary-list-row-actions>
                         <govuk-summary-list-row-action asp-action="Edit" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId" asp-fragment="@Html.IdFor(m => m.StartDate)" visually-hidden-text="start date">
