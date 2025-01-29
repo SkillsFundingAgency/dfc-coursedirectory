@@ -29,9 +29,11 @@
                 <govuk-summary-list-row-value>@Model.DisplayName</govuk-summary-list-row-value>
                 @if (Model.CanChangeDisplayName)
                 {
-                    <govuk-summary-list-row-action asp-action="DisplayName" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="display name" data-testid="ChangeDisplayName">
-                        Change
-                    </govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-action="DisplayName" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="display name" data-testid="ChangeDisplayName">
+                            Change
+                        </govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 }
             </govuk-summary-list-row>
             <govuk-summary-list-row>
@@ -61,9 +63,11 @@
                 </govuk-summary-list-row-value>
                 @if (Model.CanChangeProviderType)
                 {
-                    <govuk-summary-list-row-action asp-controller="EditProviderType" asp-action="Get" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="provider type" data-testid="ChangeProviderType">
-                        Change
-                    </govuk-summary-list-row-action>
+                    <govuk-summary-list-row-actions>
+                        <govuk-summary-list-row-action asp-controller="EditProviderType" asp-action="Get" asp-all-route-data="@ProviderContext.RouteValues" visually-hidden-text="provider type" data-testid="ChangeProviderType">
+                            Change
+                        </govuk-summary-list-row-action>
+                    </govuk-summary-list-row-actions>
                 }
             </govuk-summary-list-row>
             @if (Model.ShowMarketingInformation)
@@ -74,9 +78,11 @@
                     <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
                     @if (Model.CanUpdateMarketingInformation)
                     {
-                        <govuk-summary-list-row-action asp-action="EditProviderInfo" asp-route-providerId="@Model.ProviderId" visually-hidden-text="provider information" data-testid="ChangeMarketingInformation">
-                            Change
-                        </govuk-summary-list-row-action>
+                        <govuk-summary-list-row-actions>
+                            <govuk-summary-list-row-action asp-action="EditProviderInfo" asp-route-providerId="@Model.ProviderId" visually-hidden-text="provider information" data-testid="ChangeMarketingInformation">
+                                Change
+                            </govuk-summary-list-row-action>
+                        </govuk-summary-list-row-actions>
                     }
                 </govuk-summary-list-row>
             }

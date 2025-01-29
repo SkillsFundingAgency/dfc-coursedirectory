@@ -38,12 +38,14 @@
             </govuk-input>
 
             <govuk-date-input asp-for="StartDate">
-                <govuk-date-input-label class="govuk-label--m">
-                    Start date
-                </govuk-date-input-label>
-                <govuk-date-input-hint>
-                    For example, 30 9 2020
-                </govuk-date-input-hint>
+                <govuk-date-input-fieldset>
+                    <govuk-date-input-fieldset-legend class="govuk-label--m">
+                        Start date
+                    </govuk-date-input-fieldset-legend>
+                    <govuk-date-input-hint>
+                        For example, 30 9 2020
+                    </govuk-date-input-hint>
+                </govuk-date-input-fieldset>
             </govuk-date-input>
 
             <govuk-checkboxes asp-for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
