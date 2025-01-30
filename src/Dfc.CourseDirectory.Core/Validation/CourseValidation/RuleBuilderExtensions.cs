@@ -275,68 +275,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 });
         }
 
-        public static void StartDate<T>(this IRuleBuilderInitial<T, DateInput> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
-        {
-            field
-                .Cascade(CascadeMode.Stop)
-                // Must be valid
-                .Custom((v, ctx) =>
-                {
-                    if (v == null)
-                        return;
-                    var date = new DateInput(v.Value);
-                    if (date.IsValid)
-                    {
-                        return;
-                    }
-                    var displayName = "Start date";
-                    Debug.Assert(date.InvalidReasons != InvalidDateInputReasons.None);
-
-                    // A date was provided but it's invalid; figure out an appropriate message.
-                    // We expect to have InvalidReasons to be either: InvalidDate OR
-                    // 1-2 of MissingDay, MissingMonth and MissingYear.
-
-                    if ((date.InvalidReasons & InvalidDateInputReasons.InvalidDate) != 0)
-                    {
-                        ctx.AddFailure($"{displayName} must be a real date");
-                        return;
-                    }
-
-                    var missingFields = EnumHelper.SplitFlags(date.InvalidReasons)
-                        .Aggregate(
-                            Enumerable.Empty<string>(),
-                            (acc, r) =>
-                            {
-                                var elementName = r switch
-                                {
-                                    InvalidDateInputReasons.MissingDay => "day",
-                                    InvalidDateInputReasons.MissingMonth => "month",
-                                    InvalidDateInputReasons.MissingYear => "year",
-                                    _ => throw new NotSupportedException($"Unexpected {nameof(InvalidDateInputReasons)}: '{r}'.")
-                                };
-
-                                return acc.Append(elementName);
-                            })
-                        .ToArray();
-
-                    Debug.Assert(missingFields.Length <= 2 && missingFields.Length > 0);
-
-                    ctx.AddFailure($"{displayName} must include a {string.Join(" and ", missingFields)}");
-                })
-                // Required if flexible start date is false
-                .NotEmpty()
-                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_START_DATE_REQUIRED")
-                // Not allowed if flexible start date is not false
-                .Empty()
-                    .When(t => getFlexibleStartDate(t) == true, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_START_DATE_NOT_ALLOWED")
-                // Must be in the future
-                .Must(v => v.Value >= now.Date)
-                    .When(t => getFlexibleStartDate(t) == false, ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID");
-        }
-
         public static void StartDate<T>(this IRuleBuilderInitial<T, DateTime?> field, DateTime now, Func<T, bool?> getFlexibleStartDate)
         {
             field
