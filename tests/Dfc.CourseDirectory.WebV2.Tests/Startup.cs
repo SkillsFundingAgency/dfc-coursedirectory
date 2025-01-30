@@ -87,7 +87,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             services.Decorate<IFeatureFlagProvider, OverridableFeatureFlagProvider>();
             services.AddSingleton<Settings>();
             services.AddSingleton<ICookieSettingsProvider, TestCookieSettingsProvider>();
-            services.AddTransient<DateValidationTestsValidator>();
             services.AddSingleton<IBackgroundWorkScheduler, ExecuteImmediatelyBackgroundWorkScheduler>();
 
             services.Configure<DataManagementOptions>(
