@@ -151,6 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
                 .ForQuery("api-key=key&expand=true&sort=true")
+                .IgnoringQuery() // TODO - do we want to add this? Other example taken from GetById_ErrorResponse_ThrowsException - which succeeds
                 .Responds()
                 .WithStatus(HttpStatusCode.InternalServerError)
                 .RegisterWith(httpRequestInterceptor);
