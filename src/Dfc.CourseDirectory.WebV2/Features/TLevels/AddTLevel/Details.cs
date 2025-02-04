@@ -158,7 +158,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
                 RuleFor(c => c.StartDate)
                     .StartDate(tLevelId: null, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
-
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()
                         .WithMessage("Select a T Level venue");
