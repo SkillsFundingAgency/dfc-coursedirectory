@@ -32,6 +32,58 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
                     .WithMessage($"How you'll learn must be {Constants.HowYoullLearnMaxLength} characters or fewer");
         }
 
+        public static void StartDate<T>(
+            this IRuleBuilderInitial<T, DateTime?> field,
+            Guid? tLevelId,
+            Guid providerId,
+            Guid tLevelDefinitionId,
+            ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                    .WithMessage("Enter a start date")
+                .CustomAsync(async (v, ctx, _) =>
+                {
+                    var existingTLevels = await sqlQueryDispatcher.ExecuteQuery(
+                        new GetTLevelsForProvider() { ProviderId = providerId });
+
+                    if (existingTLevels.Any(tl =>
+                        tl.TLevelDefinition.TLevelDefinitionId == tLevelDefinitionId &&
+                        tl.StartDate == v.Value &&
+                        tl.TLevelId != tLevelId))
+                    {
+                        ctx.AddFailure("Start date already exists");
+                    }
+                });
+        }
+
+        public static void StartDate<T>(
+            this IRuleBuilderInitial<T, DateTime> field,
+            Guid? tLevelId,
+            Guid providerId,
+            Guid tLevelDefinitionId,
+            ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            field
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                    .WithMessage("Enter a start date")
+                .CustomAsync(async (v, ctx, _) =>
+                {
+                    var existingTLevels = await sqlQueryDispatcher.ExecuteQuery(
+                        new GetTLevelsForProvider() { ProviderId = providerId });
+
+                    if (existingTLevels.Any(tl =>
+                        tl.TLevelDefinition.TLevelDefinitionId == tLevelDefinitionId &&
+                        tl.StartDate == v &&
+                        tl.TLevelId != tLevelId))
+                    {
+                        ctx.AddFailure("Start date already exists");
+                    }
+                });
+        }
+
         public static void Website<T>(this IRuleBuilderInitial<T, string> field, IWebRiskService webRiskService)
         {
             field
