@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public string YourReference { get; set; }
+        [DisplayName("Start date")]
         public DateTime StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
@@ -156,9 +158,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService)
             {
                 RuleFor(c => c.YourReference).YourReference();
-
-                RuleFor(c => c.StartDate)
-                    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()

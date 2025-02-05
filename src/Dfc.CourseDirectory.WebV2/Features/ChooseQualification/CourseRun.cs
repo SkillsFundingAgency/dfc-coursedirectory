@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
         public CourseDeliveryMode DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
+        [DisplayName("Start date")]
         public DateTime? StartDate { get; set; }
         public bool? FlexibleStartDate { get; set; }
         public bool? NationalDelivery { get; set; }
