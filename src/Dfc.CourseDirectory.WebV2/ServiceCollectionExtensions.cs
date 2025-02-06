@@ -257,7 +257,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.SaveTokens = true;
                     options.CallbackPath = settings.CallbackPath;
                     options.SignedOutCallbackPath = settings.SignedOutCallbackPath;
-                    options.TokenHandler = new JwtSecurityTokenHandler()
+                    options.SecurityTokenValidator = new JwtSecurityTokenHandler()
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),
                         TokenLifetimeInMinutes = 90,

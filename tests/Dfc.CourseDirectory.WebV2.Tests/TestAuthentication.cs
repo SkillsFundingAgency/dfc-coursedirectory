@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -20,8 +19,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             IOptionsMonitor<TestAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            TimeProvider clock)
-            : base(options, logger, encoder)
+            ISystemClock clock)
+            : base(options, logger, encoder, clock)
         {
             _authenticatedUserInfo = authenticatedUserInfo;
         }
