@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         public CourseDeliveryMode? DeliveryMode { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
-        public DateInput StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public bool? FlexibleStartDate { get; set; }
         public bool? NationalDelivery { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
@@ -66,7 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 
         public void SetCourseRun(string courseName,
         string providerCourseRef,
-        DateInput startDate,
+        DateTime? startDate,
         bool? flexibleStartDate,
         bool? nationalDelivery,
         IEnumerable<string> subRegionIds,

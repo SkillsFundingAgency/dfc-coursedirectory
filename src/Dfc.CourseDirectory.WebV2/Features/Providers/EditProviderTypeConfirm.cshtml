@@ -49,9 +49,9 @@
 
                         @foreach (var error in affectedItemCountErrors)
                         {
-                            <span class="govuk-error-message">
+                            <p class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
-                            </span>
+                            </p>
                         }
 
                         <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
@@ -69,9 +69,10 @@
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         <h2 class="govuk-fieldset__heading">Are you sure?</h2>
                     </govuk-radios-fieldset-legend>
+                
+                    <govuk-radios-item value="True" checked="false">Yes</govuk-radios-item>
+                    <govuk-radios-item value="False" checked="false">No</govuk-radios-item>
                 </govuk-radios-fieldset>
-                <govuk-radios-item value="True" checked="false">Yes</govuk-radios-item>
-                <govuk-radios-item value="False" checked="false">No</govuk-radios-item>
             </govuk-radios>
 
             <govuk-button type="submit">Save and continue</govuk-button>

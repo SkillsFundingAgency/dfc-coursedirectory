@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
@@ -8,6 +9,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
     public class EditCourseRunSaveViewModel
     {
         public string CourseName { get; set; }
+        [DisplayName("Start date")]
         public DateTime? StartDate { get; set; }
         public string StartDateType { get; set; }
         public string Day { get; set; }

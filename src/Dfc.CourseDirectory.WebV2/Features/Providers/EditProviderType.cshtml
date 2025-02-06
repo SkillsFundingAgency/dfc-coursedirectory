@@ -16,50 +16,54 @@
         <form asp-action="Post" asp-all-route-data="@ProviderContext.RouteValues">
             @Html.HiddenFor(m => m.ProviderId)
             <govuk-checkboxes asp-for="ProviderType">
-                <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
-                    @ProviderType.FE.ToDescription()
-                </govuk-checkboxes-item>
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-item value="@((int)ProviderType.FE)" checked="@(Model.ProviderType.HasFlag(ProviderType.FE))" input-data-testid="fe">
+                        @ProviderType.FE.ToDescription()
+                    </govuk-checkboxes-item>
 
-                <govuk-checkboxes-item value="@((int)ProviderType.NonLARS)" checked="@(Model.ProviderType.HasFlag(ProviderType.NonLARS))" input-data-testid="nonLars" onchange="SelectAllNonLARSDefinitionCheckboxes($(this));">
-                    @ProviderType.NonLARS.ToDescription()
+                    <govuk-checkboxes-item value="@((int)ProviderType.NonLARS)" checked="@(Model.ProviderType.HasFlag(ProviderType.NonLARS))" input-data-testid="nonLars" onchange="SelectAllNonLARSDefinitionCheckboxes($(this));">
+                        @ProviderType.NonLARS.ToDescription()
 
-                    <govuk-checkboxes-item-conditional>
-                        <govuk-checkboxes asp-for="@Model.SelectedNonLarsSubTypeIds">
-                            <govuk-checkboxes-fieldset>
-                                <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-                                    What Non LARS Courses can this provider offer?
-                                </govuk-checkboxes-fieldset-legend>
-                            </govuk-checkboxes-fieldset>
-                            @foreach (var providerNonLars in Model.ProviderNonLarsSubTypes)
-                            {
-                                <govuk-checkboxes-item value="@providerNonLars.NonLarsSubTypeId" checked="@providerNonLars.Selected" input-data-testid="@($"nonLarsSubtype-{providerNonLars.NonLarsSubTypeId}")">
-                                    @providerNonLars.Name
-                                </govuk-checkboxes-item>
-                            }
-                        </govuk-checkboxes>                        
-                    </govuk-checkboxes-item-conditional>
-                </govuk-checkboxes-item>
+                        <govuk-checkboxes-item-conditional>
+                            <govuk-checkboxes asp-for="@Model.SelectedNonLarsSubTypeIds">
+                                <govuk-checkboxes-fieldset>
+                                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+                                        What Non LARS Courses can this provider offer?
+                                    </govuk-checkboxes-fieldset-legend>
+                                
+                                    @foreach (var providerNonLars in Model.ProviderNonLarsSubTypes)
+                                    {
+                                        <govuk-checkboxes-item value="@providerNonLars.NonLarsSubTypeId" checked="@providerNonLars.Selected" input-data-testid="@($"nonLarsSubtype-{providerNonLars.NonLarsSubTypeId}")">
+                                            @providerNonLars.Name
+                                        </govuk-checkboxes-item>
+                                    }
+                                </govuk-checkboxes-fieldset>
+                            </govuk-checkboxes>                        
+                        </govuk-checkboxes-item-conditional>
+                    </govuk-checkboxes-item>
 
-                <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels" onchange="SelectAllTLevelDefinitionCheckboxes($(this));">
-                    @ProviderType.TLevels.ToDescription()
-                    <govuk-checkboxes-item-conditional>
-                        <govuk-checkboxes asp-for="@Model.SelectedProviderTLevelDefinitionIds">
-                            <govuk-checkboxes-fieldset>
-                                <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
-                                    What T Levels can this provider offer?
-                                </govuk-checkboxes-fieldset-legend>
-                            </govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-item value="@((int)ProviderType.TLevels)" checked="@(Model.ProviderType.HasFlag(ProviderType.TLevels))" input-data-testid="tLevels" onchange="SelectAllTLevelDefinitionCheckboxes($(this));">
+                        @ProviderType.TLevels.ToDescription()
+                        <govuk-checkboxes-item-conditional>
+                            <govuk-checkboxes asp-for="@Model.SelectedProviderTLevelDefinitionIds">
+                                <govuk-checkboxes-fieldset>
+                                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
+                                        What T Levels can this provider offer?
+                                    </govuk-checkboxes-fieldset-legend>
+                                
 
-                            @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
-                            {
-                            <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
-                                @providerTLevelDefinition.Name
-                            </govuk-checkboxes-item>
-                            }
+                                    @foreach (var providerTLevelDefinition in Model.ProviderTLevelDefinitions)
+                                    {
+                                    <govuk-checkboxes-item value="@providerTLevelDefinition.TLevelDefinitionId" checked="@providerTLevelDefinition.Selected" input-data-testid="@($"tLevelDefinition-{providerTLevelDefinition.TLevelDefinitionId}")">
+                                        @providerTLevelDefinition.Name
+                                    </govuk-checkboxes-item>
+                                    }
+                                </govuk-checkboxes-fieldset>
 
-                        </govuk-checkboxes>
-                    </govuk-checkboxes-item-conditional>
-                </govuk-checkboxes-item>
+                            </govuk-checkboxes>
+                        </govuk-checkboxes-item-conditional>
+                    </govuk-checkboxes-item>
+                </govuk-checkboxes-fieldset>
             </govuk-checkboxes>
 
             <div class="govuk-button-group">

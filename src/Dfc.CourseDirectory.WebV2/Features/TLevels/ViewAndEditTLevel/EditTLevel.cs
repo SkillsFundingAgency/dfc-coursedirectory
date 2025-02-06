@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
     public class Command : IRequest<OneOf<ModelWithErrors<ViewModel>, Success>>
     {
         public string YourReference { get; set; }
-        public DateInput StartDate { get; set; }
+        [DisplayName("Start date")]
+        public DateTime StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         public bool IsSecureWebsite { get; set; }
@@ -106,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
             _journeyInstance.UpdateState(state =>
             {
                 state.YourReference = request.YourReference;
-                state.StartDate = request.StartDate.Value;
+                state.StartDate = request.StartDate;
                 state.LocationVenueIds = request.LocationVenueIds.ToList();
                 state.Website = request.Website;
                 state.WhoFor = request.WhoFor;
@@ -131,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLeve
                 })
                 .ToList(),
             LocationVenueIds = new HashSet<Guid>(_journeyInstance.State.LocationVenueIds),
-            StartDate = _journeyInstance.State.StartDate,
+            StartDate = (DateTime)_journeyInstance.State.StartDate,
             Website = _journeyInstance.State.Website,
             YourReference = _journeyInstance.State.YourReference,
             EntryRequirements = _journeyInstance.State.EntryRequirements,
