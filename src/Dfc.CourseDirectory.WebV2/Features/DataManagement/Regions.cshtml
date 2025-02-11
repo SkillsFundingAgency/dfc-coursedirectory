@@ -24,12 +24,14 @@
             {
                 <govuk-accordion-item>
                     <govuk-accordion-item-heading>@region.Name</govuk-accordion-item-heading>
-                    <ul class="govuk-list">
-                        @foreach (var subRegion in region.SubRegions.OrderBy(sr => sr.Name))
-                        {
-                            <li>@subRegion.Name</li>
-                        }
-                    </ul>
+                    <govuk-accordion-item-content>
+                        <ul class="govuk-list">
+                            @foreach (var subRegion in region.SubRegions.OrderBy(sr => sr.Name))
+                            {
+                                <li>@subRegion.Name</li>
+                            }
+                        </ul>
+                    </govuk-accordion-item-content>
                 </govuk-accordion-item>
             }
         </govuk-accordion>

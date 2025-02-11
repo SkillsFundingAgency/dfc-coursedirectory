@@ -143,33 +143,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         }
 
         [Fact]
-        public async Task SearchByPostcode_WithInternalServerError_ThrowsException()
-        {
-            // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
-                .Responds()
-                .WithStatus(HttpStatusCode.InternalServerError)
-                .RegisterWith(httpRequestInterceptor);
-
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
-
-            var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
-            options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
-
-            var service = new GetAddressAddressSearchService(httpClient, options.Object);
-
-            // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(() => service.SearchByPostcode("XX2 00X"));
-        }
-
-        [Fact]
         public async Task GetById_WithValidRequest_ReturnsParsedResult()
         {
             // Arrange

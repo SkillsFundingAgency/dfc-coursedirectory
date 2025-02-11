@@ -30,12 +30,14 @@
             </govuk-input>
 
             <govuk-date-input asp-for="StartDate">
-                <govuk-date-input-label class="govuk-label--m">
-                    Start date
-                </govuk-date-input-label>
-                <govuk-date-input-hint>
-                    For example, 30 9 2020
-                </govuk-date-input-hint>
+                <govuk-date-input-fieldset>
+                    <govuk-date-input-fieldset-legend class="govuk-label--m">
+                        Start date
+                    </govuk-date-input-fieldset-legend>
+                    <govuk-date-input-hint>
+                        For example, 30 9 2020
+                    </govuk-date-input-hint>
+                </govuk-date-input-fieldset>
             </govuk-date-input>
 
             <govuk-checkboxes asp-for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
@@ -43,13 +45,13 @@
                     <govuk-checkboxes-fieldset-legend class="govuk-label--m">
                         Venue
                     </govuk-checkboxes-fieldset-legend>
+                    @foreach (var item in Model.ProviderVenues)
+                    {
+                        <govuk-checkboxes-item value="@item.VenueId" checked="@(Model.LocationVenueIds.Contains(item.VenueId))" input-data-testid="LocationVenueIds-@(item.VenueId)">
+                            @item.VenueName
+                        </govuk-checkboxes-item>
+                    }
                 </govuk-checkboxes-fieldset>
-                @foreach (var item in Model.ProviderVenues)
-                {
-                    <govuk-checkboxes-item value="@item.VenueId" checked="@(Model.LocationVenueIds.Contains(item.VenueId))" input-data-testid="LocationVenueIds-@(item.VenueId)">
-                        @item.VenueName
-                    </govuk-checkboxes-item>
-                }
             </govuk-checkboxes>
 
             @* TODO move this inside the LocationVenueIds formgroup above when tag helper library supports it? *@

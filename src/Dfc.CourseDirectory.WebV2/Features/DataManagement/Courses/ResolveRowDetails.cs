@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +38,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
         public int RowNumber { get; set; }
         public string CourseName { get; set; }
         public string ProviderCourseRef { get; set; }
-        public DateInput StartDate { get; set; }
+        [DisplayName("Start date")]
+        public DateTime? StartDate { get; set; }
         public bool? FlexibleStartDate { get; set; }
         public bool? NationalDelivery { get; set; }
         public IEnumerable<string> SubRegionIds { get; set; }
@@ -165,7 +167,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDe
                     DeliveryMode = request.DeliveryMode,
                     CourseName = request.CourseName,
                     ProviderCourseRef = request.ProviderCourseRef,
-                    StartDate = request.StartDate.ToDateTime(),
+                    StartDate = request.StartDate,
                     FlexibleStartDate = request.FlexibleStartDate.Value,
                     NationalDelivery = request.NationalDelivery,
                     SubRegionIds = request.SubRegionIds?.ToArray(),
