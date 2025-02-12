@@ -8,10 +8,10 @@ SELECT        ld.LearnAimRef, ld.LearnAimRefTitle, lt.LearnAimRefTypeDesc, ld.No
                          ld.CertificationEndDate, ld.OperationalEndDate,
 Case when ld.LearnAimRef in  
 (
-select LearnAimRef from lars.Validity where LastNewStartDate =''
+select LearnAimRef from LARS.Validity where LastNewStartDate =''
 UNION ALL
-select LearnAimRef from lars.Validity where LearnAimRef not in (
-select LearnAimRef from lars.Validity where LastNewStartDate ='') group by LearnAimRef HAVING max(convert(varchar, LastNewStartDate ,105))>GETDATE()
+select LearnAimRef from LARS.Validity where LearnAimRef not in (
+select LearnAimRef from LARS.Validity where LastNewStartDate ='') group by LearnAimRef HAVING max(convert(varchar, LastNewStartDate ,105))>GETDATE()
 ) Then 'false'
 Else 'true'
 End as IsExpired
