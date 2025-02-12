@@ -19,8 +19,12 @@ namespace Dfc.CourseDirectory.Web
                 .ConfigureLogging((context, builder) =>
                 {
                     builder.AddConfiguration(context.Configuration.GetSection("Logging"));
-                    var appInsightsKey = context.Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
-                    builder.AddApplicationInsights(appInsightsKey);
+                    var appInsightsConnectionString = context.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+                    builder.AddApplicationInsights(
+                        configureTelemetryConfiguration: (config) =>
+                            config.ConnectionString = appInsightsConnectionString,
+                            configureApplicationInsightsLoggerOptions: (options) => { }
+                        );
                 })
                 .ConfigureAppConfiguration(builder =>
                 {
