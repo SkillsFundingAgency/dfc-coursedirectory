@@ -914,8 +914,8 @@
         if (isNaN(parsedYear) || isNaN(parsedMonth) || isNaN(parsedDay) || parsedYear < 1 || parsedMonth < 1 || parsedDay < 1) return "Invalid Date";
         var parsedDate = new Date(parsedYear + "-" + parsedMonth + "-" + parsedDay);
         if (parsedDate.toString() === "Invalid Date") return parsedDate;
-        if (parseInt(parsedDate.toISOString().substr(5, 2)) !== parseInt($(this._monthInput).val())) return "Invalid Date";
-        var isoDateString = parsedDate.toString() === "Invalid Date" ? "Invalid Date" : parsedDate.toISOString().substr(0, 10);
+        if (parseInt(parsedDate.toISOString().substring(5, 7)) !== parseInt($(this._monthInput).val())) return "Invalid Date";
+        var isoDateString = parsedDate.toString() === "Invalid Date" ? "Invalid Date" : parsedDate.toISOString().substring(0, 10);
         return isoDateString;
     };
 
@@ -1492,7 +1492,7 @@
             var date = new Date(input);
             if (date.toString() === "Invalid Date") return false;
             if (!/(\d{4})-(\d{2})-(\d{2})/.test(input)) return false;
-            return parseInt(date.toISOString().substr(7, 2)) === parseInt(input.substr(7, 2));
+            return parseInt(date.toISOString().substring(7, 9)) === parseInt(input.substr(7, 2));
         }
     };
 
@@ -1523,7 +1523,7 @@
             var date = new Date(input);
             if (date.toString() === "Invalid Date") return false;
             if (!/(\d{4})-(\d{2})-(\d{2})/.test(input)) return false;
-            if (parseInt(date.toISOString().substr(7, 2)) !== parseInt(input.substr(7, 2))) return false;
+            if (parseInt(date.toISOString().substring(7, 9)) !== parseInt(input.substr(7, 2))) return false;
             return (this.options.ref.getTime() - date.getTime()) > 0;
         }
     };
@@ -1555,7 +1555,7 @@
             var date = new Date(input);
             if (date.toString() === "Invalid Date") return false;
             if (!/(\d{4})-(\d{2})-(\d{2})/.test(input)) return false;
-            if (parseInt(date.toISOString().substr(7, 2)) !== parseInt(input.substr(7, 2))) return false;
+            if (parseInt(date.toISOString().substring(7, 9)) !== parseInt(input.substr(7, 2))) return false;
             return (this.options.ref.getTime() - date.getTime()) < 0;
         }
     };
@@ -1669,7 +1669,7 @@
     };
 
     Plugin.prototype.validate = function (input) {
-        if (!$.isArray(this.options.extensions)) return false;
+        if (Array.isArray(this.options.extensions)) return false;
         if (input instanceof File) {
             var ext = input.name.slice((input.name.lastIndexOf(".") - 1 >>> 0) + 2);
             return $.inArray(ext, this.options.extensions) > -1;
@@ -1771,7 +1771,7 @@
         //
         triggerElementValidationsOnFormValidation: function () {
             return this.each(function () {
-                $(this).bind('formValidation', function (e, form) {
+                $(this).on('formValidation', function (e, form) {
                     $(form).find('*[data-val=true]').each(function (i, field) {
                         if ($(field).hasClass('input-validation-error')) {
                             $(field).trigger('elementValidationError', field);
@@ -1787,51 +1787,51 @@
 
         formValidation: function (fn) {
             return this.each(function () {
-                $(this).bind('formValidation', function (e, element, result) { fn(element, result); });
+                $(this).on('formValidation', function (e, element, result) { fn(element, result); });
             });
         },
 
         formValidationSuccess: function (fn) {
             return this.each(function () {
-                $(this).bind('formValidationSuccess', function (e, element) { fn(element); });
+                $(this).on('formValidationSuccess', function (e, element) { fn(element); });
             });
         },
 
         formValidationError: function (fn) {
             return this.each(function () {
-                $(this).bind('formValidationError', function (e, element) { fn(element); });
+                $(this).on('formValidationError', function (e, element) { fn(element); });
             });
         },
 
         formValidAndInvalid: function (valid, invalid) {
             return this.each(function () {
-                $(this).bind('formValidationSuccess', function (e, element) { valid(element); });
-                $(this).bind('formValidationError', function (e, element) { invalid(element); });
+                $(this).on('formValidationSuccess', function (e, element) { valid(element); });
+                $(this).on('formValidationError', function (e, element) { invalid(element); });
             });
         },
 
         elementValidation: function (fn) {
             return this.each(function () {
-                $(this).bind('elementValidation', function (e, element, result) { fn(element, result); });
+                $(this).on('elementValidation', function (e, element, result) { fn(element, result); });
             });
         },
 
         elementValidationSuccess: function (fn) {
             return this.each(function () {
-                $(this).bind('elementValidationSuccess', function (e, element) { fn(element); });
+                $(this).on('elementValidationSuccess', function (e, element) { fn(element); });
             });
         },
 
         elementValidationError: function (fn) {
             return this.each(function () {
-                $(this).bind('elementValidationError', function (e, element) { fn(element); });
+                $(this).on('elementValidationError', function (e, element) { fn(element); });
             });
         },
 
         elementValidAndInvalid: function (valid, invalid) {
             return this.each(function () {
-                $(this).bind('elementValidationSuccess', function (e, element) { valid(element); });
-                $(this).bind('elementValidationError', function (e, element) { invalid(element); });
+                $(this).on('elementValidationSuccess', function (e, element) { valid(element); });
+                $(this).on('elementValidationError', function (e, element) { invalid(element); });
             });
         }
     });
