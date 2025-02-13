@@ -337,8 +337,8 @@
           "appServiceAppSettings": {
             "value": [
               {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+                "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                "value": "[reference('courseDirectoryAppInsights').outputs.connectionString.value]"
               },
               {
                 "name": "LarsSearchSettings__ApiUrl",
@@ -755,6 +755,10 @@
     "appInsightInstrumentationKey": {
       "type": "string",
       "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+    },
+    "appInsightConnectionString": {
+      "type": "string",
+      "value": "[reference('courseDirectoryAppInsights').outputs.connectionString.value]"
     },
     "appServiceName": {
       "type": "string",
