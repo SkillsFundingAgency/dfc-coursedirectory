@@ -338,7 +338,7 @@
             "value": [
               {
                 "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                "value": "[reference('courseDirectoryAppInsights').outputs.connectionString.value]"
+                "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationConnectionString.value]"
               },
               {
                 "name": "LarsSearchSettings__ApiUrl",
