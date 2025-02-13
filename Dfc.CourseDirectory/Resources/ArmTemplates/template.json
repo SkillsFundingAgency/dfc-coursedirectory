@@ -758,7 +758,7 @@
     },
     "appInsightConnectionString": {
       "type": "string",
-      "value": "[reference('courseDirectoryAppInsights').outputs.ConnectionString.value]"
+      "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationConnectionString.value]"
     },
     "appServiceName": {
       "type": "string",
