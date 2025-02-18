@@ -4,14 +4,6 @@
     ViewContext.SetLayoutData(title: "Add venue");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="ProviderVenueRef" />
-    <govuk-error-summary-item asp-for="Name" />
-    <govuk-error-summary-item asp-for="Email" />
-    <govuk-error-summary-item asp-for="Telephone" />
-    <govuk-error-summary-item asp-for="Website" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Details" asp-all-route-data="RouteValuesHelper.FromQueryString()">

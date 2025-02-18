@@ -4,10 +4,6 @@
     ViewContext.SetLayoutData(title: "Venue name");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="Name" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Name" asp-route-venueId="@Model.VenueId">
