@@ -5,10 +5,6 @@
     ViewContext.SetLayoutData(title: "Add a venue");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="Postcode" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="PostcodeSearch" method="get">

@@ -3,10 +3,6 @@
     ViewContext.SetLayoutData(title: "Email address");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="Email" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Email" asp-route-venueId="@Model.VenueId">

@@ -4,10 +4,6 @@
     ViewContext.SetLayoutData(title: "Add a venue");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="AddressId" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="SelectPostcode" asp-all-route-data="@RouteValuesHelper.FromQueryString()">

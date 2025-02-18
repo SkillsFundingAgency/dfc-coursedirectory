@@ -5,15 +5,6 @@
     ViewContext.SetLayoutData(title: "T Level description");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="WhoFor" />
-    <govuk-error-summary-item asp-for="EntryRequirements" />
-    <govuk-error-summary-item asp-for="WhatYoullLearn" />
-    <govuk-error-summary-item asp-for="HowYoullLearn" />
-    <govuk-error-summary-item asp-for="HowYoullBeAssessed" />
-    <govuk-error-summary-item asp-for="WhatYouCanDoNext" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Description" asp-all-route-data="@(RouteValuesHelper.FromQueryString())">
