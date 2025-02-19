@@ -51,9 +51,18 @@
                 <govuk-input-label class="govuk-label--s">Telephone</govuk-input-label>
             </govuk-input>
 
-            <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
+            @* <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
                 <govuk-input-label class="govuk-label--s">Website</govuk-input-label>
-            </govuk-input>
+            </govuk-input> *@
+
+            <website-input asp-for="Website"
+                id="Website"
+                name="Website"
+                label="Website"
+                hint="For example https://www.venue.com."
+                model-state-entry="@ViewContext.ModelState["Website"]"
+                value="@Model.Website">
+            </website-input>
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>

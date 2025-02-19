@@ -10,10 +10,16 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Website" asp-route-venueId="@Model.VenueId">
-            <govuk-input asp-for="Website" input-class="govuk-input--width-20">
-                <govuk-input-label class="govuk-label--l">Website</govuk-input-label>
-                <govuk-input-hint>For example https://www.venue.com</govuk-input-hint>
-            </govuk-input>
+           
+
+            <website-input asp-for="Website"
+                id="Website"
+                name="Website"
+                label="Website"
+                hint="For example https://www.venue.com."
+                model-state-entry="@ViewContext.ModelState["Website"]"
+                value="@Model.Website">
+            </website-input>
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
