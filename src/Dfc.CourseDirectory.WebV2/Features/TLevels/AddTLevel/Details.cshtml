@@ -3,13 +3,6 @@
     ViewContext.SetLayoutData(title: "T Level details");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="YourReference" />
-    <govuk-error-summary-item asp-for="StartDate" />
-    <govuk-error-summary-item asp-for="LocationVenueIds" />
-    <govuk-error-summary-item asp-for="Website" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Details" asp-all-route-data="@(RouteValuesHelper.FromQueryString())">

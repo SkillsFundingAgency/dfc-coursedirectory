@@ -3,10 +3,6 @@
     ViewContext.SetLayoutData(title: "Phone number");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="PhoneNumber" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="PhoneNumber" asp-route-venueId="@Model.VenueId">
