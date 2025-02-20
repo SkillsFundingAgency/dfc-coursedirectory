@@ -59,15 +59,7 @@
                 </govuk-button>
             </div>
 
-            <website-input 
-                asp-for="Website" 
-                id="Website" 
-                name="Website"                
-                label="Website" 
-                hint="The webpage for this T Level. For example, https://www.provider.com/tlevelname."
-                model-state-entry="@ViewContext.ModelState["Website"]"
-                value="@Model.Website"> 
-            </website-input>            
+            <pttcd-website-input asp-for="Website" label="T Level webpage" hint="The webpage for this T Level. For example, https://www.provider.com/tlevelname." model-state-entry="@ViewContext.ModelState["Website"]" value="@Model.Website"></pttcd-website-input>
 
             <govuk-button>Continue</govuk-button>
         </form>

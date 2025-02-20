@@ -8,7 +8,7 @@ using static GovUk.Frontend.AspNetCore.ComponentDefaults;
 
 namespace Dfc.CourseDirectory.WebV2.TagHelpers
 {
-    [HtmlTargetElement("website-input")]
+    [HtmlTargetElement("pttcd-website-input")]
     public class WebsiteTagHelper : TagHelper
     {
         private readonly IGovUkHtmlGenerator _generator;
@@ -16,8 +16,8 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
         [HtmlAttributeName("asp-for")]
         public ModelExpression For { get; set; }
 
-        public string Id { get; set; }
-        public string Name { get; set; }
+        public string Id { get; set; } = "Website";
+        public string Name { get; set; } = "Website";
         public string Label { get; set; }
         public string Hint { get; set; }
         public string Type { get; set; } = "text";
@@ -31,13 +31,6 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            // Use the model property name if not explicitly provided
-            var id = Id ?? For?.Name;
-            var name = Name ?? For?.Name;
-
-            // Extract validation attributes from the model
-            var validationAttributes = For?.GetValidationAttributes();
-
             output.TagName = "div";
             output.Attributes.Add("class", "govuk-form-group");
 
@@ -83,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
             </div>";
 
             var inputHtml = $@"
-            <input class='govuk-input {errorInputClass}' id='{id}' name='{name}' value='{Value}' type='{Type}' aria-describedby='{id}-hint'>";
+            <input class='govuk-input {errorInputClass}' id='{Id}' name='{Name}' value='{Value}' type='{Type}' aria-describedby='{Id}-hint'>";
 
             var secureWebsiteHintMessage = string.Empty;
             if (error && webSecurityRiskError)

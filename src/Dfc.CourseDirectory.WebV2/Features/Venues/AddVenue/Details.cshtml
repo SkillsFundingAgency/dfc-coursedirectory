@@ -55,14 +55,7 @@
                 <govuk-input-label class="govuk-label--s">Website</govuk-input-label>
             </govuk-input> *@
 
-            <website-input asp-for="Website"
-                id="Website"
-                name="Website"
-                label="Website"
-                hint="For example https://www.venue.com."
-                model-state-entry="@ViewContext.ModelState["Website"]"
-                value="@Model.Website">
-            </website-input>
+            <pttcd-website-input asp-for="Website" label="Webpage" model-state-entry="@ViewContext.ModelState["Website"]" value="@Model.Website"></pttcd-website-input>
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
