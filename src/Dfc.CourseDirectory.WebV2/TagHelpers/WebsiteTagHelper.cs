@@ -56,10 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
 
                 output.Attributes.SetAttribute("class", "govuk-form-group--error");
                 errorHtml = $@"
-                <span class=""govuk-error-message"" style="""">
-                    <span class=""govuk-visually-hidden"">Error:</span>
-                    {errorMessage}
-                </span>";
+                <span class=""govuk-error-message"" id =""{Id}-error""><span class=""govuk-visually-hidden"">Error</span>{errorMessage}</span>";
                 errorInputClass = "govuk-input--error";
             }            
 
