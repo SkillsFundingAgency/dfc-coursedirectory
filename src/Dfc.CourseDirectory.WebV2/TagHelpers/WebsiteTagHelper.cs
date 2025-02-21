@@ -54,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
                         : errorMessage;
                 }
 
-                output.Attributes.SetAttribute("class", "govuk-form-group--error");
+                output.Attributes.SetAttribute("class", "govuk-form-group--error govuk-form-group");
                 errorHtml = $@"
                 <span class=""govuk-error-message"" id =""{Id}-error""><span class=""govuk-visually-hidden"">Error</span>{errorMessage}</span>";
                 errorInputClass = "govuk-input--error";
@@ -73,9 +73,10 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
             </div>";
 
             var inputHtml = $@"
-            <input class='govuk-input {errorInputClass}' id='{Id}' name='{Name}' value='{Value}' type='{Type}' aria-describedby='{Id}-hint'>";
+            <input aria-describedby='{Id}-hint' class='{errorInputClass} govuk-input' id='{Id}' name='{Name}' type='{Type}' value='{Value}'>";
 
             var secureWebsiteHintMessage = string.Empty;
+            var htmlContent = string.Empty;
             if (error && webSecurityRiskError)
             {
                 secureWebsiteHintMessage = $@"<div secure-website-message-hint-text style=""display:block"">
@@ -87,9 +88,13 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
                 You cannot upload this URL to the course directory until it can pass this security check.
             </span>
         </div>";
-            }
 
-            var htmlContent = $"{labelHtml}{errorHtml}{hintHtml}{inputHtml}{secureWebsiteHintMessage}";
+                htmlContent = $"{labelHtml}{errorHtml}{hintHtml}{inputHtml}{secureWebsiteHintMessage}";
+            }
+            else
+            {
+                htmlContent = $"{labelHtml}{hintHtml}{errorHtml}{inputHtml}";
+            }
 
             // Combine all elements
             output.Content.SetHtmlContent(htmlContent);
