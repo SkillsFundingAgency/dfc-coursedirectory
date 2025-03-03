@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         ) AS OtherTLevelCount
             FROM        Pttcd.Providers p with (nolock)
             WHERE p.ProviderType <> 0
-            AND ProviderUkprn not like '8%'
+            AND Ukprn not like '8%'
             ORDER BY    p.Ukprn ASC";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction))
