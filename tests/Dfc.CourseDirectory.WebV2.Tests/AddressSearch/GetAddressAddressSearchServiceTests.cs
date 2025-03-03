@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHttps()
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
+                .ForQuery("key=key")
                 .Responds()
                 .WithStatus(HttpStatusCode.InternalServerError)
                 .RegisterWith(httpRequestInterceptor);
