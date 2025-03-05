@@ -70,100 +70,31 @@
     }
   },
   "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "webAppName": "[concat(parameters('webAppPrefix'),'-as', parameters('webAppSuffix'))]",
     "appInsightName": "[concat(parameters('webAppPrefix'),'-ai')]"
   },
   "resources": [
     {
-      "apiVersion": "2017-05-10",
-      "name": "ppapiAppInsights",
-      "type": "Microsoft.Resources/deployments",
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}/{2}', variables('webAppName'), 'staging', 'appsettings')]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('appInsightName')]"
-          },
-          "attachedService": {
-            "value": "[variables('webAppName')]"
-          },
-          "workspaceName": {
-            "value": "[parameters('workspaceName')]"
-          },
-          "workspaceResourceGroup": {
-            "value": "[parameters('workspaceResourceGroup')]"
-          }
-        }
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(parameters('appServicePlanResourceGroup') ,resourceId('microsoft.insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01').InstrumentationKey]",
+        "WEBSITE_RUN_FROM_PACKAGE": "1",
+        "AzureSearchUrl": "[concat('https://', parameters('searchName'), '.search.windows.net')]",
+        "AzureSearchQueryKey": "[parameters('searchQueryKey')]",
+        "EnvironmentSettings__EnvironmentName": "[parameters('environmentName')]",
+        "Logging__ApplicationInsights__LogLevel__Default": "Information"
       }
     },
     {
-      "name": "ppapiAppService",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
-      "dependsOn": [
-        "ppapiAppInsights"
-      ],
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}/{2}', variables('webAppName'), 'staging' , 'connectionstrings')]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appServiceName": {
-            "value": "[variables('webAppName')]"
-          },
-          "appServicePlanName": {
-            "value": "[parameters('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[parameters('appServicePlanResourceGroup')]"
-          },
-          "appServiceAppSettings": {
-            "value": [
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
-              },
-              {
-                "name": "WEBSITE_RUN_FROM_PACKAGE",
-                "value": "1"
-              },
-              {
-                "name": "AzureSearchUrl",
-                "value": "[concat('https://', parameters('searchName'), '.search.windows.net')]"
-              },
-              {
-                "name": "AzureSearchQueryKey",
-                "value": "[parameters('searchQueryKey')]"
-              },
-              {
-                "name": "EnvironmentSettings__EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "Logging__ApplicationInsights__LogLevel__Default",
-                "value": "Information"
-              }
-            ]
-          },
-          "appServiceConnectionStrings": {
-            "value": [
-              {
-                "name": "DefaultConnection",
-                "type": "SQLServer",
-                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
-              }
-            ]
-          },
-          "deployStagingSlot": {
-            "value": true
-          }
+        "DefaultConnection": {
+          "value": "[parameters('sqlCourseDirectoryConnectionString')]",
+          "type": "SQLServer"
         }
       }
     }
@@ -179,7 +110,7 @@
     },
     "appInsightInstrumentationKey": {
       "type": "string",
-      "value": "[reference('ppapiAppInsights').outputs.InstrumentationKey.value]"
+      "value": "[reference(parameters('appServicePlanResourceGroup') ,resourceId('microsoft.insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01').InstrumentationKey]"
     }
   }
 }
