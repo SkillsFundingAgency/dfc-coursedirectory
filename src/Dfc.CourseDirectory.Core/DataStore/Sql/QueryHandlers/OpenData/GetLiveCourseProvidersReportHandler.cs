@@ -33,6 +33,7 @@ AND         p.ProviderId IN(
                 AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
                 and ([OfferingType]=1 or [OfferingType]=2)
             )
+AND p.Ukprn not like '8%'
 ORDER BY    p.Ukprn ASC";
 
 
