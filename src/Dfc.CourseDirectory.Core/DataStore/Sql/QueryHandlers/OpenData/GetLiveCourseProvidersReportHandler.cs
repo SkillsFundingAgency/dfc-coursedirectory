@@ -27,12 +27,13 @@ SELECT
 FROM        Pttcd.Providers p with(nolock)
 LEFT JOIN   Pttcd.ProviderContacts pc with(nolock) ON pc.ProviderId = p.ProviderId
 WHERE       p.ProviderType != ({(int)ProviderType.None})
-AND         p.ProviderId IN(
-                SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
-                WHERE       c.Live = 1
-                AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
-                and ([OfferingType]=1 or [OfferingType]=2)
-            )
+    AND p.Ukprn not like '8%'
+    AND         p.ProviderId IN(
+                    SELECT      DISTINCT c.ProviderId FROM [Pttcd].[FindACourseIndex] c
+                    WHERE       c.Live = 1
+                    AND         (c.FlexibleStartDate = 1 OR c.StartDate >= '{query.FromDate:MM-dd-yyyy}')
+                    and ([OfferingType]=1 or [OfferingType]=2)
+                )
 ORDER BY    p.Ukprn ASC";
 
 
