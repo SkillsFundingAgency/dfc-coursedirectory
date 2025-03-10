@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
@@ -30,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             doc.Body.TextContent.Should().Contain("You have no venues");
@@ -51,7 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.ViewVenues
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using Dapper;
-using Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers;
 using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql
