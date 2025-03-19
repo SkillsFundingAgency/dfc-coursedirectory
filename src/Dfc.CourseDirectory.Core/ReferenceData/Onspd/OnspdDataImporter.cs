@@ -95,21 +95,22 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 string responseFromServer = await response.Content.ReadAsStringAsync();
-
-                dynamic jsonResponse = JsonSerializer.Deserialize<ExpandoObject>(responseFromServer)!;
-                string data = jsonResponse.data.ToString();
-                var importObjects = JsonSerializer.Deserialize<ImportObject[]>(data);
-                if (importObjects != null)
+                var jsonResponse = JsonDocument.Parse(responseFromServer);
+                if (jsonResponse.RootElement.TryGetProperty("results", out JsonElement dataElement))
                 {
-                    var dataObject = importObjects[0];
-                    var downloadLink = $"https://www.arcgis.com/sharing/content/items/{dataObject.id}/data";
-                    _logger.LogInformation("Dataset found. Name: {name}. Title: {title}. Owner {Owner}", dataObject.name,dataObject.title,dataObject.owner);
-                    //Download to temp folder and then insert data to Sql table
-                    await DownloadZipFileToTempAsync(downloadLink);
-                }
-                else
-                {
-                    _logger.LogWarning("Failed to import / deserialize objects from {arcgisUrl}", arcgisUrl);
+                    var importObjects = JsonSerializer.Deserialize<ImportObject[]>(dataElement);
+                    if (importObjects != null)
+                    {
+                        var dataObject = importObjects[0];
+                        var downloadLink = $"https://www.arcgis.com/sharing/content/items/{dataObject.id}/data";
+                        _logger.LogInformation("Dataset found. Name: {name}. Title: {title}. Owner {Owner}", dataObject.name, dataObject.title, dataObject.owner);
+                        //Download to temp folder and then insert data to Sql table
+                        await DownloadZipFileToTempAsync(downloadLink);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to import / deserialize objects from {arcgisUrl}", arcgisUrl);
+                    }
                 }
             }
             else
