@@ -139,7 +139,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     {
                         _logger.LogInformation("Find csv file - {CsvName}.", entry.Name);
                         var destination = Path.Combine(extractDirectory, entry.Name);
-                        _logger.LogInformation("Extract to file location - {destination}.", destination);
+                        _logger.LogInformation("Extract and saved in local drive.");
                         try
                         {
                             entry.ExtractToFile(destination, overwrite: true);
