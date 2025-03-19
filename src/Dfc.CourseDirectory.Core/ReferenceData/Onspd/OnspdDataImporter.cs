@@ -29,6 +29,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ILogger<OnspdDataImporter> _logger;
+        private HttpClient _httpClient;
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
@@ -38,6 +39,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _logger = logger;
+            _httpClient = new HttpClient()
+            {
+                Timeout = TimeSpan.FromSeconds(300)
+            };
         }
 
         public async Task ImportData()
@@ -80,12 +85,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         public async Task AutomatedImportData()
         {
-            string arcgisUrl = "https://opendata.arcgis.com/api/v3/datasets?fields%5bdatasets%5d=id&filter%5btags%5d=PRD_ONSPD&page%5Bsize%5D=1&sort=-created";
+            string arcgisUrl = "https://www.arcgis.com/sharing/rest/search?f=json&filter=tags:\"PRD_ONSPD\"&sortField=created&sortOrder=desc&num=1";
 
             _logger.LogInformation("Automated process generate request url at: {arcgisUrl}", arcgisUrl);
-            var client = new HttpClient();
 
-            var response = await client.GetAsync(arcgisUrl);
+            var response = await _httpClient.GetAsync(arcgisUrl);
             _logger.LogInformation("Response Code on GET from '{arcgisUrl}' is [{responseCode}]", arcgisUrl, response.StatusCode);
 
             if (response.StatusCode == HttpStatusCode.OK)
@@ -97,8 +101,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 var importObjects = JsonSerializer.Deserialize<ImportObject[]>(data);
                 if (importObjects != null)
                 {
-                    var downloadLink = importObjects[0].links.esriRest.Replace("?f=json", "") + "/data";
-
+                    var dataObject = importObjects[0];
+                    var downloadLink = $"https://www.arcgis.com/sharing/content/items/{dataObject.id}/data";
+                    _logger.LogInformation("Dataset found. Name: {name}. Title: {title}. Owner {Owner}", dataObject.name,dataObject.title,dataObject.owner);
                     //Download to temp folder and then insert data to Sql table
                     await DownloadZipFileToTempAsync(downloadLink);
                 }
@@ -119,11 +124,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
-            var client = new HttpClient
-            {
-                Timeout = new TimeSpan(0, 15, 0)
-            };
-            var downloadResponse = await client.GetAsync(downloadLink);
+
+            var downloadResponse = await _httpClient.GetAsync(downloadLink);
 
             _logger.LogInformation("Response Code on GET from '{downloadLink}' is [{responseCode}]", downloadLink, downloadResponse.StatusCode);
 
@@ -216,14 +218,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private class ImportObject
         {
             public string id { get; set; }
-            public ImportLinks links { get; set; }
-        }
-        private class ImportLinks
-        {
-            public string self { get; set; }
-            public string rawEs { get; set; }
-            public string itemPage { get; set; }
-            public string esriRest { get; set; }
+            public string owner { get; set; }
+            public string name { get; set; }
+            public string title { get; set; }
         }
     }
 }
