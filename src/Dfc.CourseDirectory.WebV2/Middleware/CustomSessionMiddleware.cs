@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
                 });
             }
 
-            context.Response.Headers.Append("X-Ncs-Session-Id", context.Request.Cookies["X-Ncs-Session-Id"]);
+            context.Response.Headers["X-Ncs-Session-Id"] = context.Request.Cookies["X-Ncs-Session-Id"];
 
             await _next(context);
         }
