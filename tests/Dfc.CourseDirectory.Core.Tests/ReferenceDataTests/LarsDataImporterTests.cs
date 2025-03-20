@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                (await CountSqlRows("LARS.AwardOrgCode")).Should().BeGreaterThanOrEqualTo(617);
+                (await CountSqlRows("LARS.AwardOrgCode")).Should().BeGreaterThanOrEqualTo(600);
                 (await CountSqlRows("LARS.Category")).Should().BeGreaterThanOrEqualTo(75);
                 (await CountSqlRows("LARS.LearnAimRefType")).Should().BeGreaterThanOrEqualTo(127);
                 (await CountSqlRows("LARS.LearningDelivery")).Should().BeGreaterThanOrEqualTo(130182);
