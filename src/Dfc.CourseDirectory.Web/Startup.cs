@@ -45,6 +45,7 @@ namespace Dfc.CourseDirectory.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging();
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddSingleton(Configuration);
 
@@ -225,7 +226,7 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseCommitSqlTransaction();
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(); 
             app.UseSession();
 
             app.UseCsp(options => options
@@ -303,6 +304,8 @@ namespace Dfc.CourseDirectory.Web
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<AddSessionIdToHeaderMiddleware>();
 
             app.UseMiddleware<ProviderContextMiddleware>();
 
