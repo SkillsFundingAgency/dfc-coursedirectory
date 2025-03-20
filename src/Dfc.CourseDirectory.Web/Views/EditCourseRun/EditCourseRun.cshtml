@@ -834,7 +834,7 @@
                 event.preventDefault();
                 validate();
                 if (validStates.every(isAllValid)) {
-                    $("#editCourseRun").submit();
+                    $("#editCourseRun").trigger("submit");
                 }
             });
 
@@ -874,7 +874,6 @@
                     Cost: $cost.val(),
                     CostDescription: $costDescription.val(),
                     Mode: $mode.val(),
-                    //AdvancedLearnerLoan
                     DurationUnit: $duration.find("select").val(),
                     DurationLength: $duration.find("input").val(),
                     StudyMode: $studyMode.find("input[type='radio']:checked").val(),
@@ -884,7 +883,7 @@
 
             });
 
-            $startDateRadios.change(function () {
+            $startDateRadios.on("change", function () {
                 if ($("#SpecifiedStartDate").prop("checked") === true) {
                     $("#govuk-label-start_date").show();
                 }
@@ -898,7 +897,7 @@
                 }
             });
 
-            $deliveryRadios.change(function () {
+            $deliveryRadios.on("change", function () {
                 var $venueChoice = $("#sectionVenue");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");

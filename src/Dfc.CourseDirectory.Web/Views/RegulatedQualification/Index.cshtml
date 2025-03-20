@@ -89,7 +89,7 @@
                 event.preventDefault();
                 validate();
                 if (validStates.every(isAllValid)) {
-                    $("#QualificationType").submit();
+                    $("#QualificationType").trigger("submit");
                 }
             });
 

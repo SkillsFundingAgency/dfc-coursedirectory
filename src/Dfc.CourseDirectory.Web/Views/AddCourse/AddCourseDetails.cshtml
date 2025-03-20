@@ -609,7 +609,6 @@
                             validStates.push(false);
                         } else if ($.dateValidate(startDateValue)) {
                             $startDate.govUkDateInput("validState");
-                            //$errorSummary.govUkErrorSummary("removeErrorHashLinksFor", $startDate[0].id);
                             $errorSummary.govUkErrorSummary("hideIfEmpty")
                             validStates.push(true);
                         }
@@ -811,12 +810,10 @@
             }
 
             var $goToSection1Link = $("#goToSection1Link");
-            $goToSection1Link.click(function () {
+            $goToSection1Link.on("click", function (event) {
                 event.preventDefault();
-                // if (validate()) {
                 $("#addCourseSection2").attr("action", "AddCourseRunToAddCourse");
-                $("#addCourseSection2").submit();
-                //}
+                $("#addCourseSection2").trigger("submit");
             });
 
 
@@ -861,7 +858,6 @@
                     Url: $url.val(),
                     Cost: $cost.val(),
                     CostDescription: $costDescription.val(),
-                    //AdvancedLearnerLoan
                     DurationUnit: $duration.find("select").val(),
                     DurationLength: $duration.find("input").val(),
                     StudyMode: $studyMode.find("input[type='radio']:checked").val(),
@@ -883,12 +879,11 @@
                 event.preventDefault();
                 validate();
                 if (validStates.every(isAllValid)) {
-                    //$("#addCourseSection2").submit();
                     $("#addCourseSection2").trigger('submit');
                 }
             });
 
-            $startDateRadios.change(function () {
+            $startDateRadios.on("change", function () {
                 if ($("#SpecifiedStartDate").prop("checked") === true) {
                     $("#govuk-label-start_date").show();
                 }
@@ -903,7 +898,7 @@
             });
 
 
-            $deliveryRadios.change(function () {
+            $deliveryRadios.on("change", function () {
                 var $venueChoice = $("#VenueItemsCheckboxList");
                 var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
                 var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
