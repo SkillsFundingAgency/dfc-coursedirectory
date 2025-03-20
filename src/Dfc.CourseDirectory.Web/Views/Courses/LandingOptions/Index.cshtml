@@ -99,7 +99,7 @@
                 event.preventDefault();
                 validate();
                 if (validStates.every(isAllValid)) {
-                    $("#CoursesWhatWouldYouLikeToDoForm").submit();
+                    $("#CoursesWhatWouldYouLikeToDoForm").trigger("submit");
                 }
             });
 
