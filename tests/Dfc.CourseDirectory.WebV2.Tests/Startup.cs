@@ -41,7 +41,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             app.UseCommitSqlTransaction();
 
             app.UseSession();
-            app.UseMiddleware<CustomSessionMiddleware>();
 
             app.UseRouting();
 

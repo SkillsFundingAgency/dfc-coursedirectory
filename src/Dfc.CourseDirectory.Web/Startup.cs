@@ -305,7 +305,7 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseAuthentication();
 
-            app.UseMiddleware<AddSessionIdToHeaderMiddleware>();
+            app.UseMiddleware<NcsSessionCookieMiddleware>();
 
             app.UseMiddleware<ProviderContextMiddleware>();
 
