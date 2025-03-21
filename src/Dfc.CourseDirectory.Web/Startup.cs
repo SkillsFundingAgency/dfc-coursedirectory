@@ -145,6 +145,9 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
 
             services.AddResponseCaching();
+
+            services.AddHttpContextAccessor();
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(40);

@@ -24,7 +24,6 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
                         Secure = true,
                         IsEssential = true,
                         HttpOnly = true,
-                        MaxAge = TimeSpan.FromDays(7)
                     };
                     context.Response.Cookies.Append("ncs_main_session", id, options);
                     context.Response.Headers.Append("X-Ncs-Session-Id", id);
