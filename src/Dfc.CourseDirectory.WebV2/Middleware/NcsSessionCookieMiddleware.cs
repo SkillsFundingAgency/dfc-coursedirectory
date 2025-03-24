@@ -7,31 +7,35 @@ namespace Dfc.CourseDirectory.WebV2.Middleware
 {
     public class NcsSessionCookieMiddleware
     {
+        private const string SessionCookieName = "ncs_main_session";
+        private const string SesionHeaderName = "X-Ncs-Session-Id";
         private readonly RequestDelegate _requestDelegate;
+
         public NcsSessionCookieMiddleware(RequestDelegate requestDelegate)
         {
             _requestDelegate = requestDelegate;
         }
+
         public async Task InvokeAsync(HttpContext context)
         {
             context.Response.OnStarting(() =>
             {
-                if (context.Request.Cookies["ncs_main_session"] == null)
+                var sessionId = context.Request.Cookies[SessionCookieName];
+
+                if (string.IsNullOrEmpty(sessionId))
                 {
-                    var id = Guid.NewGuid().ToString();
+                    sessionId = Guid.NewGuid().ToString();
                     var options = new CookieOptions()
                     {
                         Secure = true,
                         IsEssential = true,
                         HttpOnly = true,
                     };
-                    context.Response.Cookies.Append("ncs_main_session", id, options);
-                    context.Response.Headers.Append("X-Ncs-Session-Id", id);
+                    context.Response.Cookies.Append(SessionCookieName, sessionId, options);
                 }
-                else
-                {
-                    context.Response.Headers.Append("X-Ncs-Session-Id", context.Request.Cookies["ncs_main_session"]);
-                }
+
+                context.Response.Headers.Append(SesionHeaderName, sessionId);
+
                 return Task.FromResult(0);
             });
             await _requestDelegate(context);
