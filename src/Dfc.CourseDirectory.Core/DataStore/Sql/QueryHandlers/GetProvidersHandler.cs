@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using OneOf.Types;
 using Dapper;
 using System.Collections.Generic;
 
