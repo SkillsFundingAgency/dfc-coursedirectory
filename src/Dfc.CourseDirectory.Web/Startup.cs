@@ -146,6 +146,8 @@ namespace Dfc.CourseDirectory.Web
 
             services.AddResponseCaching();
 
+            services.AddDistributedMemoryCache();
+
             services.AddHttpContextAccessor();
 
             services.AddSession(options =>
