@@ -152,6 +152,7 @@ namespace Dfc.CourseDirectory.Web
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(40);
                 options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
