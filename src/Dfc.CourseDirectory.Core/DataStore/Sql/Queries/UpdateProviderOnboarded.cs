@@ -1,5 +1,4 @@
 ﻿using System;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using OneOf;
 using OneOf.Types;
