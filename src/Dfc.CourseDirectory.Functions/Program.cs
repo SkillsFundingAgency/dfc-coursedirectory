@@ -11,16 +11,20 @@ using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Functions;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices((context, services) =>
     {
         var configuration = context.Configuration;
-
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
+        services.AddLogging();
         services.AddSqlDataStore(configuration.GetConnectionString("DefaultConnection"));
 
         services.AddTransient<LarsDataImporter>();
@@ -48,6 +52,15 @@ var host = new HostBuilder()
 
         services.AddSingleton(
             _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
+        services.Configure<LoggerFilterOptions>(options =>
+        {
+            LoggerFilterRule toRemove = options.Rules.FirstOrDefault(rule => rule.ProviderName
+                == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+            if (toRemove is not null)
+            {
+                options.Rules.Remove(toRemove);
+            }
+        });
     })
     .ConfigureAppConfiguration((context, config) =>
     {

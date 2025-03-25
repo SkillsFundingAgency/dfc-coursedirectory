@@ -32,13 +32,13 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         {
             var result = await _mediator.Send(request);
 
-            _log.LogInformation($"Start Getting Course Details for the given search criteria. Provider Name [{request.ProviderName}]");
+            _log.LogInformation("Start Getting Course Details for the given search criteria. Provider Name [{ProviderName}]", request.ProviderName);
 
             return result.Match<IActionResult>(
                 p =>
                 {
                     //_log.LogWarning($"{nameof(CourseSearch)} failed. {nameof(p.Title)}: {{{nameof(p.Title)}}}, {nameof(p.Detail)}: {{{nameof(p.Detail)}}}.", p.Title, p.Detail);
-                    _log.LogWarning($"Failed to get the course deails. Response Code [BAD REQUEST]. Error Details : [{p.Title}/{p.Detail}] ");
+                    _log.LogWarning("Failed to get the course deails. Response Code [BAD REQUEST]. Error Details : [{Title}/{Detail}] ",p.Title,p.Detail);
 
                     return new ObjectResult(p)
                     {
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
                 },
                 r =>
                 {
-                    _log.LogInformation($"Successfully retrieved Course Detail. Response Code [OK]");
+                    _log.LogInformation("Successfully retrieved Course Detail. Response Code [OK]");
                     return Ok(r);
                 }
             );

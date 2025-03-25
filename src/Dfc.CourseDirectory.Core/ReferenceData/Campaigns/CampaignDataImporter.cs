@@ -8,7 +8,6 @@ using CsvHelper;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Campaigns

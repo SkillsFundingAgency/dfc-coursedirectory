@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Web.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Dfc.CourseDirectory.Core.Models;
 
