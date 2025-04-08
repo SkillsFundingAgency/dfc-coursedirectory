@@ -17,7 +17,7 @@ MOJFrontend.SortableTable = function (params) {
 	this.body = this.table.find('tbody');
 	this.createHeadingButtons();
 	this.createStatusBox();
-	this.table.on('click', 'th button', $.proxy(this, 'onSortButtonClick'));
+	this.table.on('click', 'th button', this.bind('onSortButtonClick'));
 };
 
 MOJFrontend.SortableTable.prototype.setupOptions = function(params) {
@@ -94,7 +94,7 @@ MOJFrontend.SortableTable.prototype.getTableRowsArray = function() {
 };
 
 MOJFrontend.SortableTable.prototype.sort = function(rows, columnNumber, sortDirection) {
-	var newRows = rows.sort($.proxy(function(rowA, rowB) {
+	var newRows = rows.sort(function(rowA, rowB) {
 		var tdA = $(rowA).find('td').eq(columnNumber);
 		var tdB = $(rowB).find('td').eq(columnNumber);
 		var valueA = this.getCellValue(tdA);
@@ -116,7 +116,7 @@ MOJFrontend.SortableTable.prototype.sort = function(rows, columnNumber, sortDire
 			}
 			return 0;
 		}
-	}, this));
+	}.bind(this));
 	return newRows;
 };
 
