@@ -8,27 +8,28 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
-using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+using Microsoft.Extensions.Configuration;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
     public class CourseSummaryController : BaseController
     {
+        private const string FindACourseUrlConfigName = "FindACourse:Url";
+
         private ISession Session => HttpContext.Session;
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
-        
+        private readonly IConfiguration _configuration;
+
 
         public CourseSummaryController(
             ICourseService courseService,
-            ISqlQueryDispatcher sqlQueryDispatcher) : base(sqlQueryDispatcher)
+            ISqlQueryDispatcher sqlQueryDispatcher,
+            IConfiguration configuration) : base(sqlQueryDispatcher)
         {
             if (courseService == null)
             {
@@ -37,6 +38,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             _courseService = courseService;
             _sqlQueryDispatcher = sqlQueryDispatcher;
+            _configuration = configuration;
         }
         public async Task<IActionResult> Index(Guid? courseId, Guid? courseRunId)
         {
@@ -128,10 +130,10 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 vm.Regions = FormattedRegionsByIds(allRegions, courseRun.SubRegionIds);
             }
 
-            //Generate Live service URL accordingly based on current host
-            string host = HttpContext.Request.Host.ToString();
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) +
-                "find-a-course/course-details?CourseId=" + vm.CourseId + "&r=" + vm.CourseInstanceId;
+            //Get live service link from the Environment and add in the unique ids
+            string findACourseUrl = string.Format(_configuration[FindACourseUrlConfigName], vm.CourseId, vm.CourseInstanceId);
+
+            ViewBag.LiveServiceURL = findACourseUrl;
 
             return View(vm);
         }

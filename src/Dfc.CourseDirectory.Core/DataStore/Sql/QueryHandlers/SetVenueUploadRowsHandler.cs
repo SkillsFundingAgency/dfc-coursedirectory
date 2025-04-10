@@ -8,7 +8,6 @@ using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using OneOf.Types;
 using static Dapper.SqlMapper;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers

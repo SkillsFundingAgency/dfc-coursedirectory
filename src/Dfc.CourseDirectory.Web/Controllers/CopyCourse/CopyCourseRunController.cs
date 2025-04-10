@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
@@ -36,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
     {
         private const string CopyCourseRunSaveViewModelSessionKey = "CopyCourseRunSaveViewModel";
         private const string CopyCourseRunPublishedCourseSessionKey = "CopyCourseRunPublishedCourse";
+        private const string FindACourseUrlConfigName = "FindACourse:Url";
 
         private readonly ILogger<CopyCourseRunController> _logger;
         private readonly ICourseService _courseService;
@@ -46,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+        private readonly IConfiguration _configuration;
         private readonly IWebRiskService _webRiskService;
 
         public CopyCourseRunController(
@@ -56,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             IRegionCache regionCache,
+            IConfiguration configuration,
             IWebRiskService webRiskService = null) : base(sqlQueryDispatcher)
         {
             if (logger == null)
@@ -75,6 +79,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _regionCache = regionCache;
+            _configuration = configuration;
             _webRiskService = webRiskService;
         }
 
@@ -603,11 +608,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _session.Remove(CopyCourseRunPublishedCourseSessionKey);
 
             //Generate Live service URL accordingly based on current host
-            string host = HttpContext.Request.Host.ToString();
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) +
-                "find-a-course/course-details?CourseId=" + publishedCourse.CourseId + "&r=" + publishedCourse.CourseRunId;
+            ViewBag.LiveServiceURL = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
 
             return View(publishedCourse);
-        }        
+        }
     }
 }

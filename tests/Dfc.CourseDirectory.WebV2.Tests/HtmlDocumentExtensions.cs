@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 using Xunit.Sdk;
