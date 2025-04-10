@@ -24,19 +24,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CourseRunDetail([FromQuery] Features.CourseRunDetail.Query request)
         {
-            _log.LogInformation($"Start Getting Course Run Details for [{request.CourseRunId}] in course [{request.CourseId}]");
+            _log.LogInformation("Start Getting Course Run Details for [{CourseRunId}] in course [{CourseId}]",request.CourseRunId, request.CourseId);
 
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
                 _ =>
                 {
-                    _log.LogWarning($"Failed to get Course Run Detail for [{request.CourseRunId}] in course [{request.CourseId}]. Response Code [NOT FOUND]");
+                    _log.LogWarning("Failed to get Course Run Detail for [{CourseRunId}] in course [{.CourseId}]. Response Code [NOT FOUND]", request.CourseRunId, request.CourseId);
                     return NotFound();
                 },
                 r =>
                 {
-                    _log.LogInformation($"Successfully retrieved Course Run Detail for [{request.CourseRunId}] in course [{request.CourseId}]. Response Code [OK]");
+                    _log.LogInformation("Successfully retrieved Course Run Detail for [{CourseRunId}] in course [{CourseId}]. Response Code [OK]", request.CourseRunId, request.CourseId);
                     return Ok(r);
                 }
             );
