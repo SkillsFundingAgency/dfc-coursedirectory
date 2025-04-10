@@ -1,12 +1,10 @@
-﻿using Dfc.CourseDirectory.Core;
+﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.WebV2.Mvc;
-using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Polly;
-using GovUk.Frontend.AspNetCore;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting
 {
@@ -28,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting
         {
 
             return await _mediator.SendAndMapResponse(
-                new AllCoursesReport.Query(), 
+                new AllCoursesReport.Query(),
                 records => new CsvResult<AllCoursesReport.Csv>(
                     $"{nameof(AllCoursesReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
         }

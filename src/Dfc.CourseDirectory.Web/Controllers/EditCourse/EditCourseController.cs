@@ -3,12 +3,10 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Helpers;
-using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
@@ -20,7 +18,6 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
 using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -218,20 +215,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             qualificationType = course.LearnAimRefTypeDesc,
                             courseId = courseId
                         });
-            }
-        }
-
-        private class EditCourseSaveViewModelValidator : AbstractValidator<EditCourseSaveViewModel>
-        {
-            public EditCourseSaveViewModelValidator()
-            {
-                RuleFor(c => c.CourseFor).WhoThisCourseIsFor();
-                RuleFor(c => c.EntryRequirements).EntryRequirements();
-                RuleFor(c => c.WhatWillLearn).WhatYouWillLearn();
-                RuleFor(c => c.HowYouWillLearn).HowYouWillLearn();
-                RuleFor(c => c.WhatYouNeed).WhatYouWillNeedToBring();
-                RuleFor(c => c.HowAssessed).HowYouWillBeAssessed();
-                RuleFor(c => c.WhereNext).WhereNext();
             }
         }        
     }

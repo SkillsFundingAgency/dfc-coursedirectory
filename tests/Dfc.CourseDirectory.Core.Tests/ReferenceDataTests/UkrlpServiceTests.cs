@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -48,7 +47,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 .Build();
 
             await server.StartAsync();
-            
+
             var ukrlpWcfClientBuilder = new TestUkrlpWcfClientFactory
             {
                 Endpoint = $"{host}/{endpoint}"

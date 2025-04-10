@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using JustEat.HttpClientInterception;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using static Dfc.CourseDirectory.WebV2.AddressSearch.GetAddressAddressSearchService;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
 {
@@ -30,7 +27,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .Responds()
                 .WithJsonContent(new
                 {
-                    header = new 
+                    header = new
                     {
                         uri = "https://example.com/getaddress/{0}",
                         query = "",
@@ -58,7 +55,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                                 POST_TOWN= "Croydon",
                                 TOWN_NAME = "Croydon"
                             }
-                        } 
+                        }
                     }
                 })
                 .RegisterWith(httpRequestInterceptor);
@@ -74,11 +71,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
             var result = await service.SearchByPostcode("XX2 00X");
 
             // Assert
-            Assert.Equal(1, result.Count);
+            Assert.Single(result);
 
-              Assert.Equal($"XX2 00X::1", result.First().Id );
-              Assert.Equal("658 Mitcham Road", result.First().StreetAddress);
-             Assert.Equal("Croydon", result.First().Place);
+            Assert.Equal($"XX2 00X::1", result.First().Id);
+            Assert.Equal("658 Mitcham Road", result.First().StreetAddress);
+            Assert.Equal("Croydon", result.First().Place);
 
         }
 
@@ -212,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                                  BUILDING_NUMBER="660",
                                  STREET_DESCRIPTION = "",
                                  POST_TOWN = "Croydon",
-                              
+
                                 TOWN_NAME = "Croydon"
 
                             }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2.Behaviors
 {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Components;
 
 namespace Dfc.CourseDirectory.WebV2
 {
