@@ -16,13 +16,15 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
         public string Day { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
-        public Guid VenueId { get; set; }
+        public Guid? VenueId { get; set; }        
         public bool? National { get; set; }
-        public string[] SelectedRegions { get; set; }
+        public string[] SelectedRegions { get; set; }        
         public string Url { get; set; }
         public string Cost { get; set; }
+        public decimal? CostDecimal { get => decimal.TryParse(Cost, out var d) ? d : (decimal?)null; }
         public string CostDescription { get; set; }
         public string DurationLength { get; set; }
+        public int? DurationLengthInt { get => int.TryParse(DurationLength, out var durationLength) ? durationLength : (int?)null; }
         public CourseDurationUnit DurationUnit { get; set; }
         public CourseAttendancePattern? AttendanceMode { get; set; }
         public CourseStudyMode? StudyMode { get; set; }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "projectPrefix": {
@@ -259,14 +259,13 @@
       "type": "string"
     },
     "workspaceResourceGroup": {
-        "type": "string"
+      "type": "string"
     },
     "googleWebRiskApiKey": {
       "type": "securestring"
     }
   },
   "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "appInsightsName": "[concat(variables('appServiceName'),'-ai')]",
     "appServiceName": "[concat(parameters('projectPrefix'),'-as',parameters('projectSuffix'))]",
     "functionAppName": "[concat(parameters('projectPrefix'),'-fa',parameters('projectSuffix'))]",
@@ -274,453 +273,111 @@
   },
   "resources": [
     {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryAppInsights",
-      "type": "Microsoft.Resources/deployments",
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}/{2}', variables('appServiceName'), 'staging', 'appsettings')]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('appInsightsName')]"
-          },
-          "attachedService": {
-            "value": "[variables('appServiceName')]"
-          },
-          "workspaceName": {
-            "value": "[parameters('workspaceName')]"
-          },
-          "workspaceResourceGroup": {
-            "value": "[parameters('workspaceResourceGroup')]"
-          }
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
+        "LarsSearchSettings__ApiUrl": "[parameters('larsApiUrl')]",
+        "LarsSearchSettings__ApiKey": "[parameters('larsApiKey')]",
+        "LarsSearchSettings__ApiVersion": "2017-11-11",
+        "LarsSearchSettings__Indexes": "azuresql-index",
+        "LarsSearchSettings__ItemsPerPage": 25,
+        "LarsSearchSettings__PageParamName": "PageNo",
+        "PostCodeSearchSettings__FindAddressesBaseUrl": "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws?",
+        "PostCodeSearchSettings__RetrieveAddressBaseUrl": "[parameters('postcodeApiUrl')]",
+        "PostCodeSearchSettings__Key": "[parameters('postcodeApiKey')]",
+        "GetAddressSettings__ApiUrl": "[parameters('getAddressApiUrl')]",
+        "GetAddressSettings__ApiKey": "[parameters('getAddressApiKey')]",
+        "CourseServiceSettings__ApiUrl": "[parameters('courseApiUrl')]",
+        "CourseServiceSettings__ApiKey": "[parameters('courseApiKey')]",
+        "ApprenticeshipServiceSettings__ApiUrl": "[parameters('apprenticeshipApiUrl')]",
+        "ApprenticeshipServiceSettings__ApiKey": "[parameters('apprenticeshipApiKey')]",
+        "AppUISettings__VenueNameComponentSettings__VenueName_Label": "Venue name",
+        "AppUISettings__CourseForComponentSettings__TextFieldMaxChars": "2000",
+        "AppUISettings__EntryRequirementsComponentSettings__TextFieldMaxChars": "500",
+        "AppUISettings__WhatWillLearnComponentSettings__TextFieldMaxChars": "1500",
+        "AppUISettings__HowYouWillLearnComponentSettings__TextFieldMaxChars": "500",
+        "AppUISettings__WhatYouNeedComponentSettings__TextFieldMaxChars": "500",
+        "AppUISettings__HowAssessedComponentSettings__TextFieldMaxChars": "500",
+        "AppUISettings__WhereNextComponentSettings__TextFieldMaxChars": "500",
+        "DFESignInSettings__ClientID": "[parameters('dfeClientID')]",
+        "DFESignInSettings__ClientSecret": "[parameters('dfeClientSecret')]",
+        "DFESignInSettings__TokenEndpoint": "[parameters('dfeEndpointUrl')]",
+        "DFESignInSettings__MetadataAddress": "[parameters('dfeMetadataUrl')]",
+        "DFESignInSettings__CallbackPath": "[parameters('dfeCallBackPath')]",
+        "DFESignInSettings__SignedOutCallbackPath": "[parameters('dfeSignedOutPath')]",
+        "DFESignInSettings__Issuer": "CourseDirectory",
+        "DFESignInSettings__Audience": "signin.education.gov.uk",
+        "DFESignInSettings__APISecret": "[parameters('dfeApiSecret')]",
+        "DFESignInSettings__APIUri": "[parameters('dfeApiUri')]",
+        "FindACourseServiceSettings__ApiUrl": "[parameters('findCourseApiUrl')]",
+        "FindACourseServiceSettings__ApiKey": "[parameters('findCourseApiKey')]",
+        "FindACourseServiceSettings__UserName": "APIUser",
+        "FindACourseServiceSettings__Password": "[parameters('findCourseApiPassword')]",
+        "BlobStorageSettings__AccountName": "[parameters('storageAccountName')]",
+        "BlobStorageSettings__AccountKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageAccountKey', parameters('keyVaultName'))]",
+        "BlobStorageSettings__Container": "[parameters('blobStorageSettingsContainerName')]",
+        "BlobStorageSettings__TemplatePath": "bulkuploadtemplate.csv",
+        "BlobStorageSettings__InlineProcessingThreshold": "[parameters('BlobStorageSettingsInlineProcessingThreshhold')]",
+        "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString', parameters('keyVaultName'))]",
+        "EnvironmentSettings__EnvironmentName": "[parameters('environmentName')]",
+        "ApprenticeshipSettings__NationalRadius": "600",
+        "ApprenticeshipSettings__SubRegionRadius": "10",
+        "CourseServiceSettings__BulkUploadSecondsPerRecord": "[parameters('BulkUploadSecondsPerRecord')]",
+        "DataProtection__ContainerName": "data-protection-keys",
+        "ConnectionStrings__Redis": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryRedisConnectionString', parameters('keyVaultName'))]",
+        "BlobStorageBinaryStorageProviderSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString', parameters('keyVaultName'))]",
+        "BlobStorageBinaryStorageProviderSettings__ContainerName": "[parameters('blobStorageSettingsContainerName')]",
+        "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
+        "AzureSearchQueryKey": "[parameters('searchQueryKey')]",
+        "FindACourse__Url": "[parameters('FindACourseUrl')]",
+        "Logging__ApplicationInsights__LogLevel__Default": "Information",
+        "WEBSITE_RUN_FROM_PACKAGE": "1",
+        "GoogleWebRiskSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey', parameters('keyVaultName'))]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}/{2}', variables('appServiceName'), 'staging' , 'connectionstrings')]",
+      "properties": {
+        "DefaultConnection": {
+          "value": "[parameters('sqlCourseDirectoryConnectionString')]",
+          "type": "SQLServer"
         }
       }
     },
     {
-      "apiVersion": "2017-05-10",
-      "name": "courseDirectoryAppService",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "courseDirectoryAppInsights"
-      ],
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'appsettings')]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appServiceName": {
-            "value": "[variables('appServiceName')]"
-          },
-          "appServicePlanName": {
-            "value": "[parameters('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[resourcegroup().name]"
-          },
-          "customHostName": {
-            "value": "[parameters('appHostName')]"
-          },
-          "deployStagingSlot": {
-            "value": true
-          },
-          "clientAffinity": {
-            "value": true
-          },
-          "appServiceAppSettings": {
-            "value": [
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
-              },
-              {
-                "name": "LarsSearchSettings__ApiUrl",
-                "value": "[parameters('larsApiUrl')]"
-              },
-              {
-                "name": "LarsSearchSettings__ApiKey",
-                "value": "[parameters('larsApiKey')]"
-              },
-              {
-                "name": "LarsSearchSettings__ApiVersion",
-                "value": "2017-11-11"
-              },
-              {
-                "name": "LarsSearchSettings__Indexes",
-                "value": "azuresql-index"
-              },
-              {
-                "name": "LarsSearchSettings__ItemsPerPage",
-                "value": 25
-              },
-              {
-                "name": "LarsSearchSettings__PageParamName",
-                "value": "PageNo"
-              },
-              {
-                "name": "PostCodeSearchSettings__FindAddressesBaseUrl",
-                "value": "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws?"
-              },
-              {
-                "name": "PostCodeSearchSettings__RetrieveAddressBaseUrl",
-                "value": "[parameters('postcodeApiUrl')]"
-              },
-              {
-                "name": "PostCodeSearchSettings__Key",
-                "value": "[parameters('postcodeApiKey')]"
-              },
-              {
-                "name": "GetAddressSettings__ApiUrl",
-                "value": "[parameters('getAddressApiUrl')]"
-              },
-              {
-                "name": "GetAddressSettings__ApiKey",
-                "value": "[parameters('getAddressApiKey')]"
-              },
-              {
-                "name": "CourseServiceSettings__ApiUrl",
-                "value": "[parameters('courseApiUrl')]"
-              },
-              {
-                "name": "CourseServiceSettings__ApiKey",
-                "value": "[parameters('courseApiKey')]"
-              },
-              {
-                "name": "ApprenticeshipServiceSettings__ApiUrl",
-                "value": "[parameters('apprenticeshipApiUrl')]"
-              },
-              {
-                "name": "ApprenticeshipServiceSettings__ApiKey",
-                "value": "[parameters('apprenticeshipApiKey')]"
-              },
-              {
-                "name": "AppUISettings__VenueNameComponentSettings__VenueName_Label",
-                "value": "Venue name"
-              },
-              {
-                "name": "AppUISettings__CourseForComponentSettings__TextFieldMaxChars",
-                "value": "2000"
-              },
-              {
-                "name": "AppUISettings__EntryRequirementsComponentSettings__TextFieldMaxChars",
-                "value": "500"
-              },
-              {
-                "name": "AppUISettings__WhatWillLearnComponentSettings__TextFieldMaxChars",
-                "value": "1500"
-              },
-              {
-                "name": "AppUISettings__HowYouWillLearnComponentSettings__TextFieldMaxChars",
-                "value": "500"
-              },
-              {
-                "name": "AppUISettings__WhatYouNeedComponentSettings__TextFieldMaxChars",
-                "value": "500"
-              },
-              {
-                "name": "AppUISettings__HowAssessedComponentSettings__TextFieldMaxChars",
-                "value": "500"
-              },
-              {
-                "name": "AppUISettings__WhereNextComponentSettings__TextFieldMaxChars",
-                "value": "500"
-              },
-              {
-                "name": "DFESignInSettings__ClientID",
-                "value": "[parameters('dfeClientID')]"
-              },
-              {
-                "name": "DFESignInSettings__ClientSecret",
-                "value": "[parameters('dfeClientSecret')]"
-              },
-              {
-                "name": "DFESignInSettings__TokenEndpoint",
-                "value": "[parameters('dfeEndpointUrl')]"
-              },
-              {
-                "name": "DFESignInSettings__MetadataAddress",
-                "value": "[parameters('dfeMetadataUrl')]"
-              },
-              {
-                "name": "DFESignInSettings__CallbackPath",
-                "value": "[parameters('dfeCallBackPath')]"
-              },
-              {
-                "name": "DFESignInSettings__SignedOutCallbackPath",
-                "value": "[parameters('dfeSignedOutPath')]"
-              },
-              {
-                "name": "DFESignInSettings__Issuer",
-                "value": "CourseDirectory"
-              },
-              {
-                "name": "DFESignInSettings__Audience",
-                "value": "signin.education.gov.uk"
-              },
-              {
-                "name": "DFESignInSettings__APISecret",
-                "value": "[parameters('dfeApiSecret')]"
-              },
-              {
-                "name": "DFESignInSettings__APIUri",
-                "value": "[parameters('dfeApiUri')]"
-              },
-              {
-                "name": "FindACourseServiceSettings__ApiUrl",
-                "value": "[parameters('findCourseApiUrl')]"
-              },
-              {
-                "name": "FindACourseServiceSettings__ApiKey",
-                "value": "[parameters('findCourseApiKey')]"
-              },
-              {
-                "name": "FindACourseServiceSettings__UserName",
-                "value": "APIUser"
-              },
-              {
-                "name": "FindACourseServiceSettings__Password",
-                "value": "[parameters('findCourseApiPassword')]"
-              },
-              {
-                "name": "BlobStorageSettings__AccountName",
-                "value": "[parameters('storageAccountName')]"
-              },
-              {
-                "name": "BlobStorageSettings__AccountKey",
-                "value": "[listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
-              },
-              {
-                "name": "BlobStorageSettings__Container",
-                "value": "[parameters('blobStorageSettingsContainerName')]"
-              },
-              {
-                "name": "BlobStorageSettings__TemplatePath",
-                "value": "bulkuploadtemplate.csv"
-              },
-              {
-                "name": "BlobStorageSettings__InlineProcessingThreshold",
-                "value": "[parameters('BlobStorageSettingsInlineProcessingThreshhold')]"
-              },
-              {
-                "name": "BlobStorageSettings__ConnectionString",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-              },
-              {
-                "name": "EnvironmentSettings__EnvironmentName",
-                "value": "[parameters('environmentName')]"
-              },
-              {
-                "name": "ApprenticeshipSettings__NationalRadius",
-                "value": "600"
-              },
-              {
-                "name": "ApprenticeshipSettings__SubRegionRadius",
-                "value": "10"
-              },
-              {
-                "name": "CourseServiceSettings__BulkUploadSecondsPerRecord",
-                "value": "[parameters('BulkUploadSecondsPerRecord')]"
-              },
-              {
-                "name": "DataProtection__ContainerName",
-                "value": "data-protection-keys"
-              },
-              {
-                "name": "ConnectionStrings__Redis",
-                "value": "[concat(parameters('RedisCacheName'), '.redis.cache.windows.net:6380,ssl=True,abortConnect=False,password=', listKeys(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Cache/Redis', parameters('RedisCacheName')), '2015-08-01').primaryKey)]"
-              },
-              {
-                "name": "BlobStorageBinaryStorageProviderSettings__ConnectionString",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-              },
-              {
-                "name": "BlobStorageBinaryStorageProviderSettings__ContainerName",
-                "value": "[parameters('blobStorageSettingsContainerName')]"
-              },
-              {
-                "name": "AzureSearchUrl",
-                "value": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]"
-              },
-              {
-                "name": "AzureSearchQueryKey",
-                "value": "[parameters('searchQueryKey')]"
-              },
-              {
-                "name": "FindACourse__Url",
-                "value": "[parameters('FindACourseUrl')]"
-              },
-              {
-                "name": "Logging__ApplicationInsights__LogLevel__Default",
-                "value": "Information"
-              },
-              {
-                "name": "WEBSITE_RUN_FROM_PACKAGE",
-                "value": "1"
-              },
-              {
-                "name": "GoogleWebRiskSettings__ApiKey",
-                "value": "[parameters('googleWebRiskApiKey')]"
-              }
-            ]
-          },
-          "appServiceConnectionStrings": {
-            "value": [
-              {
-                "name": "DefaultConnection",
-                "type": "SQLServer",
-                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
-              }
-            ]
-          }
-        }
+        "FUNCTIONS_EXTENSION_VERSION": "~4",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+        "MSDEPLOY_RENAME_LOCKED_FILES": "1",
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
+        "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString', parameters('keyVaultName'))]",
+        "BlobStorageSettings__ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]",
+        "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
+        "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
+        "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
+        "WEBSITE_RUN_FROM_PACKAGE": "1",
+        "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
+        "CampaignDataContainerName": "campaign-data",
+        "DataUploadsContainerName": "data-uploads",
+        "CourseUploadsFolderName": "courses",
+        "VenueUploadsFolderName": "venues"
       }
     },
     {
-      "apiVersion": "2017-05-10",
-      "name": "[variables('functionAppInsightsName')]",
-      "type": "Microsoft.Resources/deployments",
+      "type": "Microsoft.Web/sites/slots/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'connectionstrings')]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('functionAppInsightsName')]"
-          },
-          "attachedService": {
-            "value": ""
-          },
-          "workspaceName": {
-            "value": "[parameters('workspaceName')]"
-          },
-          "workspaceResourceGroup": {
-            "value": "[parameters('workspaceResourceGroup')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "[variables('functionAppName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appServiceName": {
-            "value": "[variables('functionAppName')]"
-          },
-          "appServicePlanName": {
-            "value": "[parameters('appServicePlanName')]"
-          },
-          "appServicePlanResourceGroup": {
-            "value": "[resourcegroup().name]"
-          },
-          "appServiceType": {
-            "value": "functionapp"
-          },
-          "deployStagingSlot": {
-            "value": true
-          },
-          "appServiceAppSettings": {
-            "value": [
-              {
-                "name": "FUNCTIONS_EXTENSION_VERSION",
-                "value": "~4"
-              },
-              {
-                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                "value": "1"
-              },
-              {
-                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(resourceId(parameters('ProviderPortalSharedResourceGroupName'), 'Microsoft.Insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01', 'Full').properties.InstrumentationKey]"
-              },
-              {
-                "name": "AzureWebJobsStorage",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-              },
-              {
-                "name": "BlobStorageSettings__ConnectionString",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-              },
-              {
-                "name": "AzureSearchUrl",
-                "value": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]"
-              },
-              {
-                "name": "AzureSearchAdminKey",
-                "value": "[parameters('searchAdminKey')]"
-              },
-              {
-                "name": "LarsDataset__Url",
-                "value": "[parameters('larsDatasetUrl')]"
-              },
-              {
-                "name": "WEBSITE_RUN_FROM_PACKAGE",
-                "value": "1"
-              },
-              {
-                "name": "GoogleWebRiskSettings:ApiKey",
-                "value": "[concat('@Microsoft.KeyVault(VaultName=', parameters('keyVaultName'), ';SecretName=GoogleWebRiskApiKey)')]"
-              }
-            ]
-          },
-          "appServiceConnectionStrings": {
-            "value": [
-              {
-                "name": "DefaultConnection",
-                "type": "SQLServer",
-                "connectionString": "[parameters('sqlCourseDirectoryConnectionString')]"
-              }
-            ]
-          }
-        }
-      },
-      "dependsOn": [
-        "[variables('functionAppInsightsName')]"
-      ]
-    },
-    {
-      "apiVersion": "2017-05-10",
-      "resourceGroup": "[parameters('keyVaultResourceGroup')]",
-      "name": "[concat(variables('functionAppName'), 'KeyVaultAccessPolicy')]",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "[variables('functionAppName')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'KeyVault/keyvault-access-policy.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "servicePrincipalObjectId": {
-            "value": "[reference(variables('functionAppName')).outputs.identityPrincipalId.value]"
-          },
-          "keyPermissions": {
-            "value": [
-              "get"
-            ]
-          },
-          "secretPermissions": {
-            "value": [
-              "get"
-            ]
-          }
+        "DefaultConnection": {
+          "value": "[parameters('sqlCourseDirectoryConnectionString')]",
+          "type": "SQLServer"
         }
       }
     }
@@ -728,7 +385,7 @@
   "outputs": {
     "appInsightInstrumentationKey": {
       "type": "string",
-      "value": "[reference('courseDirectoryAppInsights').outputs.InstrumentationKey.value]"
+      "value": "[reference(resourceId('microsoft.insights/components', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
     },
     "appServiceName": {
       "type": "string",

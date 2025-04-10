@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration.Provider;
 using System.Data;
-using System.Drawing.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -12,8 +10,6 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
-using FluentAssertions.Common;
-using FluentAssertions.Execution;
 using Microsoft.Extensions.Logging;
 using Moq;
 using UkrlpService;
@@ -67,8 +63,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 providerName: "Test Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
-                contact: 
-                
+                contact:
+
                     new ProviderContact
                     {
                         ContactType = "P",
@@ -223,7 +219,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             actualContact?.AddressPostTown.Should().Be(ukrlpContact?.ContactAddress.Town);
             actualContact?.AddressCounty.Should().Be(ukrlpContact?.ContactAddress.County);
             actualContact?.AddressItems.Should().BeEquivalentTo(
-            
+
                 ukrlpContact?.ContactAddress.Town + " " +
                 ukrlpContact?.ContactAddress.County
             );
@@ -261,7 +257,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             UnitedKingdomProviderReferenceNumber = ukprn.ToString(),
             ProviderName = "Ukrlp Test Provider",
             ProviderStatus = "Active",
-            ProviderAliases = new[] { new ProviderAliasesStructure {ProviderAlias = "Ukrlp ProviderAliasHere"} },
+            ProviderAliases = new[] { new ProviderAliasesStructure { ProviderAlias = "Ukrlp ProviderAliasHere" } },
             ProviderContact = new[]
             {
                 new ProviderContactStructure

@@ -1685,7 +1685,7 @@ namespace UkrlpService
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(PersonBirthDateStructure))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(ProviderQueryResultStructure))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(authenticationDetails))]
-        System.Threading.Tasks.Task<UkrlpService.response> retrieveAllProvidersAsync(UkrlpService.ProviderQueryParam request);
+        System.Threading.Tasks.Task<UkrlpService.Response> retrieveAllProvidersAsync(UkrlpService.ProviderQueryParam request);
     }
     
     /// <remarks/>
@@ -1768,17 +1768,17 @@ namespace UkrlpService
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "2.1.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class response
+    public partial class Response
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://ukrlp.co.uk.server.ws.v3", Order=0)]
         public UkrlpService.ProviderQueryResponse ProviderQueryResponse;
         
-        public response()
+        public Response()
         {
         }
         
-        public response(UkrlpService.ProviderQueryResponse ProviderQueryResponse)
+        public Response(UkrlpService.ProviderQueryResponse ProviderQueryResponse)
         {
             this.ProviderQueryResponse = ProviderQueryResponse;
         }
@@ -1835,12 +1835,12 @@ namespace UkrlpService
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<UkrlpService.response> UkrlpService.ProviderQueryPortType.retrieveAllProvidersAsync(UkrlpService.ProviderQueryParam request)
+        System.Threading.Tasks.Task<UkrlpService.Response> UkrlpService.ProviderQueryPortType.retrieveAllProvidersAsync(UkrlpService.ProviderQueryParam request)
         {
             return base.Channel.retrieveAllProvidersAsync(request);
         }
         
-        public System.Threading.Tasks.Task<UkrlpService.response> retrieveAllProvidersAsync(UkrlpService.ProviderQueryStructure ProviderQueryRequest)
+        public System.Threading.Tasks.Task<UkrlpService.Response> retrieveAllProvidersAsync(UkrlpService.ProviderQueryStructure ProviderQueryRequest)
         {
             UkrlpService.ProviderQueryParam inValue = new UkrlpService.ProviderQueryParam();
             inValue.ProviderQueryRequest = ProviderQueryRequest;

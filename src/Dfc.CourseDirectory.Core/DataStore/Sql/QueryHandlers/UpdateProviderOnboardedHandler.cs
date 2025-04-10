@@ -1,8 +1,6 @@
 ﻿using System.Data.SqlClient;
-using System.Net;
 using System.Threading.Tasks;
 using Dapper;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using OneOf;

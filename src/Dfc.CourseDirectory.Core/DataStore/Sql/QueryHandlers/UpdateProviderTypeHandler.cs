@@ -1,13 +1,9 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using OneOf;
 using OneOf.Types;
 using System.Data.SqlClient;
 using Dapper;
-using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {

@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using MediatR;
 

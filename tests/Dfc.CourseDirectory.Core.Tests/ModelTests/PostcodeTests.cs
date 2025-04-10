@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
 
             // Assert
             result.Should().BeTrue();
-            postcode.ToString().Should().Equals(expectedNormalizedPostcode);
+            postcode.ToString().Should().Be(expectedNormalizedPostcode);
         }
 
         [Theory]
@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
             var result = leftPostcode == rightPostcode;
 
             // Assert
-            result.Should().Equals(expectedResult);
+            result.Should().Be(expectedResult);
         }
 
         [Theory]
@@ -101,7 +101,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
             var result = leftPostcode != rightPostcode;
 
             // Assert
-            result.Should().Equals(expectedResult);
+            result.Should().Be(expectedResult);
         }
 
         [Theory]
@@ -114,12 +114,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ModelTests
             var result = left.Equals(right);
 
             // Assert
-            result.Should().Equals(expectedResult);
+            result.Should().Be(expectedResult);
         }
 
         public static TheoryData<Postcode, object, bool> Equals_ReturnsExpectedResultData => new TheoryData<Postcode, object, bool>()
         {
-            { new Postcode("EC1A 1BB"), "EC1A 1BB", true },
+            { new Postcode("EC1A 1BB"),new Postcode("EC1A 1BB"), true },
             { new Postcode("EC1A 1BB"), new Postcode("ec1a 1bb"), true },
             { new Postcode("EC1A1BB"), new Postcode("ec1a 1bb"), true },
             { new Postcode("EC1A1BB"), new Postcode("M1 1AE"), false },

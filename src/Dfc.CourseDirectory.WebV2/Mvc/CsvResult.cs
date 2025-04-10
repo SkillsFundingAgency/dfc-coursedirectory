@@ -58,8 +58,8 @@ namespace Dfc.CourseDirectory.WebV2.Mvc
         public async Task ExecuteResultAsync(ActionContext context)
         {
             context.HttpContext.Response.StatusCode = StatusCodes.Status200OK;
-            context.HttpContext.Response.Headers.Add(HeaderNames.ContentType, "text/csv");
-            context.HttpContext.Response.Headers.Add(
+            context.HttpContext.Response.Headers.Append(HeaderNames.ContentType, "text/csv");
+            context.HttpContext.Response.Headers.Append(
                 HeaderNames.ContentDisposition,
                 new ContentDispositionHeaderValue("attachment")
                 {
