@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 ReceiveTimeout = _receiveTimeout,
             });
 
-            _logger.LogDebug($"UKRLP Sync: Using UKRLP endpoint '{client.Endpoint.Address.Uri}'");
+            _logger.LogDebug("UKRLP Sync: Using UKRLP endpoint {Endpoint}",client.Endpoint.Address.Uri);
 
             var results = new List<ProviderRecordStructure>();
 
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 var request = CreateRequest(status);
 
-                _logger.LogDebug($"UKRLP Sync: Fetching UKRLP data for status '{status}'...");
+                _logger.LogDebug("UKRLP Sync: Fetching UKRLP data for status '{status}'...",status);
                 var result = await client.retrieveAllProvidersAsync(request);
                 var records = result.ProviderQueryResponse.MatchingProviderRecords;
 
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 {
                    results.AddRange(records);
                 }
-                _logger.LogDebug($"UKRLP Sync: {records?.Length ?? 0} records received from UKRLP API for status '{status}.'");
+                _logger.LogDebug("UKRLP Sync: {Count} records received from UKRLP API for status '{status}.'", records?.Length ?? 0,status);
             }
 
             return results;

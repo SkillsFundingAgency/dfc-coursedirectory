@@ -12,7 +12,6 @@ using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using OneOf;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteCourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
@@ -58,7 +57,6 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
     public class ConfirmedQuery : IRequest<ConfirmedViewModel>
     {
-        public bool IsNonLars { get; set; }
     }
 
     public class ConfirmedViewModel
@@ -145,32 +143,20 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         public async Task<ConfirmedViewModel> Handle(ConfirmedQuery request, CancellationToken cancellationToken)
         {
             var providerId = _journeyInstance.State.ProviderId;
-            bool hasCourses;
-            if (request.IsNonLars)
+
+            var liveCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
             {
-                var nonlarsCourse = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider()
-                {
-                    ProviderId = providerId
-                });
-                hasCourses = nonlarsCourse.Count != 0;
-            }
-            else
-            {
-                var liveCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
-                {
-                    ProviderId = providerId
-                });
-                hasCourses = liveCourses.Count != 0;
-            }            
+                ProviderId = providerId
+            });
 
             return new ConfirmedViewModel()
             {
                 ProviderId = _journeyInstance.State.ProviderId,
                 CourseName = _journeyInstance.State.CourseName,
-                HasOtherCourseRuns = hasCourses,
-                NonLarsCourse = request.IsNonLars
+                HasOtherCourseRuns = liveCourses.Any()
             };
         }
+
         private async Task<ViewModel> CreateViewModel(Course course, CourseRun courseRun)
         {
             Venue venue = default;

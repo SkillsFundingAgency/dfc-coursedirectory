@@ -45,6 +45,7 @@ pr:
   branches:
     include:
     - main
+    - develop
   paths:
     include:
     - Dfc.CourseDirectory/*

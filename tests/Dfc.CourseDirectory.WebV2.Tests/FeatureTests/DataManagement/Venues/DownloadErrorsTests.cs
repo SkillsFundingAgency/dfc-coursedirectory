@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -104,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             });
 
             var rows = csvReader.GetRecords<CsvVenueRowWithErrors>();
-            rows.Should().BeEquivalentTo(
+            rows.Should().BeEquivalentTo( new List<CsvVenueRowWithErrors> {
                 new CsvVenueRowWithErrors()
                 {
                     ProviderVenueRef = venueUploadRows[0].ProviderVenueRef,
@@ -119,7 +120,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                     Website = venueUploadRows[0].Website,
                     Errors = ErrorRegistry.All["VENUE_NAME_REQUIRED"].GetMessage() + "\n"
                         + ErrorRegistry.All["VENUE_POSTCODE_FORMAT"].GetMessage()
-                });
+                } 
+            });
         }
     }
 }

@@ -10,10 +10,8 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
-using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
@@ -76,7 +74,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation($"Processed {rowCount} rows, imported {importedCount} postcodes.");
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
         }
 
         public async Task AutomatedImportData()
@@ -85,15 +83,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
 
-            _logger.LogInformation($"Automated process generate request url at: {requesturl}");
+            _logger.LogInformation("Automated process generate request url at: {requesturl}", requesturl);
 
             bool urlexist = await CheckURLExistsAndProcessAsync(requesturl);
             if (!urlexist)
             {
                 //sometime the url contains extra string at the end
-                _logger.LogInformation($"Not found url at: {requesturl}");
+                _logger.LogInformation("Not found url at: {requesturl}", requesturl);
                 requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-version-2");
-                _logger.LogInformation($"Automated process generate request url at: {requesturl}");
+                _logger.LogInformation("Automated process generate request url at: {requesturl}", requesturl);
                 urlexist = await CheckURLExistsAndProcessAsync(requesturl);
             }
         }
@@ -106,7 +104,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             var response = await client.GetAsync(requesturl);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                _logger.LogInformation($"Find url at: {requesturl}");
+                _logger.LogInformation("Find url at: {requesturl}", requesturl);
                 returnvalue = true;
                 
                 // Read the content.
@@ -117,7 +115,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     int findindex = responseFromServer.IndexOf(arcgisurl);
                     int arcgisurllength = arcgisurl.Length;
                     string zipfileurl = arcgisurl + responseFromServer.Substring(findindex + arcgisurllength, 32) + "/data";
-                    _logger.LogInformation($"Find arcgis download url at: {zipfileurl}");
+                    _logger.LogInformation("Find arcgis download url at: {zipfileurl}", requesturl);
 
                     //Download to temp folder
                     await DownloadZipFileToTempAsync(zipfileurl);
@@ -160,12 +158,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private async Task<string> CheckURLContainsExtraAsync(string datasetstring)
         {
             string returnvalue = datasetstring.Replace("(extra)", "");
-            _logger.LogInformation($"In CheckURLContainsExtraAsync, starting");
+            _logger.LogInformation("In CheckURLContainsExtraAsync, starting");
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(returnvalue);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                _logger.LogInformation($"In CheckURLContainsExtraAsync - response.StatusCode == HttpStatusCode.OK");
+                _logger.LogInformation("In CheckURLContainsExtraAsync - response.StatusCode == HttpStatusCode.OK");
                 // Read the content.
                 string responseFromServer = await response.Content.ReadAsStringAsync();
                 byte[] bytes = Encoding.Default.GetBytes(responseFromServer);
@@ -186,7 +184,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         string responseFromServer1 = await response1.Content.ReadAsStringAsync();
                         if (responseFromServer1.Contains(arcgisurl))
                         {
-                            _logger.LogInformation($"In CheckURLContainsExtraAsync - url does have extra '-version-2'");
+                            _logger.LogInformation("In CheckURLContainsExtraAsync - url does have extra '-version-2'");
                             return returnvalue;
                         }
                         else
@@ -200,12 +198,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                                 string responseFromServer2 = await response2.Content.ReadAsStringAsync();
                                 if (responseFromServer2.Contains(arcgisurl))
                                 {
-                                    _logger.LogInformation($"In CheckURLContainsExtraAsync -  - url does have extra '-1'");
+                                    _logger.LogInformation("In CheckURLContainsExtraAsync -  - url does have extra '-1'");
                                     return returnvalue;
                                 }
                                 else
                                 {
-                                    _logger.LogInformation($"In CheckURLContainsExtraAsync -  - url not found.");
+                                    _logger.LogInformation("In CheckURLContainsExtraAsync -  - url not found.");
                                 }
                             }
                         }
@@ -217,7 +215,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private async Task DownloadZipFileToTempAsync(string zipfileurl)
         {
-            _logger.LogInformation($"Start download zip file - {zipfileurl}.");
+            _logger.LogInformation("Start download zip file - {zipfileurl}.",zipfileurl);
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
 
@@ -229,17 +227,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 if (entry.Name.EndsWith("_UK.csv") && entry.Name.StartsWith("ONSPD"))
                 {
-                    _logger.LogInformation($"Find csv file - {entry.Name}.");
+                    _logger.LogInformation("Find csv file - {Name}.", entry.Name);
                     var destination = Path.Combine(extractDirectory, entry.Name);
-                    _logger.LogInformation($"Extract to file location - {destination}.");
+                    _logger.LogInformation("Extract to file location - {destination}.",destination);
                     try
                     {
                         entry.ExtractToFile(destination, overwrite: true);
-                        _logger.LogInformation($"Extract csv file - {entry.Name} complete.");
+                        _logger.LogInformation("Extract csv file - {Name} complete.",entry.Name);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogInformation($"Extract csv file error message - {ex.Message}.");
+                        _logger.LogInformation("Extract csv file error message - {Message}.", ex.Message);
                     }
 
                     using StreamReader streamReader = new StreamReader(destination);
@@ -250,7 +248,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
        4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose))
                     {
                         // temp file exists
-                        _logger.LogInformation($"Temp csv file - {entry.Name} has been removed.");
+                        _logger.LogInformation("Temp csv file - {Name} has been removed.", entry.Name);
                     }
                 }
             }
@@ -258,7 +256,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private async Task ProcessCSVtoDBAsync(StreamReader streamReader)
         {
-            _logger.LogInformation($"Start import csv postcodes to DB.");
+            _logger.LogInformation("Start import csv postcodes to DB.");
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
             var rowCount = 0;
@@ -286,7 +284,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation($"Processed {rowCount} rows, imported {importedCount} postcodes.");
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
         }
 
         private class Record

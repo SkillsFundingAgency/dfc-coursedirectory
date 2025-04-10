@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
-            _log.LogInformation($" EditCourseRunController AddNewVenue");
+            _log.LogInformation("EditCourseRunController AddNewVenue");
 
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
@@ -115,8 +115,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
                 .ToString();
 
-            _log.LogInformation($" EditCourseRunController AddNewVenue [{returnurl}]");
-            //return RedirectToAction("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") });
+            _log.LogInformation("EditCourseRunController AddNewVenue [{returnurl}]", returnurl);
 
             return Json(returnurl);
         }
@@ -248,7 +247,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
-            _log.LogInformation($" EditCourseRunController Index");
+            _log.LogInformation("EditCourseRunController Index");
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
@@ -264,7 +263,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             List<SelectListItem> courseRunVenues = new List<SelectListItem>();
 
-            //VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
             var venues = await GetVenuesForProvider();
 
             foreach (var venue in venues.VenueItems)
@@ -287,7 +285,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 if (courseRun != null)
                 {
-                    _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    _log.LogInformation("EditCourseRunController Index courseRun !=null");
                     
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
@@ -375,11 +373,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
-                    _log.LogInformation($" EditCourseRunController Index EditCourseRun");
+                    _log.LogInformation("EditCourseRunController Index EditCourseRun");
                     return View("EditCourseRun", vm);
                 }
             }
-            _log.LogInformation($" EditCourseRunController Index error "+ Activity.Current?.Id ?? HttpContext.TraceIdentifier);
+            _log.LogInformation("EditCourseRunController Index error {Error}",Activity.Current?.Id ?? HttpContext.TraceIdentifier);
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
