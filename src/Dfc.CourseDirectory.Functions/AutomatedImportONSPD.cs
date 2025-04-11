@@ -10,13 +10,10 @@ namespace Dfc.CourseDirectory.Functions
     public class AutomatedImportONSPD
     {
         private readonly OnspdDataImporter _onspdDataImporter;
-        private readonly ILogger _logger;
 
-        public AutomatedImportONSPD(OnspdDataImporter onspdDataImporter,
-            ILogger<AutomatedImportONSPD> logger)
+        public AutomatedImportONSPD(OnspdDataImporter onspdDataImporter)
         {
             _onspdDataImporter = onspdDataImporter;
-            _logger = logger;
         }
         /*
         [FunctionName("AutomatedImportONSPD")]

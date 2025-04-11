@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
+﻿using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderCoursesResults

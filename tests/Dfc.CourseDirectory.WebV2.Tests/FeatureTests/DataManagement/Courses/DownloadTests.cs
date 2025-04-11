@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using FluentAssertions;
-using Microsoft.Extensions.Hosting;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
