@@ -121,6 +121,17 @@
                 asp-fallback-test="window.jQuery"></script>
     </environment>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.2.0/tinymce.min.js"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var element = document.getElementById("RemoveAria");
+            if (element) {
+                element.removeAttribute("aria-hidden");
+            } else {
+                console.error("Element with ID 'RemoveAria' not found.");
+            }
+        });
+    </script>
+    
     <partial name="~/SharedViews/Partials/_V2Scripts.cshtml" />
     @RenderSection("Scripts", required: false)
 
