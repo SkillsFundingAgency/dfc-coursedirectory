@@ -8,16 +8,11 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
-using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {

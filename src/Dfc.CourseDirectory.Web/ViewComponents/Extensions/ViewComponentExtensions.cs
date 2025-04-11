@@ -1,6 +1,4 @@
-﻿using System;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Courses;
+﻿using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Extensions
 {

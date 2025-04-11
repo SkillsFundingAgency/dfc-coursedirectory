@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Dfc.CourseDirectory.Web.Helpers

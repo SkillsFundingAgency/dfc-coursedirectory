@@ -6,7 +6,6 @@ using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.UnregulatedProvision;
-using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
 using Dfc.CourseDirectory.Web.ViewComponents.ZCodeFoundResult;

@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using OneOf;
 using OneOf.Types;
 using System.Data.SqlClient;
 using Dapper;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CourseConstants = Dfc.CourseDirectory.Core.Validation.CourseValidation.Constants;
 using VenueConstants = Dfc.CourseDirectory.Core.Validation.VenueValidation.Constants;
-using TLevelConstants = Dfc.CourseDirectory.Core.Validation.TLevelValidation.Constants;
 namespace Dfc.CourseDirectory.Core.Validation
 {
     public static class ErrorRegistry

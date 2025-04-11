@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Functions
     public class SyncUkrlp
     {
         private readonly UkrlpSyncHelper _ukrlpSyncHelper;
-        private readonly ILogger _logger;
+        private readonly ILogger<SyncUkrlp> _logger;
 
         public SyncUkrlp(UkrlpSyncHelper ukrlpSyncHelper, ILogger<SyncUkrlp> logger)
         {
