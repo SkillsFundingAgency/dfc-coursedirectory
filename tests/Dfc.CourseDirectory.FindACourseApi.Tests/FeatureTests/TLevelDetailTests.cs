@@ -42,8 +42,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var providerName = "Test Provider";
             var providerUkprn = 123456;
             var providerContactEmail = "contact@exampleprovider.com";
-            var providerEmployerSatisfaction = 9m;
-            var providerLearnerSatisfaction = 10m;
 
             var tLevelDefinitionId = Guid.NewGuid();
             var tLevelDefinitionName = "T Level name";
@@ -159,9 +157,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     ProviderId = providerId,
                     Ukprn = providerUkprn,
                     ProviderType = ProviderType.TLevels,
-                    ProviderName = providerName,
-                    EmployerSatisfaction = providerEmployerSatisfaction,
-                    LearnerSatisfaction = providerLearnerSatisfaction
+                    ProviderName = providerName
 
                 });
 
@@ -196,8 +192,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                 json["provider"]["providerName"].ToObject<string>().Should().Be(providerName);
                 json["provider"]["ukprn"].ToObject<int>().Should().Be(providerUkprn);
                 json["provider"]["email"].ToObject<string>().Should().Be(providerContactEmail);
-                json["provider"]["employerSatisfaction"].ToObject<decimal?>().Should().Be(providerEmployerSatisfaction);
-                json["provider"]["learnerSatisfaction"].ToObject<decimal?>().Should().Be(providerLearnerSatisfaction);
                 json["whoFor"].ToObject<string>().Should().Be(whoFor);
                 json["entryRequirements"].ToObject<string>().Should().Be(HtmlEncode(entryRequirements));
                 json["whatYoullLearn"].ToObject<string>().Should().Be(HtmlEncode(whatYoullLearn));
