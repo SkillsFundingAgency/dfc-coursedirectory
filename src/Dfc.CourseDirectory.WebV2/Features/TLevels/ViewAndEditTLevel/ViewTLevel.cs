@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.ViewTLeve
             }
 
             return new ViewModel
-            { 
+            {
                 TLevelId = result.TLevelId,
                 TLevelDefinitionName = result.TLevelDefinition.Name,
                 CreatedOn = result.CreatedOn,

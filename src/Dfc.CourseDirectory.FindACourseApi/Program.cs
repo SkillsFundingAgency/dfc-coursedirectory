@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.FindACourseApi
 {
@@ -14,8 +13,6 @@ namespace Dfc.CourseDirectory.FindACourseApi
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(builder =>
                 {
-                    builder.AddApplicationInsightsSettings();
-
                     var environmentName = Environment.GetEnvironmentVariable("EnvironmentSettings__EnvironmentName");
 
                     if (!string.IsNullOrEmpty(environmentName))

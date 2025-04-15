@@ -25,9 +25,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Sectors()
         {
-            _log.LogInformation($"Start getting all sectors");
+            _log.LogInformation("Start getting all sectors");
 
             return Ok(await _mediator.Send(new Features.Sectors.Query()));
-        }        
+        }
     }
 }

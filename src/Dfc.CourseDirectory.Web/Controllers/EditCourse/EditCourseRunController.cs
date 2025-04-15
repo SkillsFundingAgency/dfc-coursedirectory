@@ -1,28 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
-using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -81,7 +76,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         [Authorize]
         public IActionResult AddNewVenue(CourseRunRequestModel model)
         {
-            _log.LogInformation($" EditCourseRunController AddNewVenue");
+            _log.LogInformation("EditCourseRunController AddNewVenue");
 
             EditCourseRunViewModel vm = new EditCourseRunViewModel
             {
@@ -120,8 +115,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
                 .ToString();
 
-            _log.LogInformation($" EditCourseRunController AddNewVenue [{returnurl}]");
-            //return RedirectToAction("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") });
+            _log.LogInformation("EditCourseRunController AddNewVenue [{returnurl}]", returnurl);
 
             return Json(returnurl);
         }
@@ -253,7 +247,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
         {
             int? UKPRN;
 
-            _log.LogInformation($" EditCourseRunController Index");
+            _log.LogInformation("EditCourseRunController Index");
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
@@ -269,7 +263,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             List<SelectListItem> courseRunVenues = new List<SelectListItem>();
 
-            //VenueSearchCriteria criteria = new VenueSearchCriteria(UKPRN.ToString(), null);
             var venues = await GetVenuesForProvider();
 
             foreach (var venue in venues.VenueItems)
@@ -292,7 +285,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
                 if (courseRun != null)
                 {
-                    _log.LogInformation($" EditCourseRunController Index courseRun !=null");
+                    _log.LogInformation("EditCourseRunController Index courseRun !=null");
                     
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
@@ -380,11 +373,11 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                             selectRegionRegionItem.SubRegion = selectRegionRegionItem.SubRegion.OrderBy(x => x.SubRegionName).ToList();
                         }
                     }
-                    _log.LogInformation($" EditCourseRunController Index EditCourseRun");
+                    _log.LogInformation("EditCourseRunController Index EditCourseRun");
                     return View("EditCourseRun", vm);
                 }
             }
-            _log.LogInformation($" EditCourseRunController Index error "+ Activity.Current?.Id ?? HttpContext.TraceIdentifier);
+            _log.LogInformation("EditCourseRunController Index error {Error}",Activity.Current?.Id ?? HttpContext.TraceIdentifier);
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
@@ -428,7 +421,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             model.FlexibleStartDate = flexibleStartDate;
 
-            var validationResult = new EditCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).Validate(model);
+            var validationResult = await new EditCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).ValidateAsync(model);
             if (!validationResult.IsValid)
             {
                 return BadRequest();
@@ -565,67 +558,5 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             return selectVenue;
         }
-
-        private class EditCourseRunSaveViewModelValidator : AbstractValidator<EditCourseRunSaveViewModel>
-        {
-            public EditCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock, IWebRiskService webRiskService)
-            {
-                RuleFor(c => c.AttendanceMode)
-                    .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
-
-                RuleFor(c => c.Cost)
-                    .Transform(v => decimal.TryParse(v, out var d) ? d : (decimal?)null)
-                    .Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), getCostDescription: c => c.CostDescription);
-
-                RuleFor(c => c.CostDescription)
-                    .CostDescription();
-
-                RuleFor(c => c.CourseName).CourseName();
-
-                RuleFor(c => c.CourseProviderReference).ProviderCourseRef();
-
-                RuleFor(c => c.DeliveryMode).IsInEnum();
-
-                RuleFor(c => c.DurationLength)
-                    .Transform(v => int.TryParse(v, out var i) ? i : (int?)i)
-                    .Duration();
-
-                RuleFor(c => c.DurationUnit).IsInEnum();
-
-                RuleFor(c => c.FlexibleStartDate)
-                    .Transform(v => (bool?)v)
-                    .FlexibleStartDate();
-
-                RuleFor(c => c.National)
-                    .Transform(v => (bool?)v)
-                    .NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
-
-                RuleFor(c => c.SelectedRegions)
-                    .Transform(v =>
-                    {
-                        if (v == null)
-                        {
-                            return null;
-                        }
-
-                        var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
-                        return v.Select(id => allSubRegions[id]).ToArray();
-                    })
-                    .SubRegions(subRegionsWereSpecified: c => c.SelectedRegions?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.National);
-
-                RuleFor(c => c.StartDate)
-                    .Transform(v => (DateInput)v)
-                    .StartDate(clock.UtcNow, getFlexibleStartDate: c => c.FlexibleStartDate);
-
-                RuleFor(c => c.StudyMode)
-                    .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
-
-                RuleFor(c => c.Url).CourseWebPage(webRiskService);
-
-                RuleFor(c => c.VenueId)
-                    .Transform(v => v == default ? (Guid?)null : v)
-                    .VenueId(getDeliveryMode: c => c.DeliveryMode);
-            }
-        }        
     }
 }

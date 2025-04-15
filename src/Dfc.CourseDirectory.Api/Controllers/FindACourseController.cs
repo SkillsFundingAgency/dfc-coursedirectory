@@ -27,13 +27,13 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Search([FromBody] FindACourseApi.Features.Search.Query request)
         {
-            _log.LogInformation($"Start Searching for Courses by the Search Criteria [{request}]");
+            _log.LogInformation("Start Searching for Courses by the Search Criteria [{request}]",request);
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
                 p =>
                 {
-                    _log.LogWarning($"Failed to retrieve courses with given search criteria. {nameof(p.Title)}: {{{nameof(p.Title)}}}, {nameof(p.Detail)}: {{{nameof(p.Detail)}}}.", p.Title, p.Detail);
+                    _log.LogWarning("Failed to retrieve courses with given search criteria. {Title}: {TitleValue}, {Detail}: {DetailValue}.", nameof(p.Title), p.Title, nameof(p.Detail), p.Detail);
 
                     return new ObjectResult(p)
                     {
@@ -46,7 +46,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 },
                 r =>
                 {
-                    _log.LogInformation($"Courses found. Returning Courses data in Json format. Response Code [OK]");
+                    _log.LogInformation("Courses found. Returning Courses data in Json format. Response Code [OK]");
                     return Ok(r);
                 });
         }
@@ -58,17 +58,20 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CourseRunDetail([FromQuery] FindACourseApi.Features.CourseRunDetail.Query request)
         {
-            _log.LogInformation($"Start Getting for CourseRunDetail by the CourseId [{request.CourseId}] and CourseRunId [{request.CourseRunId}]");
+            _log.LogInformation("Start Getting for CourseRunDetail by the CourseId [{CourseId}] and CourseRunId [{CourseRunId}]", request.CourseId, request.CourseRunId);
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
-                    _log.LogWarning($"Failed to retrieve CourseRun Details with given search criteria.Response Code [NOT FOUND]"); 
+                _ =>
+                {
+                    _log.LogWarning("Failed to retrieve CourseRun Details with given search criteria.Response Code [NOT FOUND]");
                     return NotFound();
                 },
-                r => {
-                    _log.LogInformation($"CourseRun Details found. Returning data in Json format. Response Code [OK]");
-                    return Ok(r); });
+                r =>
+                {
+                    _log.LogInformation("CourseRun Details found. Returning data in Json format. Response Code [OK]");
+                    return Ok(r);
+                });
         }
 
         [HttpGet("~/public/fac/tleveldetail")]
@@ -78,16 +81,18 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> TLevelDetail([FromQuery] FindACourseApi.Features.TLevels.TLevelDetail.Query request)
         {
-            _log.LogInformation($"Start Getting for TLevel Detail by the TlevelID [{request.TLevelId}]");
+            _log.LogInformation("Start Getting for TLevel Detail by the TlevelID [{TLevelId}]", request.TLevelId);
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
-                    _log.LogWarning($"Failed to retrieve TLevel Details with given T-Level ID.Response Code [NOT FOUND]");
+                _ =>
+                {
+                    _log.LogWarning("Failed to retrieve TLevel Details with given T-Level ID.Response Code [NOT FOUND]");
                     return NotFound();
                 },
-                r => {
-                    _log.LogInformation($"T-Level Details found. Returning data in Json format. Response Code [OK]");
+                r =>
+                {
+                    _log.LogInformation("T-Level Details found. Returning data in Json format. Response Code [OK]");
                     return Ok(r);
                 });
         }

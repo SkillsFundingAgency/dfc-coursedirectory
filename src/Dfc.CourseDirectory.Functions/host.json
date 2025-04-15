@@ -4,11 +4,14 @@
   "logging": {
     "logLevel": {
       "default": "Information",
-      "Azure.Core" : "Error"
+      "Azure.Core": "Error"
     },
-
-    "applicationInsights": { 
-      "enableDependencyTracking": true
+    "applicationInsights": {
+      "enableDependencyTracking": true,
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
     }
-   }
+  }
 }

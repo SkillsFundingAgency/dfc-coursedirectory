@@ -24,7 +24,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTLevelDefinitions()
         {
-           return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
+            return Ok(await _mediator.Send(new Features.TLevelDefinitions.Query()));
         }
 
         [HttpGet("~/tlevels")]
@@ -44,17 +44,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> TLevelDetail([FromQuery] Features.TLevels.TLevelDetail.Query request)
         {
-            _log.LogInformation($"Start Getting T-Level Details for [{request.TLevelId}]");
+            _log.LogInformation("Start Getting T-Level Details for [{TLevelId}]", request.TLevelId);
 
             var result = await _mediator.Send(request);
 
             return result.Match<IActionResult>(
-                _ => {
-                    _log.LogWarning($"Failed to get T-Level Details for [{request.TLevelId}]. Response Code [NOT FOUND]");
+                _ =>
+                {
+                    _log.LogWarning("Failed to get T-Level Details for [{TLevelId}]. Response Code [NOT FOUND]", request.TLevelId);
                     return NotFound();
                 },
-                r => {
-                    _log.LogInformation($"Successfully retrieved T-Level Details for [{request.TLevelId}]. Response Code [OK]");
+                r =>
+                {
+                    _log.LogInformation("Successfully retrieved T-Level Details for [{TLevelId}]. Response Code [OK]", request.TLevelId);
                     return Ok(r);
                 }
             );

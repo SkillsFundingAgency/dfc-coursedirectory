@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         {
             var channel = Channel.CreateUnbounded<UploadStatus>();
 
-            var obs = _fileUploadProcessor.GetCourseUploadStatusUpdatesForProvider(_providerContextProvider.GetProviderId(),false)
+            var obs = _fileUploadProcessor.GetCourseUploadStatusUpdatesForProvider(_providerContextProvider.GetProviderId(), false)
                     .TakeWhile(v => v == UploadStatus.Created || v == UploadStatus.Processing);
 
             var subscription = obs.Subscribe(

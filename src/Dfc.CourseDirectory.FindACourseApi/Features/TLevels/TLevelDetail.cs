@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                 return new NotFound();
             }
 
-           
+
 
             var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(
                 new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = tLevel.ProviderId });

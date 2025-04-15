@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Search;
 using MediatR;
 using OneOf;
 using OneOf.Types;
@@ -149,7 +149,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     }
                     : null,
                 Provider = new ProviderViewModel
-                { 
+                {
                     ProviderName = sqlProvider.DisplayName,
                     TradingName = sqlProvider.DisplayName,
                     CourseDirectoryName = provider.CourseDirectoryName,

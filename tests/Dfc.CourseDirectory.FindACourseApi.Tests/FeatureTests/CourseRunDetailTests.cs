@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using FluentAssertions;
@@ -13,7 +13,6 @@ using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Provider = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Provider;
-using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 {

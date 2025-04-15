@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,14 +8,13 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
-using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
+using Dfc.CourseDirectory.Web.Validation;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Web.ViewModels;
@@ -29,6 +27,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
@@ -38,6 +37,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
     {
         private const string CopyCourseRunSaveViewModelSessionKey = "CopyCourseRunSaveViewModel";
         private const string CopyCourseRunPublishedCourseSessionKey = "CopyCourseRunPublishedCourse";
+        private const string FindACourseUrlConfigName = "FindACourse:Url";
 
         private readonly ILogger<CopyCourseRunController> _logger;
         private readonly ICourseService _courseService;
@@ -48,6 +48,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IClock _clock;
         private readonly IRegionCache _regionCache;
+        private readonly IConfiguration _configuration;
         private readonly IWebRiskService _webRiskService;
 
         public CopyCourseRunController(
@@ -58,6 +59,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             ICurrentUserProvider currentUserProvider,
             IClock clock,
             IRegionCache regionCache,
+            IConfiguration configuration,
             IWebRiskService webRiskService = null) : base(sqlQueryDispatcher)
         {
             if (logger == null)
@@ -77,6 +79,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _currentUserProvider = currentUserProvider;
             _clock = clock;
             _regionCache = regionCache;
+            _configuration = configuration;
             _webRiskService = webRiskService;
         }
 
@@ -484,7 +487,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
 
             RefineModelDataForADeliveryMode(model);
 
-            var validationResult = new CopyCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).Validate(model);
+            var validationResult = await new CopyCourseRunSaveViewModelValidator(allRegions, _clock, _webRiskService).ValidateAsync(model);
             if (!validationResult.IsValid)
             {
                 return BadRequest();
@@ -605,65 +608,9 @@ namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
             _session.Remove(CopyCourseRunPublishedCourseSessionKey);
 
             //Generate Live service URL accordingly based on current host
-            string host = HttpContext.Request.Host.ToString();
-            ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + 
-                "find-a-course/course-details?CourseId=" + publishedCourse.CourseId + "&r=" + publishedCourse.CourseRunId; 
+            ViewBag.LiveServiceURL = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
 
             return View(publishedCourse);
-        }
-
-        private class CopyCourseRunSaveViewModelValidator : AbstractValidator<CopyCourseRunSaveViewModel>
-        {
-            public CopyCourseRunSaveViewModelValidator(IReadOnlyCollection<Region> allRegions, IClock clock, IWebRiskService webRiskService)
-            {
-                RuleFor(c => c.AttendanceMode)
-                    .AttendancePattern(attendancePatternWasSpecified: c => c.AttendanceMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
-
-                RuleFor(c => c.Cost)
-                    .Transform(v => decimal.TryParse(v, out var d) ? d : (decimal?)null)
-                    .Cost(costWasSpecified: c => !string.IsNullOrEmpty(c.Cost), getCostDescription: c => c.CostDescription);
-
-                RuleFor(c => c.CostDescription)
-                    .CostDescription();
-
-                RuleFor(c => c.CourseName).CourseName();
-
-                RuleFor(c => c.CourseProviderReference).ProviderCourseRef();
-
-                RuleFor(c => c.DeliveryMode).IsInEnum();
-
-                RuleFor(c => c.DurationLength)
-                    .Transform(v => int.TryParse(v, out var i) ? i : (int?)i)
-                    .Duration();
-
-                RuleFor(c => c.DurationUnit).IsInEnum();
-
-                RuleFor(c => c.National)
-                    .Transform(v => (bool?)v)
-                    .NationalDelivery(getDeliveryMode: c => c.DeliveryMode);
-
-                RuleFor(c => c.SelectedRegions)
-                    .Transform(v =>
-                    {
-                        if (v == null)
-                        {
-                            return null;
-                        }
-
-                        var allSubRegions = allRegions.SelectMany(r => r.SubRegions).ToDictionary(sr => sr.Id, sr => sr);
-                        return v.Select(id => allSubRegions[id]).ToArray();
-                    })
-                    .SubRegions(subRegionsWereSpecified: c => c.SelectedRegions?.Count() > 0, getDeliveryMode: c => c.DeliveryMode, getNationalDelivery: c => c.National);
-
-                RuleFor(c => c.StudyMode)
-                    .StudyMode(studyModeWasSpecified: c => c.StudyMode.HasValue, getDeliveryMode: c => c.DeliveryMode);
-
-                RuleFor(c => c.Url).CourseWebPage(webRiskService);
-
-                RuleFor(c => c.VenueId)
-                    .Transform(v => v == default ? (Guid?)null : v)
-                    .VenueId(getDeliveryMode: c => c.DeliveryMode);
-            }
         }
     }
 }
