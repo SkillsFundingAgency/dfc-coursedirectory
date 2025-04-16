@@ -12,7 +12,6 @@ using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using OneOf;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteCourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
@@ -161,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
                     ProviderId = providerId
                 });
                 hasCourses = liveCourses.Count != 0;
-            }            
+            }
 
             return new ConfirmedViewModel()
             {
