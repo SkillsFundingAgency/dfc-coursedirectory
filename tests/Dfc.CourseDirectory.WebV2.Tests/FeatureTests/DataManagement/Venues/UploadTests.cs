@@ -319,7 +319,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             // Arrange
             var provider = await TestData.CreateProvider();
 
-            var csvStream = new MemoryStream(new byte[1048576 + 1]);
+            var csvStream = new MemoryStream(new byte[10485760 + 1]);
             var requestContent = CreateMultiPartDataContent("text/csv", csvStream);
 
             // Act
@@ -329,7 +329,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.AssertHasError("File", "The selected file must be smaller than 1MB");
+            doc.AssertHasError("File", "The selected file must be smaller than 10 MB");
         }
 
         private MultipartFormDataContent CreateMultiPartDataContent(string contentType, Stream csvStream)
