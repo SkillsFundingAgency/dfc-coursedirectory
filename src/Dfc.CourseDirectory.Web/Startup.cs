@@ -145,10 +145,16 @@ namespace Dfc.CourseDirectory.Web
             services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
 
             services.AddResponseCaching();
+
+            services.AddDistributedMemoryCache();
+
+            services.AddHttpContextAccessor();
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(40);
                 options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
@@ -303,6 +309,8 @@ namespace Dfc.CourseDirectory.Web
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<NcsSessionCookieMiddleware>();
 
             app.UseMiddleware<ProviderContextMiddleware>();
 
