@@ -14,28 +14,6 @@ namespace Dfc.CourseDirectory.Web.Helpers
             var attributes = (DescriptionAttribute[])value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
             return attributes.Length > 0 ? attributes[0].Description : value.ToString();
         }
-
-        public static IEnumerable<SelectListItem> ToSelectList<T>(this System.Enum enumValue)
-        {
-            return
-                System.Enum.GetValues(enumValue.GetType()).Cast<T>()
-                    .Select(
-                        x =>
-                            new SelectListItem
-                            {
-                                Text = ((System.Enum)(object)x).ToDescription(),
-                                Value = x.ToString(),
-                                Selected = (enumValue.Equals(x))
-                            });
-        }
-        public static TAttribute GetAttribute<TAttribute>(this Enum enumValue)
-        where TAttribute : Attribute
-        {
-            return enumValue.GetType()
-                            .GetMember(enumValue.ToString())
-                            .First()
-                            .GetCustomAttribute<TAttribute>();
-        }
         public static T ToEnum<T>(this string value, T defaultValue) where T : struct
         {
             if (string.IsNullOrEmpty(value))
