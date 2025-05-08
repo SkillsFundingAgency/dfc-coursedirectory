@@ -11,11 +11,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
         public string NotionalNVQLevelv2 { get; set; }
         public string AwardOrgCode { get; set; }
         public string QualificationType { get; set; }
-
-
         public string CourseTextId { get; set; }
-
-
         public string CourseRunId { get; set; }
         public string CourseName { get; set; }
         public string StartDate { get; set; }
