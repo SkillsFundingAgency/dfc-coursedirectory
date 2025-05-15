@@ -1,9 +1,6 @@
 ﻿using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Services;
 
 namespace Dfc.CourseDirectory.Web.Controllers

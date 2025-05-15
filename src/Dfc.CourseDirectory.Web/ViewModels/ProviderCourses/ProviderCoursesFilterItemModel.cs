@@ -1,7 +1,4 @@
-﻿using Dfc.CourseDirectory.Services;
-using System.Collections.Generic;
-
-namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
+﻿namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
 {
     public class ProviderCoursesFilterItemModel
     {
