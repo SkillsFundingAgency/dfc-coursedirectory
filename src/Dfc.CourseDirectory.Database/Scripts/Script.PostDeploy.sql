@@ -178,32 +178,6 @@ INSERT INTO [Pttcd].[NonLarsSubType]
            ,'2023-12-27 13:16:33.797'
            ,1)
 
--------Script will set UpdatedOn fields in Pttcd.Courses and Pttcd.CourseRuns tables so that the archived records be deleted after 30 days from these tables ----------------
--------This is a one time script so it should be removed for the next release --------- 
-	DECLARE @ArchivedStatus int = 4
-	DECLARE @UpdatedBy varchar(100) = 'RemoveRedundantRecordsRelease'
-
-	UPDATE 		
-		Pttcd.Courses 
-	SET 
-		UpdatedOn = GETDATE(),
-		UpdatedBy = @UpdatedBy
-	WHERE 
-		CourseStatus = @ArchivedStatus 
-		AND UpdatedOn IS NULL
-
-	
-	UPDATE 		
-		Pttcd.CourseRuns 
-	SET 
-		UpdatedOn = GETDATE(),
-		UpdatedBy = @UpdatedBy
-	WHERE 
-		CourseRunStatus = @ArchivedStatus
-		AND UpdatedOn IS NULL
-
-------------------------------------------------------------------------------------
-
 DECLARE @Regions TABLE (
 	RegionId VARCHAR(12),
 	Name NVARCHAR(100),
@@ -648,19 +622,6 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
 		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
 		N'You will have the industry knowledge and experience to progress into roles like: Jewellery designer-maker, Furniture maker, Furniture designer, Furniture restorer, Dressmaker, Wardrobe assistant, Tailor, Fashion design assistant, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
-	(
-		N'04a21a57-6789-429f-b434-d7e222d3ccc7',
-		53,
-		31,
-		3,
-		N'T Level in Hairdressing, Barbering and Beauty Therapy',
-		N'This T Level is suitable for anyone wanting a career in hairdressing, barbering or beauty therapy. The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose a specialist occupation.',
-		N'There are no national entry requirements for starting a T Level. These are set by the individual college or school. Contact us to find out more',
-		N'You will develop an understanding of a broad range of issues relevant to Hairdressing, Barbering and Beauty Therapy including business context, client consultation, sales and marketing and understanding the customer journey. In addition to the core content, each student will also complete at least one module of occupation-specific content. The specialisms available in the Hairdressing, Barbering and Beauty Therapy T Level are: Barbering, Hairdressing, Beauty Therapy',
-		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
-		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
-		N'You will have the industry knowledge and experience to progress into roles like: Hairdresser, Barber, Beauty Therapist, Make-up Artist, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
 	),
 	(
 		N'5a783ebd-b7f5-46f0-8d21-71bbf3273efa',
