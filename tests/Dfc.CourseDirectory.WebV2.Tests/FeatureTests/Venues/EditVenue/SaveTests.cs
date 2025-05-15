@@ -7,7 +7,6 @@ using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
 using FormFlow;
-using Microsoft.Extensions.DependencyInjection;
 using OneOf;
 using OneOf.Types;
 using Xunit;

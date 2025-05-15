@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dfc.CourseDirectory.Core.Models
+﻿namespace Dfc.CourseDirectory.Core.Models
 {
     public class SelectCourse
     { 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -119,7 +120,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             });
 
             var rows = csvReader.GetRecords<CsvCourseRowWithErrors>();
-            rows.Should().BeEquivalentTo(
+            rows.Should().BeEquivalentTo(new List<CsvCourseRowWithErrors>
+            {
                 new CsvCourseRowWithErrors()
                 {
                     LearnAimRef = courseUploadRows[0].LearnAimRef,
@@ -148,7 +150,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                     AttendancePattern = courseUploadRows[0].AttendancePattern,
                     Errors = ErrorRegistry.All["COURSERUN_COURSE_NAME_REQUIRED"].GetMessage() + "\n"
                         + ErrorRegistry.All["COURSERUN_VENUE_REQUIRED"].GetMessage()
-                });
+                }
+            });
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.BackgroundWorkers
     public class QueueBackgroundWorkScheduler : BackgroundService, IBackgroundWorkScheduler
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly ILogger _logger;
+        private readonly ILogger<QueueBackgroundWorkScheduler> _logger;
         private readonly Channel<(WorkItem WorkItem, object State)> _work;
 
         public QueueBackgroundWorkScheduler(
