@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult;
+﻿using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ZCodeSSA

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Web.ViewModels;
 
