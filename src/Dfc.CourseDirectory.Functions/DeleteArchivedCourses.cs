@@ -10,7 +10,7 @@ namespace Dfc.CourseDirectory.Functions
     {
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly IClock _clock;
-        private readonly ILogger _logger;
+        private readonly ILogger<DeleteArchivedCourses> _logger;
 
         public DeleteArchivedCourses(ISqlQueryDispatcherFactory sqlQueryDispatcherFactory, IClock clock, ILogger<DeleteArchivedCourses> logger)
         {
@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Functions
         [Function("DeleteArchivedCourses")]
         public async Task Run([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
-            _logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            _logger.LogInformation("C# Timer trigger function executed at: {DateTime}", DateTime.Now);
 
             if (timer.IsPastDue)
             {
@@ -36,13 +36,13 @@ namespace Dfc.CourseDirectory.Functions
             var thirtyDaysOldDate = _clock.UtcNow.AddDays(-30);
 
 
-            _logger.LogInformation($"Calling the stored procedure to archive courses for providers with a type of 'None' that have remained unchanged for the past month as of {fourWeeksOldDate.ToShortDateString()}");
+            _logger.LogInformation("Calling the stored procedure to archive courses for providers with a type of 'None' that have remained unchanged for the past month as of {DateString}", fourWeeksOldDate.ToShortDateString());
             await dispatcher.ExecuteQuery(new SqlQueries.ArchiveProviderCourses() { RetentionDate = fourWeeksOldDate });
 
-            _logger.LogInformation($"Calling stored procedure to archive courses with a start date older than 15 months as of {fifteenMonthsOldDate.ToShortDateString()}");
+            _logger.LogInformation("Calling stored procedure to archive courses with a start date older than 15 months as of {DateString}", fifteenMonthsOldDate.ToShortDateString());
             await dispatcher.ExecuteQuery(new SqlQueries.ArchiveOldCourses() { RetentionDate = fifteenMonthsOldDate });
 
-            _logger.LogInformation($"Calling the stored procedure to remove records that have been archived for more than 30 days.");
+            _logger.LogInformation("Calling the stored procedure to remove records that have been archived for more than 30 days.");
             await dispatcher.ExecuteQuery(new SqlQueries.DeleteArchivedCourses() { RetentionDate = thirtyDaysOldDate });
 
             await dispatcher.Commit();

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using CsvHelper;
 using System.Web;
 
 namespace Dfc.CourseDirectory.Core.Services
@@ -22,7 +16,7 @@ namespace Dfc.CourseDirectory.Core.Services
         {
             _WebRiskSettings = options.Value;
             _factory = factory;
-            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>(); ;
+            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>();
         }
 
         public async Task<bool> CheckForSecureUri(string url)
