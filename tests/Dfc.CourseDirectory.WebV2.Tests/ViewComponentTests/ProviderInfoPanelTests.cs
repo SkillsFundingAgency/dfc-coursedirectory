@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;

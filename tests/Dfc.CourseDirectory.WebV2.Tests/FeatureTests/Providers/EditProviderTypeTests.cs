@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Http;
 using Moq;
 using OneOf;
 using OneOf.Types;
@@ -650,7 +649,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
 
@@ -715,7 +714,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
 
@@ -781,7 +780,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={provider.ProviderId}");
 
             foreach (var tLevel in tLevels)
@@ -839,7 +838,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
 
@@ -905,7 +904,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             foreach (var tLevel in tLevels)
@@ -951,7 +950,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             tLevel = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
@@ -996,7 +995,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
@@ -1046,7 +1045,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
 
@@ -1114,7 +1113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
 
@@ -1183,7 +1182,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers/provider-type?providerId={provider.ProviderId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(
@@ -1242,7 +1241,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
 
@@ -1311,7 +1310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var response = await HttpClient.SendAsync(request);
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/providers?providerId={provider.ProviderId}");
 
             tLevel1 = await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(

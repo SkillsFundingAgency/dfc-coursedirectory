@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Web.ViewModels;
+﻿using Dfc.CourseDirectory.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
