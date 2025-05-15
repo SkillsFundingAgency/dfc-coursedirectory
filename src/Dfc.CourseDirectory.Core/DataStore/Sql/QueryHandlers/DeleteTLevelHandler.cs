@@ -20,6 +20,11 @@ UPDATE Pttcd.TLevels SET
 WHERE TLevelId = @TLevelId
 AND TLevelStatus = @LiveTLevelStatus
 
+UPDATE Pttcd.TLevelLocations SET
+    TLevelLocationStatus = @DeletedTLevelStatus
+WHERE TLevelId = @TLevelId
+AND TLevelLocationStatus = @LiveTLevelStatus
+
 DECLARE @TLevelIds Pttcd.GuidIdTable
 
 INSERT INTO @TLevelIds VALUES (@TLevelId)

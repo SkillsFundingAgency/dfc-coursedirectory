@@ -1,4 +1,6 @@
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
@@ -13,6 +15,10 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("ImportLarsData")]
-        public Task Run([TimerTrigger("0 0 4 * * *")] TimerInfo timer) => _dataImporter.ImportData();
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+        {
+            await _dataImporter.ImportData();
+            return new OkObjectResult("LARS data import triggered");
+        }
     }
 }
