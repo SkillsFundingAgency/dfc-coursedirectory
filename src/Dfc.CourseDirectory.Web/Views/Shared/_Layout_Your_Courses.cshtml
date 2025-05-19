@@ -1,4 +1,6 @@
 ﻿@using Dfc.CourseDirectory.Web.Views.Shared
+@using GovUk.Frontend.AspNetCore
+@inject GovUk.Frontend.AspNetCore.PageTemplateHelper PageTemplateHelper
 
 @{ var layoutModel = ViewData.GetLayoutModel(); }
 
@@ -15,10 +17,11 @@
     <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="~/assets/images/govuk-favicon-tudor-crown.ico" type="image/x-icon" />
     <link rel="mask-icon" href="~/assets/images/govuk-mask-icon-tudor-crown.svg" color="#0b0c0c">
     <link rel="apple-touch-icon" href="~/assets/images/govuk-icon-180.png">
-    <link href="~/dist/site.min.css" rel="stylesheet" />
+    <link href="~/content/dist/site.min.css" rel="stylesheet" />
     <partial name="~/SharedViews/Partials/_V2Styles.cshtml" />
     <script src="https://cloud.tinymce.com/4/tinymce.min.js?apiKey=z0ozy7rkwybyt6ygjzmzpdb48ubu095r3auqciv6ngdxzo0d"></script>
     <partial name="_ScriptsPartial" />
+        @PageTemplateHelper.GenerateStyleImports()
 </head>
 
 <body class="govuk-template__body app-body-class">
@@ -29,7 +32,7 @@
 
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    <div class=" cd-fullwidth-container">
+    <div class=" govuk-width-container">
         @if (layoutModel.BackLink)
         {
             <pttcd-back-link href="@layoutModel.BackLinkHref" text="@layoutModel.BackLinkText" class="govuk-!-margin-bottom-8 govuk-!-margin-top-0" />
@@ -38,7 +41,7 @@
             @RenderBody()
         </main>
     </div>
-
+     @PageTemplateHelper.GenerateScriptImports()
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 
@@ -68,8 +71,19 @@
     </script>
     <partial name="_GovukFooterPartial" />
 
-    @RenderSection("Scripts", required: false)
+    <environment include="Development">
+        <script src="~/vendor/jquery/jquery.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+                integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g= sha384-NXgwF8Kv9SSAr+jemKKcbvQsz+teULH/a5UNJvZc6kP47hZgl62M1vGnw6gHQhb1 sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+                crossorigin="anonymous"
+                asp-fallback-src="~/vendor/jquery/jquery.min.js"
+                asp-fallback-test="window.jQuery"></script>
+    </environment>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.2.0/tinymce.min.js"></script>
     <partial name="~/SharedViews/Partials/_V2Scripts.cshtml" />
+        @RenderSection("Scripts", required: false)
 </body>
 
 

@@ -225,7 +225,12 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseCommitSqlTransaction();
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+           Path.Combine(Environment.CurrentDirectory, "Content")),
+                RequestPath = "/Content"
+            });
             app.UseSession();
 
             app.UseCsp(options => options
