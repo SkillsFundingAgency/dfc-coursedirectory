@@ -90,7 +90,7 @@ steps:
     del v2 /F /Q
     mklink /D v2 ..\..\$(SolutionBaseName).WebV2\Content
   displayName: 'Restore v2 content symlink'
-  workingDirectory: src/$(SolutionBaseName).Web/wwwroot
+  workingDirectory: src/$(SolutionBaseName).Web/content
 
 - task: MSBuild@1
   displayName: Build database

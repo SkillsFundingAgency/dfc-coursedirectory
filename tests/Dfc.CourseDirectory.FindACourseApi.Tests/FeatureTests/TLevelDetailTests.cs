@@ -160,8 +160,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
                     Ukprn = providerUkprn,
                     ProviderType = ProviderType.TLevels,
                     ProviderName = providerName,
-                    EmployerSatisfaction = providerEmployerSatisfaction,
-                    LearnerSatisfaction = providerLearnerSatisfaction
+                    //EmployerSatisfaction = providerEmployerSatisfaction,
+                    //LearnerSatisfaction = providerLearnerSatisfaction
 
                 });
 

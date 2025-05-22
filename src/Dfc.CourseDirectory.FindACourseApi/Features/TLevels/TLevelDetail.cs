@@ -79,8 +79,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     Telephone = providerContact?.Telephone1,
                     Fax = providerContact?.Fax,
                     Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress),
-                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
-                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction
+                    //LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
+                    //EmployerSatisfaction = sqlProvider?.EmployerSatisfaction
                 },
                 WhoFor = HtmlEncode(tLevel.WhoFor),
                 EntryRequirements = HtmlEncode(tLevel.EntryRequirements),

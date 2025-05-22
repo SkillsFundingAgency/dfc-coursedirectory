@@ -164,8 +164,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.CourseRunDetail
                     Fax = providerContact?.Fax,
                     Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress),
                     Email = providerContact?.Email,
-                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction,
-                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
+                    //EmployerSatisfaction = sqlProvider?.EmployerSatisfaction,
+                    //LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
                 },
                 Qualification = qualification != null ? new QualificationViewModel
                 {
