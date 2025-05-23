@@ -18,9 +18,7 @@ SELECT  ProviderId,
         UkrlpProviderStatusDescription as ProviderStatus,
         Alias,
         MarketingInformation,
-        DisplayNameSource,
-        LearnerSatisfaction,
-        EmployerSatisfaction
+        DisplayNameSource
 FROM    Pttcd.Providers
 WHERE   {nameof(Provider.ProviderId)} = @{nameof(query.ProviderId)}";
 
