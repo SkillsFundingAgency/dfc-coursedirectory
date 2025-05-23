@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.0.1" />
     <PackageReference Include="FontAwesome" Version="4.7.0" />
+    <PackageReference Include="GovUk.Frontend.AspNetCore" Version="1.5.0" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="JWT" Version="11.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
@@ -27,5 +28,17 @@
   <ItemGroup>
     <ProjectReference Include="..\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Content/**/*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\vendor\govuk-frontend\" />
   </ItemGroup>
 </Project>

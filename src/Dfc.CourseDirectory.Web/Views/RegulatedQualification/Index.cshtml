@@ -37,10 +37,11 @@
                     <div class="govuk-radios__item">
                         @Html.RadioButtonFor(m => m.WhatAreYouAwarding, WhatAreYouAwarding.No, new { @class = "govuk-radios__input", id = WhatAreYouAwarding.No })
                         <label class="govuk-label govuk-radios__label" for="@WhatAreYouAwarding.No">
-                            @WebHelper.GetEnumDescription(WhatAreYouAwarding.No) <span class="govuk-hint">
-    The course does not lead to a qualification overseen by Ofqual or the QAA for Higher Education
-</span>
-                                            </label>
+                            @WebHelper.GetEnumDescription(WhatAreYouAwarding.No)
+                            <span class="govuk-hint"> The course does not lead to a qualification overseen by Ofqual or the QAA for Higher Education
+                    </span>
+                    </label>
+                   
                     </div>
                     
                 </div>
