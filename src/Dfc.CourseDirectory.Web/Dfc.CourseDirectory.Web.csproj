@@ -11,22 +11,15 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="Content\dist\site.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Include="Content\dist\site.min.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="Content\dist\site.min.js" />
     <Content Include="Content\js\site.js" />
     <Content Include="Content\lib\jquery-validation\dist\Jquery.validate.min.js" />
     <Content Include="Content\lib\jquery\dist\jquery.min.js" />
     <Content Include="Content\lib\microsoft-signalr\signalr.js" />
     <Content Include="Content\lib\microsoft-signalr\signalr.min.js" />
-    <Content Include="Content\vendor\govuk-frontend\all.js" />
-    <Content Include="Content\vendor\govuk-frontend\all.min.js" />
     <Content Include="Content\vendor\jquery-validation\jquery.validate.min.js" />
     <Content Include="Content\vendor\jquery\jquery.min.js" />
   </ItemGroup>
@@ -61,5 +54,9 @@
     <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\v2\" />
+    <Folder Include="Content\vendor\govuk-frontend\" />
   </ItemGroup>
 </Project>
