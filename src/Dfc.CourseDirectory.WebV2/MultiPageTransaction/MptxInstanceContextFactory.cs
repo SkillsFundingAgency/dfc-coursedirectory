@@ -6,10 +6,12 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
     public class MptxInstanceContextFactory
     {
         private readonly IMptxStateProvider _stateProvider;
+        private readonly IServiceProvider _serviceProvider;
 
-        public MptxInstanceContextFactory(IMptxStateProvider stateProvider)
+        public MptxInstanceContextFactory(IMptxStateProvider stateProvider, IServiceProvider serviceProvider)
         {
             _stateProvider = stateProvider;
+            _serviceProvider = serviceProvider;
         }
 
         public MptxInstanceContext CreateContext(MptxInstance instance, Type stateType, Type parentStateType)
@@ -29,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
                 typeof(MptxInstanceContext<>).MakeGenericType(stateType);
 
             return (MptxInstanceContext)ActivatorUtilities.CreateInstance(
-                provider: null,
+                _serviceProvider,
                 contextType,
                 _stateProvider,
                 instance);

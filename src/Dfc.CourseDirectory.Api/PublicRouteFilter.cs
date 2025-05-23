@@ -1,6 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System.Linq;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
 
 namespace Dfc.CourseDirectory.Api
 {

@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FormFlow;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue

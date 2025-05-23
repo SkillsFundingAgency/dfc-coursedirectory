@@ -15,7 +15,6 @@ using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
-using Dfc.CourseDirectory.WebV2.Behaviors;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Filters;
@@ -109,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
-                
+
 
                 services.AddSingleton<IBinaryStorageProvider, BlobStorageBinaryStorageProvider>();
             }
@@ -173,10 +172,10 @@ namespace Dfc.CourseDirectory.WebV2
 
             if (!environment.IsTesting())
             {
-				services.AddAzureSearchClient<Provider>(
-	                new Uri(configuration["AzureSearchUrl"]),
-	                configuration["AzureSearchQueryKey"],
-	                configuration["ProviderAzureSearchIndexName"]);
+                services.AddAzureSearchClient<Provider>(
+                    new Uri(configuration["AzureSearchUrl"]),
+                    configuration["AzureSearchQueryKey"],
+                    configuration["ProviderAzureSearchIndexName"]);
 
                 services.AddAzureSearchClient<Lars>(
                     new Uri(configuration["AzureSearchUrl"]),
@@ -259,11 +258,12 @@ namespace Dfc.CourseDirectory.WebV2
 
                     // When we expire the session, ensure user is prompted to sign in again at DfE Sign In
                     options.MaxAge = overallSessionTimeout;
-
+                    
                     options.SaveTokens = true;
                     options.CallbackPath = settings.CallbackPath;
                     options.SignedOutCallbackPath = settings.SignedOutCallbackPath;
-                    options.SecurityTokenValidator = new JwtSecurityTokenHandler()
+                    options.UseSecurityTokenValidator = true;
+                    options.TokenHandler = new JwtSecurityTokenHandler()
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),
                         TokenLifetimeInMinutes = 90,

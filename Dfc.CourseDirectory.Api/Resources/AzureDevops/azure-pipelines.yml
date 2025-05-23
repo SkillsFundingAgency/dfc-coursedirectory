@@ -41,6 +41,7 @@ pr:
     include:
     - release/*
     - main
+    - develop
   paths:
     include:
     - Dfc.CourseDirectory.Api/*

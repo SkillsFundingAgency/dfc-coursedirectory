@@ -52,14 +52,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-           
+
 
             var sqlProvider = await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetProviderById()
             {
                 ProviderId = request.ProviderId
             });
 
-           
+
 
             var currentUser = _currentUserProvider.GetCurrentUser();
 
