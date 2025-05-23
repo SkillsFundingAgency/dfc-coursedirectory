@@ -30,9 +30,7 @@ SELECT  ProviderId,
         BulkUploadInProgress,
         BulkUploadPublishInProgress,
         BulkUploadStartedDateTime,
-        BulkUploadTotalRowCount,
-        LearnerSatisfaction,
-        EmployerSatisfaction
+        BulkUploadTotalRowCount
 FROM    Pttcd.Providers
 WHERE   {nameof(Provider.ProviderId)} IN (SELECT * FROM @{nameof(sqlParameters.ProviderIds)})";
 
