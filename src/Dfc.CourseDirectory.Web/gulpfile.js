@@ -15,7 +15,7 @@ var gulp = require("gulp"),
 // paths
 
 var paths = {
-    webroot: "content/"
+    webroot: "wwwroot/"
 };
 
 paths.js = paths.webroot + "js/**/*.js";
