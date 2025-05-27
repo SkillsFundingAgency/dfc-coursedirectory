@@ -30,15 +30,7 @@
     <ProjectReference Include="..\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content/**/*" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="wwwroot\**" />
-    <Content Remove="wwwroot\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
-    <None Remove="wwwroot\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\vendor\govuk-frontend\" />
-  </ItemGroup>
+    <EmbeddedResource Include="Content\**\*" />
+	<Content Include="Content\**\*"/>	  
+  </ItemGroup> 
 </Project>
