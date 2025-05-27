@@ -1,1 +1,0 @@
-﻿We need BulkUpload folder to CSV files for bulk uploaded courses.
