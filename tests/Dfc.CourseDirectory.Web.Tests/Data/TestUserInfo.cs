@@ -8,7 +8,7 @@ using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Security;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.Web.Tests.Core
+namespace Dfc.CourseDirectory.Web.Tests.Data
 {
     public enum TestUserType { Developer, Helpdesk, ProviderUser, ProviderSuperUser }
 

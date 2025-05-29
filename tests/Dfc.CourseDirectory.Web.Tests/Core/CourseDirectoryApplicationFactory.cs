@@ -9,6 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
