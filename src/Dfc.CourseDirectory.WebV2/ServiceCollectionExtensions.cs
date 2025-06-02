@@ -10,23 +10,23 @@ using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
+using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.Core.Services;
+using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.Core.Security;
-using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
-using Dfc.CourseDirectory.WebV2.ViewHelpers;
 using FormFlow;
 using GovUk.Frontend.AspNetCore;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -41,7 +41,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Dfc.CourseDirectory.Core.Middleware;
+
 namespace Dfc.CourseDirectory.WebV2
 {
     public static class ServiceCollectionExtensions
@@ -88,6 +88,8 @@ namespace Dfc.CourseDirectory.WebV2
                     }
 
                     options.ViewLocationFormats.Add("/SharedViews/{0}.cshtml");
+                    options.ViewLocationFormats.Add("~/Views/Providers/{0}.cshtml");
+                    options.ViewLocationFormats.Add("~/Views/ProviderSearch/{0}.cshtml");
 
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });

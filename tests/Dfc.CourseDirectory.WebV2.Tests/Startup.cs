@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.Web.Controllers.Providers;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
@@ -55,6 +56,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers()
+                .AddApplicationPart(typeof(EditProviderTypeController).Assembly)
+                .AddApplicationPart(typeof(ProviderDashboardController).Assembly)
+                .AddApplicationPart(typeof(ProviderReportsController).Assembly)
+                .AddApplicationPart(typeof(ProvidersController).Assembly)
+                .AddControllersAsServices();
+
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
             services.AddSession();
             services.AddSingleton<ISessionStore, SingletonSessionStore>();
 
