@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.Web.Features.Providers
+namespace Dfc.CourseDirectory.Web.ViewModels.Providers
 {
     public class ProviderNonLarsSubTypeViewModel
     {

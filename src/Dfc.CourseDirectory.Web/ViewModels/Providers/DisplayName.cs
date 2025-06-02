@@ -11,7 +11,7 @@ using Dfc.CourseDirectory.WebV2;
 using MediatR;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Web.Features.Providers.DisplayName
+namespace Dfc.CourseDirectory.Web.ViewModels.Providers.DisplayName
 {
     public class Query : IRequest<ViewModel>
     {

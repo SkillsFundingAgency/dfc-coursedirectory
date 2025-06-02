@@ -1,7 +1,7 @@
-@using Dfc.CourseDirectory.Core.Middleware
 @using Dfc.CourseDirectory.Core.Models
-@using Dfc.CourseDirectory.WebV2.SharedViews
-@model Dfc.CourseDirectory.Web.Features.Providers.ProviderDetails.ViewModel
+@using Dfc.CourseDirectory.WebV2.Features
+@using Dfc.CourseDirectory.WebV2.TagHelpers
+@model Dfc.CourseDirectory.Web.ViewModels.Providers.ProviderDetails.ViewModel
 @{
     ViewContext.SetLayoutData(title: Model.ProviderName);
 }
@@ -78,7 +78,7 @@
                 <govuk-summary-list-row class="pttcd-summary-list__row__split pttcd-providers__provider-details__marketing-information" data-testid="MarketingInformation">
                     <govuk-summary-list-row-key>Provider information</govuk-summary-list-row-key>
                     @* N.B. Don't add whitespace to element below - we rely on CSS :empty selector *@
-                    <govuk-summary-list-row-value>@Html.Raw(Model.MarketingInformation)</govuk-summary-list-row-value>
+                    <govuk-summary-list-row-value>@Html.Raw((object)Model.MarketingInformation)</govuk-summary-list-row-value>
                     @if (Model.CanUpdateMarketingInformation)
                     {
                         <govuk-summary-list-row-actions>

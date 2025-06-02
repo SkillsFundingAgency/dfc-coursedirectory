@@ -9,7 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
-namespace Dfc.CourseDirectory.Web.Features.Providers.Reporting.ProviderTypeReport
+namespace Dfc.CourseDirectory.Web.ViewModels.Providers.Reporting.ProviderTypeReport
 {
     public class Query : IRequest<IAsyncEnumerable<Csv>>
     {

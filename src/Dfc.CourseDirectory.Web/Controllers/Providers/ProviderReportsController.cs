@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.Web.Features.Providers.Reporting
+namespace Dfc.CourseDirectory.Web.Controllers.Providers
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("providers/reports")]
@@ -25,13 +25,13 @@ namespace Dfc.CourseDirectory.Web.Features.Providers.Reporting
 
         [HttpGet("provider-type")]
         public Task<IActionResult> ProviderTypeReport() =>
-            _mediator.SendAndMapResponse<IAsyncEnumerable<ProviderTypeReport.Csv>, IActionResult>(new ProviderTypeReport.Query(),
-                records => new CsvResult<ProviderTypeReport.Csv>($"{nameof(ProviderTypeReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+            _mediator.SendAndMapResponse<IAsyncEnumerable<ViewModels.Providers.Reporting.ProviderTypeReport.Csv>, IActionResult>(new ViewModels.Providers.Reporting.ProviderTypeReport.Query(),
+                records => new CsvResult<ViewModels.Providers.Reporting.ProviderTypeReport.Csv>($"{nameof(ProviderTypeReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
 
 
         [HttpGet("providers-missing-primary-contact")]
         public Task<IActionResult> ProvidersMissingPrimaryContact() =>
-            _mediator.SendAndMapResponse<IAsyncEnumerable<ProviderMissingPrimaryContactReport.Csv>, IActionResult>(new ProviderMissingPrimaryContactReport.Query(),
-                records => new CsvResult<ProviderMissingPrimaryContactReport.Csv>($"{nameof(ProviderMissingPrimaryContactReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+            _mediator.SendAndMapResponse<IAsyncEnumerable<ViewModels.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>, IActionResult>(new ViewModels.Providers.Reporting.ProviderMissingPrimaryContactReport.Query(),
+                records => new CsvResult<ViewModels.Providers.Reporting.ProviderMissingPrimaryContactReport.Csv>($"{nameof(ViewModels.Providers.Reporting.ProviderMissingPrimaryContactReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
     }
 }

@@ -18,7 +18,7 @@ using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.Web.Features.Providers.EditProviderType
+namespace Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType
 {
     public class Query : IRequest<ViewModel>
     {
@@ -85,12 +85,12 @@ namespace Dfc.CourseDirectory.Web.Features.Providers.EditProviderType
 
             var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitions());
             var providerTLevelDefinitions = provider.ProviderType.HasFlag(ProviderType.TLevels)
-                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
+                ? await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
             var nonLarsSubTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetAllNonLarsSubTypes());
             var providerSubTypes = provider.ProviderType.HasFlag(ProviderType.NonLARS)
-                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetNonLarsSubTypeForProvider { ProviderId = request.ProviderId })
+                ? await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsSubTypeForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.NonLarsSubType>();
 
             return CreateViewModel(provider.ProviderId, provider.ProviderType, nonLarsSubTypes, providerSubTypes.Select(pd => pd.NonLarsSubTypeId), tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
@@ -117,7 +117,7 @@ namespace Dfc.CourseDirectory.Web.Features.Providers.EditProviderType
                 failureList.Add(error);
             }
 
-            FluentValidation.Results.ValidationResult validationResult = new FluentValidation.Results.ValidationResult(failureList);
+            ValidationResult validationResult = new ValidationResult(failureList);
 
             if (!validationResult.IsValid)
             {
