@@ -28,6 +28,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Azure.Storage.Sas;
+using MediatR;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -90,7 +91,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddSingleton(new BlobServiceClient(Configuration["BlobStorageSettings:ConnectionString"]));
-
+            services.AddMediatR(typeof(Startup).Assembly);
             services.AddCourseDirectory(_env, Configuration);
             services.AddSignalR();
 

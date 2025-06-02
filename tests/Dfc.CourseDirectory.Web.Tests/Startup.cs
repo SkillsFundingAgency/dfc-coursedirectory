@@ -3,6 +3,9 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.Web.Tests.Core;
+using Dfc.CourseDirectory.Web.Tests.Data;
+using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
@@ -18,7 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.Web.Tests
 {
     public class Startup
     {

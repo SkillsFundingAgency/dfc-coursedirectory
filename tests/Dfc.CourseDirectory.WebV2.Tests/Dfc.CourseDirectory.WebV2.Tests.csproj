@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <UserSecretsId>7ba8ee27-9b8e-484f-9470-7bc0a6046b4a</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.17.1" />
