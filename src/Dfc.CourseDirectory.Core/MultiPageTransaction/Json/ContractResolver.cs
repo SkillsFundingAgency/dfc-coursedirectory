@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction.Json
 {
     public class ContractResolver : DefaultContractResolver
     {

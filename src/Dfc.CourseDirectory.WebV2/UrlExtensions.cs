@@ -1,5 +1,5 @@
 ﻿using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using Flurl;
 
 namespace Dfc.CourseDirectory.WebV2

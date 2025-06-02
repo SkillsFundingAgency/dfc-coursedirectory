@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
 {
     public class LocalFileMptxStateProvider : IMptxStateProvider
     {

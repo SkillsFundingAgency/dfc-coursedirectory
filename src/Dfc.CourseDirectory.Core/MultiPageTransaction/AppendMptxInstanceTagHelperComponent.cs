@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
 {
     public class AppendMptxInstanceTagHelperComponent : TagHelperComponent
     {

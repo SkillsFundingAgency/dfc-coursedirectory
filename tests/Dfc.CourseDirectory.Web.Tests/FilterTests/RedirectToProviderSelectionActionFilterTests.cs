@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Web.Tests.FilterTests
                 "RedirectToProviderSelectionActionFilterTest/without-parameter");
 
             // Assert
-            Assert.Equal(HttpStatusCode.Found, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("/provider-search", UrlHelper.StripQueryParams(response.Headers.Location.OriginalString));
         }
     }

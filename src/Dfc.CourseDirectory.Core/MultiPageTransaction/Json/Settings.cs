@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction.Json
 {
     public static class Settings
     {

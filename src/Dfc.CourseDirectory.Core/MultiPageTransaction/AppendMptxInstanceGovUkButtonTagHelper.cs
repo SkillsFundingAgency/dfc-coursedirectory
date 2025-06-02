@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
 {
     [HtmlTargetElement("govuk-button", Attributes = "append-mptx-id")]
     public class AppendMptxInstanceGovUkButtonTagHelper : TagHelper

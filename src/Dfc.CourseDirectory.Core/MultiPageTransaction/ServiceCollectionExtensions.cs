@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
 {
     public static class ServiceCollectionExtensions
     {

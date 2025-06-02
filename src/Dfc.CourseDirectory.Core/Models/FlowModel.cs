@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
+namespace Dfc.CourseDirectory.Core.Models
 {
     public class FlowModel : IMptxState
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Mapster;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
 {
     public abstract class MptxInstanceContext
     {

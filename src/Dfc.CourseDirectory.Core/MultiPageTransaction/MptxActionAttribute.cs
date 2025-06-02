@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
-namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public sealed class MptxActionAttribute : Attribute, IActionConstraint

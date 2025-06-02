@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseSelected
