@@ -13,7 +13,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
+namespace Dfc.CourseDirectory.Web.Features.Providers.EditProviderInfo
 {
     public class Query : IRequest<Command>
     {

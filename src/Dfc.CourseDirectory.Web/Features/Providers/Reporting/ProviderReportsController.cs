@@ -7,7 +7,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting
+
+namespace Dfc.CourseDirectory.Web.Features.Providers.Reporting
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("providers/reports")]

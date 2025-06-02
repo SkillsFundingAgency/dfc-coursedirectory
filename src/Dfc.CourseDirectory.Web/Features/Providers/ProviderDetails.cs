@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Features.NonLarsSubType;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Web.Features.NonLarsSubType;
 using MediatR;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
+namespace Dfc.CourseDirectory.Web.Features.Providers.ProviderDetails
 {
     public class Query : IRequest<ViewModel>
     {

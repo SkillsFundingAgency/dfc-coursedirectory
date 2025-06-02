@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.WebV2;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers
+namespace Dfc.CourseDirectory.Web.Features.Providers
 {
     [Route("providers/provider-type")]
     [RequireProviderContext]

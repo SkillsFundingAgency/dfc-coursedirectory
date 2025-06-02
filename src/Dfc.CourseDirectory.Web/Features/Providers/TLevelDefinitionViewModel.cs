@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers
+namespace Dfc.CourseDirectory.Web.Features.Providers
 {
     public class TLevelDefinitionViewModel
     {

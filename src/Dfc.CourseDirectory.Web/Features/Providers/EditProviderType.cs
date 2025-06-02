@@ -18,7 +18,7 @@ using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
+namespace Dfc.CourseDirectory.Web.Features.Providers.EditProviderType
 {
     public class Query : IRequest<ViewModel>
     {
