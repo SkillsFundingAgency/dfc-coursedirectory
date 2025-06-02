@@ -31,7 +31,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Save
             _journeyInstance = journeyInstance;
         }
 
-        public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+        public Task Handle(Command request, CancellationToken cancellationToken)
         {
             // Stash the values in state
             // Since these haven't been validated `IsValid` is set to false

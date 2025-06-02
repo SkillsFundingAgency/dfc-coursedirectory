@@ -19,7 +19,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CourseRun = Dfc.CourseDirectory.Core.DataStore.Sql.Models.CourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
-
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
     public class ProviderCoursesController : BaseController

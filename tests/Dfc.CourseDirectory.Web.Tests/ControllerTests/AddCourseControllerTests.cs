@@ -2,8 +2,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -22,6 +20,8 @@ using Newtonsoft.Json;
 using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using System.Linq;
+using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
 {

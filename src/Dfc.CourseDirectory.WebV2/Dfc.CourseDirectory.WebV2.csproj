@@ -22,6 +22,16 @@
     <EmbeddedResource Include="Content/**/*" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="HttpContextFeatures\**" />
+    <Compile Remove="Middleware\**" />
+    <Content Remove="HttpContextFeatures\**" />
+    <Content Remove="Middleware\**" />
+    <EmbeddedResource Remove="HttpContextFeatures\**" />
+    <EmbeddedResource Remove="Middleware\**" />
+    <None Remove="HttpContextFeatures\**" />
+    <None Remove="Middleware\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Content\components\cancel-btn.css" />
     <None Remove="Content\components\cookie-banner.css" />
     <None Remove="Content\components\cookie-banner.js" />
@@ -59,9 +69,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="HttpContextFeatures\" />
-    <Folder Include="Middleware\" />
   </ItemGroup>
 </Project>

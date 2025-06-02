@@ -3,8 +3,8 @@
 @addTagHelper *, GovUk.Frontend.AspNetCore
 
 @inject IAuthorizationService Authorization
-@inject Dfc.CourseDirectory.WebV2.Security.ICurrentUserProvider CurrentUserProvider
-@inject Dfc.CourseDirectory.WebV2.IProviderContextProvider ProviderContextProvider
+@inject Dfc.CourseDirectory.Core.Security.ICurrentUserProvider CurrentUserProvider
+@inject Dfc.CourseDirectory.Core.Middleware.IProviderContextProvider ProviderContextProvider
 
 @{
     var providerContext = ProviderContextProvider.GetProviderContext(withLegacyFallback: true);

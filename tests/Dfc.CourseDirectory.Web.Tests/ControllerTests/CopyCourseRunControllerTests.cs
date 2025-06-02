@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -21,6 +20,7 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
 using Newtonsoft.Json;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
 {

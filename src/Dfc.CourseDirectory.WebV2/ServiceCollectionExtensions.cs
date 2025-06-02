@@ -41,7 +41,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-
+using Dfc.CourseDirectory.Core.Middleware;
 namespace Dfc.CourseDirectory.WebV2
 {
     public static class ServiceCollectionExtensions
@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2
                 options.AddImportsToHtml = false;
             });
             services.AddHttpClient();
-            services.AddMediatR(typeof(ServiceCollectionExtensions));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
             services.AddTransient<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();

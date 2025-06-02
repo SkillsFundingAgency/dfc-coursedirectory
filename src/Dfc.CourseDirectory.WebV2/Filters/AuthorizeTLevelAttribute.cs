@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-
+using Dfc.CourseDirectory.Core.Middleware;
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
     public class AuthorizeTLevelAttribute : ActionFilterAttribute

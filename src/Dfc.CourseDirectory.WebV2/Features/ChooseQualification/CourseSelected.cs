@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseSelected
             _flow = flow;
         }
 
-        public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+        public Task Handle(Command request, CancellationToken cancellationToken)
         {
             _flow.Update(s => s.SetCourse(request.LarsCode, request.CourseName));
 

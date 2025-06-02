@@ -1,6 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.Tests.Core;
@@ -9,7 +10,6 @@ using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
-using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow.State;
 using MediatR;
@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
             services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
-            services.AddMediatR(typeof(Startup));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly));
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();

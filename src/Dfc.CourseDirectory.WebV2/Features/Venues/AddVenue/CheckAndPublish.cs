@@ -11,7 +11,7 @@ using Dfc.CourseDirectory.Core.Security;
 using FormFlow;
 using MediatR;
 using OneOf.Types;
-
+using Dfc.CourseDirectory.Core.Extensions;
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.CheckAndPublish
 {
     public class Query : IRequest<ViewModel>

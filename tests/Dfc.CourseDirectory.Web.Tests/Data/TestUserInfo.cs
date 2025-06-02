@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dfc.CourseDirectory.Web.Tests.Data

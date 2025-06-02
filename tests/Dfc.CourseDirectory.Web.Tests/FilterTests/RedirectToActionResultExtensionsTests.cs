@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Middleware;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Web.Tests.Core;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
