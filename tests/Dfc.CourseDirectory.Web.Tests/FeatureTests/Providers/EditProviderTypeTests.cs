@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
+using Dfc.CourseDirectory.Web.Tests.Core;
+using Dfc.CourseDirectory.Web.Tests.Data;
+using Dfc.CourseDirectory.Web.Tests.Extensions;
+using Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -15,7 +18,7 @@ using OneOf;
 using OneOf.Types;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
+namespace Dfc.CourseDirectory.Web.Tests.FeatureTests.Providers
 {
     public class EditProviderTypeTests : MvcTestBase
     {
@@ -82,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.FE | ProviderType.TLevels, new[] { "fe", "tLevels" })]
         [InlineData(ProviderType.NonLARS | ProviderType.TLevels, new[] { "nonLars", "tLevels" })]
         [InlineData(ProviderType.NonLARS | ProviderType.FE, new[] { "nonLars", "fe" })]
-        [InlineData(ProviderType.FE | ProviderType.NonLARS | ProviderType.TLevels, new[] {"fe", "nonLars", "tLevels" })]
+        [InlineData(ProviderType.FE | ProviderType.NonLARS | ProviderType.TLevels, new[] { "fe", "nonLars", "tLevels" })]
 
         public async Task Get_ValidRequest_RendersExpectedOutput(
             ProviderType providerType,
