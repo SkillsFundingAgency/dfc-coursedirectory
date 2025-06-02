@@ -12,7 +12,6 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Middleware;
 using Dfc.CourseDirectory.WebV2.Security;
 using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
 using Microsoft.AspNetCore.Builder;
@@ -77,6 +76,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
 
+            services.AddSingleton<Middleware.IProviderContextProvider, Middleware.ProviderContextProvider>();
+            services.AddSingleton<Middleware.IProviderInfoCache, Middleware.ProviderInfoCache>();
             services.Configure<GoogleWebRiskSettings>(
                 Configuration.GetSection(nameof(GoogleWebRiskSettings)));
             services.AddScoped<IWebRiskService, WebRiskService>();
@@ -305,7 +306,7 @@ namespace Dfc.CourseDirectory.Web
 
             app.UseAuthentication();
 
-            app.UseMiddleware<ProviderContextMiddleware>();
+            app.UseMiddleware<Middleware.ProviderContextMiddleware>();
 
             app.UseAuthorization();
 

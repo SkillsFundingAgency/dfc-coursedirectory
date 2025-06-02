@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.WebV2.HttpContextFeatures
+namespace Dfc.CourseDirectory.Core.Middleware
 {
     public class ProviderContextFeature
     {

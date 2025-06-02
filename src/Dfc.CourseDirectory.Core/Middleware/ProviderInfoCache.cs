@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Middleware
 {
     public class ProviderInfoCache : IProviderInfoCache
     {

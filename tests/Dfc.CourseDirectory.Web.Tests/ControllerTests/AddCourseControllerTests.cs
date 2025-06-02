@@ -23,7 +23,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using System.Linq;
 
-namespace Dfc.CourseDirectory.Web.Tests
+namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
 {
     public class AddCourseControllerTests
     {
@@ -106,7 +106,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var learnAimRefTitleDescription = Faker.Lorem.Paragraph(1);
             Guid? courseId = null;
 
-            var course = new Faker<CourseText>()                
+            var course = new Faker<CourseText>()
                 .RuleFor(c => c.CourseDescription, f => f.Lorem.Paragraph())
                 .RuleFor(c => c.EntryRequirements, f => f.Lorem.Paragraph())
                 .RuleFor(c => c.WhatYoullLearn, f => f.Lorem.Paragraph())
@@ -159,7 +159,7 @@ namespace Dfc.CourseDirectory.Web.Tests
                 .RuleFor(c => c.WhatYoullLearn, f => f.Lorem.Paragraph())
                 .RuleFor(c => c.HowYoullLearn, f => f.Lorem.Paragraph())
                 .RuleFor(c => c.WhatYoullNeed, f => f.Lorem.Paragraph())
-                .RuleFor(c => c.HowYoullBeAssessed, f => f.Lorem.Paragraph()).Generate();            
+                .RuleFor(c => c.HowYoullBeAssessed, f => f.Lorem.Paragraph()).Generate();
 
             _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetCourse>())).ReturnsAsync(course);
 
@@ -183,7 +183,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockSession.Verify(p => p.Set(SessionAwardOrgCode, Encoding.UTF8.GetBytes(awardOrgCode)), Times.Once);
             _mockSession.Verify(p => p.Set(SessionLearnAimRefTitle, Encoding.UTF8.GetBytes(learnAimRefTitle)), Times.Once);
             _mockSession.Verify(p => p.Set(SessionLearnAimRefTypeDesc, Encoding.UTF8.GetBytes(learnAimRefTitleDescription)), Times.Once);
-        }        
+        }
 
         [Fact]
         public async Task AddCourse_WhenLearnAimRefIsNullOrEmptyAndCourseIdIsNull_ReturnsViewModelWithEmptyCourseDataAndSetsNonLarsSessionObject()
@@ -201,7 +201,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             Assert.NotNull(viewModel);
 
             _mockSession.Verify(p => p.Set(SessionNonLarsCourse, Encoding.UTF8.GetBytes("true")), Times.Once);
-        }       
+        }
 
         [Fact]
         public async Task AddCourse_WhenLearnAimRefIsNullOrEmptyAndCourseIdHasValue_ReturnsViewModelWithCourseDataAndSetsNonLarsSessionObject()
@@ -237,7 +237,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             Assert.Equal(course.HowYoullBeAssessed, viewModel.HowAssessed.HowAssessed);
 
             _mockSession.Verify(p => p.Set(SessionNonLarsCourse, Encoding.UTF8.GetBytes("true")), Times.Once);
-            _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetNonLarsCourse>()), Times.Once); 
+            _mockSqlQueryDispatcher.Verify(m => m.ExecuteQuery(It.IsAny<GetNonLarsCourse>()), Times.Once);
         }
         #endregion
 
@@ -246,7 +246,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         public async Task AddCourseDetails_WhenUkprnIsNull_RedirectsToHomePageWithErrorMessage()
         {
             // Arrange
-            var addCourseController = GetController();            
+            var addCourseController = GetController();
 
             // Act
             var result = await addCourseController.AddCourseDetails(null) as RedirectToActionResult;
@@ -294,7 +294,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             Assert.NotNull(viewModel.LearnAimRef);
             Assert.Null(viewModel.CourseType);
             Assert.Null(viewModel.SectorId);
-            Assert.Null(viewModel.EducationLevel);            
+            Assert.Null(viewModel.EducationLevel);
 
             _mockSession.Verify(m => m.TryGetValue(sessionUkprn, out ukprn), Times.AtLeastOnce);
             _mockProviderContextProvider.Verify(m => m.GetProviderContext(true), Times.AtLeastOnce);
@@ -467,7 +467,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
 
             var venueModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(venueModel));
-            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);            
+            _mockSession.Setup(m => m.TryGetValue(SessionVenues, out venueModelBytes)).Returns(true);
 
             var regionModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(regionModel));
             _mockSession.Setup(m => m.TryGetValue(SessionRegions, out regionModelBytes)).Returns(true);
@@ -537,7 +537,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         {
             // Arrange
             var controller = GetController();
-            
+
             var model = GetAddCourseSection2RequestModel();
             model.DeliveryMode = CourseDeliveryMode.Online;
 
@@ -578,7 +578,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         {
             // Arrange
             var controller = GetController();
-            
+
             var model = GetAddCourseSection2RequestModel();
             model.DeliveryMode = CourseDeliveryMode.WorkBased;
             model.National = true;
@@ -609,8 +609,8 @@ namespace Dfc.CourseDirectory.Web.Tests
             Assert.NotNull(result);
 
             var viewModel = result.Model as AddCourseSummaryViewModel;
-            Assert.NotNull(viewModel);            
-            
+            Assert.NotNull(viewModel);
+
             var foundNationalRegion = viewModel.Regions.FirstOrDefault(v => v.Equals("National")) != null;
             Assert.True(foundNationalRegion);
         }
@@ -620,7 +620,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         {
             // Arrange
             var controller = GetController();
-                        
+
             var model = GetAddCourseSection2RequestModel();
             model.DeliveryMode = CourseDeliveryMode.WorkBased;
             model.SelectedRegions = new string[] { "E12000001", "E08000023" };
@@ -685,8 +685,8 @@ namespace Dfc.CourseDirectory.Web.Tests
 
             var learnAimRef = "6101137";
             var section1Model = GetAddCourseSection1RequestModel();
-            var section2Model = GetAddCourseSection2RequestModel();            
-            
+            var section2Model = GetAddCourseSection2RequestModel();
+
             var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
             _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
 
@@ -725,19 +725,19 @@ namespace Dfc.CourseDirectory.Web.Tests
         {
             // Arrange
             var controller = GetController();
-                        
+
             var section1Model = GetAddCourseSection1RequestModel();
             var section2Model = GetAddCourseSection2RequestModel();
             section2Model.StartDateType = "SpecifiedStartDate";
             section2Model.Day = DateTime.Now.AddDays(30).Day.ToString();
             section2Model.Month = DateTime.Now.AddDays(30).Month.ToString();
             section2Model.Year = DateTime.Now.AddDays(30).Year.ToString();
-            
+
             var section1ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section1Model));
             _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection1, out section1ModelBytes)).Returns(true);
 
             var section2ModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(section2Model));
-            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);            
+            _mockSession.Setup(m => m.TryGetValue(SessionAddCourseSection2, out section2ModelBytes)).Returns(true);
 
             var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
             var providerContext = new ProviderContext(providerInfo);
@@ -806,7 +806,7 @@ namespace Dfc.CourseDirectory.Web.Tests
 
             var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
             var providerContext = new ProviderContext(providerInfo);
-            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);            
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
 
             var trueValueBytes = Encoding.UTF8.GetBytes("true");
             _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValueBytes)).Returns(true);
@@ -839,7 +839,7 @@ namespace Dfc.CourseDirectory.Web.Tests
 
             var providerInfo = new ProviderInfo { ProviderId = Guid.NewGuid(), ProviderName = Faker.Company.Name() };
             var providerContext = new ProviderContext(providerInfo);
-            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);            
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
 
             var trueValueBytes = Encoding.UTF8.GetBytes("true");
             _mockSession.Setup(m => m.TryGetValue(SessionNonLarsCourse, out trueValueBytes)).Returns(true);
@@ -912,9 +912,9 @@ namespace Dfc.CourseDirectory.Web.Tests
             return new Faker<SelectVenueModel>()
                             .RuleFor(c => c.VenueItems, f => new Faker<VenueItemModel>()
                                                         .RuleFor(v => v.Id, f => f.Random.Number(1, 20).ToString())
-                                                        .RuleFor(v => v.VenueName, f => f.Address.City())                            
-                                                        .Generate(4))                            
+                                                        .RuleFor(v => v.VenueName, f => f.Address.City())
+                                                        .Generate(4))
                             .Generate();
-        }        
+        }
     }
 }

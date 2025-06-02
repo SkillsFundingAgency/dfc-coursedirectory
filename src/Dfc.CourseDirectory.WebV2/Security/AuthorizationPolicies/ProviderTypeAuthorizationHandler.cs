@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies
+namespace Dfc.CourseDirectory.Core.Security.AuthorizationPolicies
 {
     public class ProviderTypeAuthorizationHandler : AuthorizationHandler<ProviderTypeRequirement>
     {

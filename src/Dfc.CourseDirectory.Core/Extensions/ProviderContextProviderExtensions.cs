@@ -1,6 +1,7 @@
 ﻿using System;
+using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Extensions
 {
     public static class ProviderContextProviderExtensions
     {

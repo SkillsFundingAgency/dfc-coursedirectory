@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Extensions
 {
     public static class MediatorExtensions
     {

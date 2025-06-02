@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Dfc.CourseDirectory.WebV2.Security
+namespace Dfc.CourseDirectory.Core.Security
 {
     public interface ISignInAction
     {

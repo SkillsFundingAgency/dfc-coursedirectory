@@ -1,7 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Middleware
 {
     public class ProviderInfo
     {

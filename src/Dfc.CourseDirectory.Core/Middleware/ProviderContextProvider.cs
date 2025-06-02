@@ -1,8 +1,7 @@
 ﻿using System;
-using Dfc.CourseDirectory.WebV2.HttpContextFeatures;
 using Microsoft.AspNetCore.Http;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Middleware
 {
     public class ProviderContextProvider : IProviderContextProvider
     {

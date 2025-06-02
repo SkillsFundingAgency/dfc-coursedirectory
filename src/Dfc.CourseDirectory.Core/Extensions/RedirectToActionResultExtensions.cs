@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.WebV2.Middleware;
+using Dfc.CourseDirectory.Core.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Extensions
 {
     public static class RedirectToActionResultExtensions
     {

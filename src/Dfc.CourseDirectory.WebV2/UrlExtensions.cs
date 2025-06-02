@@ -1,4 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Middleware;
+﻿using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using Flurl;
 

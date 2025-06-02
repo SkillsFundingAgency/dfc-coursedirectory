@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.WebV2
+﻿namespace Dfc.CourseDirectory.Core.Middleware
 {
     public interface IProviderContextProvider
     {
