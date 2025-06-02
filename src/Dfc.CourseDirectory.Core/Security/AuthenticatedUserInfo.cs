@@ -1,7 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.WebV2.Security
+namespace Dfc.CourseDirectory.Core.Security
 {
     public class AuthenticatedUserInfo : UserInfo
     {

@@ -12,9 +12,6 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Middleware;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +26,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Azure.Storage.Sas;
 using MediatR;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
+using Dfc.CourseDirectory.Core.Security;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -77,6 +77,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
 
+            services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
+            services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.Configure<GoogleWebRiskSettings>(
                 Configuration.GetSection(nameof(GoogleWebRiskSettings)));
             services.AddScoped<IWebRiskService, WebRiskService>();
@@ -91,7 +93,7 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddSingleton(new BlobServiceClient(Configuration["BlobStorageSettings:ConnectionString"]));
-            services.AddMediatR(typeof(Startup).Assembly);
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
             services.AddCourseDirectory(_env, Configuration);
             services.AddSignalR();
 

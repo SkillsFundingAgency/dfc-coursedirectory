@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.WebV2
 {

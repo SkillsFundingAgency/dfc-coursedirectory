@@ -17,7 +17,7 @@ using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
 using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

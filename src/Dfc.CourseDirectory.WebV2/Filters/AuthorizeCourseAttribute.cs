@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-
+using Dfc.CourseDirectory.Core.Middleware;
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
     public class AuthorizeCourseAttribute : ActionFilterAttribute

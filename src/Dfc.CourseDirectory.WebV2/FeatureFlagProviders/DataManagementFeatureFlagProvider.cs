@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.Extensions.Configuration;
 
 namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders

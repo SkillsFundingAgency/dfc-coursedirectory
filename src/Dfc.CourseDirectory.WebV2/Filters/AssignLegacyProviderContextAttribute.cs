@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-
+using Dfc.CourseDirectory.Core.Middleware;
 namespace Dfc.CourseDirectory.WebV2.Filters
 {
     /// <summary>

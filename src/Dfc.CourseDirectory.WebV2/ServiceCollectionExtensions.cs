@@ -20,8 +20,8 @@ using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies;
+using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
 using Dfc.CourseDirectory.WebV2.ViewHelpers;
 using FormFlow;
@@ -41,7 +41,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-
+using Dfc.CourseDirectory.Core.Middleware;
 namespace Dfc.CourseDirectory.WebV2
 {
     public static class ServiceCollectionExtensions
@@ -130,7 +130,7 @@ namespace Dfc.CourseDirectory.WebV2
                 options.AddImportsToHtml = false;
             });
             services.AddHttpClient();
-            services.AddMediatR(typeof(ServiceCollectionExtensions));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
             services.AddTransient<IClock, SystemClock>();
             services.AddSingleton<ICurrentUserProvider, ClaimsPrincipalCurrentUserProvider>();
             services.AddHttpContextAccessor();

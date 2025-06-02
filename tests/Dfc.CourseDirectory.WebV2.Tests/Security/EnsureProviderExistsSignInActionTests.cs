@@ -2,9 +2,8 @@
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using Xunit;
-using EnsureProviderExistsSignInAction = Dfc.CourseDirectory.WebV2.Security.EnsureProviderExistsSignInAction;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.Security
 {

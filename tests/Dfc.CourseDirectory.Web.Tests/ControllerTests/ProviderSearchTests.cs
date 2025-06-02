@@ -15,7 +15,7 @@ using FluentAssertions.Execution;
 using Moq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests
+namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
 {
     public class ProviderSearchTests : MvcTestBase
     {

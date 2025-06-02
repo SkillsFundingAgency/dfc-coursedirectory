@@ -2,13 +2,13 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.Middleware
+namespace Dfc.CourseDirectory.Core.Middleware
 {
     public class ProviderContextMiddleware
     {

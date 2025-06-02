@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.WebV2.Security;
-using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -21,8 +20,9 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
 using Newtonsoft.Json;
+using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.Web.Tests
+namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
 {
     public class CopyCourseRunControllerTests
     {
@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Web.Tests
         private readonly Mock<ILogger<CopyCourseRunController>> _mockLogger;
         private readonly Mock<ISqlQueryDispatcher> _mockSqlQueryDispatcher;
         private readonly Mock<ICurrentUserProvider> _mockCurrentUserProvider;
-        private readonly Mock<IProviderContextProvider> _mockProviderContextProvider;        
+        private readonly Mock<IProviderContextProvider> _mockProviderContextProvider;
         private readonly Mock<IClock> _mockClock;
         private readonly Mock<IRegionCache> _mockRegionCache;
         private readonly Mock<IConfiguration> _mockConfiguration;
@@ -41,15 +41,15 @@ namespace Dfc.CourseDirectory.Web.Tests
         public CopyCourseRunControllerTests()
         {
             _mockLogger = new Mock<ILogger<CopyCourseRunController>>();
-            _mockCourseService = new Mock<ICourseService>();            
-            _mockSqlQueryDispatcher = new Mock<ISqlQueryDispatcher>();            
-            _mockProviderContextProvider = new Mock<IProviderContextProvider>();            
+            _mockCourseService = new Mock<ICourseService>();
+            _mockSqlQueryDispatcher = new Mock<ISqlQueryDispatcher>();
+            _mockProviderContextProvider = new Mock<IProviderContextProvider>();
             _mockCurrentUserProvider = new Mock<ICurrentUserProvider>();
             _mockClock = new Mock<IClock>();
             _mockRegionCache = new Mock<IRegionCache>();
             _mockConfiguration = new Mock<IConfiguration>();
             _mockSession = new Mock<ISession>();
-        }        
+        }
 
         [Fact]
         public async Task Index_WhenUkprnSessionHasNoValue_RedirectsToHome()
@@ -64,11 +64,11 @@ namespace Dfc.CourseDirectory.Web.Tests
             var result = await copyCourseRunController.Index(courseId, courseRunId) as RedirectToActionResult;
 
             // Assert            
-            Assert.NotNull(result);            
+            Assert.NotNull(result);
 
             Assert.Equal("Home", result.ControllerName);
             Assert.Equal("Index", result.ActionName);
-            Assert.Equal("Please select a Provider.", result.RouteValues["errmsg"]);            
+            Assert.Equal("Please select a Provider.", result.RouteValues["errmsg"]);
         }
 
         [Fact]
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var result = await copyCourseRunController.Index(courseId, courseRunId) as NotFoundResult;
 
             // Assert            
-            Assert.NotNull(result);            
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var ukprn = Encoding.UTF8.GetBytes("123456");
 
             _mockSession.Setup(m => m.TryGetValue("UKPRN", out ukprn)).Returns(true);
-            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);            
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
 
             var course = new Faker<Course>()
                 .RuleFor(c => c.CourseDescription, f => f.Lorem.Paragraph())
@@ -145,7 +145,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var ukprn = Encoding.UTF8.GetBytes("123456");
 
             _mockSession.Setup(m => m.TryGetValue("UKPRN", out ukprn)).Returns(true);
-            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);            
+            _mockProviderContextProvider.Setup(m => m.GetProviderContext(true)).Returns(providerContext);
 
             var course = new Faker<Course>()
                 .RuleFor(c => c.CourseDescription, f => f.Lorem.Paragraph())
@@ -198,7 +198,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var saveModel = new Faker<CopyCourseRunSaveViewModel>()
                 .RuleFor(c => c.CourseId, f => courseId)
                 .RuleFor(c => c.CourseRunId, f => courseRunId)
-                .Generate();            
+                .Generate();
             var saveModelBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(saveModel));
             _mockSession.Setup(m => m.TryGetValue("CopyCourseRunSaveViewModel", out saveModelBytes)).Returns(true);
 
@@ -291,7 +291,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             var addCourseController = new CopyCourseRunController(
                 _mockLogger.Object,
                             _mockCourseService.Object,
-                            _mockSqlQueryDispatcher.Object,                            
+                            _mockSqlQueryDispatcher.Object,
                             _mockProviderContextProvider.Object,
                             _mockCurrentUserProvider.Object,
                             _mockClock.Object,
