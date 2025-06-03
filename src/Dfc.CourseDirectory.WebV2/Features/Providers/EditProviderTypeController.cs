@@ -4,13 +4,12 @@ using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Security;
-using Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType;
-using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Dfc.CourseDirectory.Web.Controllers.Providers
+namespace Dfc.CourseDirectory.WebV2.Features.Providers
 {
     [Route("providers/provider-type")]
     [RequireProviderContext]

@@ -9,7 +9,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.Providers.Reporting.ProviderMissingPrimaryContactReport
+namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderMissingPrimaryContactReport
 {
     public class Query : IRequest<IAsyncEnumerable<Csv>>
     {

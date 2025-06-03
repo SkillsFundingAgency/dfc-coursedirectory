@@ -4,7 +4,6 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.Controllers.Providers;
 using Dfc.CourseDirectory.Web.Tests.Core;
 using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.WebV2;
@@ -24,6 +23,9 @@ using Moq;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2.Features.ProviderDashboard;
+using Dfc.CourseDirectory.WebV2.Features.Providers;
+using Dfc.CourseDirectory.WebV2.Features.Providers.Reporting;
 
 namespace Dfc.CourseDirectory.Web.Tests
 {

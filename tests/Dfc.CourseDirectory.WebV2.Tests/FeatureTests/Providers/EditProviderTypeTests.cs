@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType;
+using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Web.ViewModels.Providers.Reporting.ProviderTypeReport;
+using Dfc.CourseDirectory.WebV2.Features.Providers.Reporting.ProviderTypeReport;
 using FluentAssertions;
 using Xunit;
 

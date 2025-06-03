@@ -2,10 +2,11 @@
 using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.Controllers.Providers
+namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard
 {
     [Route("/")]
     public class ProviderDashboardController : Controller
@@ -23,7 +24,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.Providers
         [HttpGet("dashboard")]
         public async Task<IActionResult> Index()
         {
-            var query = new ViewModels.Providers.Dashboard.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View("Dashboard", vm));
         }
     }

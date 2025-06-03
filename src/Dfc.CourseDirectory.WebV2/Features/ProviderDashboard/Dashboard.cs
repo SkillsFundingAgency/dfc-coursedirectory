@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.Providers.Dashboard
+namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
 {
     public class Query : IRequest<ViewModel>
     {
