@@ -26,6 +26,7 @@ using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2.Features.ProviderDashboard;
 using Dfc.CourseDirectory.WebV2.Features.Providers;
 using Dfc.CourseDirectory.WebV2.Features.Providers.Reporting;
+using Dfc.CourseDirectory.WebV2.Features.ProviderSearch;
 
 namespace Dfc.CourseDirectory.Web.Tests
 {

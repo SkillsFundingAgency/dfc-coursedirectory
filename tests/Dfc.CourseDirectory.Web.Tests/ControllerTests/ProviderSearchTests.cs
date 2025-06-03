@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Web.Tests.Core;
 using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.Web.Tests.Extensions;
 using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2.Features.ProviderSearch;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;

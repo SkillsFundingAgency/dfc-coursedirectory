@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Web.ViewModels;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.Web.Controllers
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
 {
     [AuthorizeAdmin]
     [Route("provider-search")]
