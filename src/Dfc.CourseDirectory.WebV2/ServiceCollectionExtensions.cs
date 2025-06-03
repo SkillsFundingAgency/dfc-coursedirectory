@@ -10,7 +10,9 @@ using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using Dfc.CourseDirectory.Core.Search.Models;
@@ -21,11 +23,7 @@ using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
-using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
-using Dfc.CourseDirectory.Core.MultiPageTransaction;
-using Dfc.CourseDirectory.Core.Security;
-using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
 using FormFlow;
 using GovUk.Frontend.AspNetCore;
@@ -43,7 +41,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Dfc.CourseDirectory.Core.Search;
 
 namespace Dfc.CourseDirectory.WebV2
 {
