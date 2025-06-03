@@ -8,10 +8,11 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.WebV2;
 using MediatR;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.DisplayName
+namespace Dfc.CourseDirectory.Web.ViewModels.Providers.DisplayName
 {
     public class Query : IRequest<ViewModel>
     {

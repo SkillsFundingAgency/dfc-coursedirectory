@@ -1,13 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.BinaryStorageProvider;
 using Dfc.CourseDirectory.Core.Configuration;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.Core.Services;
+using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.Configuration;
 using Dfc.CourseDirectory.Web.Helpers;
@@ -17,20 +23,12 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Azure.Storage;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Azure.Storage.Sas;
-using MediatR;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
-using Dfc.CourseDirectory.Core.Security;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.Web.Controllers;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -79,6 +77,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
 
+            services.AddTransient<ProviderContextHelper>();
+            services.AddScoped<RouteValuesHelper>();
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.Configure<GoogleWebRiskSettings>(
@@ -95,9 +95,8 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddSingleton(new BlobServiceClient(Configuration["BlobStorageSettings:ConnectionString"]));
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly, typeof(OnboardProviderCommand).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
             services.AddCourseDirectory(_env, Configuration);
-           
             services.AddSignalR();
 
             var mvcBuilder = services
@@ -116,7 +115,7 @@ namespace Dfc.CourseDirectory.Web
                 options.FileProviders.Add(new PhysicalFileProvider(v2ProjectPath));
             });
 #endif
-            services.AddMvc().AddApplicationPart(typeof(ProviderSearchController).Assembly);
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Admin", policy => policy.RequireRole("Developer"));

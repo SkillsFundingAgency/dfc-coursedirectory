@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
     <ProjectReference Include="..\..\src\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
+    <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Web\Dfc.CourseDirectory.Web.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>

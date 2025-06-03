@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
 using Flurl;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Dfc.CourseDirectory.WebV2.ViewHelpers
+namespace Dfc.CourseDirectory.Core.ViewHelpers
 {
     public class ProviderContextHelper
     {

@@ -1,13 +1,16 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Filters;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType;
+using Dfc.CourseDirectory.WebV2;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Filters;
-using Dfc.CourseDirectory.Core.Attributes;
-namespace Dfc.CourseDirectory.WebV2.Features.Providers
+
+namespace Dfc.CourseDirectory.Web.Controllers.Providers
 {
     [Route("providers/provider-type")]
     [RequireProviderContext]
@@ -30,12 +33,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         [HttpGet("")]
         public async Task<IActionResult> Get()
         {
-            var query = new EditProviderType.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View("EditProviderType", vm));
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Post(EditProviderType.Command command)
+        public async Task<IActionResult> Post(Command command)
         {
             if (command.ProviderId != _providerContext.ProviderInfo.ProviderId)
             {

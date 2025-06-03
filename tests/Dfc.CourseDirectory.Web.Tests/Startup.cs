@@ -4,6 +4,7 @@ using Dfc.CourseDirectory.Core.BackgroundWorkers;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.Web.Controllers.Providers;
 using Dfc.CourseDirectory.Web.Tests.Core;
 using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.WebV2;
@@ -12,13 +13,13 @@ using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using FormFlow.State;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SqlServer.Dac.Model;
 using Moq;
 using Dfc.CourseDirectory.Web.Controllers;
 using Dfc.CourseDirectory.Core.Search;
@@ -61,6 +62,14 @@ namespace Dfc.CourseDirectory.Web.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers()
+                .AddApplicationPart(typeof(EditProviderTypeController).Assembly)
+                .AddApplicationPart(typeof(ProviderDashboardController).Assembly)
+                .AddApplicationPart(typeof(ProviderReportsController).Assembly)
+                .AddApplicationPart(typeof(ProvidersController).Assembly)
+                .AddApplicationPart(typeof(ProviderSearchController).Assembly)
+                .AddControllersAsServices();
+
             services.AddSession();
             services.AddSingleton<ISessionStore, SingletonSessionStore>();
 
@@ -74,7 +83,6 @@ namespace Dfc.CourseDirectory.Web.Tests
                 .AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", _ => { });
 
             services.AddCourseDirectory(HostingEnvironment, Configuration);
-            services.AddMvc().AddApplicationPart(typeof(ProviderSearchController).Assembly);
 
             services.Configure<GoogleWebRiskSettings>(
             Configuration.GetSection(nameof(GoogleWebRiskSettings)));
@@ -83,8 +91,11 @@ namespace Dfc.CourseDirectory.Web.Tests
             mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
             services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly, typeof(OnboardProviderCommand).Assembly));
-
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(
+                    typeof(Web.Startup).Assembly);
+            });
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
