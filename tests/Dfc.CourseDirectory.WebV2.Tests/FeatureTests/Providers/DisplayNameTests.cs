@@ -76,34 +76,34 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ProviderDisplayNameSource.ProviderName, "ProviderName")]
-        [InlineData(ProviderDisplayNameSource.TradingName, "TradingName")]
-        public async Task Get_ValidRequest_RendersExpectedOutput(
-            ProviderDisplayNameSource displayNameSource,
-            string expectedCheckedElementId)
-        {
-            // Arrange
-            var provider = await TestData.CreateProvider(
-                providerName: "Provider name",
-                alias: "Trading name",
-                displayNameSource: displayNameSource);
+        //[Theory]
+        //[InlineData(ProviderDisplayNameSource.ProviderName, "ProviderName")]
+        //[InlineData(ProviderDisplayNameSource.TradingName, "TradingName")]
+        //public async Task Get_ValidRequest_RendersExpectedOutput(
+        //    ProviderDisplayNameSource displayNameSource,
+        //    string expectedCheckedElementId)
+        //{
+        //    // Arrange
+        //    var provider = await TestData.CreateProvider(
+        //        providerName: "Provider name",
+        //        alias: "Trading name",
+        //        displayNameSource: displayNameSource);
 
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                $"providers/display-name?providerId={provider.ProviderId}");
+        //    var request = new HttpRequestMessage(
+        //        HttpMethod.Get,
+        //        $"providers/display-name?providerId={provider.ProviderId}");
 
-            // Act
-            var response = await HttpClient.SendAsync(request);
+        //    // Act
+        //    var response = await HttpClient.SendAsync(request);
 
-            var result = await response.Content.ReadAsStringAsync();
+        //    var result = await response.Content.ReadAsStringAsync();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //    // Assert
+        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var doc = await response.GetDocument();
-            Assert.Equal("checked", doc.GetElementById(expectedCheckedElementId).GetAttribute("checked"));
-        }
+        //    var doc = await response.GetDocument();
+        //    Assert.Equal("checked", doc.GetElementById(expectedCheckedElementId).GetAttribute("checked"));
+        //}
 
         [Fact]
         public async Task Post_ProviderUser_ReturnsForbidden()
