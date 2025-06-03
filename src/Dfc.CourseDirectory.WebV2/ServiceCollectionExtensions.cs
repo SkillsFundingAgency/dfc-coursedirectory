@@ -81,16 +81,7 @@ namespace Dfc.CourseDirectory.WebV2
                 .AddApplicationPart(thisAssembly)
                 .AddRazorOptions(options =>
                 {
-                    // TODO When the legacy views are all moved this check can go away
-                    if (environment.IsTesting())
-                    {
-                        options.ViewLocationFormats.Clear();
-                    }
-
                     options.ViewLocationFormats.Add("/SharedViews/{0}.cshtml");
-                    options.ViewLocationFormats.Add("~/Views/Providers/{0}.cshtml");
-                    options.ViewLocationFormats.Add("~/Views/ProviderSearch/{0}.cshtml");
-
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
 
