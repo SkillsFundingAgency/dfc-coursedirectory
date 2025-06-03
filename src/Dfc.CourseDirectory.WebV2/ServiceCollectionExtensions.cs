@@ -42,6 +42,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Search;
 namespace Dfc.CourseDirectory.WebV2
 {
     public static class ServiceCollectionExtensions
@@ -79,6 +80,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
+                
                 .AddRazorOptions(options =>
                 {
                     // TODO When the legacy views are all moved this check can go away
@@ -88,6 +90,7 @@ namespace Dfc.CourseDirectory.WebV2
                     }
 
                     options.ViewLocationFormats.Add("/SharedViews/{0}.cshtml");
+                    options.ViewLocationFormats.Add("~/Views/ProviderSearch/{0}.cshtml");
 
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });

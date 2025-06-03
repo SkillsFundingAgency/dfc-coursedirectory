@@ -20,6 +20,9 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Dfc.CourseDirectory.Web.Controllers;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.Tests
 {
@@ -71,6 +74,7 @@ namespace Dfc.CourseDirectory.Web.Tests
                 .AddScheme<TestAuthenticationOptions, TestAuthenticationHandler>("Test", _ => { });
 
             services.AddCourseDirectory(HostingEnvironment, Configuration);
+            services.AddMvc().AddApplicationPart(typeof(ProviderSearchController).Assembly);
 
             services.Configure<GoogleWebRiskSettings>(
             Configuration.GetSection(nameof(GoogleWebRiskSettings)));
@@ -79,7 +83,8 @@ namespace Dfc.CourseDirectory.Web.Tests
             mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
             services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly, typeof(OnboardProviderCommand).Assembly));
+
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
