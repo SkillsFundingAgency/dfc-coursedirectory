@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Xunit;
-
+using Dfc.CourseDirectory.Core.Attributes;
 namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
 {
     public class ProviderContextMiddlewareTests : MvcTestBase

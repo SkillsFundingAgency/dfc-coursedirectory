@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
-
+using Dfc.CourseDirectory.Core.Attributes;
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
     public class RedirectToProviderSelectionActionFilterTests : MvcTestBase
