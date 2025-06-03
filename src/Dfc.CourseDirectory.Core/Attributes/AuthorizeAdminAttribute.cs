@@ -1,8 +1,9 @@
-﻿using Dfc.CourseDirectory.Core.Security;
+﻿using Dfc.CourseDirectory.Core.Filters;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.Core.Attributes
 {
     public class AuthorizeAdminAttribute : ActionFilterAttribute
     {

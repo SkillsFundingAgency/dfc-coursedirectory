@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Middleware;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Dfc.CourseDirectory.WebV2

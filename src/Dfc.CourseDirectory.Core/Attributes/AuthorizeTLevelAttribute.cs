@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Dfc.CourseDirectory.Core.Middleware;
-namespace Dfc.CourseDirectory.WebV2.Filters
+using Dfc.CourseDirectory.Core.Filters;
+
+namespace Dfc.CourseDirectory.Core.Attributes
 {
     public class AuthorizeTLevelAttribute : ActionFilterAttribute
     {

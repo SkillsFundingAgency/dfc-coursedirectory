@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Dfc.CourseDirectory.Core.Middleware;
-namespace Dfc.CourseDirectory.WebV2.Filters
+using Dfc.CourseDirectory.Core.Filters;
+
+namespace Dfc.CourseDirectory.Core.Attributes
 {
     /// <summary>
     /// A filter that throws a <see cref="NotAuthorizedException"/> if the current provider does not have

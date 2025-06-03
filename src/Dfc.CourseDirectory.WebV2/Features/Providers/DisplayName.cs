@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Security;
 using MediatR;

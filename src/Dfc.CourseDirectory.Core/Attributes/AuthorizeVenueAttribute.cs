@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Dfc.CourseDirectory.Core.Middleware;
-namespace Dfc.CourseDirectory.WebV2.Filters
+using Dfc.CourseDirectory.Core.Filters;
+
+namespace Dfc.CourseDirectory.Core.Attributes
 {
-    public class AuthorizeCourseAttribute : ActionFilterAttribute
+    public class AuthorizeVenueAttribute : ActionFilterAttribute
     {
-        public AuthorizeCourseAttribute(string courseIdRouteParameterName = "courseId")
+        public AuthorizeVenueAttribute(string venueIdRouteParameterName = "venueId")
         {
-            CourseIdRouteParameterName = courseIdRouteParameterName;
+            VenueIdRouteParameterName = venueIdRouteParameterName;
         }
 
-        public string CourseIdRouteParameterName { get; }
+        public string VenueIdRouteParameterName { get; }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (!Guid.TryParse(context.RouteData.Values[CourseIdRouteParameterName]?.ToString(), out var courseId))
+            if (!Guid.TryParse(context.RouteData.Values[VenueIdRouteParameterName]?.ToString(), out var venueId))
             {
                 throw new InvalidOperationException(
-                    $"Could not extract course ID from '{CourseIdRouteParameterName}' route parameter.");
+                    $"Could not extract venue ID from '{VenueIdRouteParameterName}' route parameter.");
             }
 
             var services = context.HttpContext.RequestServices;
@@ -30,22 +31,24 @@ namespace Dfc.CourseDirectory.WebV2.Filters
             var providerInfoCache = services.GetRequiredService<IProviderInfoCache>();
             var providerOwnershipCache = services.GetRequiredService<IProviderOwnershipCache>();
 
-            var providerId = await providerOwnershipCache.GetProviderForCourse(courseId);
+            var providerId = await providerOwnershipCache.GetProviderForVenue(venueId);
 
             if (providerId == null)
             {
-                throw new ResourceDoesNotExistException(ResourceType.Course, courseId);
+                throw new ResourceDoesNotExistException(ResourceType.Venue, venueId);
             }
 
-            if (!IsAuthorized())
+            if (IsAuthorized())
+            {
+                var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
+                providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
+
+                await next();
+            }
+            else
             {
                 throw new NotAuthorizedException();
             }
-
-            var providerInfo = await providerInfoCache.GetProviderInfo(providerId.Value);
-            providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
-
-            await next();
 
             bool IsAuthorized()
             {

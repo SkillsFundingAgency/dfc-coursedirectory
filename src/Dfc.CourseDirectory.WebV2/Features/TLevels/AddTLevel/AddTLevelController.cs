@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Attributes;
 using Flurl;
 using FormFlow;
 using MediatR;

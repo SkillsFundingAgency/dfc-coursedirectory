@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Dfc.CourseDirectory.Core.Middleware;
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.Core.Attributes
 {
     /// <summary>
     /// Assigns the legacy Session-backed current provider identifier when the action is executed.

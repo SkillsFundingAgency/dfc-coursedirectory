@@ -17,7 +17,7 @@ using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using Dfc.CourseDirectory.Core.Security;

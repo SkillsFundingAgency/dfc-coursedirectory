@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Attributes;
 
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.Core.Filters
 {
     public class RedirectToProviderSelectionActionFilter : IActionFilter, IOrderedFilter
     {

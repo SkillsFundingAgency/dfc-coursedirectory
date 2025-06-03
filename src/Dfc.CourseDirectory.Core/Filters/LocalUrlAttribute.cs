@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.WebV2
+namespace Dfc.CourseDirectory.Core.Filters
 {
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
     public class LocalUrlAttribute : Attribute

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.Core.Filters
 {
     public class LocalUrlActionFilter : IActionFilter
     {

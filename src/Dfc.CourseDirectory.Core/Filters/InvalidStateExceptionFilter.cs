@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.Core.Filters
 {
     public class InvalidStateExceptionFilter : IExceptionFilter
     {

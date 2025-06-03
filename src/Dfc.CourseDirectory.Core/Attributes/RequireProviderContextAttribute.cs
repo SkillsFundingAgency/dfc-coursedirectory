@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace Dfc.CourseDirectory.Web.Attributes
+namespace Dfc.CourseDirectory.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
     public sealed class RequireProviderContextAttribute : Attribute, IActionModelConvention, IControllerModelConvention

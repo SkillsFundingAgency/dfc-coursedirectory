@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Filters;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;

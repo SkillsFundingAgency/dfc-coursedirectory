@@ -2,7 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

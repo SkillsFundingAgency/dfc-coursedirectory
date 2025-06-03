@@ -1,9 +1,8 @@
-﻿using Dfc.CourseDirectory.Core;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.Filters
+namespace Dfc.CourseDirectory.Core.Attributes
 {
     public class RequireFeatureFlagAttribute : ActionFilterAttribute
     {
