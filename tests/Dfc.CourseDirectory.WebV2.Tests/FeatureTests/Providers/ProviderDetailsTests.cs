@@ -58,37 +58,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        //[Theory]
-        //[InlineData(TestUserType.Developer)]
-        //[InlineData(TestUserType.Helpdesk)]
-        //[InlineData(TestUserType.ProviderSuperUser)]
-        //[InlineData(TestUserType.ProviderUser)]
-        //public async Task Get_ValidRequest_RendersExpectedContent(TestUserType userType)
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(
-        //        providerName: "My Provider",
-        //        providerType: ProviderType.FE,
-        //        providerStatus: "Active",
-        //        alias: "My Trading Name");
+        [Theory]
+        [InlineData(TestUserType.Developer)]
+        [InlineData(TestUserType.Helpdesk)]
+        [InlineData(TestUserType.ProviderSuperUser)]
+        [InlineData(TestUserType.ProviderUser)]
+        public async Task Get_ValidRequest_RendersExpectedContent(TestUserType userType)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                providerName: "My Provider",
+                providerType: ProviderType.FE,
+                providerStatus: "Active",
+                alias: "My Trading Name");
 
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-        //    await User.AsTestUser(userType, provider.ProviderId);
+            await User.AsTestUser(userType, provider.ProviderId);
 
-        //    // Act
-        //    var response = await HttpClient.SendAsync(request);
+            // Act
+            var response = await HttpClient.SendAsync(request);
 
-        //    // Assert
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        //    var doc = await response.GetDocument();
-        //    Assert.Equal("My Provider", doc.GetElementByTestId("ProviderName").TextContent);
-        //    Assert.Equal("Active", doc.GetSummaryListValueWithKey("Course directory status"));
-        //    Assert.Equal(provider.Ukprn.ToString(), doc.GetSummaryListValueWithKey("UKPRN"));
-        //    Assert.Equal("My Trading Name", doc.GetSummaryListValueWithKey("Trading name"));
-        //    //Assert.Equal("FE Courses", doc.GetSummaryListValueWithKey("Provider type"));
-        //}
+            var doc = await response.GetDocument();
+            Assert.Equal("My Provider", doc.GetElementByTestId("ProviderName").TextContent);
+            Assert.Equal("Active", doc.GetSummaryListValueWithKey("Course directory status"));
+            Assert.Equal(provider.Ukprn.ToString(), doc.GetSummaryListValueWithKey("UKPRN"));
+            Assert.Equal("My Trading Name", doc.GetSummaryListValueWithKey("Trading name"));
+            //Assert.Equal("FE Courses", doc.GetSummaryListValueWithKey("Provider type"));
+        }
 
         [Theory]
         [InlineData(TestUserType.Developer)]
@@ -171,30 +171,30 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             Assert.Null(doc.GetElementByTestId("ChangeProviderType"));
         }
 
-        //[Theory]
-        //[InlineData(ProviderDisplayNameSource.ProviderName, "My Provider")]
-        //[InlineData(ProviderDisplayNameSource.TradingName, "My Trading Name")]
-        //public async Task Get_ProviderHasAlias_RendersCorrectDisplayName(
-        //    ProviderDisplayNameSource displayNameSource,
-        //    string expectedDisplayName)
-        //{
-        //    // Arrange
-        //    var provider = await TestData.CreateProvider(
-        //        providerName: "My Provider",
-        //        alias: "My Trading Name",
-        //        displayNameSource: displayNameSource);
+        [Theory]
+        [InlineData(ProviderDisplayNameSource.ProviderName, "My Provider")]
+        [InlineData(ProviderDisplayNameSource.TradingName, "My Trading Name")]
+        public async Task Get_ProviderHasAlias_RendersCorrectDisplayName(
+            ProviderDisplayNameSource displayNameSource,
+            string expectedDisplayName)
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider(
+                providerName: "My Provider",
+                alias: "My Trading Name",
+                displayNameSource: displayNameSource);
 
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"providers?providerId={provider.ProviderId}");
 
-        //    // Act
-        //    var response = await HttpClient.SendAsync(request);
+            // Act
+            var response = await HttpClient.SendAsync(request);
 
-        //    // Assert
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        //    var doc = await response.GetDocument();
-        //    Assert.Equal(expectedDisplayName, doc.GetSummaryListValueWithKey("Display name"));
-        //}
+            var doc = await response.GetDocument();
+            Assert.Equal(expectedDisplayName, doc.GetSummaryListValueWithKey("Display name"));
+        }
 
         [Theory]
         [InlineData(ProviderDisplayNameSource.ProviderName)]
