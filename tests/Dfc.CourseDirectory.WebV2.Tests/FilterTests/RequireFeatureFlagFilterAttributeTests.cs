@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using Dfc.CourseDirectory.Core.Attributes;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {

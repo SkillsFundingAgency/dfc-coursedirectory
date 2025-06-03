@@ -15,6 +15,7 @@ using MediatR;
 using OneOf;
 using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteCourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 {

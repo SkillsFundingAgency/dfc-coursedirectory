@@ -29,6 +29,8 @@ using MediatR;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.Web.Controllers;
 
 namespace Dfc.CourseDirectory.Web
 {
@@ -93,8 +95,9 @@ namespace Dfc.CourseDirectory.Web
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddSingleton(new BlobServiceClient(Configuration["BlobStorageSettings:ConnectionString"]));
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly, typeof(OnboardProviderCommand).Assembly));
             services.AddCourseDirectory(_env, Configuration);
+           
             services.AddSignalR();
 
             var mvcBuilder = services
@@ -113,7 +116,7 @@ namespace Dfc.CourseDirectory.Web
                 options.FileProviders.Add(new PhysicalFileProvider(v2ProjectPath));
             });
 #endif
-
+            services.AddMvc().AddApplicationPart(typeof(ProviderSearchController).Assembly);
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Admin", policy => policy.RequireRole("Developer"));

@@ -12,7 +12,7 @@ using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using FormFlow;
 using FormFlow.State;
 using Microsoft.AspNetCore.Mvc.Testing;

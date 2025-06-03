@@ -15,6 +15,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue
 {
