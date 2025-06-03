@@ -77,10 +77,10 @@ namespace Dfc.CourseDirectory.Web
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseTypeService, CourseTypeService>();
 
-            services.AddTransient<ProviderContextHelper>();
-            services.AddScoped<RouteValuesHelper>();
-            services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
-            services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
+            //services.AddTransient<ProviderContextHelper>();
+            //services.AddScoped<RouteValuesHelper>();
+            //services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
+            //services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.Configure<GoogleWebRiskSettings>(
                 Configuration.GetSection(nameof(GoogleWebRiskSettings)));
             services.AddScoped<IWebRiskService, WebRiskService>();
