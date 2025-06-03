@@ -2,6 +2,7 @@
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType;
 using Dfc.CourseDirectory.WebV2;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -30,12 +31,12 @@ namespace Dfc.CourseDirectory.Web.Controllers.Providers
         [HttpGet("")]
         public async Task<IActionResult> Get()
         {
-            var query = new Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View("EditProviderType", vm));
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Post(ViewModels.Providers.EditProviderType.Command command)
+        public async Task<IActionResult> Post(Command command)
         {
             if (command.ProviderId != _providerContext.ProviderInfo.ProviderId)
             {
