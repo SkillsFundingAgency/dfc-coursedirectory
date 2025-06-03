@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Attributes;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

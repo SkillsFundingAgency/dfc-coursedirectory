@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

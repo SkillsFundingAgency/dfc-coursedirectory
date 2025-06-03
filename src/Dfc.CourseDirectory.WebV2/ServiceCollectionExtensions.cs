@@ -21,9 +21,11 @@ using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Security.AuthorizationPolicies;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
 using FormFlow;
 using GovUk.Frontend.AspNetCore;
@@ -41,6 +43,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Dfc.CourseDirectory.Core.Search;
 
 namespace Dfc.CourseDirectory.WebV2
 {
@@ -79,6 +82,7 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ModelBinderProviders.Insert(1, new MultiValueEnumModelBinderProvider());
                 })
                 .AddApplicationPart(thisAssembly)
+                
                 .AddRazorOptions(options =>
                 {
                     options.ViewLocationFormats.Add("/SharedViews/{0}.cshtml");

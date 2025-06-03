@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Dfc.CourseDirectory.Core.Attributes;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {

@@ -11,7 +11,7 @@ using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using FormFlow.State;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +21,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SqlServer.Dac.Model;
 using Moq;
+using Dfc.CourseDirectory.Web.Controllers;
+using Dfc.CourseDirectory.Core.Search;
+using Dfc.CourseDirectory.Web.ViewModels;
 
 namespace Dfc.CourseDirectory.Web.Tests
 {
@@ -64,9 +67,8 @@ namespace Dfc.CourseDirectory.Web.Tests
                 .AddApplicationPart(typeof(ProviderDashboardController).Assembly)
                 .AddApplicationPart(typeof(ProviderReportsController).Assembly)
                 .AddApplicationPart(typeof(ProvidersController).Assembly)
+                .AddApplicationPart(typeof(ProviderSearchController).Assembly)
                 .AddControllersAsServices();
-
-            //services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             services.AddSession();
             services.AddSingleton<ISessionStore, SingletonSessionStore>();

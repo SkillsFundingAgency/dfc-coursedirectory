@@ -15,6 +15,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 using DeleteTLevelQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.DeleteTLevel;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
 {
