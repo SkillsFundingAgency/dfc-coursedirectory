@@ -10,7 +10,6 @@ using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
 using FormFlow.State;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Session;
@@ -86,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
             services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly, typeof(Web.Startup).Assembly));
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
