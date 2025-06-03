@@ -5,13 +5,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Web.Tests.Core;
-using Dfc.CourseDirectory.Web.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.FeatureTests.ProviderDashboard
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
 {
     public class DashboardTests : MvcTestBase
     {

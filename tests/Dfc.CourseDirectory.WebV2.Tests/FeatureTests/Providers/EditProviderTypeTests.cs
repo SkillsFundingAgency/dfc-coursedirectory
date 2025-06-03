@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.Tests.Core;
-using Dfc.CourseDirectory.Web.Tests.Data;
-using Dfc.CourseDirectory.Web.Tests.Extensions;
 using Dfc.CourseDirectory.Web.ViewModels.Providers.EditProviderType;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -18,7 +15,7 @@ using OneOf;
 using OneOf.Types;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.FeatureTests.Providers
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 {
     public class EditProviderTypeTests : MvcTestBase
     {

@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Web.Tests.Core;
-using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.Web.ViewModels.Providers.Reporting.ProviderTypeReport;
 using FluentAssertions;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.FeatureTests.Providers.Reporting
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers.Reporting
 {
     public class ProviderTypeReportTests : MvcTestBase
     {
