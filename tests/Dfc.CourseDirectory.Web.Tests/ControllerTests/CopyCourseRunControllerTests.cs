@@ -22,7 +22,7 @@ using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
+namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
 {
     public class CopyCourseRunControllerTests
     {
