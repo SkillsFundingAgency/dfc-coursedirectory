@@ -1,7 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Services.Models;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
+namespace Dfc.CourseDirectory.WebV2.ViewModels.EditCourse
 {
     public class EditCourseSaveViewModel
     {

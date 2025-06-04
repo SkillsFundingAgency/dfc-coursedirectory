@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
+namespace Dfc.CourseDirectory.WebV2.ViewModels.EditCourse
 {
     public class EditCourseRunSaveViewModel
     {
