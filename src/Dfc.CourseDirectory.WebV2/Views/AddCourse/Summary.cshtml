@@ -1,11 +1,9 @@
-﻿@using Dfc.CourseDirectory.Core.Models
-@using Dfc.CourseDirectory.Web.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryList
-@using Dfc.CourseDirectory.Web.ViewComponents.Summary.SummaryComponent
-@using Dfc.CourseDirectory.Web.Views.Shared
-@using Microsoft.AspNetCore.Http
+﻿@using Dfc.CourseDirectory.WebV2.Extensions
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Summary.SummaryComponent
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Summary.SummaryList
+@using Dfc.CourseDirectory.WebV2.Views.Shared
 
-@model AddCourseSummaryViewModel
+@model Dfc.CourseDirectory.WebV2.ViewModels.AddCourseSummaryViewModel
 
 @{
     Context.Session.SetObject("SummaryLoadedAtLeastOnce", true);
