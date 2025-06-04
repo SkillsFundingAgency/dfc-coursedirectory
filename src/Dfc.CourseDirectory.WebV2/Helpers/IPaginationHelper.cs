@@ -1,5 +1,5 @@
-﻿using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Pagination;
 
 namespace Dfc.CourseDirectory.Web.Helpers
 {

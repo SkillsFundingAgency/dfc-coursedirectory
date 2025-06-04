@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Web.ViewComponents.Pagination;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Pagination;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
 

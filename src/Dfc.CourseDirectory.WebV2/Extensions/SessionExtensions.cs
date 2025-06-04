@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace Dfc.CourseDirectory.Web.Extensions
+namespace Dfc.CourseDirectory.WebV2.Extensions
 {
     public static class SessionExtensions
     {

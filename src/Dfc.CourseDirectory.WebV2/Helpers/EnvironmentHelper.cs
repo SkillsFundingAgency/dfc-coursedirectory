@@ -1,9 +1,10 @@
 ﻿using System;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Web.Configuration;
+using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.WebV2.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Dfc.CourseDirectory.Web.Helpers
+namespace Dfc.CourseDirectory.WebV2.Helpers
 {
     public class EnvironmentHelper : IEnvironmentHelper
     {
