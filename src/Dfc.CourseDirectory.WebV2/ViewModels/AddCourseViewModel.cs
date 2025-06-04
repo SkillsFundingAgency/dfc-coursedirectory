@@ -1,15 +1,15 @@
 ﻿using System;
 using System.ComponentModel;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.CourseFor;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.EntryRequirements;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.FundingOptions;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.HowAssessed;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.HowYouWillLearn;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhatWillLearn;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhatYouNeed;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhereNext;
 
-namespace Dfc.CourseDirectory.Web.ViewModels
+namespace Dfc.CourseDirectory.WebV2.ViewModels
 {
     public class AddCourseViewModel
     {

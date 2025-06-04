@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using System.Collections.Generic;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.SelectVenue;
 
-namespace Dfc.CourseDirectory.Web.ViewModels
+namespace Dfc.CourseDirectory.WebV2.ViewModels
 {
     public class AddCourseDetailsViewModel
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.Web.ViewModels
+namespace Dfc.CourseDirectory.WebV2.ViewModels
 {
     public class AddCoursePublishModel
     {
