@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
@@ -13,29 +14,26 @@ using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseFor;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.EntryRequirements;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.FundingOptions;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowAssessed;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.HowYouWillLearn;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatWillLearn;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhatYouNeed;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.WhereNext;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Extensions;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.CourseFor;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.EntryRequirements;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.FundingOptions;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.HowAssessed;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.HowYouWillLearn;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.SelectVenue;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhatWillLearn;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhatYouNeed;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhereNext;
+using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
+using Dfc.CourseDirectory.WebV2.ViewModels;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     public class AddCourseController : BaseController
     {

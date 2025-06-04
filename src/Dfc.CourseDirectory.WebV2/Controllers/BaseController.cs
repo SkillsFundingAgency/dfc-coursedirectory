@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Web.Extensions;
+using Dfc.CourseDirectory.WebV2.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     public class BaseController : Controller
     {
