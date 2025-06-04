@@ -1,24 +1,20 @@
 ﻿@using Dfc.CourseDirectory.Core.Models
-@using Dfc.CourseDirectory.Services.Models.Courses
-@using Dfc.CourseDirectory.Web.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
-@using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
-@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
+@using Dfc.CourseDirectory.WebV2.ViewComponents.CourseName
+@using Dfc.CourseDirectory.WebV2.ViewComponents.CourseProviderReference
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseVenue
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Duration
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Extensions
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Notification
 @using Microsoft.AspNetCore.Html
-@using Microsoft.AspNetCore.Http
 @using StudyMode = Dfc.CourseDirectory.Core.Models.CourseStudyMode
-@model Dfc.CourseDirectory.Web.ViewModels.CopyCourse.CopyCourseRunViewModel
+@model Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse.CopyCourseRunViewModel
 @{
     ViewData["Title"] = "Copy course";
     Layout = "_Layout_Your_Courses";
@@ -206,11 +202,11 @@ else
             </div>
 
             <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
-                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.WebV2.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
                 {
-                StudyMode = Model.StudyMode,
-                LabelText = "Course hours",
-                HintText = "Select one option."
+                    StudyMode = Model.StudyMode,
+                    LabelText = "Course hours",
+                    HintText = "Select one option."
                 })
             </div>
 

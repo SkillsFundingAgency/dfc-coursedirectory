@@ -5,22 +5,23 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Extensions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
-using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.Controllers;
+using Dfc.CourseDirectory.WebV2.Extensions;
+using Dfc.CourseDirectory.WebV2.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CourseRun = Dfc.CourseDirectory.Core.DataStore.Sql.Models.CourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
-using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Middleware;
+
 namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
 {
     public class ProviderCoursesController : BaseController

@@ -6,7 +6,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
+using Dfc.CourseDirectory.WebV2.ViewComponents.LarsSearchResult;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;

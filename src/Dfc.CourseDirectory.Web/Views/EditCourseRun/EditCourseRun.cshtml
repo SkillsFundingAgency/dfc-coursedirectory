@@ -1,24 +1,22 @@
 ﻿@using Dfc.CourseDirectory.Services.Models
-@using Dfc.CourseDirectory.Web.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.CourseName
-@using Dfc.CourseDirectory.Web.ViewComponents.CourseProviderReference
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AddStartDate
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Attendance
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.AwardingBody
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseVenue
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Cost
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.DeliveryType
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.Duration
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode
-@using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
-@using Dfc.CourseDirectory.Web.ViewComponents.Extensions
-@using Dfc.CourseDirectory.Web.ViewComponents.Notification
 @using Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+@using Dfc.CourseDirectory.WebV2.ViewComponents.CourseName
+@using Dfc.CourseDirectory.WebV2.ViewComponents.CourseProviderReference
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.AwardingBody
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseVenue
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.CourseType
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Duration
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.EducationLevel
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Extensions
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Notification
 @using Microsoft.AspNetCore.Html
-@using Microsoft.AspNetCore.Http
-@model Dfc.CourseDirectory.Web.ViewModels.EditCourse.EditCourseRunViewModel
+@model Dfc.CourseDirectory.WebV2.ViewModels.EditCourse.EditCourseRunViewModel
 @{
     ViewData["Title"] = "Edit course details";
     Layout = "_Layout_Your_Courses";
@@ -92,14 +90,14 @@
             @if (Model.NonLarsCourse)
             {
                 <div id="sectionCourseType">
-                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.CourseType.CourseType), new CourseTypeModel
-                {
-                CourseType = Model.CourseType,
-                LabelText = "Course type",
-                HintText = "Select one option.",
-                SecondHintText = "Select what is the type of this course",
-                AriaDescribedBy = "Select what is the type of this course"
-                })
+                    @await Component.InvokeAsync(nameof(CourseType), new CourseTypeModel
+                    {
+                        CourseType = Model.CourseType,
+                        LabelText = "Course type",
+                        HintText = "Select one option.",
+                        SecondHintText = "Select what is the type of this course",
+                        AriaDescribedBy = "Select what is the type of this course"
+                    })
                 </div>
 
                 <div class="govuk-form-group" id="Sector">
@@ -126,14 +124,14 @@
                 </div>                
 
                 <div id="sectionEducationLevel">
-                    @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.EducationLevel.EducationLevel), new EducationLevelModel
-                {
-                EducationLevel = Model.EducationLevel,
-                LabelText = "Education level",
-                HintText = "Select one option.",
-                SecondHintText = "Select what is the education level",
-                AriaDescribedBy = "Select what is the education level"
-                })
+                    @await Component.InvokeAsync(nameof(EducationLevel), new EducationLevelModel
+                    {
+                        EducationLevel = Model.EducationLevel,
+                        LabelText = "Education level",
+                        HintText = "Select one option.",
+                        SecondHintText = "Select what is the education level",
+                        AriaDescribedBy = "Select what is the education level"
+                    })
                 </div>
 
                 <div id="sectionAwardingBody">
@@ -233,11 +231,11 @@
             </div>
 
             <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
-                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.Web.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+                @await Component.InvokeAsync(nameof(StudyMode), new StudyModeModel
                 {
-                StudyMode = Model.StudyMode,
-                LabelText = "Course hours",
-                HintText = "Select one option."
+                    StudyMode = Model.StudyMode,
+                    LabelText = "Course hours",
+                    HintText = "Select one option."
                 })
             </div>
 

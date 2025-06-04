@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
+using Dfc.CourseDirectory.WebV2.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;

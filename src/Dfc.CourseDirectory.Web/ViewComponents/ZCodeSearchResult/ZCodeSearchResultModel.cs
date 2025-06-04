@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Dfc.CourseDirectory.Web.ViewComponents.LarsSearchResult;
+using Dfc.CourseDirectory.WebV2.ViewComponents.LarsSearchResult;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult
 {
