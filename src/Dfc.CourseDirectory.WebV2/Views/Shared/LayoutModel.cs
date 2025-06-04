@@ -1,4 +1,4 @@
-namespace Dfc.CourseDirectory.Web.Views.Shared
+namespace Dfc.CourseDirectory.WebV2.Views.Shared
 {
     public class LayoutModel
     {
