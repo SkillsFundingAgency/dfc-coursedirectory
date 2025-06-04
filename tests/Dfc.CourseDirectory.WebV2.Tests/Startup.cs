@@ -64,8 +64,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 .AddApplicationPart(typeof(ProvidersController).Assembly)
                 .AddControllersAsServices();
 
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
             services.AddSession();
             services.AddSingleton<ISessionStore, SingletonSessionStore>();
 
@@ -87,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
             services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly, typeof(Web.Startup).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly));
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();
