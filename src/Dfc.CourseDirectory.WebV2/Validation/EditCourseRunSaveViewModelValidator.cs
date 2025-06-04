@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
-using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Dfc.CourseDirectory.WebV2.ViewModels.EditCourse;
 using FluentValidation;
 
 namespace Dfc.CourseDirectory.Web.Validation

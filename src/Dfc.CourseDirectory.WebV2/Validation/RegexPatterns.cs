@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.Validation
+﻿namespace Dfc.CourseDirectory.WebV2.Validation
 {
     public static class RegexPattern
     {

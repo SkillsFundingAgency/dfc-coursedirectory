@@ -1,8 +1,8 @@
 ﻿using Dfc.CourseDirectory.Core.Validation.CourseValidation;
-using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Dfc.CourseDirectory.WebV2.ViewModels.EditCourse;
 using FluentValidation;
 
-namespace Dfc.CourseDirectory.Web.Validation
+namespace Dfc.CourseDirectory.WebV2.Validation
 {
     public class EditCourseSaveViewModelValidator : AbstractValidator<EditCourseSaveViewModel>
     {
