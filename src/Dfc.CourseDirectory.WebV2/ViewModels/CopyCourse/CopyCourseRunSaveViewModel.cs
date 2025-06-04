@@ -2,7 +2,7 @@
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
+namespace Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse
 {
     public class CopyCourseRunSaveViewModel
     {

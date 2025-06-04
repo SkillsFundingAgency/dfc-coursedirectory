@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
+namespace Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse
 {
     public class CopyCourseRunViewModel
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.CopyCourse
+namespace Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse
 {
     public class CopyCourseRunSummaryViewModel
     {
