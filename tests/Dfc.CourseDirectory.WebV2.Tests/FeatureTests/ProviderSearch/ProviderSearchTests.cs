@@ -6,17 +6,13 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.Tests.Core;
-using Dfc.CourseDirectory.Web.Tests.Data;
-using Dfc.CourseDirectory.Web.Tests.Extensions;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2.Features.ProviderSearch;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
+namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
 {
     public class ProviderSearchTests : MvcTestBase
     {

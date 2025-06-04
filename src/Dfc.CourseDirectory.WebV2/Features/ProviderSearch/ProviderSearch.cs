@@ -14,7 +14,7 @@ using OneOf;
 using OneOf.Types;
 using SearchModels = Dfc.CourseDirectory.Core.Search.Models;
 
-namespace Dfc.CourseDirectory.Web.ViewModels
+namespace Dfc.CourseDirectory.WebV2.Features.ProviderSearch
 {
     public class Query : IRequest<ViewModel>
     {

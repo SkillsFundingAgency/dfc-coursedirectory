@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.WebV2.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
+
 namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]

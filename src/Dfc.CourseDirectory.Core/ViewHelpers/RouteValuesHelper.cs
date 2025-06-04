@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 
-namespace Dfc.CourseDirectory.WebV2.ViewHelpers
+namespace Dfc.CourseDirectory.Core.ViewHelpers
 {
     public class RouteValuesHelper
     {

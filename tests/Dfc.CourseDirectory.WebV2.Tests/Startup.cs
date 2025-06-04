@@ -8,8 +8,10 @@ using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Features.ProviderDashboard;
+using Dfc.CourseDirectory.WebV2.Features.Providers;
+using Dfc.CourseDirectory.WebV2.Features.Providers.Reporting;
 using FormFlow.State;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Session;
@@ -55,6 +57,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers()
+                .AddApplicationPart(typeof(EditProviderTypeController).Assembly)
+                .AddApplicationPart(typeof(ProviderDashboardController).Assembly)
+                .AddApplicationPart(typeof(ProviderReportsController).Assembly)
+                .AddApplicationPart(typeof(ProvidersController).Assembly)
+                .AddControllersAsServices();
+
             services.AddSession();
             services.AddSingleton<ISessionStore, SingletonSessionStore>();
 
@@ -76,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             mockWebRiskService.Setup(x => x.CheckForSecureUri(It.IsAny<string>())).ReturnsAsync(true);
             services.AddScoped<IWebRiskService>(_ => mockWebRiskService.Object);
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Startup).Assembly));
 
             services.AddSingleton<TestUserInfo>();
             services.AddSingleton<IDistributedCache, ClearableMemoryCache>();

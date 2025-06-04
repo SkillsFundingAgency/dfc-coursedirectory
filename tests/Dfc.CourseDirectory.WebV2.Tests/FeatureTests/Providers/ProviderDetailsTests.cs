@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             var doc = await response.GetDocument();
             var providerTypeValue = doc.GetSummaryListValueWithKey("Provider type");
 
-            doc.GetAllElementsByTestId("providerType").Select(e => e.TextContent.Trim()).Should().OnlyContain(p => p == "T Levels" );
+            doc.GetAllElementsByTestId("providerType").Select(e => e.TextContent.Trim()).Should().OnlyContain(p => p == "T Levels");
         }
 
         [Theory]

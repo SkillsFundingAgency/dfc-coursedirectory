@@ -96,6 +96,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
             // Act
             var response = await HttpClient.SendAsync(request);
 
+            var result = await response.Content.ReadAsStringAsync();
+
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
