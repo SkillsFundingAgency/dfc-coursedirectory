@@ -29,7 +29,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />
+    <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.SqlClient">
