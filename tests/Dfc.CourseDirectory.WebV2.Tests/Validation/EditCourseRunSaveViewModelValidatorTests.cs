@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
-using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Web.ViewModels.EditCourse;
+using Dfc.CourseDirectory.Web.Validation;
+using Dfc.CourseDirectory.WebV2.ViewModels.EditCourse;
+using FluentValidation.TestHelper;
 using Moq;
 using Xunit;
-using FluentValidation.TestHelper;
-using System.Threading.Tasks;
-using System.Linq;
-using Dfc.CourseDirectory.Web.Validation;
 
-namespace Dfc.CourseDirectory.Web.Tests.Validation
+namespace Dfc.CourseDirectory.WebV2.Tests.Validation
 {
     public class EditCourseRunSaveViewModelValidatorTests
     {

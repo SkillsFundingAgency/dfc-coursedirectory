@@ -1,28 +1,28 @@
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Core.Security;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using Xunit;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
 using System;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using Bogus;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataStore;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Controllers.CopyCourse;
+using Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.ViewModels.CopyCourse;
+using Moq;
 using Newtonsoft.Json;
-using Dfc.CourseDirectory.Core.Middleware;
+using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
+namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
 {
     public class CopyCourseRunControllerTests
     {

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Web.Views.Shared;
+using Dfc.CourseDirectory.WebV2.Views.Shared;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Web.Tests

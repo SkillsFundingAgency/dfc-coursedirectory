@@ -1,29 +1,29 @@
+using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Bogus;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Services.CourseService;
+using Dfc.CourseDirectory.Services.Models.Regions;
+using Dfc.CourseDirectory.WebV2.Controllers;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.SelectVenue;
+using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
+using Dfc.CourseDirectory.WebV2.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Xunit;
-using Dfc.CourseDirectory.Web.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using Dfc.CourseDirectory.Web.ViewModels;
-using System;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Bogus;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Web.RequestModels;
 using Newtonsoft.Json;
-using Dfc.CourseDirectory.Web.ViewComponents.Courses.SelectVenue;
-using Dfc.CourseDirectory.Services.Models.Regions;
-using System.Linq;
-using Dfc.CourseDirectory.Core.Security;
-using Dfc.CourseDirectory.Core.Middleware;
+using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
+namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
 {
     public class AddCourseControllerTests
     {
