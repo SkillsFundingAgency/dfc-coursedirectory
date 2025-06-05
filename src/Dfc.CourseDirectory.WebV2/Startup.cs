@@ -16,7 +16,6 @@ using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Web.Helpers;
-using Dfc.CourseDirectory.WebV2;
 using Dfc.CourseDirectory.WebV2.Configuration;
 using Dfc.CourseDirectory.WebV2.Helpers;
 using Microsoft.AspNetCore.Builder;
@@ -31,7 +30,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Dfc.CourseDirectory.Web
+namespace Dfc.CourseDirectory.WebV2
 {
     public class Startup
     {

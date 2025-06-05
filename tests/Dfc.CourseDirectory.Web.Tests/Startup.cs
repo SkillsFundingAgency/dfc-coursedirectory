@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Web.Tests
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(
-                    typeof(Web.Startup).Assembly);
+                    typeof(WebV2.Startup).Assembly);
             });
 
             services.AddSingleton<TestUserInfo>();

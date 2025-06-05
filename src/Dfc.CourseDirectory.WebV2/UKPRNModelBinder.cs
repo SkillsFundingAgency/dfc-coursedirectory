@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Dfc.CourseDirectory.Web
+namespace Dfc.CourseDirectory.WebV2
 {
     public class UKPRNModelBinder : IModelBinder
     {

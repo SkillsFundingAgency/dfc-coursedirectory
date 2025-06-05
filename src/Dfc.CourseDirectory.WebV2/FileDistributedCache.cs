@@ -8,7 +8,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Dfc.CourseDirectory.Web
+namespace Dfc.CourseDirectory.WebV2
 {
     /// <summary>
     /// WARNING: This code is for development only and must not be used in production.
