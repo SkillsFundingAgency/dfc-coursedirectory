@@ -42,7 +42,7 @@
 .pttcd-c-pager__previous-page:before {
     display: inline-block;
     content: '';
-    background-image: url(/v2/images/arrow-pagination-left.svg);
+    background-image: url(/images/arrow-pagination-left.svg);
     background-repeat: no-repeat;
     width: 15px;
     height: 10px;
@@ -53,7 +53,7 @@
 .pttcd-c-pager__next-page:after {
     display: inline-block;
     content: '';
-    background-image: url(/v2/images/arrow-pagination-right.svg);
+    background-image: url(/images/arrow-pagination-right.svg);
     background-repeat: no-repeat;
     width: 15px;
     height: 10px;

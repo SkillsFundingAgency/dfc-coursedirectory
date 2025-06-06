@@ -8,7 +8,7 @@ $('*[data-pttcd-module="rich-text-editor"]').each(function (i, el) {
         statusbar: false,
         toolbar: 'formatselect | bold | numlist bullist | removeformat',
         paste_as_text: true,
-        content_css: '/v2/pttcd.css',
+        content_css: '/pttcd.css',
         setup: function (editor) {
             var triggerCharacterCountUpdate = function () {
                 var e = document.createEvent('HTMLEvents');
