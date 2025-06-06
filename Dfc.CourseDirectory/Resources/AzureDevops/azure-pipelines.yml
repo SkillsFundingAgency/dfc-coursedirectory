@@ -129,10 +129,10 @@ steps:
   condition: succeededOrFailed()
 
 - task: DotNetCoreCLI@2
-  displayName: Publish Dfc.CourseDirectory.Web
+  displayName: Publish Dfc.CourseDirectory.WebV2
   inputs:
     command: publish
-    projects: 'src/$(SolutionBaseName).Web/$(SolutionBaseName).Web.csproj'
+    projects: 'src/$(SolutionBaseName).WebV2/$(SolutionBaseName).WebV2.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
