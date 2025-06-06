@@ -219,7 +219,6 @@ namespace Dfc.CourseDirectory.WebV2
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
