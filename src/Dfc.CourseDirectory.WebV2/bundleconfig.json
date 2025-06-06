@@ -1,14 +1,14 @@
 [
   {
-    "outputFileName": "Content/dist/pttcd.min.css",
+    "outputFileName": "wwwroot/dist/pttcd.min.css",
     "inputFiles": [
-      "Content/**/*.css"
+      "wwwroot/**/*.css"
     ]
   },
   {
-    "outputFileName": "Content/dist/pttcd.min.js",
+    "outputFileName": "wwwroot/dist/pttcd.min.js",
     "inputFiles": [
-      "Content/**/*.js"
+      "wwwroot/**/pttcd.js"
     ]
   }
 ]
