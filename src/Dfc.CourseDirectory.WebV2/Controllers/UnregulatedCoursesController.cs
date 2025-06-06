@@ -6,11 +6,11 @@ using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Services.UnregulatedProvision;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewComponents.ZCodeFoundResult;
-using Dfc.CourseDirectory.Web.ViewComponents.ZCodeSearchResult;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2.ViewComponents.LarsSearchResult;
+using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
+using Dfc.CourseDirectory.WebV2.ViewComponents.ZCodeFoundResult;
+using Dfc.CourseDirectory.WebV2.ViewComponents.ZCodeSearchResult;
+using Dfc.CourseDirectory.WebV2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     public class UnregulatedCoursesController : Controller
     {

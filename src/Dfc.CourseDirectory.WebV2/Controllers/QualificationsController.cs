@@ -1,9 +1,9 @@
-﻿using Dfc.CourseDirectory.Web.ViewModels;
+﻿using Dfc.CourseDirectory.WebV2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize("Fe")]
     public class QualificationsController : Controller

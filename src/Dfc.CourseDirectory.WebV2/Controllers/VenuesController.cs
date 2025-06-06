@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize]
     public class VenuesController : Controller

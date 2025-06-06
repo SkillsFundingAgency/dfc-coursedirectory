@@ -15,8 +15,6 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Controllers;
 using Dfc.CourseDirectory.WebV2.Extensions;
 using Dfc.CourseDirectory.WebV2.Validation;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion;
@@ -24,7 +22,6 @@ using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
 using Dfc.CourseDirectory.WebV2.ViewModels;
 using Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse;
-using FluentValidation;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -34,7 +31,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Web.Controllers.CopyCourse
+namespace Dfc.CourseDirectory.WebV2.Controllers.CopyCourse
 {
     public class CopyCourseRunController : BaseController
     {

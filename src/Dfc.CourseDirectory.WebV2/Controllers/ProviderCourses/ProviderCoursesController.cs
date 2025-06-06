@@ -10,11 +10,11 @@ using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.RequestModels;
-using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
-using Dfc.CourseDirectory.WebV2.Controllers;
 using Dfc.CourseDirectory.WebV2.Extensions;
 using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.WebV2.ViewComponents.ProviderCoursesResults;
+using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
+using Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 using CourseRun = Dfc.CourseDirectory.Core.DataStore.Sql.Models.CourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
-namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
+namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 {
     public class ProviderCoursesController : BaseController
     {
@@ -552,7 +552,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             model.Regions = regionFilterItems;
             model.AttendancePattern = attendanceModeFilterItems;
 
-            return ViewComponent(nameof(ViewComponents.ProviderCoursesResults.ProviderCoursesResults), model);
+            return ViewComponent(nameof(ProviderCoursesResults), model);
         }
     }
 }

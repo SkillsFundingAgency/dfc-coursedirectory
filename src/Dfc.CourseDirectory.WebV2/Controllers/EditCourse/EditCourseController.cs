@@ -7,9 +7,6 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Controllers;
 using Dfc.CourseDirectory.WebV2.Validation;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.CourseFor;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.EntryRequirements;
@@ -25,7 +22,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
+namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
 {
     public class EditCourseController : BaseController
     {

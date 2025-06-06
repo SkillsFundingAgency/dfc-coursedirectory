@@ -1,11 +1,11 @@
 ﻿using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Web.ViewModels;
+using Dfc.CourseDirectory.WebV2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     public class RegulatedQualificationController : Controller
     {

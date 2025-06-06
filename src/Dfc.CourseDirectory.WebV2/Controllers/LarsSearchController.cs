@@ -5,14 +5,14 @@ using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
-using Dfc.CourseDirectory.Web.RequestModels;
 using Dfc.CourseDirectory.WebV2.ViewComponents.LarsSearchResult;
+using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     public class LarsSearchController : Controller
     {

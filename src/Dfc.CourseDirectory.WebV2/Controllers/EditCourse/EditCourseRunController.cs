@@ -19,15 +19,12 @@ using Dfc.CourseDirectory.Services.Models;
 using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
 using Dfc.CourseDirectory.Web.Validation;
-using Dfc.CourseDirectory.WebV2;
-using Dfc.CourseDirectory.WebV2.Controllers;
 using Dfc.CourseDirectory.WebV2.Extensions;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.SelectVenue;
 using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
 using Dfc.CourseDirectory.WebV2.ViewModels;
 using Dfc.CourseDirectory.WebV2.ViewModels.EditCourse;
-using FluentValidation;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +33,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
+namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
 {
     public class EditCourseRunController : BaseController
     {

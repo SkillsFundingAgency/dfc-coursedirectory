@@ -1,13 +1,12 @@
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Web.ViewModels;
-using Dfc.CourseDirectory.WebV2;
+using Dfc.CourseDirectory.WebV2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.Web.Controllers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize("Fe")]
     public class CoursesController : Controller
