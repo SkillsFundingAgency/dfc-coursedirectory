@@ -6,7 +6,7 @@ using AngleSharp;
 using AngleSharp.Html.Dom;
 using AngleSharp.Io;
 
-namespace Dfc.CourseDirectory.Web.Tests.Core
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     public static class HtmlHelpers
     {

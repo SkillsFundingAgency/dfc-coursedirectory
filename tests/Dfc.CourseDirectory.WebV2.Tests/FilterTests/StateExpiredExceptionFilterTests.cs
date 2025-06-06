@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Filters;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;

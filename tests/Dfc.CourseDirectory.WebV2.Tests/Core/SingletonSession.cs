@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
 
-namespace Dfc.CourseDirectory.Web.Tests.Core
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     /// <summary>
     /// A dictionary-backed implementation of <see cref="ISession" /> for testing.

@@ -10,9 +10,9 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
 using FormFlow;
 using FormFlow.State;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -21,7 +21,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.Core
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     [Collection("Mvc")]
     public abstract class MvcTestBase : IAsyncLifetime

@@ -4,11 +4,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
 {
     public class LayoutTests : MvcTestBase
     {

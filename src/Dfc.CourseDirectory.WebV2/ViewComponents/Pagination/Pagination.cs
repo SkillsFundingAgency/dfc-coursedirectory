@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Dfc.CourseDirectory.Web.Helpers;
+using Dfc.CourseDirectory.WebV2.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.ViewComponents.Pagination

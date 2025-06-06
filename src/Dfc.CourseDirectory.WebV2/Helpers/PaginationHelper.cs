@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.WebV2.ViewComponents.Pagination;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Dfc.CourseDirectory.Web.Helpers
+namespace Dfc.CourseDirectory.WebV2.Helpers
 {
     public class PaginationHelper : IPaginationHelper
     {

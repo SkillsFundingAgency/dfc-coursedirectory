@@ -4,9 +4,13 @@ using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -49,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 }
             };
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
-            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+            LarsSearchSettings.Setup(x => x.Value).Returns(new LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
@@ -93,7 +97,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 }
             };
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
-            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+            LarsSearchSettings.Setup(x => x.Value).Returns(new LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
@@ -138,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 }
             };
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
-            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+            LarsSearchSettings.Setup(x => x.Value).Returns(new LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
 
@@ -186,7 +190,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 }
             };
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
-            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+            LarsSearchSettings.Setup(x => x.Value).Returns(new LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm={term}&providerId={provider.ProviderId}");
 
@@ -230,7 +234,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 }
             };
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
-            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+            LarsSearchSettings.Setup(x => x.Value).Returns(new LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/?providerId={provider.ProviderId}");
             // Act
@@ -266,7 +270,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                 }
             };
             LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
-            LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
+            LarsSearchSettings.Setup(x => x.Value).Returns(new LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
             // Act

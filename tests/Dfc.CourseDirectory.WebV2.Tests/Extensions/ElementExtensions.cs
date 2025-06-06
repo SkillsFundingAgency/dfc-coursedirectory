@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.Extensions
 {
     public static class ElementExtensions
     {

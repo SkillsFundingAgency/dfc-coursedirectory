@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.Extensions
 {
     public static class HttpResponseMessageExtensions
     {

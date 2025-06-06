@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
-using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Testing;
 using Xunit;
+using DatabaseTestBase = Dfc.CourseDirectory.WebV2.Tests.Core.DatabaseTestBase;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.Security
 {

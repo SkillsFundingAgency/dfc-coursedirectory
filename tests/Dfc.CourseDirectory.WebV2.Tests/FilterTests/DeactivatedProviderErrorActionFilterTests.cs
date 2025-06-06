@@ -5,6 +5,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {

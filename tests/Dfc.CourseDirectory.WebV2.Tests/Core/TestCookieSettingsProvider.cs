@@ -1,6 +1,6 @@
 ﻿using Dfc.CourseDirectory.WebV2.Cookies;
 
-namespace Dfc.CourseDirectory.Web.Tests.Core
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     public class TestCookieSettingsProvider : ICookieSettingsProvider
     {

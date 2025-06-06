@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     public class InMemoryMptxStateProvider : IMptxStateProvider
     {

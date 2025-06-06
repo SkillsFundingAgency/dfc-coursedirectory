@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.WebV2.Views.Shared;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
 {
     public class LayoutModelStorageTests
     {
@@ -16,8 +16,8 @@ namespace Dfc.CourseDirectory.Web.Tests
             mockViewData.SetLayoutModel(layoutModel);
             var retrievedModel = mockViewData.GetLayoutModel();
 
-            Assert.Same(retrievedModel,layoutModel);
-            Assert.Equal(retrievedModel.BackLink,layoutModel.BackLink);
+            Assert.Same(retrievedModel, layoutModel);
+            Assert.Equal(retrievedModel.BackLink, layoutModel.BackLink);
         }
 
         [Fact]

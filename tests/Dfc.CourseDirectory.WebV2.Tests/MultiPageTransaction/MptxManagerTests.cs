@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 

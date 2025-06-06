@@ -9,10 +9,10 @@ using Dfc.CourseDirectory.Core.DataStore;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.Tests.Data;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
 using FormFlow.State;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +26,7 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Dfc.CourseDirectory.Web.Tests.Core
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     [CollectionDefinition("Mvc")]
     public class MvcCollection : ICollectionFixture<CourseDirectoryApplicationFactory>

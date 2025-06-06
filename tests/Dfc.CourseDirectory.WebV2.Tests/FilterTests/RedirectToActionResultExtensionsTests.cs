@@ -1,10 +1,12 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.WebV2.Tests
+
+namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
     public class RedirectToActionResultExtensionsTests : MvcTestBase
     {

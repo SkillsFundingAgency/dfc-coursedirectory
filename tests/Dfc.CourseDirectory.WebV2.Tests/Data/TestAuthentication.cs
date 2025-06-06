@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Dfc.CourseDirectory.Web.Tests.Data
+namespace Dfc.CourseDirectory.WebV2.Tests.Data
 {
     public class TestAuthenticationOptions : AuthenticationSchemeOptions
     {

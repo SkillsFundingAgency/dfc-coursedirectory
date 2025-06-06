@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core.Validation;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.Extensions
 {
     public static class HtmlDocumentExtensions
     {
@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests
         {
             var message = ErrorRegistry.All[errorCode];
 
-            AssertHasError(doc, fieldName, message);
+            doc.AssertHasError(fieldName, message);
         }
 
         public static IReadOnlyList<IElement> GetAllElementsByTestId(this IHtmlDocument doc, string testId) =>

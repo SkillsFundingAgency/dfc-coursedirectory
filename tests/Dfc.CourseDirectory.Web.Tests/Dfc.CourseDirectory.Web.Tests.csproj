@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Web\Dfc.CourseDirectory.Web.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ControllerTests\" />
+    <Folder Include="Core\" />
+    <Folder Include="FilterTests\" />
+  </ItemGroup>
 </Project>

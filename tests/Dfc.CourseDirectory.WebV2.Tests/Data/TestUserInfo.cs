@@ -8,7 +8,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Security;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.Data
 {
     public enum TestUserType { Developer, Helpdesk, ProviderUser, ProviderSuperUser }
 
@@ -57,9 +57,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests
                 case TestUserType.Helpdesk:
                     return AsHelpdesk();
                 case TestUserType.ProviderSuperUser:
-                    return AsProviderSuperUser(providerId.Value, Core.Models.ProviderType.FE);
+                    return AsProviderSuperUser(providerId.Value, CourseDirectory.Core.Models.ProviderType.FE);
                 case TestUserType.ProviderUser:
-                    return AsProviderUser(providerId.Value, Core.Models.ProviderType.FE);
+                    return AsProviderUser(providerId.Value, CourseDirectory.Core.Models.ProviderType.FE);
                 default:
                     throw new ArgumentException($"Unknown test user type: '{userType}'.", nameof(userType));
             }

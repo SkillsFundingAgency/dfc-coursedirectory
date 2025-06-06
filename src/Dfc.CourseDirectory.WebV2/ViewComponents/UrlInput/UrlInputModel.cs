@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.ViewComponents.UrlInput
+﻿namespace Dfc.CourseDirectory.WebV2.ViewComponents.UrlInput
 {
     public class UrlInputModel
     {

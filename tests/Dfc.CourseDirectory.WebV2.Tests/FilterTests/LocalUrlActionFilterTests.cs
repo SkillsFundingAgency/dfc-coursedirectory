@@ -2,6 +2,7 @@
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Filters;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

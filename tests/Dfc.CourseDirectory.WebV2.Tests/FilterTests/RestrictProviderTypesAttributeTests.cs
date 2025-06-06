@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.Attributes;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {

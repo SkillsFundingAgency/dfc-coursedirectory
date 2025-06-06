@@ -12,7 +12,7 @@ using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Controllers.CopyCourse;
+using Dfc.CourseDirectory.WebV2.Controllers.CopyCourse;
 using Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
+namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
 {
     public class CopyCourseRunControllerTests
     {

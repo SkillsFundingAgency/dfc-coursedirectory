@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
@@ -8,7 +7,7 @@ using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using Dfc.CourseDirectory.WebV2.ViewModels.EditCourse;
 using FluentValidation;
 
-namespace Dfc.CourseDirectory.Web.Validation
+namespace Dfc.CourseDirectory.WebV2.Validation
 {
     public class EditCourseRunSaveViewModelValidator : AbstractValidator<EditCourseRunSaveViewModel>
     {

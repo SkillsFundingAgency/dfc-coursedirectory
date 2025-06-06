@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Pagination;
 
-namespace Dfc.CourseDirectory.Web.Helpers
+namespace Dfc.CourseDirectory.WebV2.Helpers
 {
     public interface IPaginationHelper
     {

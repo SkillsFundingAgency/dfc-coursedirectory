@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FormFlow.State;
 
-namespace Dfc.CourseDirectory.WebV2.Tests
+namespace Dfc.CourseDirectory.WebV2.Tests.Core
 {
     /// <summary>
     /// An in-memory store for Journey instances used by tests.

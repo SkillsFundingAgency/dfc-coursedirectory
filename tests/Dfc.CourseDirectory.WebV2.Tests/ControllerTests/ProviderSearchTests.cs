@@ -6,17 +6,16 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Search;
 using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Web.Tests.Core;
-using Dfc.CourseDirectory.Web.Tests.Data;
-using Dfc.CourseDirectory.Web.Tests.Extensions;
-using Dfc.CourseDirectory.Web.ViewModels;
 using Dfc.CourseDirectory.WebV2.Features.ProviderSearch;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using Xunit;
 
-namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
+namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
 {
     public class ProviderSearchTests : MvcTestBase
     {
@@ -133,20 +132,20 @@ namespace Dfc.CourseDirectory.Web.Tests.ControllerTests
             using (new AssertionScope())
             {
                 provider1SearchResultRow.Should().NotBeNull();
-                provider1SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult1.ProviderName);
-                provider1SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().Be("View dashboard");
+                Extensions.ElementExtensions.GetElementByTestId(provider1SearchResultRow, "provider-name").TextContent.Should().Be(providerSearchResult1.ProviderName);
+                Extensions.ElementExtensions.GetElementByTestId(provider1SearchResultRow, "provider-action").TextContent.Trim().Should().Be("View dashboard");
 
                 provider2SearchResultRow.Should().NotBeNull();
-                provider2SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult2.ProviderName);
-                provider2SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().Be("Add provider");
+                Extensions.ElementExtensions.GetElementByTestId(provider2SearchResultRow, "provider-name").TextContent.Should().Be(providerSearchResult2.ProviderName);
+                Extensions.ElementExtensions.GetElementByTestId(provider2SearchResultRow, "provider-action").TextContent.Trim().Should().Be("Add provider");
 
                 provider3SearchResultRow.Should().NotBeNull();
-                provider3SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult3.ProviderName);
-                provider3SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().BeEmpty();
+                Extensions.ElementExtensions.GetElementByTestId(provider3SearchResultRow, "provider-name").TextContent.Should().Be(providerSearchResult3.ProviderName);
+                Extensions.ElementExtensions.GetElementByTestId(provider3SearchResultRow, "provider-action").TextContent.Trim().Should().BeEmpty();
 
                 provider4SearchResultRow.Should().NotBeNull();
-                provider4SearchResultRow.GetElementByTestId("provider-name").TextContent.Should().Be(providerSearchResult4.ProviderName);
-                provider4SearchResultRow.GetElementByTestId("provider-action").TextContent.Trim().Should().BeEmpty();
+                Extensions.ElementExtensions.GetElementByTestId(provider4SearchResultRow, "provider-name").TextContent.Should().Be(providerSearchResult4.ProviderName);
+                Extensions.ElementExtensions.GetElementByTestId(provider4SearchResultRow, "provider-action").TextContent.Trim().Should().BeEmpty();
             }
         }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
-using Dfc.CourseDirectory.Web.Validation;
+using Dfc.CourseDirectory.WebV2.Validation;
 using Dfc.CourseDirectory.WebV2.ViewModels.EditCourse;
 using FluentValidation.TestHelper;
 using Moq;

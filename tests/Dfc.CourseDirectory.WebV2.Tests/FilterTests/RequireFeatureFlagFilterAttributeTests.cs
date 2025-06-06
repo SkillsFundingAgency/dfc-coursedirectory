@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {
