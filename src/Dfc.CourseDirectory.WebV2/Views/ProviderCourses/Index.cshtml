@@ -1,11 +1,11 @@
-﻿@using Dfc.CourseDirectory.Web.ViewComponents.ProviderCoursesResults
-@using Dfc.CourseDirectory.WebV2.ViewComponents.Notification
+﻿@using Dfc.CourseDirectory.WebV2.ViewComponents.Notification
+@using Dfc.CourseDirectory.WebV2.ViewComponents.ProviderCoursesResults
 @{
     ViewData["Title"] = "Your published courses";
     Layout = "_Layout_Your_Courses";
 }
 
-@model Dfc.CourseDirectory.Web.ViewModels.ProviderCourses.ProviderCoursesViewModel
+@model Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses.ProviderCoursesViewModel
 @{
     var hasCourses = Model.ProviderCourseRuns != null && Model.ProviderCourseRuns.Any();
 
