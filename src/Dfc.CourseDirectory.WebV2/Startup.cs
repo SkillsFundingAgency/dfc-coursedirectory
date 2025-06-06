@@ -48,6 +48,8 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddSingleton(Configuration);
 
+            services.AddControllers();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
