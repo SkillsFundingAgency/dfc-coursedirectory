@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Dfc.CourseDirectory.Web.ViewModels
+namespace Dfc.CourseDirectory.WebV2.ViewModels
 {
     public class UnRegulatedNotFoundViewModel
     {

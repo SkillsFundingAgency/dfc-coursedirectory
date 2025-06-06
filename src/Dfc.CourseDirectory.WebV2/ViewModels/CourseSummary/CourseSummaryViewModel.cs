@@ -1,8 +1,8 @@
-﻿using Dfc.CourseDirectory.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
+namespace Dfc.CourseDirectory.WebV2.ViewModels.CourseSummary
 {
     public class CourseSummaryViewModel
     {

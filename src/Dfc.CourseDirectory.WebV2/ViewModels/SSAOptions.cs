@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.ViewModels
+﻿namespace Dfc.CourseDirectory.WebV2.ViewModels
 {
     public class SSAOptions
     {

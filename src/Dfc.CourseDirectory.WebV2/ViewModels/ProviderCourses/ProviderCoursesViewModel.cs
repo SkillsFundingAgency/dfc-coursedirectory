@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
+namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
 {
     public class ProviderCoursesViewModel
     {

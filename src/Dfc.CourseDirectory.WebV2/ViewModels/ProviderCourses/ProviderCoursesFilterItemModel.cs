@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.Web.ViewModels.ProviderCourses
+﻿namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
 {
     public class ProviderCoursesFilterItemModel
     {

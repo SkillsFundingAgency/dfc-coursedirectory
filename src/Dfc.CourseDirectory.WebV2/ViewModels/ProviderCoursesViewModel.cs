@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Dfc.CourseDirectory.Web.ViewModels.ProviderCourses;
+using Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses;
 
-namespace Dfc.CourseDirectory.Web.ViewModels
+namespace Dfc.CourseDirectory.WebV2.ViewModels
 {
     public class ProviderCoursesViewModel
     {
