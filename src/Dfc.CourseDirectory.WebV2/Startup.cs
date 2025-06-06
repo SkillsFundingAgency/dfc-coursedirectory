@@ -94,7 +94,6 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IBackgroundWorkScheduler>(sp => sp.GetRequiredService<QueueBackgroundWorkScheduler>());
 
             services.AddSingleton(new BlobServiceClient(Configuration["BlobStorageSettings:ConnectionString"]));
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly));
             services.AddCourseDirectory(_env, Configuration);
             services.AddSignalR();
 
