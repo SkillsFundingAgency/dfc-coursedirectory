@@ -10,5 +10,23 @@
     "inputFiles": [
       "wwwroot/**/pttcd.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validation/additional-methods.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-validation/additional-methods.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validation/jquery.validate.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-validation/jquery.validate.js"
+    ]
   }
 ]
