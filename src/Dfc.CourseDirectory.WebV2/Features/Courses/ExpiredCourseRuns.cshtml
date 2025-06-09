@@ -56,22 +56,37 @@
                             <li data-testid="StartDate">@row.StartDate.ToString("dd/MM/yyyy")</li>
                         </ul>
                     </td>
-                    <td class="govuk-table__cell" style="width: 75px">
-                        <a asp-controller="EditCourseRun"
-                           asp-action="Index"
-                           asp-route-courseId="@row.CourseId"
-                           asp-route-courseRunId="@row.CourseRunId"
-                           asp-route-learnAimRef="@row.LearnAimRef"
-                           asp-route-notionalNVQLevelv2="row.NotionalNVQLevelv2"
-                           asp-route-awardOrgCode="@row.AwardOrgCode"
-                           asp-route-learnAimRefTitle="@row.LearnAimRefTitle"
-                           asp-route-learnAimRefTypeDesc="@row.LearnAimRefTypeDesc"
-                           asp-route-mode="DataQualityIndicator"
-                           class="govuk-link">
-                            Fix
-                            <span class="govuk-visually-hidden">@row.LearnAimRefTitle</span>
-                        </a>
-                    </td>
+                    @if (row.Type == "TLevel")
+                    {
+                        <td class="govuk-table__cell" style="width: 75px">
+                            <a asp-controller="ViewTLevel"
+                               asp-action="Index"
+                               asp-route-tLevelId="@row.CourseId"
+                               class="govuk-link">
+                                Fix
+                                <span class="govuk-visually-hidden">@row.LearnAimRefTitle</span>
+                            </a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="govuk-table__cell" style="width: 75px">
+                            <a asp-controller="EditCourseRun"
+                               asp-action="Index"
+                               asp-route-courseId="@row.CourseId"
+                               asp-route-courseRunId="@row.CourseRunId"
+                               asp-route-learnAimRef="@row.LearnAimRef"
+                               asp-route-notionalNVQLevelv2="row.NotionalNVQLevelv2"
+                               asp-route-awardOrgCode="@row.AwardOrgCode"
+                               asp-route-learnAimRefTitle="@row.LearnAimRefTitle"
+                               asp-route-learnAimRefTypeDesc="@row.LearnAimRefTypeDesc"
+                               asp-route-mode="DataQualityIndicator"
+                               class="govuk-link">
+                                Fix
+                                <span class="govuk-visually-hidden">@row.LearnAimRefTitle</span>
+                            </a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
