@@ -9,26 +9,6 @@ namespace Dfc.CourseDirectory.Web.ViewComponents.ProviderCoursesResults
         {
             var actualModel = model ?? new ProviderCoursesViewModel();
 
-
-
-            //var Items = new List<ZCodeSearchResultItemModel>()
-            //{
-            //    new ZCodeSearchResultItemModel()
-            //    {
-
-            //        NotionalNVQLevelv2 = "E",
-            //        LearnAimRef = "Z00004395",
-            //        LearnAimRefTitle =
-            //            "Non regulated Adult skills formula funded provision, Pre-Entry Level, Maths, 93 to 100 hrs",
-            //        AwardOrgCode = "BTEC",
-            //        LearnAimRefTypeDesc = "Test Qualification Title"
-
-
-            //    }
-            //};
-
-            //actualModel.Items = Items;
-
             return View("~/ViewComponents/ProviderCoursesResults/Default.cshtml", actualModel);
         }
     }

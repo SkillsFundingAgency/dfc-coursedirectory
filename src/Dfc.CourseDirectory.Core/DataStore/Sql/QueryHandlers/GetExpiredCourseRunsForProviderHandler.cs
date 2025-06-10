@@ -14,36 +14,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             SqlTransaction transaction,
             GetExpiredCourseRunsForProvider query)
         {
-            //var sql = $@"
-            //        SELECT c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
-            //         v.VenueName, cr.[National], cr.StudyMode, ld.LearnAimRefTitle, ld.NotionalNVQLevelv2, ld.AwardOrgCode, lart.LearnAimRefTypeDesc,
-            //         cr.StartDate
-            //        FROM Pttcd.Courses c
-            //        JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId
-            //        JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-            //        JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
-            //        JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
-            //        LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
-            //        WHERE cr.CourseRunStatus = 1
-            //        AND cr.StartDate < @Today
-            //        AND p.ProviderId = @ProviderId
-            //        ORDER BY ld.LearnAimRefTitle ";
-
-            //if (query.IsNonLars)
-            //{
-            //    sql = $@"
-            //        SELECT c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
-            //         v.VenueName, cr.[National], cr.StudyMode, cr.StartDate
-            //        FROM Pttcd.Courses c
-            //        JOIN Pttcd.CourseRuns cr ON c.CourseId = cr.CourseId and c.LearnAimRef is null
-            //        JOIN Pttcd.Providers p ON c.ProviderUkprn = p.Ukprn
-            //        LEFT JOIN Pttcd.Venues v ON cr.VenueId = v.VenueId
-            //        WHERE cr.CourseRunStatus = 1
-            //        AND cr.StartDate < @Today
-            //        AND p.ProviderId = @ProviderId
-            //        ORDER BY cr.CourseRunId";
-            //}
-
             var sql = $@"SELECT c.CourseId, cr.CourseRunId, cr.CourseName, cr.ProviderCourseId, c.LearnAimRef, cr.DeliveryMode,
                 v.VenueName, cr.[National], cr.StudyMode, ld.LearnAimRefTitle, ld.NotionalNVQLevelv2, ld.AwardOrgCode, lart.LearnAimRefTypeDesc,
                 cr.StartDate, 'Lars' AS Type
@@ -69,8 +39,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             AND p.ProviderId = @ProviderId
             UNION
             SELECT
-                t.TLevelId AS CourseId, T.TLevelId AS 'CourseRunId', d.Name AS CourseName, 'ProviderCourseId', 'LearnAimRef', 4 AS 'DeliveryMode', 
-	            v.VenueName, 1 AS 'National', 1 AS 'StudyMode', 'LearnAimRefTitle', 'NotionalNVQLevelv2', 'AwardOrgCode', 'LearnAimRefTypeDesc', 
+                t.TLevelId AS CourseId, t.TLevelId AS 'CourseRunId', d.Name AS CourseName, T.YourReference AS 'ProviderCourseId', '' AS 'LearnAimRef', 0 AS 'DeliveryMode', 
+	            v.VenueName, 1 AS 'National', 1 AS 'StudyMode', '' AS 'LearnAimRefTitle', '' AS 'NotionalNVQLevelv2', '' AS 'AwardOrgCode', '' AS 'LearnAimRefTypeDesc' , 
 	            t.StartDate, 'TLevel' AS Type
             FROM Pttcd.TLevels AS T
             JOIN Pttcd.TLevelDefinitions d ON t.TLevelDefinitionId = d.TLevelDefinitionId

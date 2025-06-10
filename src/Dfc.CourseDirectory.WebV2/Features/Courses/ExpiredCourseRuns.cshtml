@@ -46,11 +46,15 @@
                                 </li>
                             }
 
-                            <li>@row.DeliveryMode.ToDescription()</li>
-
-                            @if (row.StudyMode.HasValue)
+                            @* T Levels don't have a delivery mode or study mode so we don't display these*@
+                            @if (row.Type != "TLevel")
                             {
-                                <li>@row.StudyMode.ToDescription()</li>
+                                <li>@row.DeliveryMode.ToDescription()</li>
+
+                                @if (row.StudyMode.HasValue)
+                                {
+                                    <li>@row.StudyMode.ToDescription()</li>
+                                }
                             }
 
                             <li data-testid="StartDate">@row.StartDate.ToString("dd/MM/yyyy")</li>
@@ -81,6 +85,7 @@
                                asp-route-learnAimRefTitle="@row.LearnAimRefTitle"
                                asp-route-learnAimRefTypeDesc="@row.LearnAimRefTypeDesc"
                                asp-route-mode="DataQualityIndicator"
+                               asp-route-type="@row.Type"
                                class="govuk-link">
                                 Fix
                                 <span class="govuk-visually-hidden">@row.LearnAimRefTitle</span>

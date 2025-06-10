@@ -30,6 +30,5 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             }
             return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query() { IsNonLars = isNonLars }, vm => View("ExpiredCourseRuns", vm));
         }
-
     }
 }
