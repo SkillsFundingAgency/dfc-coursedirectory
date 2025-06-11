@@ -1,0 +1,44 @@
+﻿@using Dfc.CourseDirectory.WebV2.Views.Shared
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@addTagHelper *, GovUk.Frontend.AspNetCore
+@model Dfc.CourseDirectory.WebV2.ViewModels.PublishedCourseViewModel
+@{
+    Layout = "_Layout_Your_Courses";
+
+    ViewData.SetLayoutModel(new LayoutModel
+            {
+                BackLink = false,
+            });
+    ViewBag.Title = "Your course has been published";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <govuk-panel>
+            <govuk-panel-title>Your course has been published</govuk-panel-title>
+            <govuk-panel-body>@Model.CourseName</govuk-panel-body>
+        </govuk-panel>
+
+        <p class="govuk-body">Your course is available to learners searching for learning and training opportunities on the National Careers Service.</p>
+
+        <p class="govuk-body">You can <a href="@ViewBag.LiveServiceURL" target="_blank" class="govuk-link">view your published course</a> to see how it's viewed by learners.</p>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+
+        <ul class="govuk-list">
+            @if (Model.NonLarsCourse)
+            {
+                <li><a asp-controller="AddCourse" asp-action="AddCourse" class="govuk-link">Add a new course</a></li>
+                <li><a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="true" class="govuk-link">View, edit, copy or delete a course</a></li>
+            }
+            else
+            {
+                <li><a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">Add a new course</a></li>
+                <li><a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link">View, edit, copy or delete a course</a></li>                
+            }
+            <li><a asp-controller="Home" asp-action="Index" class="govuk-link">Back to the home screen</a></li>
+        </ul>
+
+    </div>
+</div>

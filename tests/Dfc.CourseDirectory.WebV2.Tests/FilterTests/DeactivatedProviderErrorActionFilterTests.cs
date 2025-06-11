@@ -2,9 +2,10 @@
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FilterTests
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 
 namespace Dfc.CourseDirectory.WebV2.FeatureFlagProviders
 {

@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -67,7 +69,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("tlevels-row").TextContent.Should().NotBeNull();
 
             doc.GetElementByTestId("course-count").TextContent.Should().Be("5");
-            doc.GetElementByTestId("nonlars-count").TextContent.Should().Be("3");            
+            doc.GetElementByTestId("nonlars-count").TextContent.Should().Be("3");
             doc.GetElementByTestId("tlevel-count").TextContent.Should().Be("4");
             doc.GetElementByTestId("venue-count").TextContent.Should().Be("2");
         }
@@ -390,7 +392,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             doc.GetElementByTestId("DownloadCourses").Should().BeNull();
         }
 
-        private async Task<IReadOnlyCollection<Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>
+        private async Task<IReadOnlyCollection<CourseDirectory.Core.DataStore.Sql.Models.Venue>> CreateVenues(Guid providerId, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
                 TestData.CreateVenue(providerId, createdBy: User.ToUserInfo(), venueName: $"Test {i}")));
 
@@ -409,7 +411,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderDashboard
             }
         }
 
-        private async Task CreateTLevels(Guid providerId, IEnumerable<Core.DataStore.Sql.Models.TLevelDefinition> tLevelDefinitions, IEnumerable<Core.DataStore.Sql.Models.Venue> venues, int count) =>
+        private async Task CreateTLevels(Guid providerId, IEnumerable<CourseDirectory.Core.DataStore.Sql.Models.TLevelDefinition> tLevelDefinitions, IEnumerable<CourseDirectory.Core.DataStore.Sql.Models.Venue> venues, int count) =>
             await Task.WhenAll(Enumerable.Range(0, count).Select(i =>
                 TestData.CreateTLevel(
                     providerId,

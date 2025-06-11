@@ -1,0 +1,111 @@
+﻿@addTagHelper *, Dfc.CourseDirectory.WebV2
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Extensions
+@model Dfc.CourseDirectory.WebV2.ViewComponents.ZCodeSearchResult.ZCodeSearchResultModel;
+
+<div class="govuk-grid-row">
+    @if (Model.Items != null && Model.Items.Count() > 0)
+    {
+        <div class="govuk-grid-column-one-quarter">
+            @*<h3>filter controls here</h3>*@
+            @if (Model.Filters != null)
+            {
+                if (Model.HasSelectedFilters)
+                {
+                    <div class="govuk-form-group">
+                        <a class="govuk-link" id="ClearAllFilters" href="">Clear filters</a>
+                    </div>
+                }
+                foreach (var filter in Model.Filters)
+                {
+                    <div class="govuk-form-group govuk-!-font-size-14">
+                        <div class="accordion govuk-heading-s">@filter.Title</div>
+                        <div class="panel">
+
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-visually-hidden">
+                                    Select @filter.Title
+                                </legend>
+
+                                <div class="govuk-checkboxes govuk-checkboxes--small">
+
+                                    @foreach (var item in filter.Items)
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label" for="@item.Id">
+                                                @item.Text (@item.Count)
+                                            </label>
+                                        </div>
+                                    }
+
+                                </div>
+                            </fieldset>
+
+                        </div>
+                    </div>
+                }
+
+                <div class="govuk-form-group govuk-!-font-size-14">
+                    <a class="govuk-button" id="ApplyFilter">Apply</a>
+                </div>
+            }
+        </div>
+
+        <div class="govuk-grid-column-three-quarters">
+
+            <div class="govuk-table govuk-!-font-size-14">
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cd-lars-search-result__container">
+                        <h2 class="govuk-heading-m">@item.LearnAimRefTitle</h2>
+                        <p class="govuk-body">LARS:<span class="govuk-!-font-weight-bold"> @item.LearnAimRef</span></p>
+                        <p class="govuk-body">Level: <span class="govuk-!-font-weight-bold"> @item.NotionalNVQLevelv2</span></p>
+                        @*<p class="govuk-body">Awarding body:<span class="govuk-!-font-weight-bold"> @item.AwardOrgCode</span></p>*@
+
+                        @Html.ActionLink("Choose this provision", "AddCourse", "AddCourse", new { @item?.LearnAimRef, @item?.NotionalNVQLevelv2, @item?.AwardOrgCode, @item?.LearnAimRefTitle, @item?.LearnAimRefTypeDesc }, new { @class = "link--button" })
+
+                    </div>
+                }
+
+            </div>
+            <vc:pager
+                current-page="Model.CurrentPage"
+                total-pages="(int)Math.Ceiling((decimal)Model.TotalCount/Model.ItemsPerPage)"
+                get-page-url="@(pageNumber => Url.Action(
+                    "ZCodeNotKnown",
+                    new
+                    {
+                        Level1Id = Model.Level1Id,
+                        Level2Id = Model.Level2Id,
+                        NotionalNVQLevelv2Filter = Model.Filters.SingleOrDefault(f => f.Title == "Level")?.Items?.Where(i => i.IsSelected).Select(i => i.Value),
+                        AwardOrgAimRefFilter = Model.Filters.SingleOrDefault(f => f.Title == "Category")?.Items?.Where(i => i.IsSelected).Select(i => i.Value),
+                        PageNo = pageNumber
+                    }))" />
+        </div>
+    }
+
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var acc = document.getElementsByClassName("accordion");
+            var i;
+
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "none") {
+                        panel.style.display = "block";
+                    } else {
+                        panel.style.display = "none";
+                    }
+                });
+            }
+        });
+    })(jQuery);
+</script>

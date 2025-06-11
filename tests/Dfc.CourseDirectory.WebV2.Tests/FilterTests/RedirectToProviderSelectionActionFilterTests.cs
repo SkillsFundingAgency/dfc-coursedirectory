@@ -1,7 +1,8 @@
 ﻿using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

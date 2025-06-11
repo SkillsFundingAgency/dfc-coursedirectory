@@ -1,4 +1,5 @@
 ﻿using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
 {
