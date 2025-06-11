@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
     {
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private const string NonLars = "NonLars";
 
         private ISession Session => HttpContext.Session;
         private readonly IProviderContextProvider _providerContextProvider;
@@ -54,7 +55,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             IProviderContextProvider providerContextProvider,
             ICurrentUserProvider currentUserProvider,
             IClock clock,
-            IRegionCache regionCache, 
+            IRegionCache regionCache,
             ILogger<BlobStorageBinaryStorageProvider> log,
             IWebRiskService webRiskService) : base(sqlQueryDispatcher)
         {
@@ -108,10 +109,10 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 CostDescription = model.CostDescription,
                 AttendanceMode = model.AttendanceMode,
             };
-                      
+
             Session.SetObject("EditCourseRunObject", vm);
-   
-            var returnurl= new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
+
+            var returnurl = new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
                 .ToString();
 
@@ -150,7 +151,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
             var cachedData = Session.GetObject<EditCourseRunViewModel>("EditCourseRunObject");
 
-            var course = await GetCourse(cachedData.CourseId.Value);            
+            var course = await GetCourse(cachedData.CourseId.Value);
 
             var courseRun = course.CourseRuns.SingleOrDefault(cr => cr.CourseRunId == cachedData.CourseRunId);
 
@@ -243,7 +244,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId, Guid courseRunId, PublishMode mode)
+        public async Task<IActionResult> Index(string learnAimRef,
+            string notionalNVQLevelv2,
+            string awardOrgCode,
+            string learnAimRefTitle,
+            string learnAimRefTypeDesc,
+            Guid? courseId,
+            Guid courseRunId,
+            PublishMode mode,
+            string type)
         {
             int? UKPRN;
 
@@ -276,6 +285,8 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             Session.SetObject(SessionVenues, venues);
             Session.SetObject(SessionRegions, regions);
 
+            SetLarsSession(type);
+
             if (courseId.HasValue)
             {
                 var nonLarsCourse = IsCourseNonLars();
@@ -286,7 +297,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                 if (courseRun != null)
                 {
                     _log.LogInformation("EditCourseRunController Index courseRun !=null");
-                    
+
                     EditCourseRunViewModel vm = new EditCourseRunViewModel
                     {
                         AwardOrgCode = awardOrgCode,
@@ -342,15 +353,15 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                         if (courseRun.SubRegionIds.Contains(selectRegionRegionItem.Id))
                         {
                             var subregionsInList = from subRegion in selectRegionRegionItem.SubRegion
-                                         where courseRun.SubRegionIds.Contains(subRegion.Id)
-                                         select subRegion;
+                                                   where courseRun.SubRegionIds.Contains(subRegion.Id)
+                                                   select subRegion;
 
                             //If false, then tick all subregions
                             foreach (var subRegionItemModel in selectRegionRegionItem.SubRegion)
                             {
                                 subRegionItemModel.Checked = true;
                             }
-                            
+
                         }
                         //Else, just tick the one subregion per item
                         else
@@ -377,7 +388,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
                     return View("EditCourseRun", vm);
                 }
             }
-            _log.LogInformation("EditCourseRunController Index error {Error}",Activity.Current?.Id ?? HttpContext.TraceIdentifier);
+            _log.LogInformation("EditCourseRunController Index error {Error}", Activity.Current?.Id ?? HttpContext.TraceIdentifier);
             //error page
             return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
@@ -517,7 +528,7 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             {
                 case PublishMode.DataQualityIndicator:
                     TempData[TempDataKeys.ExpiredCoursesNotification] = model.CourseName + " has been updated";
-                    return RedirectToAction("Index", "ExpiredCourseRuns",new { isnonlars = model.NonLarsCourse })
+                    return RedirectToAction("Index", "ExpiredCourseRuns", new { isnonlars = model.NonLarsCourse })
                         .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
                 default:
                     TempData[TempDataKeys.ShowCourseUpdatedNotification] = true;
@@ -557,6 +568,21 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
             }
 
             return selectVenue;
+        }
+
+        private void SetLarsSession(string type)
+        {
+            if (!string.IsNullOrEmpty(type))
+            {
+                if (type == NonLars)
+                {
+                    Session.SetString(SessionNonLarsCourse, "true");
+                }
+                else
+                {
+                    Session.SetString(SessionNonLarsCourse, "false");
+                }
+            }
         }
     }
 }

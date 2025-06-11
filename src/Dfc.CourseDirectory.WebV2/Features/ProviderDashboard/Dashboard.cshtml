@@ -5,19 +5,20 @@
 @if (Model.PastStartDateCourseRunCount > 0 || Model.PastStartDateNonLarsCourseRunCount > 0)
 {
     <pttcd-notification title="Course start dates" data-testid="courseStartDateNotification">
-        
-        @if(Model.PastStartDateCourseRunCount > 0)
+
+        @if (Model.PastStartDateCourseRunCount > 0)
         {
             <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount LARS courses are in the past.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course start dates</a></p>
         }
         @if (Model.PastStartDateNonLarsCourseRunCount > 0)
         {
-            <br/>
             <p class="govuk-body">The start date of @Model.PastStartDateNonLarsCourseRunCount Non LARS courses are in the past.</p>
-            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link">Update Non LARS course start dates</a></p>
         }
-        
+        @if (Model.PastStartDateTLevelRunCount > 0)
+        {
+            <p class="govuk-body">The start date of @Model.PastStartDateTLevelRunCount T Levels are in the past.</p>
+        }
+        <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course / T Level start dates</a></p>
     </pttcd-notification>
 }
 
@@ -208,7 +209,7 @@
                             {
                                 <li>
                                     <a asp-controller="CoursesDataManagement" asp-action="NonLarsCheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
-                                    
+
                                 </li>
                             }
                             <li>
@@ -238,7 +239,7 @@
                                 <a asp-controller="CoursesDataManagement" asp-action="TemplateNonLars" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
                                     Download course data template (CSV)
                                 </a>
-                                
+
                             </li>
                         </ul>
                     </div>

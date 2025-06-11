@@ -39,6 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTypeDesc { get; set; }
         public DateTime StartDate { get; set; }
+        public string Type { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -91,7 +92,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
                         NotionalNVQLevelv2 = r.NotionalNVQLevelv2,
                         AwardOrgCode = r.AwardOrgCode,
                         LearnAimRefTypeDesc = r.LearnAimRefTypeDesc,
-                        StartDate = r.StartDate
+                        StartDate = r.StartDate,
+                        Type = r.Type
                     })
                     .ToArray(),
                 Total = results.Count
