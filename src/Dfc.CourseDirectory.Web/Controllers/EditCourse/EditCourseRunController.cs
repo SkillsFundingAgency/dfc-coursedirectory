@@ -572,13 +572,16 @@ namespace Dfc.CourseDirectory.Web.Controllers.EditCourse
 
         private void SetLarsSession(string type)
         {
-            if (type == NonLars)
+            if (!string.IsNullOrEmpty(type))
             {
-                Session.SetString(SessionNonLarsCourse, "true");
-            }
-            else
-            {
-                Session.SetString(SessionNonLarsCourse, "false");
+                if (type == NonLars)
+                {
+                    Session.SetString(SessionNonLarsCourse, "true");
+                }
+                else
+                {
+                    Session.SetString(SessionNonLarsCourse, "false");
+                }
             }
         }
     }
