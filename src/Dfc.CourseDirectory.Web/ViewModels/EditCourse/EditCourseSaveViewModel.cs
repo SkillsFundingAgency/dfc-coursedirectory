@@ -22,7 +22,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.EditCourse
         public PublishMode Mode { get; set; }
         public string CourseName { get; set; }
 
-    }
-
-   
+    }   
 }
