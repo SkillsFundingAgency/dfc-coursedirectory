@@ -1,5 +1,8 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using Xunit;
 

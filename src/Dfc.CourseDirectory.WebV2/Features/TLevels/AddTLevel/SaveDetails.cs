@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SaveDetails
             _journeyInstance = journeyInstance;
         }
 
-        public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+        public Task Handle(Command request, CancellationToken cancellationToken)
         {
             ThrowIfFlowStateNotValid();
 

@@ -1,0 +1,21 @@
+﻿using Newtonsoft.Json;
+
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction.Json
+{
+    public static class Settings
+    {
+        public static JsonSerializerSettings CreateSerializerSettings()
+        {
+            var settings = new JsonSerializerSettings()
+            {
+                ContractResolver = new ContractResolver(),
+                Formatting = Formatting.None,
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+
+            settings.Converters.Add(new UrlJsonConverter());
+
+            return settings;
+        }
+    }
+}
