@@ -19,14 +19,6 @@
     padding: 30px;
 }
 
-.pttcd-provider-dashboard__card > ul {
-    margin-bottom: 0;
-}
-
-.pttcd-provider-dashboard__card__actions > ul {
-    margin-bottom: 0;
-}
-
 .pttcd-provider-dashboard__card__number {
     font-size: 4rem;
     margin: 0;
