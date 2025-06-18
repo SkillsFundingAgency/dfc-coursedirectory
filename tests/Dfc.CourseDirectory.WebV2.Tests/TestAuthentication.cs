@@ -18,9 +18,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests
             TestUserInfo authenticatedUserInfo,
             IOptionsMonitor<TestAuthenticationOptions> options,
             ILoggerFactory logger,
-            UrlEncoder encoder,
-            ISystemClock clock)
-            : base(options, logger, encoder, clock)
+            UrlEncoder encoder)
+            : base(options, logger, encoder)
         {
             _authenticatedUserInfo = authenticatedUserInfo;
         }

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
@@ -10,7 +9,6 @@ using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.ProviderSearch;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
@@ -39,7 +37,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Theory]
@@ -58,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
 
@@ -78,7 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
 
@@ -115,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
 
@@ -171,7 +169,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Theory]
@@ -197,7 +195,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status302Found);
+            response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/dashboard?providerId={provider.ProviderId}");
         }
 
@@ -218,7 +216,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ProviderSearch
             var response = await HttpClient.SendAsync(request);
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         private static Provider CreateProviderSearchResult(

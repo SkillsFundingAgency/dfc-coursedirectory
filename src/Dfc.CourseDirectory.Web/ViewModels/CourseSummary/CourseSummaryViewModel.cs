@@ -1,8 +1,6 @@
 ﻿using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
 {
@@ -59,7 +57,5 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public string Name { get; set; }
         public string Text { get; set; }
         public string Value { get; set; }
-
-
     }
 }

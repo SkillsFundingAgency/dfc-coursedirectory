@@ -1,8 +1,8 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Functions.OpenData
 {
@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Functions.OpenData
             string name = req.Query["name"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            dynamic data = JsonSerializer.Deserialize<dynamic>(requestBody);
             name = name ?? data?.name;
 
             string responseMessage = string.IsNullOrEmpty(name)

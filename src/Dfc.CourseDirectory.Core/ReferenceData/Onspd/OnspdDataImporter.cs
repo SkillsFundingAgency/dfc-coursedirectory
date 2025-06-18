@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation($"Processed {rowCount} rows, imported {importedCount} postcodes.");
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
         }
 
         public async Task AutomatedImportData()
@@ -121,7 +121,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private async Task DownloadZipFileToTempAsync(string downloadLink)
         {
             _logger.LogInformation("Zip file Url :{downloadLink}", downloadLink);
-
+          
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
 
@@ -156,6 +156,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         //Remove the CSV when process done
                         using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
                         // temp file exists
+
                         _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
                         break;
                     }
@@ -170,7 +171,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private async Task ProcessCSVtoDBAsync(StreamReader streamReader)
         {
-            _logger.LogInformation($"Start import csv postcodes to DB.");
+            _logger.LogInformation("Start import csv postcodes to DB.");
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
             var rowCount = 0;
@@ -198,7 +199,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation($"Processed {rowCount} rows, imported {importedCount} postcodes.");
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
         }
 
         private class Record

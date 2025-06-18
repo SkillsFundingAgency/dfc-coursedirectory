@@ -8,16 +8,11 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Services.CourseService;
-using Dfc.CourseDirectory.Services.Models.Courses;
 using Dfc.CourseDirectory.Services.Models.Regions;
-using Dfc.CourseDirectory.Web.Helpers;
 using Dfc.CourseDirectory.Web.ViewModels.CourseSummary;
-using Dfc.CourseDirectory.WebV2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace Dfc.CourseDirectory.Web.Controllers
 {
@@ -29,7 +24,6 @@ namespace Dfc.CourseDirectory.Web.Controllers
         private readonly ICourseService _courseService;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IConfiguration _configuration;
-
 
         public CourseSummaryController(
             ICourseService courseService,
@@ -49,7 +43,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         {
             Course course = null;
             CourseRun courseRun = null;
-            
+
             var nonLarsCourse = IsCourseNonLars();
             course = await GetCourse(courseId, nonLarsCourse);
             courseRun = course.CourseRuns.Where(x => x.CourseRunId == courseRunId.Value).FirstOrDefault();
@@ -116,7 +110,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if(!string.IsNullOrEmpty(courseRun.CourseWebsite))
+            if (!string.IsNullOrEmpty(courseRun.CourseWebsite))
             {
                 if (courseRun.CourseWebsite.Contains("http") || courseRun.CourseWebsite.Contains("https"))
                 {
@@ -128,7 +122,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 }
             }
 
-            if(courseRun.SubRegionIds?.Count > 0)
+            if (courseRun.SubRegionIds?.Count > 0)
             {
                 var allRegions = _courseService.GetRegions().RegionItems;
                 var regions = GetRegions().RegionItems.Select(x => x.Id);

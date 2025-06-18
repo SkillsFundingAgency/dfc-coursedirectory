@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using JustEat.HttpClientInterception;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using static Dfc.CourseDirectory.WebV2.AddressSearch.GetAddressAddressSearchService;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
 {
@@ -153,7 +150,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                 .ForHttps()
                 .ForHost("example.com")
                 .ForPath("getaddress/XX2 00X")
-                .ForQuery("api-key=key&expand=true&sort=true")
+                .ForQuery("key=key")
                 .Responds()
                 .WithStatus(HttpStatusCode.InternalServerError)
                 .RegisterWith(httpRequestInterceptor);

@@ -51,9 +51,7 @@
                 <govuk-input-label class="govuk-label--s">Telephone</govuk-input-label>
             </govuk-input>
 
-            <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
-                <govuk-input-label class="govuk-label--s">Website</govuk-input-label>
-            </govuk-input>
+            <pttcd-website-input asp-for="Website" label="Website" model-state-entry="@ViewContext.ModelState["Website"]" value="@Model.Website"></pttcd-website-input>
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
