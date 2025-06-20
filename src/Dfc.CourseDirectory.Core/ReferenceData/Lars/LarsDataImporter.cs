@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 {
@@ -123,13 +123,25 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
             async Task<HashSet<string>> ImportLearningDeliveryToSql()
             {
+                var mappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["X"] = "Not Applicable / Not Known"
+                };
+
                 const string csv = "LearningDelivery.csv";
                 var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
 
                 var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
                 _logger.LogInformation("{csv} - Excluded {LearnAimRef}s: {Excluded} (T Level detected in {LearnAimRefTitle})", csv, nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef), string.Join(", ", excluded), nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle));
 
-                var includedRecords = records.Where(r => !IsTLevel(r)).ToList();
+                List<UpsertLarsLearningDeliveriesRecord> includedRecords = records.Where(r => !IsTLevel(r)).ToList();
+                
+                includedRecords.ForEach(r =>
+                {
+                    r.NotionalNVQLevel = mappings.GetValueOrDefault(r.NotionalNVQLevel, r.NotionalNVQLevel);
+                    r.NotionalNVQLevelv2 = mappings.GetValueOrDefault(r.NotionalNVQLevelv2, r.NotionalNVQLevelv2);
+                });
+
                 await WithSqlQueryDispatcher(dispatcher =>
                 {
                     return dispatcher.ExecuteQuery(new UpsertLarsLearningDeliveries()
