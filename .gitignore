@@ -361,3 +361,4 @@ src/Dfc.CourseDirectory.Web/wwwroot/lib/microsoft-signalr/signalr.js
 tests/Dfc.CourseDirectory.Testing/appsettings.Testing.json
 src/Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.js
 src/Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.min.js
+/src/Dfc.CourseDirectory.WebV2/wwwroot/dist/pttcd.min.css
