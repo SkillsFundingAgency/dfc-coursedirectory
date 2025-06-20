@@ -1,0 +1,8 @@
+﻿.pttcd-sub-regions-selector__region .govuk-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pttcd-sub-regions-selector__region .govuk-checkboxes__item {
+    width: 25%;
+}

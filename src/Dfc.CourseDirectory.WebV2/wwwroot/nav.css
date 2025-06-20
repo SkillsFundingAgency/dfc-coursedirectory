@@ -1,0 +1,30 @@
+﻿.pttcd-subnav {
+    background-color: #f8f8f8;
+    padding: 1em;
+    border-left: 5px solid #207E77
+}
+
+.pttcd-subnav__items {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block
+}
+
+.pttcd-subnav__item {
+    display: inline-block;
+    margin: 0 15px 0 0;
+    padding: 5px 0;
+}
+
+.pttcd-subnav__item__link {
+    color: #0b0c0c;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+@media (min-width: 980px) {
+    .pttcd-sign-out-navigation-item {
+        float: right;
+    }
+}
