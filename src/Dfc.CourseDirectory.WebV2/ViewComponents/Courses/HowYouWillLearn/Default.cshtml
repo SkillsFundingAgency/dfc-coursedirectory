@@ -1,0 +1,72 @@
+﻿@using Dfc.CourseDirectory.Services.CourseService
+@using Dfc.CourseDirectory.WebV2.Validation
+@using Microsoft.Extensions.Options
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.HowYouWillLearn.HowYouWillLearnModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IOptions<HowYouWillLearnComponentSettings> howYouWillLearnComponentSettings
+
+@{
+    @*   var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+    var regex = RegexPattern.AllowEverything;
+    var howYouWillLearnTextFieldMaxChars = howYouWillLearnComponentSettings.Value.TextFieldMaxChars;
+}
+
+
+<div class="govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnTextFieldMaxChars>
+    <div class="govuk-form-group">
+        <label id="govuk-label-@nameof(Model.HowYouWillLearn)" class="govuk-label govuk-label--m" for="word-count" name="HowYouWillLearn">
+            @Model.LabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <div class="govuk-hint">
+                @Model.HintText
+            </div>
+        }
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.HowYouWillLearn" rows="7"
+                  aria-describedby="@Model.AriaDescribedBy" aria-label="HowYouWillLearn"
+                  val-max-length=@howYouWillLearnTextFieldMaxChars val-max-length-message="How you’ll learn must be @howYouWillLearnTextFieldMaxChars characters or less"
+                  val-regex="@regex"
+                  val-regex-message="How you’ll learn contains invalid characters"></textarea>
+
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementHowYouWillLearn = $("#@nameof(Model.HowYouWillLearn)");
+
+            $elementHowYouWillLearn.on("blur", function () {
+
+                var trimmed = $elementHowYouWillLearn.val().trim();
+                $elementHowYouWillLearn.val(trimmed);
+
+                var $characterCountValue = @howYouWillLearnTextFieldMaxChars;
+                var $countMessage = $("#HowYouWillLearn-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementHowYouWillLearn.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementHowYouWillLearn.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+        });
+    })(jQuery);
+</script>

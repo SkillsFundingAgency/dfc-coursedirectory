@@ -2,9 +2,12 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -116,7 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
                     venueUploadRows[1].ProviderVenueRef,
                     venueUploadRows[1].VenueName,
                     venueUploadRows[1].AddressLine1 + ", " + venueUploadRows[1].AddressLine2 + ", " + venueUploadRows[1].Town + ", " + venueUploadRows[1].County + ", " + venueUploadRows[1].Postcode,
-                    Core.DataManagement.Errors.MapVenueErrorToFieldGroup("VENUE_NAME_REQUIRED")
+                    Errors.MapVenueErrorToFieldGroup("VENUE_NAME_REQUIRED")
                 });
 
                 doc.GetElementByTestId("ResolveOnScreenOption").Should().NotBeNull();

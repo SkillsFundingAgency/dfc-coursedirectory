@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using FormFlow;
 using MediatR;
 using OneOf.Types;

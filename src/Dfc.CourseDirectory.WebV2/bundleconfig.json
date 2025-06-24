@@ -1,14 +1,32 @@
 [
   {
-    "outputFileName": "Content/dist/pttcd.min.css",
+    "outputFileName": "wwwroot/dist/pttcd.min.css",
     "inputFiles": [
-      "Content/**/*.css"
+      "wwwroot/**/*.css"
     ]
   },
   {
-    "outputFileName": "Content/dist/pttcd.min.js",
+    "outputFileName": "wwwroot/dist/pttcd.min.js",
     "inputFiles": [
-      "Content/**/*.js"
+      "wwwroot/**/pttcd.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validation/additional-methods.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-validation/additional-methods.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery-validation/jquery.validate.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-validation/jquery.validate.js"
     ]
   }
 ]

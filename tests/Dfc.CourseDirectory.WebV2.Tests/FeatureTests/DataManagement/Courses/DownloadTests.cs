@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using FluentAssertions;
 using Xunit;
 

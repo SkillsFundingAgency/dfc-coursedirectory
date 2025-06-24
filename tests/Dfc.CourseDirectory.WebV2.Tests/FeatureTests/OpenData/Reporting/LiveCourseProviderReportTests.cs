@@ -8,6 +8,8 @@ using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
 using FluentAssertions;
 using Xunit;
 
@@ -148,7 +150,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
         public async Task LiveCourseProviderReport_Get_ProviderHasNonLarsCourses_ReturnsExpectedCsv(TestUserType userType)
         {
             //Arange
-            var provider = await TestData.CreateProvider("providerName", Core.Models.ProviderType.NonLARS, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
+            var provider = await TestData.CreateProvider("providerName", ProviderType.NonLARS, "ProviderType", contact: CreateContact("CV17 9AD", null, null, null));
             await TestData.AddSectors();
             await TestData.CreateNonLarsCourse(provider.ProviderId, createdBy: User.ToUserInfo());
             await User.AsTestUser(userType);

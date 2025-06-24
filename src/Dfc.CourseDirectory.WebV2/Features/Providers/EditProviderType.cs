@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.Core.Validation;
-using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 {
@@ -84,12 +84,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 
             var tLevelDefinitions = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitions());
             var providerTLevelDefinitions = provider.ProviderType.HasFlag(ProviderType.TLevels)
-                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
+                ? await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelDefinitionsForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.TLevelDefinition>();
 
             var nonLarsSubTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetAllNonLarsSubTypes());
             var providerSubTypes = provider.ProviderType.HasFlag(ProviderType.NonLARS)
-                ? await _sqlQueryDispatcher.ExecuteQuery(new SqlQueries.GetNonLarsSubTypeForProvider { ProviderId = request.ProviderId })
+                ? await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsSubTypeForProvider { ProviderId = request.ProviderId })
                 : Enumerable.Empty<SqlModels.NonLarsSubType>();
 
             return CreateViewModel(provider.ProviderId, provider.ProviderType, nonLarsSubTypes, providerSubTypes.Select(pd => pd.NonLarsSubTypeId), tLevelDefinitions, providerTLevelDefinitions.Select(pd => pd.TLevelDefinitionId));
@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
                 failureList.Add(error);
             }
 
-            FluentValidation.Results.ValidationResult validationResult = new FluentValidation.Results.ValidationResult(failureList);
+            ValidationResult validationResult = new ValidationResult(failureList);
 
             if (!validationResult.IsValid)
             {

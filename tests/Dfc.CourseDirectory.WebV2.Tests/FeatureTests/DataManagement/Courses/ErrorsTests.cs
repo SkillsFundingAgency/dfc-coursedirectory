@@ -2,9 +2,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -92,8 +95,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
                 var errors = errorRows.Single().GetElementByTestId("Errors").GetTrimmedTextContent();
                 errors.Should().BeEquivalentTo(
-                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
-                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
+                    Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
+                    Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
                 );
 
                 doc.GetElementByTestId("ResolveOnScreenOption").Should().NotBeNull();
@@ -297,8 +300,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
                 var errors = errorRows.Single().GetElementByTestId("NonLarsRowErrors").GetTrimmedTextContent();
                 errors.Should().BeEquivalentTo(
-                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
-                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
+                   Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED") + ", " +
+                    Errors.MapCourseErrorToFieldGroup("COURSERUN_COST_REQUIRED")
                 );
 
                 doc.GetElementByTestId("ResolveOnScreenOption").Should().NotBeNull();

@@ -2,7 +2,7 @@
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Query = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.EnsureProviderExists;
 
-namespace Dfc.CourseDirectory.WebV2.Security
+namespace Dfc.CourseDirectory.Core.Security
 {
     public class EnsureProviderExistsSignInAction : ISignInAction
     {

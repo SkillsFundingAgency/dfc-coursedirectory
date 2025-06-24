@@ -1,0 +1,171 @@
+﻿@using System.Net
+@using Dfc.CourseDirectory.WebV2.Validation
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Cost.CostModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div id="costContainer" class="govuk-form-group">
+    <label id="govuk-label-Cost" class="govuk-label--m" asp-for="Cost">
+        @Model.CostLabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.CostHintText))
+    {
+        <span class="govuk-hint govuk-!-margin-top-3">
+            @Model.CostHintText
+        </span>
+    }
+
+    @{
+        @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+        var regex = RegexPattern.AllowEverything;
+
+    }
+
+    <div class="govuk-currency-input">
+        <div class="govuk-currency-input__inner">
+            <span class="govuk-currency-input__inner__unit">£</span>
+            <input class="govuk-input govuk-input--width-10" aria-label="Enter amount in pounds" type="text" asp-for="@Model.Cost" val-required-message="Enter cost or cost description" style="padding-left:25px"
+                   val-max-length="8"
+                   val-max-length-message="Maximum allowed cost value is 999,999.99">
+        </div>
+    </div>
+
+</div>
+
+<div id="sectionCostDescription" class="govuk-character-count" data-module="character-count" data-maxlength="255">
+    <div class="govuk-form-group">
+        <label class="govuk-label--m" for="word-count" name="CostDescription">
+            @Model.CostDescriptionLabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.CostDescriptionHintText))
+        {
+            <span class="govuk-hint govuk-!-margin-top-3">
+                @Model.CostDescriptionHintText
+            </span>
+        }
+        @{
+            Model.CostDescription = @WebUtility.HtmlDecode(@Model.CostDescription);
+        }
+
+        <textarea class="govuk-textarea js-character-count " asp-for="@Model.CostDescription" rows="5" aria-label="CostDescription"
+                  val-required-message="Enter cost or cost description"
+                  val-max-length="255"
+                  val-max-length-message="Cost description must be 255 characters or less"
+                  val-regex="@regex"
+                  val-regex-message="Cost Description contains invalid characters">
+            
+    </textarea>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $elementCostDescription = $("#@nameof(Model.CostDescription)");
+            var $validationMessageCostDescription = $elementCostDescription.prev("[data-valmsg-for='@nameof(Model.CostDescription)']");
+            $validationMessageCostDescription.css("margin-bottom", "0");
+            var $elementCost = $("#@nameof(Model.Cost)");
+            var $validationMessageCost = $elementCost.prev("[data-valmsg-for='@nameof(Model.Cost)']");
+            $validationMessageCost.css("margin-bottom", "0");
+
+            $elementCostDescription.on("blur", function () {
+
+                var trimmed = $elementCostDescription.val().trim();
+                $elementCostDescription.val(trimmed);
+
+                var $characterCountValue = $elementCostDescription.attr("val-max-length");
+                var $countMessage = $("#CostDescription-info");
+
+                var $actualCharacterCount = $characterCountValue - $elementCostDescription.val().length;
+
+                if ($actualCharacterCount <= 0) {
+
+                } else {
+
+                    if ($actualCharacterCount === 1) {
+                        $countMessage.text("You have " + $actualCharacterCount + " character remaining");
+                    } else {
+                        $countMessage.text("You have " + $actualCharacterCount + " characters remaining");
+
+                        $countMessage.addClass('govuk-hint');
+                        $elementCostDescription.removeClass('govuk-textarea--error');
+                        $countMessage.removeClass('govuk-error-message');
+                        $countMessage.addClass('govuk-character-count__message');
+                    }
+                }
+
+            });
+
+
+            $elementCost.on("blur", function () {
+
+
+                var trimmed = $elementCost.val().trim();//.replace(",", "");
+
+                if (trimmed !== "") {
+
+                    if ($.isNumeric(trimmed))
+                    {
+                        //if (trimmed.includes(".")) {
+                            //if (trimmed.length >= 7) {
+
+                            //    var formatted = parseFloat(trimmed / 100).toFixed(2);
+                            //}
+                            //else {
+                                var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                            //}
+
+                            $elementCost.val(formatted);
+                        //}
+                        //else {
+                            //Is a float
+                        //    trimmed = parseFloat(trimmed).toFixed(2);
+                        //    $elementCost.val(trimmed);
+                        //}
+                    }
+                    else
+                    {
+                        $elementCost.val("");
+                    }
+                }
+
+            });
+
+
+
+            $elementCost.on("keypress", function (event) {
+                var charCode = event.which ? event.which : event.keyCode;
+                var trimmed = $elementCost.val().trim();//.replace(".", "");
+
+                if (trimmed.indexOf(".")>= 0) {
+                    if (charCode === 46) {
+                        return false;
+                    }
+                    if (trimmed.length >= 9) {
+                        return false;
+                    }
+                } else {
+                    if (charCode === 46) {
+                        if (trimmed.length >= 9) {
+                            return false;
+                        }
+                    }
+                    else {
+                        if (trimmed.length >= 6) {
+                            return false;
+                        }
+                    }
+
+
+                }
+
+                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                    return true;
+                }
+
+                return false;
+            });
+        });
+    })(jQuery);
+</script>

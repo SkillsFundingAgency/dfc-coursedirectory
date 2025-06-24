@@ -1,0 +1,50 @@
+﻿@using Dfc.CourseDirectory.Core.Models;
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.EducationLevel.EducationLevelModel
+
+<div class="govuk-form-group" id="EducationLevel">
+
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
+                @Model.LabelText
+            </h2>
+        </legend>
+        <div class="govuk-hint">
+            @Model.HintText
+        </div>
+        <div class="govuk-radios govuk-radios" val-required-message="Select Education level" id="EducationLevelRadioButtons">
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.EntryLevel, new { @class = "govuk-radios__input", id = EducationLevel.EntryLevel })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.EntryLevel">@EducationLevel.EntryLevel.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.One, new { @class = "govuk-radios__input", id = EducationLevel.One })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.One">@EducationLevel.One.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.Two, new { @class = "govuk-radios__input", id = EducationLevel.Two })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.Two">@EducationLevel.Two.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.Three, new { @class = "govuk-radios__input", id = EducationLevel.Three })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.Three">@EducationLevel.Three.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.Four, new { @class = "govuk-radios__input", id = EducationLevel.Four })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.Four">@EducationLevel.Four.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.Five, new { @class = "govuk-radios__input", id = EducationLevel.Five })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.Five">@EducationLevel.Five.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.Six, new { @class = "govuk-radios__input", id = EducationLevel.Six })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.Six">@EducationLevel.Six.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.EducationLevel, EducationLevel.Seven, new { @class = "govuk-radios__input", id = EducationLevel.Seven })
+                <label class="govuk-label govuk-radios__label" for="@EducationLevel.Seven">@EducationLevel.Seven.ToDescription()</label>
+            </div>
+        </div>
+    </fieldset>
+</div>

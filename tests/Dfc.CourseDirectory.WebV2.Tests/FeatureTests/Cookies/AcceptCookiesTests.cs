@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Cookies

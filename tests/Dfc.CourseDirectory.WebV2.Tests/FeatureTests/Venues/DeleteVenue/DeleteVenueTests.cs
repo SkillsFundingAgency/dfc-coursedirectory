@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Venues.DeleteVenue;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using OneOf;
@@ -338,7 +341,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
             response.StatusCode.Should().Be(HttpStatusCode.Found);
             response.Headers.Location.OriginalString.Should().Be($"/venues/{venue.VenueId}/delete-success?providerId={provider.ProviderId}");
 
-            SqlQuerySpy.VerifyQuery<Core.DataStore.Sql.Queries.DeleteVenue, OneOf<NotFound, Success>>(q => q.VenueId == venue.VenueId);
+            SqlQuerySpy.VerifyQuery<CourseDirectory.Core.DataStore.Sql.Queries.DeleteVenue, OneOf<NotFound, Success>>(q => q.VenueId == venue.VenueId);
         }
 
         [Fact]

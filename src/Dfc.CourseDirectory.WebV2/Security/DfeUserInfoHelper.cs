@@ -11,7 +11,7 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Newtonsoft.Json.Linq;
 
-namespace Dfc.CourseDirectory.WebV2.Security
+namespace Dfc.CourseDirectory.Core.Security
 {
     public class DfeUserInfoHelper : ISignInAction
     {
