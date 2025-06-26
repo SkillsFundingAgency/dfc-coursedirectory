@@ -1,9 +1,9 @@
-﻿using System.Text.Json;
-using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+﻿using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -44,8 +44,12 @@ namespace Dfc.CourseDirectory.Functions
         {
             _logger.LogInformation("Function '{0}' was invoked", nameof(SyncProviderByUkprn));
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            ProviderToRefresh providerData = JsonSerializer.Deserialize<ProviderToRefresh>(requestBody);
+            using StreamReader reader = new(req.Body);
+            string bodyStr = await reader.ReadToEndAsync();
+
+            _logger.LogInformation("Request body: {0}", bodyStr);
+
+            ProviderToRefresh providerData = JsonConvert.DeserializeObject<ProviderToRefresh>(bodyStr);
 
             _logger.LogInformation("UKPRN provided: {0}", providerData.Ukprn);
 
