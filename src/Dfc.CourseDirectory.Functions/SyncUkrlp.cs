@@ -1,4 +1,6 @@
 ﻿using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -34,5 +36,15 @@ namespace Dfc.CourseDirectory.Functions
 
         [Function("SyncAllKnownProvidersData")]
         public Task SyncAllKnownProvidersData([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+
+        // Ben new function
+        [Function("SyncProviderByUkprn")]
+        public IActionResult SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+        {
+            _logger.LogInformation("Function '{0}' invoked", nameof(SyncProviderByUkprn));
+            _logger.LogInformation("Request body: {0}", req.Body.ToString());
+
+            return new OkResult();
+        }
     }
 }
