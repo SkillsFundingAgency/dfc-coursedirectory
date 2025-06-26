@@ -39,12 +39,17 @@ namespace Dfc.CourseDirectory.Functions
 
         // Ben new function
         [Function("SyncProviderByUkprn")]
-        public IActionResult SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+        public IActionResult SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] ProviderToRefresh provider)
         {
-            _logger.LogInformation("Function '{0}' invoked", nameof(SyncProviderByUkprn));
-            _logger.LogInformation("Request body: {0}", req.Body.ToString());
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncProviderByUkprn));
+            _logger.LogInformation("UKPRN provided: {0}", provider.Ukprn);
 
             return new OkResult();
+        }
+
+        public class ProviderToRefresh
+        {
+            public int Ukprn;
         }
     }
 }
