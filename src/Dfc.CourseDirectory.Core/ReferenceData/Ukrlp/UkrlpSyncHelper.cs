@@ -108,17 +108,20 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncProviderData(int ukprn)
         {
-            _logger.LogInformation("UKRLP Sync: Fetching updated UKRLP data for UKPRN '{0}'",ukprn);
+            _logger.LogInformation("UKRLP Sync: Retrieving updated data for UKPRN '{0}'",ukprn);
             (await _ukrlpService.GetProviderData(new[] { ukprn })).TryGetValue(ukprn, out var providerData);
 
             if (providerData == null)
             {
-                _logger.LogWarning("UKRLP Sync: Failed to update provider information from UKRLP for {0}.", ukprn);
+                _logger.LogWarning("UKRLP Sync: Failed to update provider information for UKPRN '{0}'.", ukprn);
                 return;
             }
 
-            await CreateOrUpdateProvider(providerData);
-            _logger.LogInformation("UKRLP Sync: UKPRN '{0}' successfully updated.", ukprn);
+            _logger.LogInformation("UKRLP Sync: Processing of data for UKPRN '{0}' initiated", ukprn);
+            
+            CreateOrUpdateResult outcome = await CreateOrUpdateProvider(providerData);
+            
+            _logger.LogInformation("UKRLP Sync: Outcome result for UKPRN '{0}' - {1}", ukprn, outcome);
         }
 
         public async Task SyncProviderData(IEnumerable<int> ukprns)
