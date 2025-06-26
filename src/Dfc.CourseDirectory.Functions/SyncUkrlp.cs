@@ -1,4 +1,5 @@
-﻿using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+﻿using System.Text.Json;
+using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
@@ -39,10 +40,14 @@ namespace Dfc.CourseDirectory.Functions
 
         // Ben new function
         [Function("SyncProviderByUkprn")]
-        public IActionResult SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] ProviderToRefresh provider)
+        public async Task<IActionResult> SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
         {
             _logger.LogInformation("Function '{0}' was invoked", nameof(SyncProviderByUkprn));
-            _logger.LogInformation("UKPRN provided: {0}", provider.Ukprn);
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            ProviderToRefresh providerData = JsonSerializer.Deserialize<ProviderToRefresh>(requestBody);
+
+            _logger.LogInformation("UKPRN provided: {0}", providerData.Ukprn);
 
             return new OkResult();
         }
