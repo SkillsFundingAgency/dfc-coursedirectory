@@ -108,19 +108,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncProviderData(int ukprn)
         {
-            _logger.LogDebug("UKRLP Sync: Fetching updated UKRLP data for UKPRN {ukprn}...",ukprn);
+            _logger.LogInformation("UKRLP Sync: Fetching updated UKRLP data for UKPRN '{0}'",ukprn);
             (await _ukrlpService.GetProviderData(new[] { ukprn })).TryGetValue(ukprn, out var providerData);
 
             if (providerData == null)
             {
                 _logger.LogWarning("UKRLP Sync: Failed to update provider information from UKRLP for {0}.", ukprn);
-
                 return;
             }
 
             await CreateOrUpdateProvider(providerData);
-
-            _logger.LogInformation("UKRLP Sync: Successfully updated provider information from UKRLP for {0}.", ukprn);
+            _logger.LogInformation("UKRLP Sync: UKPRN '{0}' successfully updated.", ukprn);
         }
 
         public async Task SyncProviderData(IEnumerable<int> ukprns)
@@ -188,10 +186,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             var contact = SelectContact(providerData.ProviderContact);
             var ukrlpProviderContact = MapContact(contact);
 
-
             if (existingProvider == null)
             {
-                _logger.LogInformation("Couldn't find provider for ukprn [{ukprn}]. Attempting to create one", ukprn);
+                _logger.LogInformation("PROVIDER NOT FOUND at UKPRN '{0}'. Creating one", ukprn);
+                
                 await _sqlQueryDispatcher.ExecuteQuery(
                     new CreateProviderFromUkrlpData()
                     {
@@ -205,15 +203,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         Status = NewProviderProviderStatus,
                         Ukprn = ukprn,
                         UpdatedBy = UpdatedBy
-                    });
+                    }
+                );
 
+                _logger.LogInformation("ACTION TAKEN: Created");
                 return CreateOrUpdateResult.Created;
             }
             else
             {
                 var existingProviderContact = await GetProviderContact(providerId);
                 
-
                 var updateProvider = CheckUpdateProvider(existingProvider,providerData);
                 var updateProviderContact = true;
                 if (existingProviderContact != null)
@@ -239,24 +238,27 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 }
                 else
                 {
+                    _logger.LogInformation("ACTION TAKEN: Skipped");
                     return CreateOrUpdateResult.Skipped;
                 }
 
-                var oldStatusCode = MapProviderStatusDescription(existingProvider.ProviderStatus);
-                var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
+                var existingProviderStatus = MapProviderStatusDescription(existingProvider.ProviderStatus);
+                var refreshedProviderStatus = MapProviderStatusDescription(providerData.ProviderStatus);
 
-                var deactivating = IsDeactivatedStatus(newStatusCode);
-                _logger.LogInformation("UKRLP Sync: ukprn [{ukprn}] - oldStatusCode [{oldStatusCode}] - newStatusCode [{newStatusCode}] - deactivating [{deactivating}]", ukprn, oldStatusCode, newStatusCode, deactivating);
+                bool deactivating = IsDeactivatedStatus(refreshedProviderStatus);
+                
+                _logger.LogInformation("UKRLP Sync: UKPRN '{0}' | Previous Status '{1}' | New Status '{2}' | Deactivated? '{3}'", ukprn, existingProviderStatus, refreshedProviderStatus, deactivating);
+                
                 if (deactivating)
                 {
-                    _logger.LogInformation("UKRLP Sync: Update [{ukprn}] starting deactivating is [{deactivating}] ...", ukprn, deactivating);
+                    _logger.LogInformation("UKRLP Sync: UKPRN '{0}' selected for deactivation", ukprn);
                    
-                        await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
-                        await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
-                        await _sqlQueryDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
-                    
+                    await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
+                    await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });
+                    await _sqlQueryDispatcher.ExecuteQuery(new MarkFindACourseIndexNotLiveForDeactiveProvider() { ProviderId = providerId });
                 }
 
+                _logger.LogInformation("ACTION TAKEN: Updated");
                 return CreateOrUpdateResult.Updated;
             }
         }
