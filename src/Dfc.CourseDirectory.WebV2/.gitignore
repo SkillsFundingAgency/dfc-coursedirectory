@@ -1,1 +1,7 @@
 Content/dist/
+# ignore appSettings files
+appsettings.Development.json
+
+# ignore js and css files created on build
+wwwroot/dist/pttcd.min.css
+wwwroot/lib/jquery-validation/*.js
