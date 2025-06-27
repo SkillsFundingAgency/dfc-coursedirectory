@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             if (providerData == null)
             {
-                _logger.LogWarning("UKRLP Sync: Failed to update provider information for UKPRN '{0}'.", ukprn);
+                _logger.LogWarning("UKRLP Sync: Failed to retrieve provider information for UKPRN '{0}'.", ukprn);
                 return;
             }
 

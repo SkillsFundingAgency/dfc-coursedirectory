@@ -103,6 +103,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
                 foreach (var r in response.MatchingProviderRecords)
                 {
+                    _logger.LogInformation(" *** RETRIEVED UKRLP DATA *** ");
+
+                    _logger.LogInformation("Number of Contacts (length): {0}", r.ProviderContact.Length);
+                    _logger.LogInformation("Number of Contacts (count): {0}", r.ProviderContact.Count());
+
+                    _logger.LogInformation("#1 EMAIL: {0}", r.ProviderContact.First().ContactEmail);
+                    _logger.LogInformation("#1 WEBSITE: {0}", r.ProviderContact.First().ContactWebsiteAddress);
+                    _logger.LogInformation("#1 TEL1: {0}", r.ProviderContact.First().ContactTelephone1);
+                    _logger.LogInformation("#1 TEL2: {0}", r.ProviderContact.First().ContactTelephone2);
+                    _logger.LogInformation("#1 TYPE: {0}", r.ProviderContact.First().ContactType);
+
                     var resultUkprn = int.Parse(r.UnitedKingdomProviderReferenceNumber);
                     resultsByUkprn.Add(resultUkprn, r);
                     remainingUkprns.Remove(resultUkprn);

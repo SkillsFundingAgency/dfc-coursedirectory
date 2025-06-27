@@ -91,9 +91,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 };
                 if (query.UpdateProviderContact)
                 {
-                    _logger.LogInformation("Update ProviderContacts table starting...");
+                    _logger.LogInformation("Update ProviderContacts table starting");
                     await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                    _logger.LogInformation("Update ProviderContacts table finishe!.");
+                    _logger.LogInformation("Update ProviderContacts table finished");
                 }
             }
             return new Success();
