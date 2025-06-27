@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Error
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [AllowAnonymous]
     [Route("error")]
