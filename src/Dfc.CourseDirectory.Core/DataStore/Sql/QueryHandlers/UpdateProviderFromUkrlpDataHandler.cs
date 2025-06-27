@@ -89,6 +89,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         providerContact.WebsiteAddress,
                         providerContact.Email
                 };
+                
                 if (query.UpdateProviderContact)
                 {
                     _logger.LogInformation("Update ProviderContacts table starting");
@@ -96,10 +97,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     _logger.LogInformation("Update ProviderContacts table finished");
                 }
             }
-            return new Success();
             
-
+            return new Success();
         }
-
     }
 }

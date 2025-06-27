@@ -183,11 +183,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
             var existingProvider = await GetProvider(ukprn);
-            
             var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
-
             var contact = SelectContact(providerData.ProviderContact);
             var ukrlpProviderContact = MapContact(contact);
+
+            _logger.LogInformation(" *** Method {0} has been invoked *** ", nameof(CreateOrUpdateProvider));
+            _logger.LogInformation(" Mapped Contact EMAIL: {0}", ukrlpProviderContact.Email);
+            _logger.LogInformation(" Mapped Contact TEL: {0}", ukrlpProviderContact.Telephone1);
 
             if (existingProvider == null)
             {
@@ -214,6 +216,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
             else
             {
+                _logger.LogInformation("An existing provider with UKPRN '{0}' has been identified", ukprn);
+
                 var existingProviderContact = await GetProviderContact(providerId);
                 
                 var updateProvider = CheckUpdateProvider(existingProvider,providerData);
@@ -222,22 +226,25 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 {
                     updateProviderContact = CheckUpdateProviderContact(existingProviderContact, ukrlpProviderContact);
                 }
+
+                _logger.LogInformation("Update provider contact details? {0}", updateProviderContact); 
+
                 if (updateProvider || updateProviderContact)
                 {
-                        await _sqlQueryDispatcher.ExecuteQuery(
-                            new UpdateProviderFromUkrlpData()
-                            {
-                                Alias = providerData.ProviderAliases?.FirstOrDefault().ProviderAlias,
-                                DateUpdated = _clock.UtcNow,
-                                ProviderId = providerId,
-                                Contact = ukrlpProviderContact,
-                                ProviderName = providerData.ProviderName,
-                                ProviderStatus = providerData.ProviderStatus,
-                                UpdatedBy = UpdatedBy,
-                                UpdateProvider= updateProvider,
-                                UpdateProviderContact= updateProviderContact,
-                            });
-                    
+                    _logger.LogInformation("Execute query '{0}'", nameof(UpdateProviderFromUkrlpData));
+
+                    await _sqlQueryDispatcher.ExecuteQuery(new UpdateProviderFromUkrlpData()
+                    {
+                        Alias = providerData.ProviderAliases?.FirstOrDefault().ProviderAlias,
+                        DateUpdated = _clock.UtcNow,
+                        ProviderId = providerId,
+                        Contact = ukrlpProviderContact,
+                        ProviderName = providerData.ProviderName,
+                        ProviderStatus = providerData.ProviderStatus,
+                        UpdatedBy = UpdatedBy,
+                        UpdateProvider= updateProvider,
+                        UpdateProviderContact= updateProviderContact,
+                    });
                 }
                 else
                 {
@@ -272,7 +279,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 return false;
             }
-            else { return true; }
+            
+            return true;
         }
 
         private bool CheckUpdateProvider(Provider existingProvider, ProviderRecordStructure providerData)
