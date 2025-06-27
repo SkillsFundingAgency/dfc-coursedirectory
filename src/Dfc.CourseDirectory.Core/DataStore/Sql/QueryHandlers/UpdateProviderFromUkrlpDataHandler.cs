@@ -91,7 +91,26 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     Email = providerContact.Email,
                     ProviderId = query.ProviderId
                 };
-                
+
+                _logger.LogInformation(" *** SET ***");
+                _logger.LogInformation("ContactType: {0}", providerContact.ContactType);
+                _logger.LogInformation("AddressSaonDescription: {0}", providerContact.AddressSaonDescription);
+                _logger.LogInformation("AddressPaonDescription: {0}", providerContact.AddressPaonDescription);
+                _logger.LogInformation("AddressStreetDescription: {0}", providerContact.AddressStreetDescription);
+                _logger.LogInformation("AddressLocality: {0}", providerContact.AddressLocality);
+                _logger.LogInformation("AddressItems: {0}", providerContact.AddressItems);
+                _logger.LogInformation("AddressPostTown: {0}", providerContact.AddressPostTown);
+                _logger.LogInformation("AddressCounty: {0}", providerContact.AddressCounty);
+                _logger.LogInformation("AddressPostcode: {0}", providerContact.AddressPostcode);
+                _logger.LogInformation("PersonalDetailsPersonNameTitle: {0}", providerContact.PersonalDetailsPersonNameTitle);
+                _logger.LogInformation("PersonalDetailsPersonNameGivenName: {0}", providerContact.PersonalDetailsPersonNameGivenName);
+                _logger.LogInformation("PersonalDetailsPersonNameFamilyName: {0}", providerContact.PersonalDetailsPersonNameFamilyName);
+                _logger.LogInformation("Telephone1: {0}", providerContact.Telephone1);
+                _logger.LogInformation("Fax: {0}", providerContact.Fax);
+                _logger.LogInformation("WebsiteAddress: {0}", providerContact.WebsiteAddress);
+                _logger.LogInformation("Email: {0}", providerContact.Email);
+                _logger.LogInformation("ProviderId: {0}", query.ProviderId);
+
                 if (query.UpdateProviderContact)
                 {
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");

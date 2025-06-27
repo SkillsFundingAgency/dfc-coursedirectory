@@ -227,7 +227,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     updateProviderContact = CheckUpdateProviderContact(existingProviderContact, ukrlpProviderContact);
                 }
 
-                _logger.LogInformation("Update provider contact details? {0}", updateProviderContact); 
+                _logger.LogInformation("Update provider contact details? {0}", updateProviderContact);
+                _logger.LogInformation("ProviderId: {0}", providerId);
 
                 if (updateProvider || updateProviderContact)
                 {
