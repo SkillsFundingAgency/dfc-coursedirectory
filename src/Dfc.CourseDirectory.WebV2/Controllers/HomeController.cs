@@ -3,7 +3,7 @@ using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Home
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [AllowAnonymous]
     public class HomeController : Controller
