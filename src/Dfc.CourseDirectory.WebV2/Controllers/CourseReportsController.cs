@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.WebV2.ViewModels.Courses.AllCoursesReport;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("courses/reports")]
@@ -28,9 +28,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses.Reporting
         {
 
             return await _mediator.SendAndMapResponse(
-                new AllCoursesReport.Query(),
-                records => new CsvResult<AllCoursesReport.Csv>(
-                    $"{nameof(AllCoursesReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
+                new Query(),
+                records => new CsvResult<Csv>(
+                    $"{nameof(ViewModels.Courses.AllCoursesReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
         }
     }
 }

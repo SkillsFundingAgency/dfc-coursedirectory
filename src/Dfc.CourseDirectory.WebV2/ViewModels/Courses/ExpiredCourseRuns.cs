@@ -11,7 +11,7 @@ using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Courses.ExpiredCourseRuns
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Courses.ExpiredCourseRuns
 {
     public class Query : IRequest<ViewModel>
     {

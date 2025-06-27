@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Attributes;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Courses
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("courses/expired")]
     [RequireProviderContext]
@@ -30,7 +30,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.Courses
             {
                 Session.SetString(SessionNonLarsCourse, "false");
             }
-            return await _mediator.SendAndMapResponse(new ExpiredCourseRuns.Query() { IsNonLars = isNonLars }, vm => View("ExpiredCourseRuns", vm));
+
+            return await _mediator.SendAndMapResponse(
+                new ViewModels.Courses.ExpiredCourseRuns.Query() { IsNonLars = isNonLars },
+                vm => View("~/Views/Courses/ExpiredCourseRuns.cshtml", vm));
         }
 
     }
