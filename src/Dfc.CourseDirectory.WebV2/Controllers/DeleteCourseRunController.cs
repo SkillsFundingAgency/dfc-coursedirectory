@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Core.Filters;
 using FormFlow;
 using MediatR;
@@ -7,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.WebV2.ViewModels.DeleteCourseRun;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("courses/{courseId}/course-runs/{courseRunId}/delete")]
     [JourneyMetadata(
@@ -34,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 
         [HttpGet("")]
         [AuthorizeCourse]
-        public async Task<IActionResult> Get(
+        public async Task<IActionResult> View(
             Request request,
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl)
         {
@@ -48,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
         [HttpPost("")]
         [AuthorizeCourse]
         [RequireJourneyInstance]
-        public Task<IActionResult> Post(Guid courseId, Guid courseRunId, Command request) =>
+        public Task<IActionResult> View(Guid courseId, Guid courseRunId, Command request) =>
             _mediator.SendAndMapResponse(
                 request,
                 response => response.Match<IActionResult>(

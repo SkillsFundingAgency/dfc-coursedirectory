@@ -17,7 +17,7 @@ using DeleteCourseRunQuery = Dfc.CourseDirectory.Core.DataStore.Sql.Queries.Dele
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 using Dfc.CourseDirectory.Core.Middleware;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DeleteCourseRun
 {
     [JourneyState]
     public class JourneyModel
