@@ -12,7 +12,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.DeliveryMode
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.ChooseQualification.DeliveryMode
 {
     public class Query : IRequest<OneOf<NotFound, Command>>
     {

@@ -14,7 +14,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseDescription
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.ChooseQualification.CourseDescription
 {
     using CommandResponse = OneOf<ModelWithErrors<Command>, Success>;
 

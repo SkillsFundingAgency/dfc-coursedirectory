@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseSelected
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.ChooseQualification.CourseSelected
 {
     public class Command : IRequest
     {

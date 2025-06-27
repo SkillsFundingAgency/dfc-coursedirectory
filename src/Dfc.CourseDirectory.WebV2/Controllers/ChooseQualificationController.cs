@@ -10,8 +10,9 @@ using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.WebV2.ViewComponents.ChooseQualification;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("courses")]
     public class ChooseQualificationController : Controller, IMptxController<FlowModel>
@@ -62,7 +63,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add")]
         [MptxAction]
-        public async Task<IActionResult> CourseDescription(CourseDescription.Query query)
+        public async Task<IActionResult> CourseDescription(ViewComponents.ChooseQualification.CourseDescription.Query query)
         {
             return await _mediator.SendAndMapResponse(
                 query,
@@ -72,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpPost("add")]
         [MptxAction]
-        public async Task<IActionResult> CourseDescription(CourseDescription.Command command)
+        public async Task<IActionResult> CourseDescription(ViewComponents.ChooseQualification.CourseDescription.Command command)
         {
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
@@ -93,7 +94,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 
         public async Task<IActionResult> CourseSelected(SelectCourse course)
         {
-            await _mediator.Send(new CourseSelected.Command() { LarsCode = course.LearnAimRef, CourseName = course.CourseName });
+            await _mediator.Send(new ViewComponents.ChooseQualification.CourseSelected.Command() { LarsCode = course.LearnAimRef, CourseName = course.CourseName });
             return RedirectToAction(nameof(CourseDescription))
                 .WithMptxInstanceId(Flow.InstanceId)
                 .WithProviderContext(_providerContext);
@@ -102,7 +103,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpGet("add/delivery")]
         [MptxAction]
-        public async Task<IActionResult> SelectDeliveryMode(DeliveryMode.Query query)
+        public async Task<IActionResult> SelectDeliveryMode(ViewComponents.ChooseQualification.DeliveryMode.Query query)
         {
             return await _mediator.SendAndMapResponse(
                 query,
@@ -114,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpPost("add/delivery")]
         [MptxAction]
-        public async Task<IActionResult> SelectDeliveryMode(DeliveryMode.Command command)
+        public async Task<IActionResult> SelectDeliveryMode(ViewComponents.ChooseQualification.DeliveryMode.Command command)
         {
             return await _mediator.SendAndMapResponse(
                 command,
@@ -142,7 +143,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireValidModelState]
         public async Task<IActionResult> CourseRun([ModelBinder(typeof(DeliveryModeModelBinder))] CourseDeliveryMode deliveryMode)
         {
-            var query = new CourseRun.Query
+            var query = new ViewComponents.ChooseQualification.CourseRun.Query
             {
                 DeliveryMode = deliveryMode,
             };
@@ -160,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         [RequireProviderContext]
         [HttpPost("add-courserun")]
         [MptxAction]
-        public async Task<IActionResult> CourseRun(CourseRun.Command command)
+        public async Task<IActionResult> CourseRun(ViewComponents.ChooseQualification.CourseRun.Command command)
         {
             var returnUrl = $"add/delivery?{Constants.InstanceIdQueryParameter}={Flow.InstanceId}&providerId={_providerContext.ProviderInfo.ProviderId}";
             return await _mediator.SendAndMapResponse(

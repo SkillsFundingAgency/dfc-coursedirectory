@@ -21,7 +21,7 @@ using OneOf.Types;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.ChooseQualification.CourseRun
 {
     public class Query : IRequest<ViewModel>
     {
@@ -180,7 +180,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 
         private async Task<ViewModel> CreateViewModel(CourseDeliveryMode deliveryMode, Command row)
         {
-            var providerVenues = (deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning) ?
+            var providerVenues = deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning ?
                 (await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = _providerContextProvider.GetProviderId() }))
                     .Select(v => new ViewModelProviderVenuesItem()
                     {

@@ -15,7 +15,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using OneOf;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.ChooseQualification
 {
     using QueryResponse = OneOf<ModelWithErrors<ViewModel>, ViewModel>;
 
