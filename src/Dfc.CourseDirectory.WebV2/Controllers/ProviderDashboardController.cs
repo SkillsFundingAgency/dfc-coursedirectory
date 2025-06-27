@@ -2,11 +2,11 @@
 using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard;
+using Dfc.CourseDirectory.WebV2.ViewModels.ProviderDashboard;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("/")]
     public class ProviderDashboardController : Controller

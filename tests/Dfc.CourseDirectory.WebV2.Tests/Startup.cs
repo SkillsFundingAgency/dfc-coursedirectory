@@ -8,7 +8,7 @@ using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.WebV2.Features.DataManagement;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
-using Dfc.CourseDirectory.WebV2.Features.ProviderDashboard;
+using Dfc.CourseDirectory.WebV2.Controllers;
 using Dfc.CourseDirectory.WebV2.Features.Providers;
 using Dfc.CourseDirectory.WebV2.Features.Providers.Reporting;
 using FormFlow.State;
