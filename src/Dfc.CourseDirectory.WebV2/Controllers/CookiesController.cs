@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Filters;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Cookies
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("cookies")]
     [AllowAnonymous]
@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Cookies
         [HttpPost("accept-all")]
         public async Task<IActionResult> AcceptAllCookies([LocalUrl] string returnUrl) =>
             await _mediator.SendAndMapResponse(
-                new AcceptAllCookies.Command(),
+                new ViewComponents.Cookies.AcceptAllCookies.Command(),
                 response =>
                 {
                     TempData["AcceptedAllCookies"] = true;
@@ -34,11 +34,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Cookies
 
         [HttpGet("settings")]
         public async Task<IActionResult> Settings() => await _mediator.SendAndMapResponse(
-            new Settings.Query(),
+            new ViewComponents.Cookies.Settings.Query(),
             command => View(command));
 
         [HttpPost("settings")]
-        public async Task<IActionResult> Settings(Settings.Command command) => await _mediator.SendAndMapResponse(
+        public async Task<IActionResult> Settings(ViewComponents.Cookies.Settings.Command command) => await _mediator.SendAndMapResponse(
             command,
             response => response.Match<IActionResult>(
                 errors => this.ViewFromErrors(errors),

@@ -4,7 +4,7 @@ using Dfc.CourseDirectory.WebV2.Cookies;
 using MediatR;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Cookies.AcceptAllCookies
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.Cookies.AcceptAllCookies
 {
     public class Command : IRequest<Success>
     {

@@ -7,7 +7,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Cookies.Settings
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.Cookies.Settings
 {
     public class Query : IRequest<Command>
     {

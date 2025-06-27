@@ -1,5 +1,5 @@
 ﻿using Dfc.CourseDirectory.WebV2.Cookies;
-using Dfc.CourseDirectory.WebV2.Features.Cookies;
+using Dfc.CourseDirectory.WebV2.ViewModels.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
@@ -21,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.SharedViews.Components
                 ShowAcceptedMessage = TempData["AcceptedAllCookies"] != null
             };
 
-            return View("~/Features/Cookies/CookieBanner.cshtml", viewModel);
+            return View("~/Views/Cookies/CookieBanner.cshtml", viewModel);
         }
     }
 }

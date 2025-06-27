@@ -1,4 +1,4 @@
-﻿namespace Dfc.CourseDirectory.WebV2.Features.Cookies
+﻿namespace Dfc.CourseDirectory.WebV2.ViewModels.Cookies
 {
     public class CookieBannerViewModel
     {
