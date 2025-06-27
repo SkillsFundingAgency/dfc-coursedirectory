@@ -30,25 +30,25 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 ";
             
             var sqlProviderContact = 
-                $@"UPDATE [Pttcd].[ProviderContacts] 
-                    SET [ContactType] = @ContactType
-                        ,[AddressSaonDescription] = @AddressSaonDescription
-                        ,[AddressPaonDescription] = @AddressPaonDescription
-                        ,[AddressStreetDescription] = @AddressStreetDescription
-                        ,[AddressLocality] = @AddressLocality
-                        ,[AddressItems] = @AddressItems
-                        ,[AddressPostTown] = @AddressPostTown
-                        ,[AddressCounty] = @AddressCounty
-                        ,[AddressPostcode] = @AddressPostcode
-                        ,[PersonalDetailsPersonNameTitle] = @PersonalDetailsPersonNameTitle
-                        ,[PersonalDetailsPersonNameGivenName] = @PersonalDetailsPersonNameGivenName
-                        ,[PersonalDetailsPersonNameFamilyName] = @PersonalDetailsPersonNameFamilyName
-                        ,[Telephone1] = @Telephone1
-                        ,[Fax] = @Fax
-                        ,[WebsiteAddress] = @WebsiteAddress
-                        ,[Email] = @Email
-                    WHERE [ProviderId] = @ProviderId  AND  ContactType = 'P';
-                ";
+$@"UPDATE Pttcd.ProviderContacts 
+    SET ContactType = @ContactType,
+        AddressSaonDescription = @AddressSaonDescription,
+        AddressPaonDescription = @AddressPaonDescription,
+        AddressStreetDescription = @AddressStreetDescription,
+        AddressLocality = @AddressLocality,
+        AddressItems = @AddressItems,
+        AddressPostTown = @AddressPostTown,
+        AddressCounty = @AddressCounty,
+        AddressPostcode = @AddressPostcode,
+        PersonalDetailsPersonNameTitle = @PersonalDetailsPersonNameTitle,
+        PersonalDetailsPersonNameGivenName = @PersonalDetailsPersonNameGivenName,
+        PersonalDetailsPersonNameFamilyName = @PersonalDetailsPersonNameFamilyName,
+        Telephone1 = @Telephone1,
+        Fax = @Fax,
+        WebsiteAddress = @WebsiteAddress,
+        Email = @Email
+    WHERE ProviderId = @ProviderId 
+    AND ContactType = 'P'";
 
             var providerDataObj = new
             {
@@ -114,8 +114,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 if (query.UpdateProviderContact)
                 {
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
-                    await transaction.Connection.ExecuteAsync(sqlProviderContact, providerContactDataObj, transaction);
+                    int numberOfImpactedRows = await transaction.Connection.ExecuteAsync(sqlProviderContact, providerContactDataObj, transaction);
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
+
+                    _logger.LogInformation("Impacted rows: {0}", numberOfImpactedRows);
                 }
             }
             
