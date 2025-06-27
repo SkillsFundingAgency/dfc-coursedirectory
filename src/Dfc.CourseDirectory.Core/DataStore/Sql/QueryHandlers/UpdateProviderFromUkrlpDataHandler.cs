@@ -5,8 +5,6 @@ using System.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Data;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
@@ -30,24 +28,27 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         ,[UpdatedBy] = @UpdatedBy
                     WHERE [ProviderId] = @ProviderId;
                 ";
-
-            var sqlProviderContact = "UPDATE Pttcd.ProviderContacts SET ContactType = @contactType,"
-                + "AddressSaonDescription = @addressSaonDescription,"
-                + "AddressPaonDescription = @addressPaonDescription,"
-                + "AddressStreetDescription = @addressStreetDescription,"
-                + "AddressLocality = @addressLocality,"
-                + "AddressItems = @addressItems,"
-                + "AddressPostTown = @addressPostTown,"
-                + "AddressCounty = @addressCounty,"
-                + "AddressPostcode = @addressPostcode,"
-                + "PersonalDetailsPersonNameTitle = @personalDetailsPersonNameTitle,"
-                + "PersonalDetailsPersonNameGivenName = @personalDetailsPersonNameGivenName,"
-                + "PersonalDetailsPersonNameFamilyName = @personalDetailsPersonNameFamilyName,"
-                + "Telephone1 = @telephone1,"
-                + "Fax = @fax,"
-                + "WebsiteAddress = @websiteAddress,"
-                + "Email = @email,"
-                + "WHERE ProviderId = @providerId AND ContactType = 'P';";
+            
+            var sqlProviderContact = 
+$@"UPDATE Pttcd.ProviderContacts 
+    SET ContactType = @ContactType,
+        AddressSaonDescription = @AddressSaonDescription,
+        AddressPaonDescription = @AddressPaonDescription,
+        AddressStreetDescription = @AddressStreetDescription,
+        AddressLocality = @AddressLocality,
+        AddressItems = @AddressItems,
+        AddressPostTown = @AddressPostTown,
+        AddressCounty = @AddressCounty,
+        AddressPostcode = @AddressPostcode,
+        PersonalDetailsPersonNameTitle = @PersonalDetailsPersonNameTitle,
+        PersonalDetailsPersonNameGivenName = @PersonalDetailsPersonNameGivenName,
+        PersonalDetailsPersonNameFamilyName = @PersonalDetailsPersonNameFamilyName,
+        Telephone1 = @Telephone1,
+        Fax = @Fax,
+        WebsiteAddress = @WebsiteAddress,
+        Email = @Email
+    WHERE ProviderId = @ProviderId 
+    AND ContactType = 'P'";
 
             var providerDataObj = new
             {
@@ -70,6 +71,27 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
             if (providerContact != null)
             {
+                var providerContactDataObj = new
+                {
+                    ContactType = providerContact.ContactType,
+                    AddressSaonDescription = providerContact.AddressSaonDescription,
+                    AddressPaonDescription = providerContact.AddressPaonDescription,
+                    AddressStreetDescription = providerContact.AddressStreetDescription,
+                    AddressLocality = providerContact.AddressLocality,
+                    AddressItems = providerContact.AddressItems,
+                    AddressPostTown = providerContact.AddressPostTown,
+                    AddressCounty = providerContact.AddressCounty,
+                    AddressPostcode = providerContact.AddressPostcode,
+                    PersonalDetailsPersonNameTitle = providerContact.PersonalDetailsPersonNameTitle,
+                    PersonalDetailsPersonNameGivenName = providerContact.PersonalDetailsPersonNameGivenName,
+                    PersonalDetailsPersonNameFamilyName = providerContact.PersonalDetailsPersonNameFamilyName,
+                    Telephone1 = providerContact.Telephone1,
+                    Fax = providerContact.Fax,
+                    WebsiteAddress = providerContact.WebsiteAddress,
+                    Email = providerContact.Email,
+                    ProviderId = query.ProviderId
+                };
+
                 _logger.LogInformation(" *** SET ***");
                 _logger.LogInformation("ContactType: {0}", providerContact.ContactType);
                 _logger.LogInformation("AddressSaonDescription: {0}", providerContact.AddressSaonDescription);
@@ -91,45 +113,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
                 if (query.UpdateProviderContact)
                 {
-                    using (SqlConnection connection = new SqlConnection(Environment.GetEnvironmentVariable("DefaultConnection")))
-                    {
-                        SqlCommand command = new SqlCommand(sqlProviderContact, connection);
-                        command.Parameters.Add("@providerId", SqlDbType.UniqueIdentifier);
-                        command.Parameters["@providerId"].Value = query.ProviderId;
+                    _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
+                    int numberOfImpactedRows = await transaction.Connection.ExecuteAsync(sqlProviderContact, providerContactDataObj, transaction);
+                    _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
 
-                        command.Parameters.AddWithValue("@contactType", providerContact.ContactType);
-                        command.Parameters.AddWithValue("@addressSaonDescription", providerContact.AddressSaonDescription);
-                        command.Parameters.AddWithValue("@addressPaonDescription", providerContact.AddressPaonDescription);
-                        command.Parameters.AddWithValue("@addressStreetDescription", providerContact.AddressStreetDescription);
-                        command.Parameters.AddWithValue("@addressLocality", providerContact.AddressLocality);
-                        command.Parameters.AddWithValue("@addressItems", providerContact.AddressItems);
-                        command.Parameters.AddWithValue("@addressPostTown", providerContact.AddressPostTown);
-                        command.Parameters.AddWithValue("@addressCounty", providerContact.AddressCounty);
-                        command.Parameters.AddWithValue("@addressPostcode", providerContact.AddressPostcode);
-                        command.Parameters.AddWithValue("@personalDetailsPersonNameTitle", providerContact.PersonalDetailsPersonNameTitle);
-                        command.Parameters.AddWithValue("@personalDetailsPersonNameGivenName", providerContact.PersonalDetailsPersonNameGivenName);
-                        command.Parameters.AddWithValue("@personalDetailsPersonNameFamilyName", providerContact.PersonalDetailsPersonNameFamilyName);
-                        command.Parameters.AddWithValue("@telephone1", providerContact.Telephone1);
-                        command.Parameters.AddWithValue("@fax", providerContact.Fax);
-                        command.Parameters.AddWithValue("@websiteAddress", providerContact.WebsiteAddress);
-                        command.Parameters.AddWithValue("@email", providerContact.Email);
-
-                        _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
-
-                        try
-                        {
-                            connection.Open();
-                            int rowsAffected = await command.ExecuteNonQueryAsync();
-
-                            _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
-                            _logger.LogInformation("Impacted rows: {0}", rowsAffected);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError("ERROR! {0}", ex);
-                            throw new NotImplementedException();
-                        }
-                    }
+                    _logger.LogInformation("Impacted rows: {0}", numberOfImpactedRows);
                 }
             }
             
