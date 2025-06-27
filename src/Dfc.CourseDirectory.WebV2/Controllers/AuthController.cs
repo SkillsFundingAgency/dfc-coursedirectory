@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Auth
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("auth")]
     public class AuthController : Controller
