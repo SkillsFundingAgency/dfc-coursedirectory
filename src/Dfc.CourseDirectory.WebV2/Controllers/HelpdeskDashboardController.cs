@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.WebV2.ViewModels.HelpdeskDashboard;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
+
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     public class HelpdeskDashboardController : Controller

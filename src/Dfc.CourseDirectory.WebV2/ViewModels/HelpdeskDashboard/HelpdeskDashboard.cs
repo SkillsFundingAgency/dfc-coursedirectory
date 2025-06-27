@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
+namespace Dfc.CourseDirectory.WebV2.ViewModels.HelpdeskDashboard
 {
     public class Query : IRequest<ViewModel>
     {
