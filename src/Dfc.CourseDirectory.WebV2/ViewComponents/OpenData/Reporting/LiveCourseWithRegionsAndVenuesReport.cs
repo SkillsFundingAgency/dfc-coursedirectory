@@ -12,7 +12,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Helpers;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport
 {
     public class Query : IRequest<IAsyncEnumerable<Csv>>
     {

@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
             records.Length.Should().Be(1);
         }
 
@@ -176,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
             records.Length.Should().Be(1);
         }
 

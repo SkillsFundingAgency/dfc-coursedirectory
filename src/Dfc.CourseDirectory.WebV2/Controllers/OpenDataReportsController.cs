@@ -6,7 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
+
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("opendata/reports")]
@@ -27,14 +28,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
             var fromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1);
 
             return await _mediator.SendAndMapResponse(
-                new LiveCourseProvidersReport.Query
+                new ViewComponents.OpenData.Reporting.LiveCourseProvidersReport.Query
                 {
                     FromDate = fromDate,
                 }, // TODO: allow any cut-off date.
-                records => new CsvResult<LiveCourseProvidersReport.Csv>(
-                    $"{nameof(LiveCourseProvidersReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
+                records => new CsvResult<ViewComponents.OpenData.Reporting.LiveCourseProvidersReport.Csv>(
+                    $"{nameof(ViewComponents.OpenData.Reporting.LiveCourseProvidersReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
         }
-
 
         [HttpGet("live-courses-with-regions-and-venues-report")]
         public async Task<IActionResult> LiveCoursesWithRegionsAndVenues()
@@ -42,12 +42,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
             var fromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1);
 
             return await _mediator.SendAndMapResponse(
-                new LiveCoursesWithRegionsAndVenuesReport.Query
+                new ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Query
                 {
                     FromDate = fromDate,
                 }, // TODO: allow any cut-off date.
-                records => new CsvResult<LiveCoursesWithRegionsAndVenuesReport.Csv>(
-                    $"{nameof(LiveCoursesWithRegionsAndVenuesReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
+                records => new CsvResult<ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>(
+                    $"{nameof(ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
         }
 
         [HttpGet("live-regions-report")]
@@ -56,9 +56,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting
             var fromDate = _clock.UtcNow.AddMonths(-1).AddDays((_clock.UtcNow.Day - 1) * -1);
 
             return await _mediator.SendAndMapResponse(
-                new LiveRegionsReport.Query(),
-                records => new CsvResult<LiveRegionsReport.Csv>(
-                    $"{nameof(LiveRegionsReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
+                new ViewComponents.OpenData.Reporting.LiveRegionsReport.Query(),
+                records => new CsvResult<ViewComponents.OpenData.Reporting.LiveRegionsReport.Csv>(
+                    $"{nameof(ViewComponents.OpenData.Reporting.LiveRegionsReport)}-{_clock.UtcNow:yyyyMMdd}.csv", records));
         }
     }
 }

@@ -10,6 +10,8 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.ViewComponents.OpenData.Reporting;
+using Dfc.CourseDirectory.WebV2.ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport;
 using FluentAssertions;
 using Xunit;
 
@@ -71,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<Csv>().ToArray();
             records.Length.Should().Be(1);
         }
 
@@ -174,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<Csv>().ToArray();
             records.Length.Should().Be(0);
         }
 
@@ -205,7 +207,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<Csv>().ToArray();
             records.Length.Should().Be(1);
         }
 
@@ -234,7 +236,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<Csv>().ToArray();
             records.Length.Should().Be(0);
         }        
 

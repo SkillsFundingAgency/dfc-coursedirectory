@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper.Configuration.Attributes;
@@ -8,7 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.OpenData.Reporting.LiveRegionsReport
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.OpenData.Reporting.LiveRegionsReport
 {
     public class Query : IRequest<IAsyncEnumerable<Csv>>
     {
