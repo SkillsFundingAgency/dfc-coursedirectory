@@ -20,7 +20,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
     {
         // internal for testing
         internal const string ContainerName = "onspd";
-        internal const string FileName = "ONSPD_MAY_2023_UK.csv";
         internal const string EnglandCountryId = "E92000001";
 
         private const int ChunkSize = 200;
@@ -44,9 +43,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             };
         }
 
-        public async Task ImportData()
+        public async Task ManualDataImport(string filename)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(FileName);
+            var blobClient = _blobContainerClient.GetBlobClient(filename);
 
             var blob = await blobClient.DownloadAsync();
 
@@ -79,10 +78,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.", rowCount, importedCount);
         }
 
-        public async Task AutomatedImportData()
+        public async Task AutomatedDataImport()
         {
             string arcgisUrl = "https://www.arcgis.com/sharing/rest/search?f=json&filter=tags:\"PRD_ONSPD\"&sortField=created&sortOrder=desc&num=1";
 
@@ -121,7 +120,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private async Task DownloadZipFileToTempAsync(string downloadLink)
         {
             _logger.LogInformation("Zip file Url :{downloadLink}", downloadLink);
-          
+
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
 
@@ -199,7 +198,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.", rowCount, importedCount);
         }
 
         private class Record
