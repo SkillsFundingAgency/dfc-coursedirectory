@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View(vm));
+                vm => View("~/Views/DeleteTLevel/View.cshtml", vm));
         }
 
         [HttpPost("")]
@@ -52,7 +52,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 _mediator.SendAndMapResponse(
                     request,
                     response => response.Match<IActionResult>(
-                        errors => this.ViewFromErrors(errors),
+                        errors => this.ViewFromErrors("~/Views/DeleteTLevel/View.cshtml", errors),
                         vm => RedirectToAction(nameof(Deleted), new { tLevelId })
                             .WithProviderContext(providerContextProvider.GetProviderContext())));
 

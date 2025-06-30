@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View("~/Views/DeleteCourseRun/Get.cshtml", vm));
+                vm => View("~/Views/DeleteCourseRun/View.cshtml", vm));
         }
 
         [HttpPost("")]
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             _mediator.SendAndMapResponse(
                 request,
                 response => response.Match<IActionResult>(
-                    errors => this.ViewFromErrors(errors),
+                    errors => this.ViewFromErrors("~/Views/DeleteCourseRun/View.cshtml", errors),
                     vm => RedirectToAction(
                         nameof(Confirmed),
                         new { courseId, courseRunId })));
