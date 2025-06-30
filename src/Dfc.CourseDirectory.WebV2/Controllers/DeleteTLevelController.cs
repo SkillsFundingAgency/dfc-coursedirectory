@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.WebV2.ViewModels.TLevels.DeleteTLevel;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("t-levels/{tLevelId}/delete")]
     [JourneyMetadata(
@@ -32,19 +33,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.DeleteTLevel
 
         [HttpGet("")]
         [AuthorizeTLevel]
-        public async Task<IActionResult> Get(Request request)
+        public async Task<IActionResult> View(Request request)
         {
             _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
 
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View(vm));
+                vm => View("~/Views/DeleteTLevel/View.cshtml", vm));
         }
 
         [HttpPost("")]
         [AuthorizeTLevel]
         [RequireJourneyInstance]
-        public Task<IActionResult> Post(
+        public Task<IActionResult> View(
             Guid tLevelId,
             [FromServices] IProviderContextProvider providerContextProvider,
             Command request) =>
