@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(courseId, courseRunId));
 
-            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+            result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRunId));
 
-            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+            result.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
             var result = await HttpClient.GetAsync(CourseRunDetailUrl(course.CourseId, courseRun.CourseRunId));
 
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
             var resultJson = JObject.Parse(await result.Content.ReadAsStringAsync());
 
