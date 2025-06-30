@@ -4,10 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using FormFlow;
-using GovUk.Frontend.AspNetCore;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SaveDetails
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.SaveDetails
 {
     public class Command : IRequest
     {

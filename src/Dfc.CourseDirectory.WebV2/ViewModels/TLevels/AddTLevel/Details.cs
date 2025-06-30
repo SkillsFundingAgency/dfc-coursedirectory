@@ -19,7 +19,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Details
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
 {
     public class Query : IRequest<ViewModel>
     {

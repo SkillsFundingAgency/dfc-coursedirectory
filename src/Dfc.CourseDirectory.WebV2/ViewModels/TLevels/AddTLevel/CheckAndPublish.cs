@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation.Results;
 using FormFlow;
-using GovUk.Frontend.AspNetCore;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.CheckAndPublish
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.CheckAndPublish
 {
     public class Query : IRequest<ViewModel>
     {

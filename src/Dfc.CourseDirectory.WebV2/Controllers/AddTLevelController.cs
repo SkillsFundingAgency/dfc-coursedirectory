@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel;
 using Flurl;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("t-levels/add")]
     [JourneyMetadata(
@@ -51,13 +52,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
                     .WithJourneyInstanceUniqueKey(_journeyInstance);
             }
 
-            var query = new SelectTLevel.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ViewModels.TLevels.AddTLevel.SelectTLevel.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View("SelectTLevel", vm));
         }
 
         [HttpPost("")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> SelectTLevel(SelectTLevel.Command command)
+        public async Task<IActionResult> SelectTLevel(ViewModels.TLevels.AddTLevel.SelectTLevel.Command command)
         {
             command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
@@ -73,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> Description()
         {
-            var query = new Description.Query();
+            var query = new ViewModels.TLevels.AddTLevel.Description.Query();
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
@@ -84,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [HttpPost("description")]
         [RequireJourneyInstance]
         public async Task<IActionResult> Description(
-            Description.Command command,
+            ViewModels.TLevels.AddTLevel.Description.Command command,
             [FromQuery] bool? fromPublishPage)
         {
             return await _mediator.SendAndMapResponse(
@@ -101,7 +102,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         public async Task<IActionResult> Details(
             [FromQuery] Guid? venueId)  // Populated by the Add Venue callback journey)
         {
-            var query = new Details.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ViewModels.TLevels.AddTLevel.Details.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 query,
                 vm =>
@@ -118,7 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
 
         [HttpPost("details")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> Details(Details.Command command)
+        public async Task<IActionResult> Details(ViewModels.TLevels.AddTLevel.Details.Command command)
         {
             command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
@@ -131,7 +132,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         }
 
         [HttpPost("add-location")]
-        public async Task<IActionResult> AddAnotherLocation(SaveDetails.Command command)
+        public async Task<IActionResult> AddAnotherLocation(ViewModels.TLevels.AddTLevel.SaveDetails.Command command)
         {
             await _mediator.Send(command);
 
@@ -153,7 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> CheckAndPublish()
         {
-            var query = new CheckAndPublish.Query();
+            var query = new ViewModels.TLevels.AddTLevel.CheckAndPublish.Query();
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -161,7 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> Publish()
         {
-            var command = new CheckAndPublish.Command() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var command = new ViewModels.TLevels.AddTLevel.CheckAndPublish.Command() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -175,7 +176,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> Published()
         {
-            var query = new Published.Query();
+            var query = new ViewModels.TLevels.AddTLevel.Published.Query();
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
