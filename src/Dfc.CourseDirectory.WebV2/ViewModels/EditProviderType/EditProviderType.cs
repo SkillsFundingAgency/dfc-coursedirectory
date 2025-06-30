@@ -10,6 +10,7 @@ using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.ViewModels.Providers;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
@@ -17,7 +18,7 @@ using OneOf;
 using OneOf.Types;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
+namespace Dfc.CourseDirectory.WebV2.ViewModels.EditProviderType.EditProviderType
 {
     public class Query : IRequest<ViewModel>
     {

@@ -5,15 +5,15 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
-using Dfc.CourseDirectory.Core.Security;
 using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderInfo
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Providers.EditProviderInfo
 {
     public class Query : IRequest<Command>
     {

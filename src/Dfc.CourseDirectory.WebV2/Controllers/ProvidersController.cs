@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("providers")]
     [RequireProviderContext]
@@ -23,12 +23,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         [HttpGet("display-name")]
         public async Task<IActionResult> DisplayName()
         {
-            var query = new WebV2.Features.Providers.DisplayName.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ViewModels.Providers.DisplayName.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
         [HttpPost("display-name")]
-        public async Task<IActionResult> DisplayName(WebV2.Features.Providers.DisplayName.Command command)
+        public async Task<IActionResult> DisplayName(ViewModels.Providers.DisplayName.Command command)
         {
             command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(
@@ -39,22 +39,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         [HttpGet("")]
         public async Task<IActionResult> ProviderDetails()
         {
-            var request = new WebV2.Features.Providers.ProviderDetails.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var request = new ViewModels.Providers.ProviderDetails.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(request, vm => View(vm));
         }
         [HttpGet("info")]
         [AuthorizeAdmin]
         public async Task<IActionResult> EditProviderInfo()
         {
-            var query = new WebV2.Features.Providers.EditProviderInfo.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
+            var query = new ViewModels.Providers.EditProviderInfo.Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
             return await _mediator.SendAndMapResponse(
                 query,
-                command => View(command));
+                command => View("~/Views/Providers/EditProviderInfo.cshtml", command));
         }
 
         [HttpPost("info")]
         [AuthorizeAdmin]
-        public async Task<IActionResult> EditProviderInfo(WebV2.Features.Providers.EditProviderInfo.Command command)
+        public async Task<IActionResult> EditProviderInfo(ViewModels.Providers.EditProviderInfo.Command command)
         {
             command.ProviderId = _providerContext.ProviderInfo.ProviderId;
             return await _mediator.SendAndMapResponse(

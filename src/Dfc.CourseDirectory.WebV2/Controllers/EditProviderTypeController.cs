@@ -4,12 +4,12 @@ using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Security;
-using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
+using Dfc.CourseDirectory.WebV2.ViewModels.EditProviderType.EditProviderType;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("providers/provider-type")]
     [RequireProviderContext]
@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
         public async Task<IActionResult> Get()
         {
             var query = new Query() { ProviderId = _providerContext.ProviderInfo.ProviderId };
-            return await _mediator.SendAndMapResponse(query, vm => View("EditProviderType", vm));
+            return await _mediator.SendAndMapResponse(query, vm => View("~/Views/EditProviderType/EditProviderType.cshtml",  vm));
         }
 
         [HttpPost("")]
@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors("EditProviderType", errors),
                     confirmErrors => this.ViewFromErrors("EditProviderTypeConfirm", confirmErrors),
-                    confirm => View("EditProviderTypeConfirm", confirm),
+                    confirm => View("~/Views/EditProviderType/EditProviderTypeConfirm.cshtml", confirm),
                     cancel => RedirectToAction(nameof(Get)).WithProviderContext(_providerContext),
                     success => RedirectToAction("ProviderDetails", "Providers").WithProviderContext(_providerContext)));
         }

@@ -11,7 +11,7 @@ using MediatR;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.ProviderDetails
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Providers.ProviderDetails
 {
     public class Query : IRequest<ViewModel>
     {
