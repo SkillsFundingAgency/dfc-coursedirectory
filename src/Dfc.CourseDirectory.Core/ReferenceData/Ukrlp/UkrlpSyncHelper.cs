@@ -45,6 +45,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             var updatedCount = 0;
             var notChanged = 0;
             var failed = 0;
+            var counter = 1;
 
             foreach (var providerData in allProviders)
             {
@@ -64,17 +65,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     {
                         notChanged++;
                     }
-
-                    _logger.LogInformation("UKRLP Sync: {ReferenceNumber} - {Result}", providerData.UnitedKingdomProviderReferenceNumber, result.ToString());
-
+                    if (result != CreateOrUpdateResult.Skipped)
+                    {
+                        _logger.LogInformation("UKRLP Sync [{Counter} of {Count}]: {ReferenceNumber} - {Result}", counter++, allProviders.Count, providerData.UnitedKingdomProviderReferenceNumber, result.ToString());
+                    }
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("UKRLP Sync: Failed to process provider UKPRN: {ReferenceNumber} - {Message}", providerData.UnitedKingdomProviderReferenceNumber,e.Message);
                     failed++;
                 }
-
             }
+            await _sqlQueryDispatcher.Commit();
 
             _logger.LogInformation("UKRLP Sync: Added {0} new providers, updated {1} providers and {2} providers were up to date. {3} providers failed to sync", createdCount, updatedCount, notChanged, failed);
 
@@ -104,6 +106,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 min = max + 1;
                 max = max + chunkSize;
             }
+            await _sqlQueryDispatcher.Commit();
         }
 
         public async Task SyncProviderData(int ukprn)
@@ -120,6 +123,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             _logger.LogInformation("UKRLP Sync: Processing of data for UKPRN '{0}' initiated", ukprn);
 
             CreateOrUpdateResult outcome = await CreateOrUpdateProvider(providerData);
+            await _sqlQueryDispatcher.Commit();
 
             _logger.LogInformation("UKRLP Sync: Outcome result for UKPRN '{0}' - {1}", ukprn, outcome);
         }
