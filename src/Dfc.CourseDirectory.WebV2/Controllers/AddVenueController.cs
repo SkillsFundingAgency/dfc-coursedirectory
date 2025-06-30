@@ -1,14 +1,17 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue;
 using Flurl;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Attributes;
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
+
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("venues/add")]
     [JourneyMetadata(
@@ -53,7 +56,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
             return View(
                 nameof(PostcodeSearch),
-                new PostcodeSearch.SearchCommand()
+                new ViewModels.Venues.AddVenue.PostcodeSearch.SearchCommand()
                 {
                     Postcode = postcode
                 });
@@ -73,13 +76,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
                 return Redirect(returnUrl);
             }
 
-            return RedirectToAction(nameof(ViewVenues.ViewVenuesController.ViewVenues), "ViewVenues")
+            return RedirectToAction(nameof(ViewVenuesController.ViewVenues), "ViewVenues")
                 .WithProviderContext(_providerContextProvider.GetProviderContext());
         }
 
         [HttpGet("postcode-search")]
         [RequireJourneyInstance]
-        public async Task<IActionResult> PostcodeSearch(PostcodeSearch.SearchCommand command) =>
+        public async Task<IActionResult> PostcodeSearch(ViewModels.Venues.AddVenue.PostcodeSearch.SearchCommand command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match(
@@ -88,7 +91,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("select-postcode")]
         [RequireJourneyInstance]
-        public Task<IActionResult> SelectPostcode(PostcodeSearch.SelectCommand command)
+        public Task<IActionResult> SelectPostcode(ViewModels.Venues.AddVenue.PostcodeSearch.SelectCommand command)
         {
             var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
 
@@ -105,7 +108,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         [RequireJourneyInstance]
         public async Task<IActionResult> Address([FromQuery] string postcode, [FromQuery] bool? fromPublishPage) =>
             await _mediator.SendAndMapResponse(
-                new Address.Query(),
+                new ViewModels.Venues.AddVenue.Address.Query(),
                 vm =>
                 {
                     vm.Postcode ??= Postcode.TryParse(postcode, out var pc) ? pc : postcode;
@@ -114,7 +117,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
 
         [HttpPost("address")]
         [RequireJourneyInstance]
-        public Task<IActionResult> Address(Address.Command command, [FromQuery] bool? fromPublishPage)
+        public Task<IActionResult> Address(ViewModels.Venues.AddVenue.Address.Command command, [FromQuery] bool? fromPublishPage)
         {
             var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
 
@@ -131,12 +134,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         [RequireJourneyInstance]
         public async Task<IActionResult> Details([FromQuery] bool? fromPublishPage) =>
             await _mediator.SendAndMapResponse(
-                new Details.Query(),
+                new ViewModels.Venues.AddVenue.Details.Query(),
                 vm => View(vm).WithViewData("FromPublishPage", fromPublishPage));
 
         [HttpPost("details")]
         [RequireJourneyInstance]
-        public Task<IActionResult> Details(Details.Command command)
+        public Task<IActionResult> Details(ViewModels.Venues.AddVenue.Details.Command command)
         {
             var journeyInstance = _journeyInstanceProvider.GetInstance<AddVenueJourneyModel>();
 
@@ -154,12 +157,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         [HttpGet("check-publish")]
         [RequireJourneyInstance]
         public async Task<IActionResult> CheckAndPublish() => await _mediator.SendAndMapResponse(
-            new CheckAndPublish.Query(),
+            new ViewModels.Venues.AddVenue.CheckAndPublish.Query(),
             vm => View(vm));
 
         [HttpPost("publish")]
         [RequireJourneyInstance]
-        public Task<IActionResult> Publish(CheckAndPublish.Command command) =>
+        public Task<IActionResult> Publish(ViewModels.Venues.AddVenue.CheckAndPublish.Command command) =>
             _mediator.SendAndMapResponse(
                 command,
                 success =>
@@ -199,7 +202,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
         [RequireJourneyInstance]
         public async Task<IActionResult> Published()
         {
-            var query = new Published.Query();
+            var query = new ViewModels.Venues.AddVenue.Published.Query();
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
     }

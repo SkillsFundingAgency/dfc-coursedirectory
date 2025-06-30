@@ -6,13 +6,14 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue;
 using FluentValidation;
 using FormFlow;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Address
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.AddVenue.Address
 {
     public class Query : IRequest<Command>
     {

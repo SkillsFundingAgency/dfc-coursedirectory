@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue;
 using FluentValidation;
 using FluentValidation.Results;
 using FormFlow;
@@ -15,7 +16,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.PostcodeSearch
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.AddVenue.PostcodeSearch
 {
     public class SearchCommand : IRequest<OneOf<ModelWithErrors<SearchCommand>, SearchViewModel>>
     {

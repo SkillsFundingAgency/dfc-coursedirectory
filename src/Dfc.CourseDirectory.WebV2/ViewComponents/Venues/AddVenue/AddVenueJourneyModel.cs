@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue
 {
     [JourneyState]
     public class AddVenueJourneyModel

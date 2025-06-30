@@ -1,9 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue;
 using FormFlow;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Published
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.AddVenue.Published
 {
     public class Query : IRequest<ViewModel>
     {

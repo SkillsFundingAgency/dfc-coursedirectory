@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue;
 using FluentValidation;
 using FormFlow;
 using Mapster;
@@ -15,7 +16,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue.Details
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.AddVenue.Details
 {
     public class Query : IRequest<ViewModel>
     {
