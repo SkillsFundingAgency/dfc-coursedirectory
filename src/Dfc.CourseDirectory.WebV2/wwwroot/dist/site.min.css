@@ -990,7 +990,10 @@
     margin-top: 15px;
     margin-bottom: 15px;
     padding-left: 14px;
-    text-decoration: none
+    text-decoration: none !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-block-color: black;
 }
 
     .govuk-back-link:before, .govuk-breadcrumbs__list:after {
