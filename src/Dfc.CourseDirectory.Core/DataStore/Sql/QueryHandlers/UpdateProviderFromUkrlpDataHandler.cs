@@ -115,6 +115,7 @@ $@"UPDATE Pttcd.ProviderContacts
                 {
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
                     int numberOfImpactedRows = await transaction.Connection.ExecuteAsync(sqlProviderContact, providerContactDataObj, transaction);
+                    await transaction.CommitAsync();
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
 
                     _logger.LogInformation("Impacted rows: {0}", numberOfImpactedRows);
