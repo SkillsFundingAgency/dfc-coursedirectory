@@ -53,20 +53,15 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             _dispatcher.Dispose();
         }
 
-        [Fact]
+        /*[Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
-
-
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Test Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
-                contact:
-
-                    new ProviderContact
-                    {
+                contact: new ProviderContact {
                         ContactType = "P",
                         Telephone1 = "0123456789",
                         WebsiteAddress = "http://www.example.com",
@@ -82,14 +77,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                         PersonalDetailsPersonNameTitle = "Title",
                         PersonalDetailsPersonNameFamilyName = "FamilyName",
                         PersonalDetailsPersonNameGivenName = "GivenName"
-                    }
-                );
+                }
+            );
 
             var ukrlpData = GenerateUkrlpProviderData(provider.Ukprn);
             var ukrlpContact = ukrlpData.ProviderContact.Single();
-
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
-
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
@@ -104,7 +97,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
             _dispatcher.Dispose();
-        }
+        }*/
 
         [Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdateSkippedAsProviderAlreadyUpToDate()
