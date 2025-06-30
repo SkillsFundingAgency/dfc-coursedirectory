@@ -107,7 +107,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 min = max + 1;
                 max = max + chunkSize;
             }
-            await _sqlQueryDispatcher.Commit(); // save the outcome of the transaction
         }
 
         public async Task SyncProviderData(int ukprn)
@@ -124,7 +123,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             _logger.LogInformation("UKRLP Sync: Processing of data for UKPRN '{0}' initiated", ukprn);
 
             CreateOrUpdateResult outcome = await CreateOrUpdateProvider(providerData, false);
-            await _sqlQueryDispatcher.Commit(); // save the outcome of the transaction
 
             _logger.LogInformation("UKRLP Sync: Outcome result for UKPRN '{0}' - {1}", ukprn, outcome);
         }
@@ -180,7 +178,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             };
         }
 
-        // if we are processing batches, we aren't interested in logs regarding 'skipped' provider updates
         private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData, bool batchProcessing)
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
