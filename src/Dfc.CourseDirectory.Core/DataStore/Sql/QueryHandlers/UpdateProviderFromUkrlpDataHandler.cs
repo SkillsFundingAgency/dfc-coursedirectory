@@ -19,33 +19,33 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
         public async Task<Success> Execute(SqlTransaction transaction, UpdateProviderFromUkrlpData query)
         {
-            var sqlProvider = $@"UPDATE [Pttcd].[Providers]
-                            SET [ProviderName] = @ProviderName,
-                            [Alias] = @Alias,
-                            [UkrlpProviderStatusDescription] = @ProviderStatus,
-                            [UpdatedOn] = @UpdatedOn,
-                            [UpdatedBy] = @UpdatedBy
-                        WHERE [ProviderId] = @ProviderId;";
-            var sqlProviderContact = $@"
+            var updateProviderSql = $@"UPDATE [Pttcd].[Providers]
+                SET [ProviderName] = @ProviderName,
+                    [Alias] = @Alias,
+                    [UkrlpProviderStatusDescription] = @ProviderStatus,
+                    [UpdatedOn] = @UpdatedOn,
+                    [UpdatedBy] = @UpdatedBy
+                WHERE [ProviderId] = @ProviderId;";
+            
+            var updateContactDetailSql = $@"
             UPDATE [Pttcd].[ProviderContacts] 
-                                SET [ContactType] = @ContactType
-                                  ,[AddressSaonDescription] = @AddressSaonDescription
-                                  ,[AddressPaonDescription] = @AddressPaonDescription
-                                  ,[AddressStreetDescription] = @AddressStreetDescription
-                                  ,[AddressLocality] = @AddressLocality
-                                  ,[AddressItems] = @AddressItems
-                                  ,[AddressPostTown] = @AddressPostTown
-                                  ,[AddressCounty] = @AddressCounty
-                                  ,[AddressPostcode] = @AddressPostcode
-                                  ,[PersonalDetailsPersonNameTitle] = @PersonalDetailsPersonNameTitle
-                                  ,[PersonalDetailsPersonNameGivenName] = @PersonalDetailsPersonNameGivenName
-                                  ,[PersonalDetailsPersonNameFamilyName] = @PersonalDetailsPersonNameFamilyName
-                                  ,[Telephone1] = @Telephone1
-                                  ,[Fax] = @Fax
-                                  ,[WebsiteAddress] = @WebsiteAddress
-                                  ,[Email] = @Email
-                              WHERE [ProviderId] = @ProviderId  AND  ContactType = 'P';
-            ";
+                SET [ContactType] = @ContactType
+                    ,[AddressSaonDescription] = @AddressSaonDescription
+                    ,[AddressPaonDescription] = @AddressPaonDescription
+                    ,[AddressStreetDescription] = @AddressStreetDescription
+                    ,[AddressLocality] = @AddressLocality
+                    ,[AddressItems] = @AddressItems
+                    ,[AddressPostTown] = @AddressPostTown
+                    ,[AddressCounty] = @AddressCounty
+                    ,[AddressPostcode] = @AddressPostcode
+                    ,[PersonalDetailsPersonNameTitle] = @PersonalDetailsPersonNameTitle
+                    ,[PersonalDetailsPersonNameGivenName] = @PersonalDetailsPersonNameGivenName
+                    ,[PersonalDetailsPersonNameFamilyName] = @PersonalDetailsPersonNameFamilyName
+                    ,[Telephone1] = @Telephone1
+                    ,[Fax] = @Fax
+                    ,[WebsiteAddress] = @WebsiteAddress
+                    ,[Email] = @Email
+                WHERE [ProviderId] = @ProviderId  AND  ContactType = 'P';";
 
             var providerContact = query?.Contact;
             var paramz = new
@@ -60,9 +60,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             
             if (query.UpdateProvider)
             {
-                _logger.LogInformation("Update [Pttcd].[Providers] starting...");
-                await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
-                _logger.LogInformation("Update [Pttcd].[Providers] finished!");
+                _logger.LogInformation("Updating [Pttcd].[Providers] table data for provider '{0}'", query.ProviderId.ToString());
+                await transaction.Connection.ExecuteAsync(updateProviderSql, paramz, transaction);
             }
             
             if (providerContact != null)
@@ -89,9 +88,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 };
                 if (query.UpdateProviderContact)
                 {
-                    _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
-                    await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                    _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
+                    _logger.LogInformation("Updating [Pttcd].[ProviderContacts] table data for provider '{0}'", query.ProviderId.ToString());
+                    await transaction.Connection.ExecuteAsync(updateContactDetailSql, paramzContacts, transaction);
                 }
             }
 

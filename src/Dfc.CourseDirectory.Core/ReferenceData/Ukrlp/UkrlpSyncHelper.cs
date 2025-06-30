@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 try
                 {
-                    var result = await CreateOrUpdateProvider(providerData);
+                    var result = await CreateOrUpdateProvider(providerData, true);
 
                     if (result == CreateOrUpdateResult.Created)
                     {
@@ -76,7 +76,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                     failed++;
                 }
             }
-            await _sqlQueryDispatcher.Commit();
+            
+            await _sqlQueryDispatcher.Commit(); // save the outcome of the transaction
 
             _logger.LogInformation("UKRLP Sync: Added {0} new providers, updated {1} providers and {2} providers were up to date. {3} providers failed to sync", createdCount, updatedCount, notChanged, failed);
 
@@ -106,7 +107,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 min = max + 1;
                 max = max + chunkSize;
             }
-            await _sqlQueryDispatcher.Commit();
+            await _sqlQueryDispatcher.Commit(); // save the outcome of the transaction
         }
 
         public async Task SyncProviderData(int ukprn)
@@ -122,8 +123,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             _logger.LogInformation("UKRLP Sync: Processing of data for UKPRN '{0}' initiated", ukprn);
 
-            CreateOrUpdateResult outcome = await CreateOrUpdateProvider(providerData);
-            await _sqlQueryDispatcher.Commit();
+            CreateOrUpdateResult outcome = await CreateOrUpdateProvider(providerData, false);
+            await _sqlQueryDispatcher.Commit(); // save the outcome of the transaction
 
             _logger.LogInformation("UKRLP Sync: Outcome result for UKPRN '{0}' - {1}", ukprn, outcome);
         }
@@ -137,7 +138,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             {
                 if (allProviderData.TryGetValue(ukprn, out var providerData))
                 {
-                    await CreateOrUpdateProvider(providerData);
+                    await CreateOrUpdateProvider(providerData, true);
 
                     _logger.LogInformation("UKRLP Sync: Successfully updated provider information from UKRLP for {0}.", ukprn);
                 }
@@ -179,16 +180,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             };
         }
 
-        private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData)
+        // if we are processing batches, we aren't interested in logs regarding 'skipped' provider updates
+        private async Task<CreateOrUpdateResult> CreateOrUpdateProvider(ProviderRecordStructure providerData, bool batchProcessing)
         {
             var ukprn = int.Parse(providerData.UnitedKingdomProviderReferenceNumber);
             var existingProvider = await GetProvider(ukprn);
-            
             var providerId = existingProvider?.ProviderId ?? Guid.NewGuid();
-
             var contact = SelectContact(providerData.ProviderContact);
             var ukrlpProviderContact = MapContact(contact);
-
 
             if (existingProvider == null)
             {
@@ -214,7 +213,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             }
             else
             {
-                _logger.LogInformation("An existing provider with UKPRN '{0}' has been identified", ukprn);
+                if (!batchProcessing)
+                    _logger.LogInformation("An existing provider with UKPRN '{0}' has been identified", ukprn);
                 
                 var existingProviderContact = await GetProviderContact(providerId);
                 var updateProvider = CheckUpdateProvider(existingProvider,providerData);
@@ -227,7 +227,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 
                 if (updateProvider || updateProviderContact)
                 {
-                    _logger.LogInformation("Execute query '{0}'", nameof(UpdateProviderFromUkrlpData));
+                    if (!batchProcessing)
+                        _logger.LogInformation("Execute query '{0}'", nameof(UpdateProviderFromUkrlpData));
 
                     await _sqlQueryDispatcher.ExecuteQuery(new UpdateProviderFromUkrlpData()
                     {
@@ -244,15 +245,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 }
                 else
                 {
-                    _logger.LogInformation("ACTION TAKEN: Skipped");
+                    if (!batchProcessing)
+                        _logger.LogInformation("ACTION TAKEN: Skipped");
+                    
                     return CreateOrUpdateResult.Skipped;
                 }
 
                 var existingProviderStatus = MapProviderStatusDescription(existingProvider.ProviderStatus);
                 var refreshedProviderStatus = MapProviderStatusDescription(providerData.ProviderStatus);
                 bool deactivating = IsDeactivatedStatus(refreshedProviderStatus);
-
-                _logger.LogInformation("UKRLP Sync: UKPRN '{0}' | Previous Status '{1}' | New Status '{2}' | Deactivated? '{3}'", ukprn, existingProviderStatus, refreshedProviderStatus, deactivating);
+                
+                if (!batchProcessing)
+                    _logger.LogInformation("UKRLP Sync: UKPRN '{0}' | Previous Status '{1}' | New Status '{2}' | Deactivated? '{3}'", ukprn, existingProviderStatus, refreshedProviderStatus, deactivating);
 
                 if (deactivating)
                 {
