@@ -9,7 +9,6 @@ using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
 using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using Dfc.CourseDirectory.WebV2.Controllers;
 using Dfc.CourseDirectory.WebV2.Features.Providers;
-using Dfc.CourseDirectory.WebV2.Features.Providers.Reporting;
 using FormFlow.State;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

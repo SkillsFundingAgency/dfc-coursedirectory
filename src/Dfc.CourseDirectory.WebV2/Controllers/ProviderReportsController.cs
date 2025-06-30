@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("providers/reports")]
@@ -25,13 +25,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.Reporting
 
         [HttpGet("provider-type")]
         public Task<IActionResult> ProviderTypeReport() =>
-            _mediator.SendAndMapResponse<IAsyncEnumerable<ProviderTypeReport.Csv>, IActionResult>(new ProviderTypeReport.Query(),
-                records => new CsvResult<ProviderTypeReport.Csv>($"{nameof(ProviderTypeReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+            _mediator.SendAndMapResponse<IAsyncEnumerable<Reporting.ProviderTypeReport.Csv>, IActionResult>(new Reporting.ProviderTypeReport.Query(),
+                records => new CsvResult<Reporting.ProviderTypeReport.Csv>($"{nameof(ProviderTypeReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
 
 
         [HttpGet("providers-missing-primary-contact")]
         public Task<IActionResult> ProvidersMissingPrimaryContact() =>
-            _mediator.SendAndMapResponse<IAsyncEnumerable<ProviderMissingPrimaryContactReport.Csv>, IActionResult>(new ProviderMissingPrimaryContactReport.Query(),
-                records => new CsvResult<ProviderMissingPrimaryContactReport.Csv>($"{nameof(ProviderMissingPrimaryContactReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+            _mediator.SendAndMapResponse<IAsyncEnumerable<Reporting.ProviderMissingPrimaryContactReport.Csv>, IActionResult>(new Reporting.ProviderMissingPrimaryContactReport.Query(),
+                records => new CsvResult<Reporting.ProviderMissingPrimaryContactReport.Csv>($"{nameof(Reporting.ProviderMissingPrimaryContactReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
     }
 }
