@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel
 {
     [JourneyState]
     public class EditTLevelJourneyModel

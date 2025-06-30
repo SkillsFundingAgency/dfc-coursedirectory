@@ -9,7 +9,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.ViewTLevel
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.ViewTLevel
 {
     public class Query : IRequest<OneOf<NotFound, ViewModel>>
     {

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel;
 using FormFlow;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.Published
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.Published
 {
     public class Query : IRequest<ViewModel>
     {

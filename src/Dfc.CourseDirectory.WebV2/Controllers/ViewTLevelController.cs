@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
+
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("t-levels/{tLevelId}")]
     [RestrictProviderTypes(ProviderType.TLevels)]
@@ -19,7 +20,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index([FromRoute] ViewTLevel.Query query)
+        public async Task<IActionResult> Index([FromRoute] ViewModels.TLevels.ViewTLevel.Query query)
         {
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();

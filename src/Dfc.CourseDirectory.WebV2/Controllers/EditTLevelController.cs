@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("t-levels/{tLevelId}")]
     [JourneyMetadata(
@@ -44,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         public async Task<IActionResult> Edit(
             [FromQuery] Guid? venueId)  // Populated by the Add Venue journey
         {
-            var query = new EditTLevel.Query();
+            var query = new ViewModels.TLevels.EditTLevel.EditTLevel.Query();
             return await _mediator.SendAndMapResponse(
                 query,
                 vm =>
@@ -60,7 +61,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         }
 
         [HttpPost("edit")]
-        public async Task<IActionResult> Edit(Guid tLevelId, EditTLevel.Command command) =>
+        public async Task<IActionResult> Edit(Guid tLevelId, ViewModels.TLevels.EditTLevel.EditTLevel.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -79,7 +80,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         [HttpPost("add-location")]
         public async Task<IActionResult> AddAnotherLocation(
             Guid tLevelId,
-            Save.Command command)
+            ViewModels.TLevels.EditTLevel.Save.Command command)
         {
             await _mediator.Send(command);
 
@@ -98,7 +99,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         [HttpGet("check-publish")]
         public async Task<IActionResult> CheckAndPublish()
         {
-            var query = new CheckAndPublish.Query();
+            var query = new ViewModels.TLevels.EditTLevel.CheckAndPublish.Query();
             return await _mediator.SendAndMapResponse(query, vm => View(vm));
         }
 
@@ -106,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> Publish(Guid tLevelId)
         {
-            var command = new CheckAndPublish.Command();
+            var command = new ViewModels.TLevels.EditTLevel.CheckAndPublish.Command();
             return await _mediator.SendAndMapResponse(
                 command,
                 response => response.Match<IActionResult>(
@@ -119,7 +120,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
         [RequireJourneyInstance]
         public async Task<IActionResult> Published()
         {
-            var query = new Published.Query();
+            var query = new ViewModels.TLevels.EditTLevel.Published.Query();
 
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();

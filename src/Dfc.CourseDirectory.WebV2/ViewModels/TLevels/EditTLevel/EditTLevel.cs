@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.TLevelValidation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel;
 using FluentValidation;
 using FormFlow;
 using Mapster;
@@ -18,7 +18,7 @@ using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel.EditTLevel
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
 {
     public class Query : IRequest<ViewModel>
     {

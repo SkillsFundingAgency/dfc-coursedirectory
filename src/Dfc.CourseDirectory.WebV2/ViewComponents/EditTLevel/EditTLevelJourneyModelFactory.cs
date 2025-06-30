@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel
 {
     public class EditTLevelJourneyModelFactory
     {
