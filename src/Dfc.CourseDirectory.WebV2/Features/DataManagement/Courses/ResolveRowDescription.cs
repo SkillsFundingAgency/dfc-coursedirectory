@@ -10,6 +10,8 @@ using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
 using MediatR;
 using OneOf;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Extensions;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.ResolveRowDescription
 {

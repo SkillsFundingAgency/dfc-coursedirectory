@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
+using Dfc.CourseDirectory.Core.Middleware;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.DownloadErrors
 {

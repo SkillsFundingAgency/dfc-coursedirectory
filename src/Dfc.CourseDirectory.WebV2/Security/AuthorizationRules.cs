@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dfc.CourseDirectory.WebV2.Security
+namespace Dfc.CourseDirectory.Core.Security
 {
     public static class AuthorizationRules
     {

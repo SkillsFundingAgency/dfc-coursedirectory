@@ -1,5 +1,5 @@
-﻿using Dfc.CourseDirectory.WebV2.Filters;
-using Dfc.CourseDirectory.WebV2.Security;
+﻿using Dfc.CourseDirectory.Core.Filters;
+using Dfc.CourseDirectory.Core.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

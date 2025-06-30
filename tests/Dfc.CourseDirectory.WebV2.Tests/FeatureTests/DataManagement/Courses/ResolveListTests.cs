@@ -2,10 +2,13 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -92,7 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
 
                 var firstRowCells = errorRows.Single().GetElementByTestId("Errors").TextContent.Trim();
                 firstRowCells.Should().BeEquivalentTo(
-                    Core.DataManagement.Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED")
+                    Errors.MapCourseErrorToFieldGroup("COURSERUN_COURSE_NAME_REQUIRED")
                 );
             }
         }

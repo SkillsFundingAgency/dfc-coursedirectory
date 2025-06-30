@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

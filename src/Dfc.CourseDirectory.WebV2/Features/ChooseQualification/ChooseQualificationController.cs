@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using Flurl;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Dfc.CourseDirectory.Core.Attributes;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
 {
@@ -54,7 +57,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification
         }
 
         [HttpGet("clearfilters")]
-        public IActionResult ClearFilters(SearchQuery query) => RedirectToAction(nameof(Search), new { SearchTerm = query.SearchTerm }).WithProviderContext(_providerContext);
+        public IActionResult ClearFilters(SearchQuery query) => RedirectToAction(nameof(Search), new { query.SearchTerm }).WithProviderContext(_providerContext);
 
         [RequireProviderContext]
         [HttpGet("add")]

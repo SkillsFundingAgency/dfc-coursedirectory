@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Xunit;

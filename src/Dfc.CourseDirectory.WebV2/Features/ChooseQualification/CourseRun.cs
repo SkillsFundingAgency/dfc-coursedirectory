@@ -12,12 +12,14 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction;
+using Dfc.CourseDirectory.Core.MultiPageTransaction;
 using FluentValidation;
 using Mapster;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Extensions;
 
 namespace Dfc.CourseDirectory.WebV2.Features.ChooseQualification.CourseRun
 {

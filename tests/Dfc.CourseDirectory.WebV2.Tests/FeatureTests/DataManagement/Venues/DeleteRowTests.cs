@@ -3,10 +3,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -574,7 +578,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Venues
 
         private string GetUniqueErrorMessages(VenueUploadRow row)
         {
-            var errors = row.Errors.Select(errorCode => Core.DataManagement.Errors.MapVenueErrorToFieldGroup(errorCode));
+            var errors = row.Errors.Select(errorCode => Errors.MapVenueErrorToFieldGroup(errorCode));
             return string.Join(",", errors.Distinct().ToList());
         }
     }

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.MiddlewareTests
 {

@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;

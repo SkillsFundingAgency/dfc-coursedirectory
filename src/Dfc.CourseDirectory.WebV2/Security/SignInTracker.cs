@@ -3,7 +3,7 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
-namespace Dfc.CourseDirectory.WebV2.Security
+namespace Dfc.CourseDirectory.Core.Security
 {
     public class SignInTracker : ISignInAction
     {

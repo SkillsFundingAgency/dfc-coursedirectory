@@ -2,6 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Filters;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Cookies
 {

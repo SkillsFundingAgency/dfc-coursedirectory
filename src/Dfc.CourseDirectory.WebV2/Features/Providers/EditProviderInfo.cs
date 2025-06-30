@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.ProviderValidation;
-using Dfc.CourseDirectory.WebV2.Security;
+using Dfc.CourseDirectory.Core.Security;
 using FluentValidation;
 using MediatR;
 using OneOf;

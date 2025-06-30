@@ -1,0 +1,269 @@
+﻿@using Dfc.CourseDirectory.WebV2.ViewComponents.ZCodeSearchResult
+@model UnRegulatedNotFoundViewModel
+@{
+    ViewData["Title"] = "Choose a non-regulated provision"; 
+    Layout = "_Layout_Your_Courses";
+}
+
+
+
+@Html.HiddenFor(x => x.LevelId)
+@Html.HiddenFor(x => x.CategoryId)
+<div class="grid-row" data-sf-element="Row">
+    <div class="column-two-thirds">
+        <div class="grid-row govuk-body" data-sf-element="Row">
+            <div class="">
+                <div>
+                    <h1 class="govuk-heading-l govuk-!-margin-top-4">Choose a sector subject area (SSA)</h1>
+                </div>
+                <div class="govuk-form-group">
+                    <div class="govuk--row cd-nonregulated-provision">
+                        <div class="cd-flex">
+                            <div class="">
+                                <div class="cd-level-select govuk-form-group">
+                                    <label class="govuk-label" for="level1" name="level1">
+                                        SSA level 1
+                                    </label>
+
+                                    <select asp-for="@Model.Level1Id" asp-items="@Model.Level1" class="govuk-select" id="LevelOneSelect" style="width: 400px" aria-label="level1"></select>
+                                </div>
+                            </div>
+                            <div id="LevelTwo" class="">
+                                <div class="cd-level-select govuk-form-group">
+                                    <label class="govuk-label" for="level2" name="level2">
+                                        SSA level 2
+                                    </label>
+
+                                    <select asp-for="@Model.Level2Id" asp-items="@Model.Level2" class="govuk-select" id="LevelTwoSelect" disabled style="width: 400px" aria-label="level2"></select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="results">
+
+                        @await Component.InvokeAsync(nameof(ZCodeSearchResult))
+                    </div>
+                </div>
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    (function ($) {
+        $(function () {
+
+            $('#LevelOneSelect').change(function () {
+                // alert($(this).val());
+
+                $('#filter0').val("");
+                $('#filter1').val("");
+                $('#LevelTwoSelect').val("");
+
+                $('#LevelTwoSelect').attr('disabled', true);
+                $('#LevelTwoSelect').find('option:eq(0)').attr('selected', true);
+                var $SelectedValue = $(this).val();
+
+                if ($SelectedValue !== "") {
+
+                    $('#results').html("");
+
+                    $.ajax({
+                        url: '/UnregulatedCourses/GetSSALevelTwo',
+                        type: "GET",
+                        dataType: "json",
+                        data: { Level1Id: $SelectedValue },
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+
+                            var s = '';
+                            for (var i = 0; i < data.length; i++) {
+                                s += '<option value="' + data[i].value + '">' + data[i].text + '</option>';
+                            }
+                            $("#LevelTwoSelect").html(s);
+
+                            $('#LevelTwoSelect').prop("disabled", false);
+                            $('#LevelTwoSelect').removeAttr("disabled");
+
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+
+                        }
+                    });
+
+                } else {
+                    $('#results').html("");
+                    $('#LevelTwoSelect').attr('disabled', true);
+                }
+            });
+
+            var debounce = function (cb, delay) {
+                var inDebounce;
+                return function () {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(inDebounce);
+                    inDebounce = setTimeout(function () {
+                        cb.apply(context, args);
+                    },
+                        delay);
+                };
+            };
+
+            var isNullOrWhitespace = function (input) {
+                if (typeof input === 'undefined' || input == null) return true;
+                return input.replace(/\s/g, '').length < 3;
+            }
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithUrl = function (url, success) {
+                console.log(url);
+                $.get(url, success);
+            };
+
+            var removeSearchResults = function () {
+                var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+                $larsSearchResultContainer.html("");
+            };
+
+            var replaceSearchResult = function (searchResults) {
+                var $larsSearchResultContainer = $("#LarsSearchResultContainer");
+                $larsSearchResultContainer.html("");
+                $larsSearchResultContainer.html(searchResults);
+            };
+
+            var $larsSearchTerm = $("#LarsSearchTerm");
+            var $buttonSearch = $("#searchQualification");
+
+            var doSearch = function () {
+
+                Level1Id: $('#LevelOneSelect').val();
+                Level2Id: $('#LevelTwoSelect').val();
+
+                var $allCheckedNotionalNvqLevelV2FilterCheckboxes =
+                    $("input[name='NotionalNVQLevelv2Filter']:checkbox:checked");
+                var $allCheckedAwardAimRefFilterCheckboxes =
+                    $("input[name='AwardOrgAimRefFilter']:checkbox:checked");
+
+                makeRequestWithPayload({
+                    Level1Id: $('#LevelOneSelect').val(),
+                    Level2Id: $('#LevelTwoSelect').val(),
+                    NotionalNVQLevelv2Filter: $allCheckedNotionalNvqLevelV2FilterCheckboxes.map(function () {
+                        return $(this).val();
+                    }).get(),
+                    AwardOrgAimRefFilter: $allCheckedAwardAimRefFilterCheckboxes.map(function () {
+                        return $(this).val();
+                    }).get()
+                },
+                    onSucess);
+                // }
+            };
+
+            var assignEventsToAllCheckboxes = function () {
+                var $notionalNvqLevelV2FilterCheckboxes = $("input[name='NotionalNVQLevelv2Filter']:checkbox");
+                var $awardAimRefFilterCheckboxes = $("input[name='AwardOrgAimRefFilter']:checkbox");
+
+                //$notionalNvqLevelV2FilterCheckboxes.on("click", debounce(doSearch, 1500));
+                //$awardAimRefFilterCheckboxes.on("click", debounce(doSearch, 1500));
+
+                $("#ApplyFilter").on("click", debounce(doSearch,0));
+            };
+
+            var assignEventToClearAllFiltersLink = function () {
+                var $clearAllFiltersLink = $("#ClearAllFilters");
+
+                $clearAllFiltersLink.on("click",
+                    function (e) {
+                        e.preventDefault();
+                        var $allCheckedFilterCheckboxes = $(
+                            "input[name='NotionalNVQLevelv2Filter']:checkbox:checked, input[name='AwardOrgAimRefFilter']:checkbox:checked:checkbox");
+                        var allCheckedFilterCheckboxesLength = $allCheckedFilterCheckboxes.length;
+
+                        for (var i = 0; i < allCheckedFilterCheckboxesLength; i++) {
+                            if (i === (allCheckedFilterCheckboxesLength - 1)) {
+                                $($allCheckedFilterCheckboxes[i]).trigger("click");
+                            } else {
+                                $($allCheckedFilterCheckboxes[i]).prop('checked', false);
+                            }
+                        }
+                        doSearch();
+                    });
+            };           
+            var assignEventsToLarsSearchPagination = function () {
+                var $larsSearchResultPaginationItems = $(".govuk-link,.pttcd-c-pager__previous-page,.pttcd-c-pager__next-page");
+                $larsSearchResultPaginationItems.on("click",
+                    function (e) {
+                        e.preventDefault();
+                        var url = $(e.target).attr("href");
+                        makeRequestWithUrl(url, onSucess);
+                    });
+            };
+
+            var onSucess = function (data) {
+
+                // var results = JSON.parse(data);
+
+                $('#results').html("");
+                $('#results').html(data);
+
+                $('#Filters').css('visibility', 'visible');
+
+                assignEventsToAllCheckboxes();
+                assignEventToClearAllFiltersLink();
+                assignEventsToLarsSearchPagination();
+            };
+
+            $buttonSearch.on("click", doSearch);
+
+            $(document).keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                }
+            });
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/UnregulatedCourses/ZCodeNotKnown?" + qs, success);
+            };
+
+            $('#LevelTwoSelect').change(function () {
+
+                var $Level1Id = $('#LevelOneSelect').val();
+                var $SelectedValue = $(this).val();
+                if ($SelectedValue !== "") {
+
+                    $('#results').html("");
+
+                    doSearch();
+
+                } else {
+                    $('#results').html("");
+                }
+            });
+
+        });
+    })(jQuery);
+</script>
+
+
+
+
+

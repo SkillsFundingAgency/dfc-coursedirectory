@@ -1,5 +1,6 @@
 ﻿using System;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Filters;
 using FormFlow;
 
 namespace Dfc.CourseDirectory.WebV2

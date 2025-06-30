@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Attributes;
 namespace Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
 {
     [RequireProviderContext]

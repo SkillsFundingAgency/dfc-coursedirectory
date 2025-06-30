@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Filters;
+using Dfc.CourseDirectory.Core.Filters;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Attributes;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
 {

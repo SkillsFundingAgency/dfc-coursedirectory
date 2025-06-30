@@ -8,6 +8,9 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType;
+using Dfc.CourseDirectory.WebV2.Tests.Core;
+using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.Tests.Extensions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -82,7 +85,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
         [InlineData(ProviderType.FE | ProviderType.TLevels, new[] { "fe", "tLevels" })]
         [InlineData(ProviderType.NonLARS | ProviderType.TLevels, new[] { "nonLars", "tLevels" })]
         [InlineData(ProviderType.NonLARS | ProviderType.FE, new[] { "nonLars", "fe" })]
-        [InlineData(ProviderType.FE | ProviderType.NonLARS | ProviderType.TLevels, new[] {"fe", "nonLars", "tLevels" })]
+        [InlineData(ProviderType.FE | ProviderType.NonLARS | ProviderType.TLevels, new[] { "fe", "nonLars", "tLevels" })]
 
         public async Task Get_ValidRequest_RendersExpectedOutput(
             ProviderType providerType,

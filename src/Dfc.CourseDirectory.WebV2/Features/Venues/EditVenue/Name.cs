@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
 using FluentValidation;

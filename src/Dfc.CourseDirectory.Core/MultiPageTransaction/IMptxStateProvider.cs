@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Dfc.CourseDirectory.Core.MultiPageTransaction
+{
+    public interface IMptxStateProvider
+    {
+        MptxInstance CreateInstance(
+            Type stateType,
+            string parentInstanceId,
+            object state,
+            IReadOnlyDictionary<string, object> items);
+        void DeleteInstance(string instanceId);
+        MptxInstance GetInstance(string instanceId);
+        void SetInstanceState(string instanceId, object update);
+    }
+}

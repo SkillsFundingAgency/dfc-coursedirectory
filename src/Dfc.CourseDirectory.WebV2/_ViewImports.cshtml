@@ -2,10 +2,12 @@
 @addTagHelper *, Dfc.CourseDirectory.WebV2
 @addTagHelper *, GovUk.Frontend.AspNetCore
 @using Dfc.CourseDirectory.Core
+@using Dfc.CourseDirectory.Core.Helpers
 @using Dfc.CourseDirectory.Core.Models
+@using Dfc.CourseDirectory.Core.ViewHelpers
 @using Dfc.CourseDirectory.WebV2
 @using Dfc.CourseDirectory.WebV2.SharedViews
 @using Microsoft.AspNetCore.Http.Extensions
-@inject Dfc.CourseDirectory.Core.IFeatureFlagProvider FeatureFlagProvider
-@inject Dfc.CourseDirectory.WebV2.ViewHelpers.ProviderContextHelper ProviderContext
-@inject Dfc.CourseDirectory.WebV2.ViewHelpers.RouteValuesHelper RouteValuesHelper
+@inject IFeatureFlagProvider FeatureFlagProvider
+@inject ProviderContextHelper ProviderContext
+@inject RouteValuesHelper RouteValuesHelper
