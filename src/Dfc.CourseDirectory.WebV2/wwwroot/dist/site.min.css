@@ -1276,8 +1276,8 @@
     }
 
 .govuk-button--warning {
-    background-color: #b10e1e;
-    box-shadow: 0 2px 0 #47060c
+    background-color: #b10e1e !important;
+    box-shadow: 0 2px 0 #47060c !important;
 }
 
     .govuk-button--warning:focus, .govuk-button--warning:hover {
@@ -5345,7 +5345,7 @@ p {
 }
 
 .phase-tag-published {
-    background: #00823b
+    background: #00823b !important;
 }
 
 .duration-container {

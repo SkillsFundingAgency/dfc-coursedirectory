@@ -10,7 +10,7 @@
 
 .pttcd-cookie-banner__button {
     display: inline-block;
-    padding: 0;
+    padding: 0 !important;
     margin: 0;
 }
 
