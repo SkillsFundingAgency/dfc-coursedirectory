@@ -1,6 +1,9 @@
 ﻿using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -29,10 +32,38 @@ namespace Dfc.CourseDirectory.Functions
             _logger.LogInformation("Function App completed successfully");
         }
 
-        [Function("SyncKnownProviders")]
-        public Task SyncKnownProviders([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
-
         [Function("SyncAllKnownProvidersData")]
         public Task SyncAllKnownProvidersData([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+
+        /*
+            Trigger the function using the following request body:
+            
+            {
+                "Ukprn": <int>
+            }
+        */
+        [Function("SyncProviderByUkprn")]
+        public async Task<IActionResult> SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+        {
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncProviderByUkprn));
+
+            using StreamReader reader = new(req.Body);
+            string bodyStr = await reader.ReadToEndAsync();
+
+            ProviderToRefresh providerData = JsonConvert.DeserializeObject<ProviderToRefresh>(bodyStr);
+
+            _logger.LogInformation("UKPRN provided: {0}", providerData.Ukprn);
+
+            await _ukrlpSyncHelper.SyncProviderData(providerData.Ukprn);
+
+            _logger.LogInformation("Function '{0}' finished invoking", nameof(SyncProviderByUkprn));
+
+            return new OkResult();
+        }
+
+        public class ProviderToRefresh
+        {
+            public int Ukprn;
+        }
     }
 }

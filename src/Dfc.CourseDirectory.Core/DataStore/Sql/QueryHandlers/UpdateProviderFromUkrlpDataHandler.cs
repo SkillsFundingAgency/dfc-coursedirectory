@@ -8,19 +8,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpdateProviderFromUkrlpDataHandler :
-        ISqlQueryHandler<UpdateProviderFromUkrlpData, Success>
+    public class UpdateProviderFromUkrlpDataHandler : ISqlQueryHandler<UpdateProviderFromUkrlpData, Success>
     {
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UpdateProviderFromUkrlpDataHandler(ILoggerFactory loggerFactory)
         {
-                    _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
-
+            _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
         }
-    public async Task<Success> Execute(
-            SqlTransaction transaction,
-            UpdateProviderFromUkrlpData query)
+
+        public async Task<Success> Execute(SqlTransaction transaction, UpdateProviderFromUkrlpData query)
         {
             var sqlProvider = $@"UPDATE [Pttcd].[Providers]
                             SET [ProviderName] = @ProviderName,
@@ -60,11 +57,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.UpdatedBy,
                 query.ProviderId,
             };
+            
             if (query.UpdateProvider)
             {
-                _logger.LogInformation("Update Provider table starting...");
+                _logger.LogInformation("Update [Pttcd].[Providers] starting...");
                 await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
-                _logger.LogInformation("Update provider table finished!");
+                _logger.LogInformation("Update [Pttcd].[Providers] finished!");
             }
             
             if (providerContact != null)
@@ -91,15 +89,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 };
                 if (query.UpdateProviderContact)
                 {
-                    _logger.LogInformation("Update ProviderContacts table starting...");
+                    _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
                     await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                    _logger.LogInformation("Update ProviderContacts table finishe!.");
+                    await transaction.CommitAsync();
+                    _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
                 }
             }
+
             return new Success();
-            
-
         }
-
     }
 }
