@@ -18,22 +18,23 @@ namespace Dfc.CourseDirectory.Functions
             _logger = logger;
         }
 
+        // Select provider records to be synced (those modified in the past 7 days)
         [Function("SyncAllRecentlyModifiedProviders")]
-        public async Task RunNightly([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
+        public async Task SyncAllRecentlyModifiedProviders([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
-            // Only get records updated in the past week.
-            // It times out if you try to pull the world back and doesn't support paging.
-            // We run every day but this gives some buffer to allow for any errors.
-            var updatedSince = DateTime.Today.AddDays(-7);
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncAllRecentlyModifiedProviders));
+
+            DateTime updatedSince = DateTime.Today.AddDays(-7);
+            
             _logger.LogInformation("Starting UKRLP Sync using cutoff date of {0}", updatedSince);
 
             await _ukrlpSyncHelper.SyncAllProviderData(updatedSince);
 
-            _logger.LogInformation("Function App completed successfully");
+            _logger.LogInformation("Function '{0}' finished invoking", nameof(SyncAllRecentlyModifiedProviders));
         }
 
-        [Function("SyncAllKnownProvidersData")]
-        public Task SyncAllKnownProvidersData([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+        [Function("SyncAllProviders")]
+        public Task SyncAllProviders([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
 
         /*
             Trigger the function using the following request body:
