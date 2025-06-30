@@ -33,19 +33,19 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
         [HttpGet("")]
         [AuthorizeTLevel]
-        public async Task<IActionResult> View(Request request)
+        public async Task<IActionResult> Get(Request request)
         {
             _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
 
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View("~/Views/DeleteTLevel/View.cshtml", vm));
+                vm => View(vm));
         }
 
         [HttpPost("")]
         [AuthorizeTLevel]
         [RequireJourneyInstance]
-        public Task<IActionResult> View(
+        public Task<IActionResult> Post(
             Guid tLevelId,
             [FromServices] IProviderContextProvider providerContextProvider,
             Command request) =>
