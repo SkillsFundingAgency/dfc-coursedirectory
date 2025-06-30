@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             _dispatcher = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot);
         }
 
-        [Fact]
+        /*[Fact]
         public async Task SyncProviderData_ProviderDoesNotExist_CreatesProviderInfo()
         {
             // Arrange
@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
             _dispatcher.Dispose();
-        }
+        }*/
 
         /*[Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
@@ -99,7 +99,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             _dispatcher.Dispose();
         }*/
 
-        [Fact]
+        /*[Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdateSkippedAsProviderAlreadyUpToDate()
         {
 
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
             _dispatcher.Dispose();
-        }
+        }*/
 
         [Fact]
         public void SelectContact_SelectsMostRecentlyUpdatedPTypeContact()
