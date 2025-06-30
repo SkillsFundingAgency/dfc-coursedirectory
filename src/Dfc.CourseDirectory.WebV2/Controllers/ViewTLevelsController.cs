@@ -5,8 +5,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.WebV2.ViewModels.TLevels.ViewTLevels;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [RequireProviderContext]
     [RestrictProviderTypes(ProviderType.TLevels)]

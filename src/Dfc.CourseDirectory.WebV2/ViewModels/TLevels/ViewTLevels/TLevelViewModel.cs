@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.ViewTLevels
+namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.ViewTLevels
 {
     public class TLevelViewModel
     {
