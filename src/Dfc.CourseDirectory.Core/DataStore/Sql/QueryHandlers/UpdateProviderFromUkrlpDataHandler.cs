@@ -91,7 +91,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 {
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] starting...");
                     await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                    await transaction.CommitAsync();
                     _logger.LogInformation("Update [Pttcd].[ProviderContacts] finished!");
                 }
             }
