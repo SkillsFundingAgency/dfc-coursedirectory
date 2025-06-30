@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FormFlow;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Details
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.EditVenue.Details
 {
     public class Query : IRequest<ViewModel>
     {

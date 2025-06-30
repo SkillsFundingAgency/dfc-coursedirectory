@@ -5,13 +5,14 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FluentValidation;
 using FormFlow;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.EditVenue.Name
 {
     public class Query : IRequest<Command>
     {
@@ -21,7 +22,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef
     public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
     {
         public Guid VenueId { get; set; }
-        public string ProviderVenueRef { get; set; }
+        public string Name { get; set; }
     }
 
     public class Handler :
@@ -47,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef
             return Task.FromResult(new Command()
             {
                 VenueId = request.VenueId,
-                ProviderVenueRef = _journeyInstance.State.ProviderVenueRef
+                Name = _journeyInstance.State.Name
             });
         }
 
@@ -65,7 +66,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef
                 return new ModelWithErrors<Command>(request, validationResult);
             }
 
-            _journeyInstance.UpdateState(state => state.ProviderVenueRef = request.ProviderVenueRef?.Trim());
+            _journeyInstance.UpdateState(state => state.Name = request.Name?.Trim());
 
             return new Success();
         }
@@ -77,8 +78,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.ProviderVenueRef
                 Guid venueId,
                 ISqlQueryDispatcher sqlQueryDispatcher)
             {
-                RuleFor(c => c.ProviderVenueRef)
-                    .ProviderVenueRef(providerId, venueId, sqlQueryDispatcher);
+                RuleFor(c => c.Name)
+                    .VenueName(providerId, venueId, sqlQueryDispatcher);
             }
         }
     }

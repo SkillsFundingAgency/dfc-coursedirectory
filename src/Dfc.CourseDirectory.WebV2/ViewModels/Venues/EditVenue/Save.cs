@@ -5,11 +5,12 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FormFlow;
 using MediatR;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Save
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.EditVenue.Save
 {
     public class Command : IRequest<Success>
     {

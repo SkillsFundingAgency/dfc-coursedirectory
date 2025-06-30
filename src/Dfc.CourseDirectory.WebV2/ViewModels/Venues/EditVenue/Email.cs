@@ -3,13 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FluentValidation;
 using FormFlow;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue.Email
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.EditVenue.Email
 {
     public class Query : IRequest<Command>
     {

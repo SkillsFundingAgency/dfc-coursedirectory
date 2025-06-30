@@ -5,7 +5,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue
 {
     [JourneyState]
     public class EditVenueJourneyModel

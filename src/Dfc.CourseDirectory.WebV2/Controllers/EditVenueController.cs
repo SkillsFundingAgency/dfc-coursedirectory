@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("venues/{venueId:guid}")]
     [AuthorizeVenue(venueIdRouteParameterName: "venueId")]
@@ -38,15 +39,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Details(Details.Query query) =>
+        public async Task<IActionResult> Details(ViewModels.Venues.EditVenue.Details.Query query) =>
             await _mediator.SendAndMapResponse(query, vm => View(vm));
 
         [HttpGet("address")]
-        public async Task<IActionResult> Address(Address.Query request) =>
+        public async Task<IActionResult> Address(ViewModels.Venues.EditVenue.Address.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
 
         [HttpPost("address")]
-        public async Task<IActionResult> Address(Guid venueId, Address.Command request)
+        public async Task<IActionResult> Address(Guid venueId, ViewModels.Venues.EditVenue.Address.Command request)
         {
             request.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
@@ -57,11 +58,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpGet("email")]
-        public async Task<IActionResult> Email(Email.Query request) =>
+        public async Task<IActionResult> Email(ViewModels.Venues.EditVenue.Email.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
 
         [HttpPost("email")]
-        public async Task<IActionResult> Email(Guid venueId, Email.Command request)
+        public async Task<IActionResult> Email(Guid venueId, ViewModels.Venues.EditVenue.Email.Command request)
         {
             request.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
@@ -72,11 +73,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpGet("name")]
-        public async Task<IActionResult> Name(Name.Query request) =>
+        public async Task<IActionResult> Name(ViewModels.Venues.EditVenue.Name.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
 
         [HttpPost("name")]
-        public async Task<IActionResult> Name(Guid venueId, Name.Command request)
+        public async Task<IActionResult> Name(Guid venueId, ViewModels.Venues.EditVenue.Name.Command request)
         {
             request.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
@@ -87,11 +88,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpGet("phone-number")]
-        public async Task<IActionResult> PhoneNumber(PhoneNumber.Query request) =>
+        public async Task<IActionResult> PhoneNumber(ViewModels.Venues.EditVenue.PhoneNumber.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
 
         [HttpPost("phone-number")]
-        public async Task<IActionResult> PhoneNumber(Guid venueId, PhoneNumber.Command request)
+        public async Task<IActionResult> PhoneNumber(Guid venueId, ViewModels.Venues.EditVenue.PhoneNumber.Command request)
         {
             request.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
@@ -102,11 +103,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpGet("ref")]
-        public async Task<IActionResult> ProviderVenueRef(ProviderVenueRef.Query request) =>
+        public async Task<IActionResult> ProviderVenueRef(ViewModels.Venues.EditVenue.ProviderVenueRef.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
 
         [HttpPost("ref")]
-        public async Task<IActionResult> ProviderVenueRef(Guid venueId, ProviderVenueRef.Command request)
+        public async Task<IActionResult> ProviderVenueRef(Guid venueId, ViewModels.Venues.EditVenue.ProviderVenueRef.Command request)
         {
             request.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
@@ -117,11 +118,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpGet("website")]
-        public async Task<IActionResult> Website(Website.Query request) =>
+        public async Task<IActionResult> Website(ViewModels.Venues.EditVenue.Website.Query request) =>
             await _mediator.SendAndMapResponse(request, vm => View(vm));
 
         [HttpPost("website")]
-        public async Task<IActionResult> Website(Guid venueId, Website.Command request)
+        public async Task<IActionResult> Website(Guid venueId, ViewModels.Venues.EditVenue.Website.Command request)
         {
             request.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
@@ -132,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Save(Guid venueId, Save.Command command)
+        public async Task<IActionResult> Save(Guid venueId, ViewModels.Venues.EditVenue.Save.Command command)
         {
             command.VenueId = venueId;
             return await _mediator.SendAndMapResponse(
