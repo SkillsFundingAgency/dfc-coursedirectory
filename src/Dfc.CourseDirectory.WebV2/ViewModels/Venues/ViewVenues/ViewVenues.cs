@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.Venues.ViewVenues
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.ViewVenues
 {
     public class Query : IRequest<ViewModel>
     {
