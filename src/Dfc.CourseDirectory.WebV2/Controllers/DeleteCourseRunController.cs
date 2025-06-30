@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
         [HttpGet("")]
         [AuthorizeCourse]
-        public async Task<IActionResult> View(
+        public async Task<IActionResult> Get(
             Request request,
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl)
         {
@@ -43,13 +43,13 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View(vm));
+                vm => View("~/Views/DeleteCourseRun/Get.cshtml", vm));
         }
 
         [HttpPost("")]
         [AuthorizeCourse]
         [RequireJourneyInstance]
-        public Task<IActionResult> View(Guid courseId, Guid courseRunId, Command request) =>
+        public Task<IActionResult> Post(Guid courseId, Guid courseRunId, Command request) =>
             _mediator.SendAndMapResponse(
                 request,
                 response => response.Match<IActionResult>(
@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
 
             vm.NonLarsCourse = IsCourseNonLars();
-            return View(vm);
+            return View("~/Views/DeleteCourseRun/Confirmed.cshtml", vm);
         }
 
         private bool IsCourseNonLars()
