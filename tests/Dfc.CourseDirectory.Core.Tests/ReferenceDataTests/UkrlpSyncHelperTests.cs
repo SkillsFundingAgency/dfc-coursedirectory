@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             _dispatcher = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot);
         }
 
-        /*[Fact]
+        [Fact]
         public async Task SyncProviderData_ProviderDoesNotExist_CreatesProviderInfo()
         {
             // Arrange
@@ -51,9 +51,9 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
             _dispatcher.Dispose();
-        }*/
+        }
 
-        /*[Fact]
+        [Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
             // Arrange
@@ -61,22 +61,23 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 providerName: "Test Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
-                contact: new ProviderContact {
-                        ContactType = "P",
-                        Telephone1 = "0123456789",
-                        WebsiteAddress = "http://www.example.com",
-                        Email = "test@example.com",
-                        AddressSaonDescription = "SAON Description",
-                        AddressPaonDescription = "PAON Description",
-                        AddressStreetDescription = "Street",
-                        AddressLocality = "Locality",
-                        AddressItems = "ItemDescription",
-                        AddressPostTown = "PostTown",
-                        AddressCounty = "County",
-                        AddressPostcode = "Postcode",
-                        PersonalDetailsPersonNameTitle = "Title",
-                        PersonalDetailsPersonNameFamilyName = "FamilyName",
-                        PersonalDetailsPersonNameGivenName = "GivenName"
+                contact: new ProviderContact
+                {
+                    ContactType = "P",
+                    Telephone1 = "0123456789",
+                    WebsiteAddress = "http://www.example.com",
+                    Email = "test@example.com",
+                    AddressSaonDescription = "SAON Description",
+                    AddressPaonDescription = "PAON Description",
+                    AddressStreetDescription = "Street",
+                    AddressLocality = "Locality",
+                    AddressItems = "ItemDescription",
+                    AddressPostTown = "PostTown",
+                    AddressCounty = "County",
+                    AddressPostcode = "Postcode",
+                    PersonalDetailsPersonNameTitle = "Title",
+                    PersonalDetailsPersonNameFamilyName = "FamilyName",
+                    PersonalDetailsPersonNameGivenName = "GivenName"
                 }
             );
 
@@ -97,9 +98,9 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
             _dispatcher.Dispose();
-        }*/
+        }
 
-        /*[Fact]
+        [Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdateSkippedAsProviderAlreadyUpToDate()
         {
 
@@ -151,7 +152,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
             AssertContactMapping(actualContact, ukrlpContact);
             _dispatcher.Dispose();
-        }*/
+        }
 
         [Fact]
         public void SelectContact_SelectsMostRecentlyUpdatedPTypeContact()
