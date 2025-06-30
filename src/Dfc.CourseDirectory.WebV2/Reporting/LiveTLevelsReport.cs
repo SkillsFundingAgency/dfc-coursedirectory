@@ -7,7 +7,7 @@ using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.Reporting.LiveTLevelsReport
+namespace Dfc.CourseDirectory.WebV2.Reporting.LiveTLevelsReport
 {
     public class Query : IRequest<IAsyncEnumerable<Csv>>
     {

@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.WebV2.Reporting.LiveTLevelsReport;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dfc.CourseDirectory.Core.Extensions;
-namespace Dfc.CourseDirectory.WebV2.Features.TLevels.Reporting
+
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Authorize(Policy = AuthorizationPolicyNames.Admin)]
     [Route("t-levels/reports")]
@@ -23,7 +25,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.Reporting
 
         [HttpGet("live-t-levels")]
         public async Task<IActionResult> LiveTLevelsReport() =>
-            await _mediator.SendAndMapResponse(new LiveTLevelsReport.Query(),
-                records => new CsvResult<LiveTLevelsReport.Csv>($"{nameof(LiveTLevelsReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv", records));
+            await _mediator.SendAndMapResponse(new Query(),
+                records => new CsvResult<Csv>($"{nameof(LiveTLevelsReport)}-{_clock.UtcNow:yyyyMMddHHmmss}.csv",
+                    records));
     }
 }

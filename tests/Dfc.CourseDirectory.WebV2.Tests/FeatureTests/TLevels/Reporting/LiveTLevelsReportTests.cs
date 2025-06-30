@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.WebV2.Reporting.LiveTLevelsReport;
 using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Dfc.CourseDirectory.WebV2.Tests.Data;
 using FluentAssertions;
@@ -85,13 +86,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.Reporting
             using var reader = new StreamReader(await response.Content.ReadAsStreamAsync());
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            var records = csvReader.GetRecords<Features.TLevels.Reporting.LiveTLevelsReport.Csv>();
+            var records = csvReader.GetRecords<Csv>();
 
             records.Should().BeEquivalentTo(tLevels.Select(t =>
             {
                 var p = providers.Single(p => p.ProviderId == t.ProviderId);
 
-                return new Features.TLevels.Reporting.LiveTLevelsReport.Csv
+                return new Csv
                 {
                     ProviderUkprn = p.Ukprn,
                     ProviderName = p.ProviderName,
