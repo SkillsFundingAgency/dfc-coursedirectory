@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FormFlow;
 using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Published
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.Published
 {
     public class Query : IRequest<ViewModel>
     {

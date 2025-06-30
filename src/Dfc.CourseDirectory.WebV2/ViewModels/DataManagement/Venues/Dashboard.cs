@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Dashboard
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.Dashboard
 {
     public class Query : IRequest<ViewModel>
     {

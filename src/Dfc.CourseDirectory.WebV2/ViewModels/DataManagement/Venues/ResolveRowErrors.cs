@@ -7,6 +7,8 @@ using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
@@ -15,10 +17,8 @@ using FluentValidation;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.ResolveRowErrors
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.ResolveRowErrors
 {
     public class Query : IRequest<OneOf<NotFound, ModelWithErrors<Command>>>
     {

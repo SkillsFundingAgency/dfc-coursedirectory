@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Attributes;
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [RequireFeatureFlag(FeatureFlags.DataManagement)]
     [Route("data-upload")]
@@ -21,9 +21,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement
         [HttpGet("")]
         [RequireProviderContext]
         public async Task<IActionResult> Dashboard() =>
-            await _mediator.SendAndMapResponse(new Venues.Dashboard.Query(), vm => View(vm));
+            await _mediator.SendAndMapResponse(new ViewModels.DataManagement.Venues.Dashboard.Query(), vm => View("~/Views/DataManagement/Dashboard.cshtml", vm));
 
         [HttpGet("regions")]
-        public IActionResult Regions() => View();
+        public IActionResult Regions() => View("~/Views/DataManagement/Regions.cshtml");
     }
 }

@@ -2,19 +2,19 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Errors.WhatNext;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
-using Dfc.CourseDirectory.Core.Attributes;
+using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.Errors.WhatNext;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
+namespace Dfc.CourseDirectory.WebV2.Controllers
 {
     [Route("data-upload/venues")]
     [RequireFeatureFlag(FeatureFlags.VenuesDataManagement)]
@@ -37,28 +37,28 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [HttpGet("")]
         [RequireProviderContext]
         public async Task<IActionResult> Index() =>
-            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
+            await _mediator.SendAndMapResponse(new ViewModels.DataManagement.Venues.Upload.Query(), vm => View("Upload",vm));
 
         [HttpGet("download")]
         [RequireProviderContext]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
-            new Download.Query(),
+            new ViewModels.DataManagement.Venues.Download.Query(),
             result => new CsvResult<CsvVenueRow>(result.FileName, result.Rows));
 
         [HttpGet("download-errors")]
         [RequireProviderContext]
         public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
-            new DownloadErrors.Query(),
+            new ViewModels.DataManagement.Venues.DownloadErrors.Query(),
             result => new CsvResult<CsvVenueRowWithErrors>(result.FileName, result.Rows));
 
         [HttpPost("upload")]
         [RequireProviderContext]
-        public async Task<IActionResult> Upload(Upload.Command command)
+        public async Task<IActionResult> Upload(ViewModels.DataManagement.Venues.Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
 
             return await _mediator.SendAndMapResponse(
-                new Upload.Command()
+                new ViewModels.DataManagement.Venues.Upload.Command()
                 {
                     File = file
                 },
@@ -72,8 +72,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                         RedirectToAction(
                             result switch
                             {
-                                Venues.Upload.UploadSucceededResult.ProcessingCompletedSuccessfully => nameof(CheckAndPublish),
-                                Venues.Upload.UploadSucceededResult.ProcessingCompletedWithErrors => nameof(Errors),
+                                ViewModels.DataManagement.Venues.Upload.UploadSucceededResult.ProcessingCompletedSuccessfully => nameof(CheckAndPublish),
+                                ViewModels.DataManagement.Venues.Upload.UploadSucceededResult.ProcessingCompletedWithErrors => nameof(Errors),
                                 _ => nameof(InProgress)
                             })
                         .WithProviderContext(_providerContextProvider.GetProviderContext())));
@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [HttpGet("in-progress")]
         [RequireProviderContext]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
-            new InProgress.Query(),
+            new ViewModels.DataManagement.Venues.InProgress.Query(),
             result => result.Match(
                 notFound => NotFound(),
                 status => status switch
@@ -98,14 +98,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public async Task<IActionResult> Errors() =>
             await _mediator.SendAndMapResponse(
-                new Errors.Query(),
+                new ViewModels.DataManagement.Venues.Errors.Query(),
                 result => result.Match<IActionResult>(
                     noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpPost("errors")]
         [RequireProviderContext]
-        public async Task<IActionResult> Errors(Errors.Command command) =>
+        public async Task<IActionResult> Errors(ViewModels.DataManagement.Venues.Errors.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
@@ -122,13 +122,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public async Task<IActionResult> ResolveList() =>
             await _mediator.SendAndMapResponse(
-                new ResolveList.Query(),
+                new ViewModels.DataManagement.Venues.ResolveList.Query(),
                 result => result.Match<IActionResult>(
                     noErrors => RedirectToAction(nameof(CheckAndPublish)).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpGet("resolve/{rowNumber}")]
-        public async Task<IActionResult> ResolveRowErrors(ResolveRowErrors.Query query) =>
+        public async Task<IActionResult> ResolveRowErrors(ViewModels.DataManagement.Venues.ResolveRowErrors.Query query) =>
             await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
@@ -136,7 +136,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
                     vm => this.ViewFromErrors(vm, statusCode: System.Net.HttpStatusCode.OK)));
 
         [HttpPost("resolve/{rowNumber}")]
-        public async Task<IActionResult> ResolveRowErrors([FromRoute] int rowNumber, ResolveRowErrors.Command command)
+        public async Task<IActionResult> ResolveRowErrors([FromRoute] int rowNumber, ViewModels.DataManagement.Venues.ResolveRowErrors.Command command)
         {
             command.RowNumber = rowNumber;
 
@@ -153,14 +153,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
 
         [HttpGet("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow(DeleteRow.Query request) =>
+        public async Task<IActionResult> DeleteRow(ViewModels.DataManagement.Venues.DeleteRow.Query request) =>
             await _mediator.SendAndMapResponse(
                 request,
                 vm => View(vm));
 
         [HttpPost("resolve/{rowNumber}/delete")]
         [RequireProviderContext]
-        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, ViewModels.DataManagement.Venues.DeleteRow.Command command)
         {
             command.RowNumber = rowNumber;
             return await _mediator.SendAndMapResponse(
@@ -178,12 +178,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public async Task<IActionResult> DeleteUpload() =>
             await _mediator.SendAndMapResponse(
-                new DeleteUpload.Query(),
+                new ViewModels.DataManagement.Venues.DeleteUpload.Query(),
                 command => View(command));
 
         [HttpPost("delete")]
         [RequireProviderContext]
-        public async Task<IActionResult> DeleteUpload(DeleteUpload.Command command) =>
+        public async Task<IActionResult> DeleteUpload(ViewModels.DataManagement.Venues.DeleteUpload.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
@@ -198,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [RequireProviderContext]
         public async Task<IActionResult> CheckAndPublish()
         {
-            var query = new CheckAndPublish.Query();
+            var query = new ViewModels.DataManagement.Venues.CheckAndPublish.Query();
             return await _mediator.SendAndMapResponse(
                 query,
                 result => result.Match<IActionResult>(
@@ -209,7 +209,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [HttpPost("check-publish")]
         [RequireProviderContext]
         [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
-        public async Task<IActionResult> CheckAndPublish(CheckAndPublish.Command command) =>
+        public async Task<IActionResult> CheckAndPublish(ViewModels.DataManagement.Venues.CheckAndPublish.Command command) =>
             await _mediator.SendAndMapResponse(
                 command,
                 result => result.Match<IActionResult>(
@@ -221,8 +221,11 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
         [HttpGet("success")]
         [RequireProviderContext]
         [RequireJourneyInstance]
-        [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
-        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(new Published.Query(), vm => View(vm));
+        [JourneyMetadata("PublishVenueUpload", typeof(PublishJourneyModel), appendUniqueKey: false,
+            requestDataKeys: "providerId?")]
+        public async Task<IActionResult> Published() => await _mediator.SendAndMapResponse(
+            new ViewModels.DataManagement.Venues.Published.Query(),
+            vm => View(vm));
 
         [HttpGet("template")]
         public IActionResult Template() =>

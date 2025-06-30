@@ -3,14 +3,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using MediatR;
 using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Models;
+using MediatR;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.DownloadErrors
 {
     public class Query : IRequest<Response>
     {
@@ -19,22 +18,22 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
     public class Response
     {
         public string FileName { get; set; }
-        public IReadOnlyCollection<CsvVenueRow> Rows { get; set; }
+        public IReadOnlyCollection<CsvVenueRowWithErrors> Rows { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, Response>
     {
         private readonly IProviderContextProvider _providerContextProvider;
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly IFileUploadProcessor _fileUploadProcessor;
         private readonly IClock _clock;
 
         public Handler(
             IProviderContextProvider providerContextProvider,
-            ISqlQueryDispatcher sqlQueryDispatcher,
+            IFileUploadProcessor fileUploadProcessor,
             IClock clock)
         {
             _providerContextProvider = providerContextProvider;
-            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _fileUploadProcessor = fileUploadProcessor;
             _clock = clock;
         }
 
@@ -42,19 +41,19 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Download
         {
             var providerContext = _providerContextProvider.GetProviderContext();
 
-            var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider()
-            {
-                ProviderId = providerContext.ProviderInfo.ProviderId
-            });
+            var (uploadRows, uploadStatus) = await _fileUploadProcessor.GetVenueUploadRowsForProvider(providerContext.ProviderInfo.ProviderId);
 
-            var rows = venues
-                .OrderBy(v => v.ProviderVenueRef)
-                .ThenBy(v => v.VenueName)
-                .Select(CsvVenueRow.FromModel)
+            if (uploadStatus != UploadStatus.ProcessedWithErrors)
+            {
+                throw new InvalidUploadStatusException(uploadStatus, UploadStatus.ProcessedWithErrors);
+            }
+
+            var rows = uploadRows
+                .Select(CsvVenueRowWithErrors.FromModel)
                 .ToList();
 
             var fileName = FileNameHelper.SanitizeFileName(
-                $"{providerContext.ProviderInfo.ProviderName}_venues_{_clock.UtcNow:yyyyMMddHHmm}.csv");
+                $"{providerContext.ProviderInfo.ProviderName}_venues_errors_{_clock.UtcNow:yyyyMMddHHmm}.csv");
 
             return new Response()
             {

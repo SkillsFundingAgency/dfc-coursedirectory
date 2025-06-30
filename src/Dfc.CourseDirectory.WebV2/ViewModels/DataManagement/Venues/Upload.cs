@@ -8,19 +8,19 @@ using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OneOf;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.Upload
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.Upload
 {
     public class Query : IRequest<ViewModel>
     {

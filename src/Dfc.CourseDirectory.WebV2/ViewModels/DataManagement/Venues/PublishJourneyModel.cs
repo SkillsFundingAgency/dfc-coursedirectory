@@ -1,6 +1,6 @@
 ﻿using FormFlow;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues
 {
     [JourneyState]
     public class PublishJourneyModel

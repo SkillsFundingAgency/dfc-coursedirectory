@@ -2,14 +2,14 @@
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf;
 using OneOf.Types;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.InProgress
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.InProgress
 {
     public class Query : IRequest<OneOf<NotFound, UploadStatus>>
     {

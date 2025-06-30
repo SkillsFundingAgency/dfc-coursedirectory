@@ -4,18 +4,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.Core.Middleware;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using FluentValidation.Results;
 using FormFlow;
 using MediatR;
 using OneOf;
-using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Extensions;
 
-namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues.CheckAndPublish
+namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.CheckAndPublish
 {
     public class Query : IRequest<OneOf<UploadHasErrors, ViewModel>>
     {
