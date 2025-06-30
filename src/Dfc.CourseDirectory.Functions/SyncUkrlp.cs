@@ -18,7 +18,7 @@ namespace Dfc.CourseDirectory.Functions
             _logger = logger;
         }
 
-        [Function("SyncUkrlpChanges")]
+        [Function("SyncAllRecentlyModifiedProviders")]
         public async Task RunNightly([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
             // Only get records updated in the past week.
