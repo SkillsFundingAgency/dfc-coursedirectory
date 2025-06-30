@@ -34,15 +34,18 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("SyncAllProviders")]
-        public Task SyncAllProviders([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+        public async Task<IActionResult> SyncAllProviders([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+        {
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncAllProviders));
 
-        /*
-            Trigger the function using the following request body:
-            
-            {
-                "Ukprn": <int>
-            }
-        */
+            await _ukrlpSyncHelper.SyncAllKnownProvidersData();
+
+            _logger.LogInformation("Function '{0}' finished invoking", nameof(SyncAllProviders));
+
+            return new OkResult();
+        }
+
+        // Trigger the function using the following request body: { "Ukprn": <int> }
         [Function("SyncProviderByUkprn")]
         public async Task<IActionResult> SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
         {
