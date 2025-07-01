@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
             _logger.LogInformation("UKRLP Sync: Processing of data for UKPRN '{0}' initiated", ukprn);
 
             CreateOrUpdateResult outcome = await CreateOrUpdateProvider(providerData, false);
-
+            await _sqlQueryDispatcher.Commit();
             _logger.LogInformation("UKRLP Sync: Outcome result for UKPRN '{0}' - {1}", ukprn, outcome);
         }
 
