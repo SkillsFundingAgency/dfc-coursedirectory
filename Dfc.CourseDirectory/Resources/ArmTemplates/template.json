@@ -152,6 +152,12 @@
         "description": "DfE Siginin Uri"
       }
     },
+    "dfeIssuer": {
+      "type": "string",
+      "metadata": {
+        "description": "DfE Signin issuer"
+      }
+    },
     "sqlCourseDirectoryConnectionString": {
       "type": "string",
       "metadata": {
@@ -307,7 +313,7 @@
         "DFESignInSettings__MetadataAddress": "[parameters('dfeMetadataUrl')]",
         "DFESignInSettings__CallbackPath": "[parameters('dfeCallBackPath')]",
         "DFESignInSettings__SignedOutCallbackPath": "[parameters('dfeSignedOutPath')]",
-        "DFESignInSettings__Issuer": "CourseDirectory",
+        "DFESignInSettings__Issuer": "[parameters('dfeIssuer')]",
         "DFESignInSettings__Audience": "signin.education.gov.uk",
         "DFESignInSettings__APISecret": "[parameters('dfeApiSecret')]",
         "DFESignInSettings__APIUri": "[parameters('dfeApiUri')]",
