@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
             var services = new ServiceCollection();
             var serviceProvider = services.BuildServiceProvider();
 
-            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
+            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider, serviceProvider);
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
             services.AddSingleton<Dependency>();
             var serviceProvider = services.BuildServiceProvider();
 
-            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
+            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider, serviceProvider);
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.MultiPageTransaction
             var services = new ServiceCollection();
             var serviceProvider = services.BuildServiceProvider();
 
-            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider);
+            var instanceContextFactory = new MptxInstanceContextFactory(stateProvider, serviceProvider);
 
             var manager = new MptxManager(stateProvider, instanceContextFactory, serviceProvider);
 

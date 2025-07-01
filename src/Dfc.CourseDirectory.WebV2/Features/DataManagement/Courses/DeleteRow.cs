@@ -68,12 +68,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.DeleteRow
                 return new ModelWithErrors<ViewModel>(await CreateViewModel(request.RowNumber, request.IsNonLars), validationResult);
             }
 
-            return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber,request.IsNonLars);
+            return await _fileUploadProcessor.DeleteCourseUploadRowForProvider(_providerContextProvider.GetProviderId(), request.RowNumber, request.IsNonLars);
         }
 
         private async Task<ViewModel> CreateViewModel(int rowNumber, bool isNonLars)
         {
-            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(_providerContextProvider.GetProviderId(), rowNumber,isNonLars);
+            var row = await _fileUploadProcessor.GetCourseUploadRowDetailForProvider(_providerContextProvider.GetProviderId(), rowNumber, isNonLars);
 
             if (row == null)
             {

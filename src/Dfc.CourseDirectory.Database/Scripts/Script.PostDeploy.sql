@@ -178,32 +178,6 @@ INSERT INTO [Pttcd].[NonLarsSubType]
            ,'2023-12-27 13:16:33.797'
            ,1)
 
--------Script will set UpdatedOn fields in Pttcd.Courses and Pttcd.CourseRuns tables so that the archived records be deleted after 30 days from these tables ----------------
--------This is a one time script so it should be removed for the next release --------- 
-	DECLARE @ArchivedStatus int = 4
-	DECLARE @UpdatedBy varchar(100) = 'RemoveRedundantRecordsRelease'
-
-	UPDATE 		
-		Pttcd.Courses 
-	SET 
-		UpdatedOn = GETDATE(),
-		UpdatedBy = @UpdatedBy
-	WHERE 
-		CourseStatus = @ArchivedStatus 
-		AND UpdatedOn IS NULL
-
-	
-	UPDATE 		
-		Pttcd.CourseRuns 
-	SET 
-		UpdatedOn = GETDATE(),
-		UpdatedBy = @UpdatedBy
-	WHERE 
-		CourseRunStatus = @ArchivedStatus
-		AND UpdatedOn IS NULL
-
-------------------------------------------------------------------------------------
-
 DECLARE @Regions TABLE (
 	RegionId VARCHAR(12),
 	Name NVARCHAR(100),
@@ -650,19 +624,6 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'You will have the industry knowledge and experience to progress into roles like: Jewellery designer-maker, Furniture maker, Furniture designer, Furniture restorer, Dressmaker, Wardrobe assistant, Tailor, Fashion design assistant, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
 	),
 	(
-		N'04a21a57-6789-429f-b434-d7e222d3ccc7',
-		53,
-		31,
-		3,
-		N'T Level in Hairdressing, Barbering and Beauty Therapy',
-		N'This T Level is suitable for anyone wanting a career in hairdressing, barbering or beauty therapy. The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose a specialist occupation.',
-		N'There are no national entry requirements for starting a T Level. These are set by the individual college or school. Contact us to find out more',
-		N'You will develop an understanding of a broad range of issues relevant to Hairdressing, Barbering and Beauty Therapy including business context, client consultation, sales and marketing and understanding the customer journey. In addition to the core content, each student will also complete at least one module of occupation-specific content. The specialisms available in the Hairdressing, Barbering and Beauty Therapy T Level are: Barbering, Hairdressing, Beauty Therapy',
-		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
-		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
-		N'You will have the industry knowledge and experience to progress into roles like: Hairdresser, Barber, Beauty Therapist, Make-up Artist, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
-	(
 		N'5a783ebd-b7f5-46f0-8d21-71bbf3273efa',
 		52,
 		31,
@@ -687,6 +648,19 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
 		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
 		N'You will have the industry knowledge and experience to progress into roles like: Studio sound engineer, TV or film assistant production co-ordinator, TV or film director, Broadcast engineer, Lighting technician, Audio-visual technician, Media researcher, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level.'
+	),
+	(
+		N'A7CC5B61-179F-42E6-9E41-B1DA604F58B0',
+		59,
+		31,
+		3,
+		N'T Level in Marketing',
+		N'T Levels are a 2 year (Level 3) qualification that you can do after GCSEs as an alternative to A levels, other post-16 courses or an apprenticeship. This course is suitable for anyone interested in a career in marketing. You’ll spend 80% of your time in the classroom and 20% on a 45-day (9 week minimum) placement with an employer to give you the skills and knowledge companies look for.',
+		N'Schools and colleges set their own entry requirements for T Levels. Check with your local T Level school or college to find out the entry requirements for the Marketing T Level. Students who have not already achieved grade 4 maths and English at GCSE, will be required to work towards them alongside their T Level. And if you aren''t ready to start a T Level after GCSEs, the 1-year T Level Foundation Year can provide additional support to help them prepare.',
+		N'Students will develop an understanding of a broad range of issues relevant to the sector, including: the purpose of marketing, how it adds value to an organisation including leadership, culture and vision and the impact of no marketing activity, role of marketing including marketing as a management process, its importance, market type and reach, the key differences between consumers and customers and the different ways to influence them, routes to market including the role of suppliers and procurement: business to business (B2B), business to consumer (B2C) and other channels, and how this influences marketing activity, customer personas and how they are used to determine marketing campaigns, including purpose and typical types, e.g. competitive, spontaneous, analytical, and methodical and different types of customers and consumers and what influences their behaviours and organisational purpose and business aims including for profit and not for profit marketing objectives. the marketing and extended promotional mix (advertising, personal selling, sales promotion, public relations and direct marketing) including the differences between the channels and the benefits of a coordinated marketing mix in relation to product, price, place, promotion, people, process and physical evidence',
+		N'80% will be spent in the classroom and 20% on a 45-day placement with an employer. T Levels comprise 2 parts – the Technical Qualification (core and occupational specialism) and industry placement. The occupational specialism available in this T Level is Marketing Assistant (Multi-Channel). Most industry placements last a minimum of 315 hours (approx. 45 days) and can be offered as a block, day release or a mix, and can discuss sharing part of the placement with another employer if necessary.',
+		N'You will be assessed by written examination and task-based assessments throughout the T Level. Core exams of the Technical Qualification account for no more than a third of the total marks for the TQ including an employer-set project, designed to assess skills in a real-world context. The Occupational Specialism accounts for at least half of the TQ guided learning hours, to assess knowledge and skills required to enter employment in specific occupations assessed through projects and assignments',
+		N'On successful completion of the T Level, students can progress onto apprenticeships, higher education or skilled employment. Career options in the marketing sector might include: Advertising and media executive, Digital marketer. E-commerce, Marketing manager/assistant and Market research.'
 	)
 ) AS TLevelDefinitions(
 	TLevelDefinitionId,

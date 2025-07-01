@@ -37,9 +37,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncAllProviderData(DateTime updatedSince)
         {
-            _logger.LogInformation($"UKRLP Sync: Beginning {nameof(SyncAllProviderData)}, fetching providers from UKRLP API...");
+            _logger.LogInformation("UKRLP Sync: Beginning {SyncAllProviderData}, fetching providers from UKRLP API...", nameof(SyncAllProviderData));
             var allProviders = await _ukrlpService.GetAllProviderData(updatedSince);
-            _logger.LogInformation($"UKRLP Sync: {allProviders.Count} providers received, processing...");
+            _logger.LogInformation("UKRLP Sync: {Count} providers received, processing...", allProviders.Count);
 
             var createdCount = 0;
             var updatedCount = 0;
@@ -65,12 +65,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                         notChanged++;
                     }
 
-                    _logger.LogInformation($"UKRLP Sync: {providerData.UnitedKingdomProviderReferenceNumber} - {result.ToString()}");
+                    _logger.LogInformation("UKRLP Sync: {ReferenceNumber} - {Result}", providerData.UnitedKingdomProviderReferenceNumber, result.ToString());
 
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"UKRLP Sync: Failed to process provider UKPRN: {providerData.UnitedKingdomProviderReferenceNumber} - {e.Message}");
+                    _logger.LogError("UKRLP Sync: Failed to process provider UKPRN: {ReferenceNumber} - {Message}", providerData.UnitedKingdomProviderReferenceNumber,e.Message);
                     failed++;
                 }
 
@@ -108,7 +108,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncProviderData(int ukprn)
         {
-            _logger.LogDebug($"UKRLP Sync: Fetching updated UKRLP data for UKPRN {ukprn}...");
+            _logger.LogDebug("UKRLP Sync: Fetching updated UKRLP data for UKPRN {ukprn}...",ukprn);
             (await _ukrlpService.GetProviderData(new[] { ukprn })).TryGetValue(ukprn, out var providerData);
 
             if (providerData == null)
@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
         public async Task SyncProviderData(IEnumerable<int> ukprns)
         {
-            _logger.LogDebug($"UKRLP Sync: Fetching updated UKRLP data for UKPRNs {string.Join(", ", ukprns)}...");
+            _logger.LogDebug("UKRLP Sync: Fetching updated UKRLP data for UKPRNs {ukprns}...", string.Join(", ", ukprns));
 
             var allProviderData = await _ukrlpService.GetProviderData(ukprns);
 
@@ -191,7 +191,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
 
             if (existingProvider == null)
             {
-                _logger.LogInformation("Couldn't find provider for ukprn [{0}]. Attempting to create one", ukprn);
+                _logger.LogInformation("Couldn't find provider for ukprn [{ukprn}]. Attempting to create one", ukprn);
                 await _sqlQueryDispatcher.ExecuteQuery(
                     new CreateProviderFromUkrlpData()
                     {
@@ -246,10 +246,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Ukrlp
                 var newStatusCode = MapProviderStatusDescription(providerData.ProviderStatus);
 
                 var deactivating = IsDeactivatedStatus(newStatusCode);
-                _logger.LogInformation("UKRLP Sync: ukprn [{0}] - oldStatusCode [{1}] - newStatusCode [{2}] - deactivating [{3}]", ukprn, oldStatusCode, newStatusCode, deactivating);
+                _logger.LogInformation("UKRLP Sync: ukprn [{ukprn}] - oldStatusCode [{oldStatusCode}] - newStatusCode [{newStatusCode}] - deactivating [{deactivating}]", ukprn, oldStatusCode, newStatusCode, deactivating);
                 if (deactivating)
                 {
-                    _logger.LogInformation("UKRLP Sync: Update [{0}] starting deactivating is [{1}] ...", ukprn, deactivating);
+                    _logger.LogInformation("UKRLP Sync: Update [{ukprn}] starting deactivating is [{deactivating}] ...", ukprn, deactivating);
                    
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteCoursesForProvider() { ProviderId = providerId });
                         await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProvider() { ProviderId = providerId });

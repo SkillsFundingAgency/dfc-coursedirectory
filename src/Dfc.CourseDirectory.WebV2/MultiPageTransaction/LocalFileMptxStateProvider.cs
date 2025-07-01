@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Dfc.CourseDirectory.WebV2.MultiPageTransaction.Json;
 using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
@@ -136,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.MultiPageTransaction
         private static void EnsureDataFolderExists(string dbFilePath)
         {
             var folder = Path.GetDirectoryName(dbFilePath);
-            
+
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);

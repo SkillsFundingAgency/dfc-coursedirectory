@@ -11,7 +11,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
 using Xunit;
-using dfc = Dfc.CourseDirectory.Core.Search;
+using dfcSearch = Dfc.CourseDirectory.Core.Search;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 {
@@ -28,15 +28,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             // Arrange
             var provider = await TestData.CreateProvider();
             var facets = new Dictionary<object, long?> { { new Object(), 343 } };
-            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            dfcSearch.SearchResult<Lars> res = new dfcSearch.SearchResult<Lars>
             {
-                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                Items = new ReadOnlyCollection<dfcSearch.SearchResultItem<Lars>>(new List<dfcSearch.SearchResultItem<Lars>>()
                 {
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     },
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     }
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                     { "NotionalNVQLevelv2", facets }
                 }
             };
-            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
@@ -72,15 +72,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var notionalNVQLevelv2Facets = new Dictionary<object, long?> { { new Object(), 343 }, { new Object(), 3433 }, { new Object(), 341 } };
             var awardOrgCodeFacets = new Dictionary<object, long?>();
-            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            dfcSearch.SearchResult<Lars> res = new dfcSearch.SearchResult<Lars>
             {
-                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                Items = new ReadOnlyCollection<dfcSearch.SearchResultItem<Lars>>(new List<dfcSearch.SearchResultItem<Lars>>()
                 {
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     },
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     }
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                     { "NotionalNVQLevelv2", notionalNVQLevelv2Facets }
                 }
             };
-            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
@@ -117,15 +117,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var notionalNVQLevelv2Facets = new Dictionary<object, long?>();
             var awardOrgCodeFacets = new Dictionary<object, long?> { { new Object(), 343 }, { new Object(), 3433 } };
-            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            dfcSearch.SearchResult<Lars> res = new dfcSearch.SearchResult<Lars>
             {
-                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                Items = new ReadOnlyCollection<dfcSearch.SearchResultItem<Lars>>(new List<dfcSearch.SearchResultItem<Lars>>()
                 {
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     },
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     }
@@ -137,7 +137,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                     { "NotionalNVQLevelv2", notionalNVQLevelv2Facets }
                 }
             };
-            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");
@@ -165,15 +165,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var notionalNVQLevelv2Facets = new Dictionary<object, long?>();
             var awardOrgCodeFacets = new Dictionary<object, long?> { { new Object(), 343 }, { new Object(), 3433 } };
-            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            dfcSearch.SearchResult<Lars> res = new dfcSearch.SearchResult<Lars>
             {
-                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                Items = new ReadOnlyCollection<dfcSearch.SearchResultItem<Lars>>(new List<dfcSearch.SearchResultItem<Lars>>()
                 {
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     },
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     }
@@ -185,7 +185,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                     { "NotionalNVQLevelv2", notionalNVQLevelv2Facets }
                 }
             };
-            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm={term}&providerId={provider.ProviderId}");
@@ -209,15 +209,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var notionalNVQLevelv2Facets = new Dictionary<object, long?>();
             var awardOrgCodeFacets = new Dictionary<object, long?> { { new Object(), 343 }, { new Object(), 3433 } };
-            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            dfcSearch.SearchResult<Lars> res = new dfcSearch.SearchResult<Lars>
             {
-                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                Items = new ReadOnlyCollection<dfcSearch.SearchResultItem<Lars>>(new List<dfcSearch.SearchResultItem<Lars>>()
                 {
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     },
-                    new dfc.SearchResultItem<Lars>()
+                    new dfcSearch.SearchResultItem<Lars>()
                     {
                         Record = new Lars(),
                     }
@@ -229,7 +229,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                     { "NotionalNVQLevelv2", notionalNVQLevelv2Facets }
                 }
             };
-            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/choose-qualification/?providerId={provider.ProviderId}");
@@ -253,9 +253,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var provider = await TestData.CreateProvider();
             var notionalNVQLevelv2Facets = new Dictionary<object, long?>();
             var awardOrgCodeFacets = new Dictionary<object, long?>();
-            dfc.SearchResult<Lars> res = new dfc.SearchResult<Lars>
+            dfcSearch.SearchResult<Lars> res = new dfcSearch.SearchResult<Lars>
             {
-                Items = new ReadOnlyCollection<dfc.SearchResultItem<Lars>>(new List<dfc.SearchResultItem<Lars>>()
+                Items = new ReadOnlyCollection<dfcSearch.SearchResultItem<Lars>>(new List<dfcSearch.SearchResultItem<Lars>>()
                 {
                 }),
                 TotalCount = 0,
@@ -265,7 +265,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
                     { "NotionalNVQLevelv2", notionalNVQLevelv2Facets }
                 }
             };
-            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfc.LarsSearchQuery>())).ReturnsAsync(res);
+            LarsSearchClient.Setup(x => x.Search(It.IsAny<dfcSearch.LarsSearchQuery>())).ReturnsAsync(res);
             LarsSearchSettings.Setup(x => x.Value).Returns(new Core.Configuration.LarsSearchSettings() { ItemsPerPage = 20 });
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/courses/search?SearchTerm=test&providerId={provider.ProviderId}");

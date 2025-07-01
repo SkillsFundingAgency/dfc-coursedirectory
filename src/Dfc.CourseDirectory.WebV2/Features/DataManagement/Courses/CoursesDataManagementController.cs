@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.WebV2.Features.ChooseQualification;
 using Dfc.CourseDirectory.WebV2.Filters;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
@@ -12,7 +11,6 @@ using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Dac.Model;
-using OneOf.Types;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
@@ -154,7 +152,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpPost("nonlars-resolve/{rowNumber}/delivery")]
-        public async Task<IActionResult> ResolveNonLarsRowDeliveryMode([FromRoute] int rowNumber,ResolveRowDeliveryMode.Command command)
+        public async Task<IActionResult> ResolveNonLarsRowDeliveryMode([FromRoute] int rowNumber, ResolveRowDeliveryMode.Command command)
         {
             command.IsNonLars = true;
             command.RowNumber = rowNumber;
@@ -198,7 +196,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
 
         [HttpPost("resolve/{rowNumber}/description")]
-        public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber,ResolveRowDescription.Command command)
+        public async Task<IActionResult> ResolveRowDescription([FromRoute] int rowNumber, ResolveRowDescription.Command command)
         {
             command.RowNumber = rowNumber;
             command.IsNonLars = false;
@@ -321,7 +319,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("in-progress")]
         public async Task<IActionResult> InProgress() => await _mediator.SendAndMapResponse(
-            new InProgress.Query() { IsNonLars = false},
+            new InProgress.Query() { IsNonLars = false },
             result => result.Match(
                 notFound => NotFound(),
                 status => status switch
@@ -349,7 +347,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("delete")]
         public async Task<IActionResult> DeleteUpload() =>
             await _mediator.SendAndMapResponse(
-                new DeleteUpload.Query() { IsNonLars = false},
+                new DeleteUpload.Query() { IsNonLars = false },
                 command => View(command));
 
         [HttpGet("nonlars-delete")]
@@ -388,7 +386,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
 
         [HttpGet("download")]
         public async Task<IActionResult> Download() => await _mediator.SendAndMapResponse(
-            new Download.Query() { IsNonLars = false},
+            new Download.Query() { IsNonLars = false },
             result => new CsvResult<CsvCourseRow>(result.FileName, result.Rows));
 
         [HttpGet("downloadnonlars")]
@@ -423,7 +421,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             await _mediator.SendAndMapResponse(new DeleteRowGroup.Query() { RowNumber = rowNumber, IsNonLars = true }, vm => View(vm));
 
         [HttpPost("nonlars-resolve/{rowNumber}/course/delete/")]
-        public async Task<IActionResult> DeleteNonLarsRowGroup([FromRoute] int rowNumber,DeleteRowGroup.Command command)
+        public async Task<IActionResult> DeleteNonLarsRowGroup([FromRoute] int rowNumber, DeleteRowGroup.Command command)
         {
             command.IsNonLars = true;
             command.RowNumber = rowNumber;
@@ -443,7 +441,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("check-publish")]
         public async Task<IActionResult> CheckAndPublish()
         {
-            var query = new CheckAndPublish.Query() { IsNonLars = false};
+            var query = new CheckAndPublish.Query() { IsNonLars = false };
 
             return await _mediator.SendAndMapResponse(
                 query,
@@ -494,13 +492,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("success")]
         [RequireJourneyInstance]
         [JourneyMetadata("PublishCourseUpload", typeof(PublishJourneyModel), appendUniqueKey: false, requestDataKeys: "providerId?")]
-        public async Task<IActionResult> Published() 
+        public async Task<IActionResult> Published()
         {
             //Generate Live service URL accordingly based on current host
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
-            return await _mediator.SendAndMapResponse(new Published.Query() {}, vm => View(vm)); 
+            return await _mediator.SendAndMapResponse(new Published.Query() { }, vm => View(vm));
         }
 
         [HttpGet("nonlars-success")]
@@ -512,7 +510,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
-            return await _mediator.SendAndMapResponse(new Published.Query() {}, vm => View(vm));
+            return await _mediator.SendAndMapResponse(new Published.Query() { }, vm => View(vm));
         }
 
         [HttpGet("template")]
@@ -530,7 +528,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
             string host = HttpContext.Request.Host.ToString();
             ViewBag.LiveServiceURL = LiveServiceURLHelper.GetLiveServiceURLFromHost(host) + "find-a-course/search";
 
-            return View(); 
+            return View();
         }
 
         [HttpGet("nonlarsformatting")]
@@ -544,7 +542,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         }
         [HttpGet("download-errors")]
         public async Task<IActionResult> DownloadErrors() => await _mediator.SendAndMapResponse(
-            new DownloadErrors.Query() { IsNonLars = false},
+            new DownloadErrors.Query() { IsNonLars = false },
             result => new CsvResult<CsvCourseRowWithErrors>(result.FileName, result.Rows));
 
         [HttpGet("download-nonlars-errors")]
@@ -579,9 +577,9 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
         [HttpGet("errors")]
         public async Task<IActionResult> Errors(bool isNonLars) =>
             await _mediator.SendAndMapResponse(
-                new Errors.Query() { IsNonLars = isNonLars},
+                new Errors.Query() { IsNonLars = isNonLars },
                 result => result.Match<IActionResult>(
-                    noErrors => RedirectToAction(nameof(CheckAndPublish),isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext()),
+                    noErrors => RedirectToAction(nameof(CheckAndPublish), isNonLars).WithProviderContext(_providerContextProvider.GetProviderContext()),
                     vm => View(vm)));
 
         [HttpPost("errors")]
@@ -605,7 +603,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses
                 vm => View(vm));
 
         [HttpPost("resolve/{rowNumber}/details/delete")]
-        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber,  DeleteRow.Command command)
+        public async Task<IActionResult> DeleteRow([FromRoute] int rowNumber, DeleteRow.Command command)
         {
             command.IsNonLars = false;
             command.RowNumber = rowNumber;

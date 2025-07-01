@@ -2,17 +2,15 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dapper;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Testing;
-using Dfc.CourseDirectory.Core.Configuration;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using JustEat.HttpClientInterception;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xunit;
-using Moq;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
@@ -34,15 +32,12 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var larsDataSetOption = Options.Create(new LarsDataset
             {
-                Url =
-                    "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F008%2FLearningDelivery_V008_CSV.Zip"
+                Url = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F010%2FLearningDelivery_V010_CSV.Zip"
             });
 
             var importer = new LarsDataImporter(
                 client,
                 SqlQueryDispatcherFactory,
-                //CosmosDbQueryDispatcher.Object,
-                Clock,
                 GetLogger(),
                 larsDataSetOption);
 
@@ -52,11 +47,11 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(594);
-                (await CountSqlRows("LARS.Category")).Should().Be(66);
-                (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(125);
-                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(126612);
-                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(89348);
+                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(616);
+                (await CountSqlRows("LARS.Category")).Should().Be(75);
+                (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(127);
+                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(130286);
+                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(91158);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
             }

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
-using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -481,7 +479,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     allPostcodeInfo.TryGetValue(postcode, out postcodeInfo);
                 }
 
-                var rowValidationResult = validator.Validate(row);
+                var rowValidationResult = await validator.ValidateAsync(row);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 uploadIsValid &= rowIsValid;
