@@ -16,7 +16,5 @@
         public string Telephone { get; set; }
         public string Fax { get; set; }
         public string Website { get; set; }
-        public decimal? LearnerSatisfaction { get; set; }
-        public decimal? EmployerSatisfaction { get; set; }
     }
 }
