@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -31,7 +32,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var response = await HttpClient.GetAsync($"sectors");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
             var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
             var sectorsResult = JsonConvert.DeserializeObject<List<Sector>>(responseContent, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
@@ -57,7 +58,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var response = await HttpClient.GetAsync($"sectors");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
             var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
             var sectorsResult = JsonConvert.DeserializeObject<List<Sector>>(responseContent, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });

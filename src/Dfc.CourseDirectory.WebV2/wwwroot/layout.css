@@ -1,5 +1,5 @@
 ﻿.govuk-header__container {
-    border-bottom-color: #207E77;
+    border-bottom-color: #207E77 !important;
 }
 
 .govuk-header__content {

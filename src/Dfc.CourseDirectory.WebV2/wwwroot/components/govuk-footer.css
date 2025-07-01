@@ -1,5 +1,5 @@
 ﻿.govuk-footer__copyright-logo {
-    background-image: url("/assets/images/govuk-crest-tudor-crown.png");
+    background-image: url("/assets/images/govuk-crest-tudor-crown.png") !important;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {

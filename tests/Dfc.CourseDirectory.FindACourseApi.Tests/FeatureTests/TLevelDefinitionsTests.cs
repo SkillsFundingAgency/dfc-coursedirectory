@@ -38,7 +38,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var response = await HttpClient.GetAsync($"tleveldefinitions");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
             var json = JObject.Parse(await response.Content.ReadAsStringAsync());
 

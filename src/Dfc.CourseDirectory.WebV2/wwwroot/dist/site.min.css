@@ -181,6 +181,7 @@
 }
 
 .govuk-heading-xl {
+    font-family: nta, Arial, sans-serif !important;
     color: #0b0c0c;
     font-size: 32px;
     font-size: 2rem;
@@ -191,6 +192,7 @@
 
 @media (min-width:40.0625em) {
     .govuk-heading-xl {
+        font-family: nta, Arial, sans-serif !important;
         font-size: 48px;
         font-size: 3rem;
         line-height: 1.04167;
@@ -977,6 +979,7 @@
 }
 
 .govuk-back-link {
+    font-family: nta, Arial, sans-serif !important;
     font-size: 14px;
     font-size: .875rem;
     line-height: 1.14286;
@@ -986,8 +989,11 @@
     position: relative;
     margin-top: 15px;
     margin-bottom: 15px;
-    padding-left: 14px;    
-    text-decoration: none
+    padding-left: 14px;
+    text-decoration: none !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-block-color: black;
 }
 
     .govuk-back-link:before, .govuk-breadcrumbs__list:after {
@@ -1037,17 +1043,20 @@
 }
 
 .govuk-back-link:before {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-color: transparent;
-    border-width: 5px 6px 5px 0;
-    border-right-color: inherit;
-    position: absolute;
-    left: 0;
-    margin: auto;
-    top: -1px;
-    bottom: 1px
+    width: 0 !important;
+    height: 0 !important;
+    border-style: solid !important;
+    border-color: transparent !important;
+    -webkit-clip-path: polygon(0 50%,100% 100%,100% 0) !important;
+    clip-path: polygon(0 50%,100% 100%,100% 0) !important;
+    border-width: 5px 6px 5px 0px !important;
+    border-right-color: inherit !important;
+    position: absolute !important;
+    left: 0 !important;
+    margin: auto !important;
+    top: -1px !important;
+    bottom: 1px !important;
+    transform: none !important;
 }
 
 .govuk-breadcrumbs {
@@ -1163,7 +1172,7 @@
     border: 2px solid transparent;
     border-radius: 0;
     color: #fff;
-    background-color: #00703c;
+    background-color: #00823b;
     box-shadow: 0 2px 0 #003418;
     text-align: center;
     vertical-align: top;
@@ -1276,8 +1285,8 @@
     }
 
 .govuk-button--warning {
-    background-color: #b10e1e;
-    box-shadow: 0 2px 0 #47060c
+    background-color: #b10e1e !important;
+    box-shadow: 0 2px 0 #47060c !important;
 }
 
     .govuk-button--warning:focus, .govuk-button--warning:hover {
@@ -2907,7 +2916,7 @@
 }
 
 .govuk-header__navigation {
-    display: block;
+    display: block !important;
     margin: 0;
     padding: 0;
     list-style: none
@@ -5345,7 +5354,7 @@ p {
 }
 
 .phase-tag-published {
-    background: #00823b
+    background: #00823b !important;
 }
 
 .duration-container {
