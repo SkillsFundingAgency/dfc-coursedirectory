@@ -1,0 +1,86 @@
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Validation;
+using Dfc.CourseDirectory.Core.Validation.VenueValidation;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
+using FluentValidation;
+using FormFlow;
+using MediatR;
+using OneOf;
+using OneOf.Types;
+
+namespace Dfc.CourseDirectory.WebV2.ViewModels.Venues.EditVenue.Name
+{
+    public class Query : IRequest<Command>
+    {
+        public Guid VenueId { get; set; }
+    }
+
+    public class Command : IRequest<OneOf<ModelWithErrors<Command>, Success>>
+    {
+        public Guid VenueId { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class Handler :
+        IRequestHandler<Query, Command>,
+        IRequestHandler<Command, OneOf<ModelWithErrors<Command>, Success>>
+    {
+        private readonly JourneyInstance<EditVenueJourneyModel> _journeyInstance;
+        private readonly IProviderOwnershipCache _providerOwnershipCache;
+        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+
+        public Handler(
+            JourneyInstance<EditVenueJourneyModel> journeyInstance,
+            IProviderOwnershipCache providerOwnershipCache,
+            ISqlQueryDispatcher sqlQueryDispatcher)
+        {
+            _journeyInstance = journeyInstance;
+            _providerOwnershipCache = providerOwnershipCache;
+            _sqlQueryDispatcher = sqlQueryDispatcher;
+        }
+
+        public Task<Command> Handle(Query request, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new Command()
+            {
+                VenueId = request.VenueId,
+                Name = _journeyInstance.State.Name
+            });
+        }
+
+        public async Task<OneOf<ModelWithErrors<Command>, Success>> Handle(
+            Command request,
+            CancellationToken cancellationToken)
+        {
+            var providerId = await _providerOwnershipCache.GetProviderForVenue(request.VenueId);
+
+            var validator = new CommandValidator(providerId.Value, request.VenueId, _sqlQueryDispatcher);
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return new ModelWithErrors<Command>(request, validationResult);
+            }
+
+            _journeyInstance.UpdateState(state => state.Name = request.Name?.Trim());
+
+            return new Success();
+        }
+
+        private class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator(
+                Guid providerId,
+                Guid venueId,
+                ISqlQueryDispatcher sqlQueryDispatcher)
+            {
+                RuleFor(c => c.Name)
+                    .VenueName(providerId, venueId, sqlQueryDispatcher);
+            }
+        }
+    }
+}

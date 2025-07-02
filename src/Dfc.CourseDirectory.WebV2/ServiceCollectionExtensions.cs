@@ -23,10 +23,10 @@ using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
 using Dfc.CourseDirectory.WebV2.Cookies;
 using Dfc.CourseDirectory.WebV2.FeatureFlagProviders;
-using Dfc.CourseDirectory.WebV2.Features.TLevels.ViewAndEditTLevel;
-using Dfc.CourseDirectory.WebV2.Features.Venues.EditVenue;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.TagHelpers;
+using Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FormFlow;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -84,12 +84,6 @@ namespace Dfc.CourseDirectory.WebV2
                 
                 .AddRazorOptions(options =>
                 {
-                    // TODO When the legacy views are all moved this check can go away
-                    if (environment.IsTesting())
-                    {
-                        options.ViewLocationFormats.Clear();
-                    }
-
                     options.ViewLocationFormats.Add("/SharedViews/{0}.cshtml");
 
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());

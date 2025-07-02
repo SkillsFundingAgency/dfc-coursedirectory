@@ -1,0 +1,391 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewModels.ProviderDashboard.ViewModel
+
+<vc:qa-notifications />
+
+@if (Model.PastStartDateCourseRunCount > 0 || Model.PastStartDateNonLarsCourseRunCount > 0)
+{
+    <pttcd-notification title="Course start dates" data-testid="courseStartDateNotification">
+        
+        @if(Model.PastStartDateCourseRunCount > 0)
+        {
+            <p class="govuk-body">The start date of @Model.PastStartDateCourseRunCount LARS courses are in the past.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Update course start dates</a></p>
+        }
+        @if (Model.PastStartDateNonLarsCourseRunCount > 0)
+        {
+            <br/>
+            <p class="govuk-body">The start date of @Model.PastStartDateNonLarsCourseRunCount Non LARS courses are in the past.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0"><a asp-controller="ExpiredCourseRuns" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" asp-route-isnonlars="true" class="govuk-link">Update Non LARS course start dates</a></p>
+        }
+        
+    </pttcd-notification>
+}
+
+<div class="govuk-grid-row govuk-!-margin-bottom-5">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l" data-testid="provider-name">@Model.ProviderName</h1>
+        <p class="govuk-body">
+            Your UK Provider Reference Number (UKPRN) is
+            <span class="govuk-!-font-weight-bold" data-testid="ukprn">@Model.Ukprn</span>
+        </p>
+        <p>
+            <a asp-controller="Providers" asp-action="ProviderDetails" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                Your provider details
+            </a>
+        </p>
+    </div>
+</div>
+
+@if (Model.IsNewProvider)
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-5" data-testid="NewProvider">
+        <div class="govuk-grid-column-full">
+            <p class="govuk-body">As a new provider to Publish to the course directory you will need to <a class="govuk-link" href="mailto:support@coursedirectory.org.uk">contact the support team</a> providing your UKPRN.</p>
+
+            <p class="govuk-body">The support team will set your provider type.  Once set you can publish the courses and training you offer in Publish to the course directory.</p>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row" data-testid="upload-guidance-row">
+    <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-s section-heading">Guidance for uploading a course</h2>
+        <p class="govuk-body-s">As a provider you will need to add a venue first before adding a course to publish to the course directory</p>
+    </div>
+</div>
+
+<div class="govuk-grid-row" data-testid="courses-row">
+    <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-m section-heading">Course Options</h2>
+    </div>
+</div>
+@if (Model.ShowCourses)
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+                <h2 class="govuk-heading-s">(LARS) code </h2>
+                <p class="govuk-body-s">Published courses </p>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="course-count">@Model.CourseRunCount</p>
+                @if (Model.UnpublishedCourseCount > 0)
+                {
+                    <h2 class="govuk-body-s govuk-!-margin-top-5">Unpublished courses</h2>
+                    <p class="pttcd-provider-dashboard__card__number" data-testid="unpublished-course-count">@Model.UnpublishedCourseCount</p>
+                }
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-s">Your published courses</h2>
+                    <p class="govuk-body-s">View and manage the courses you offer to learners.</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
+                        {
+                            <li>
+                                <a asp-controller="ChooseQualification" asp-action="ChooseQualification" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-controller="RegulatedQualification" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a course</a>
+                            </li>
+                        }
+                        @if (Model.CourseRunCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="courses-view-edit-link">View and edit courses</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
+        {
+            <div class="govuk-grid-column-one-third">
+                <div class="pttcd-provider-dashboard__card">
+                    <div class="pttcd-provider-dashboard__card__content">
+                        <h2 class="govuk-heading-s">Course data upload</h2>
+                        <p class="govuk-body-s">Upload your courses with a CSV file.</p>
+                    </div>
+                    <div class="pttcd-provider-dashboard__card__actions">
+                        <ul class="govuk-list pttcd-list--small">
+                            @if (Model.UnpublishedCourseCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="CoursesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-unpublished-link">Your unpublished courses</a>
+                                </li>
+                            }
+                            <li>
+                                @if (Model.CourseUploadInProgress)
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="courses-in-progress-link">Upload in progress</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" data-testid="courses-upload-new-link" class="govuk-link">Upload new course data</a>
+                                }
+                            </li>
+                            <li>
+                                <a asp-action="Formatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Course file format requirements
+                                </a>
+                            </li>
+                            @if (Model.CourseRunCount > 0)
+                            {
+                                <li>
+                                    <a asp-action="Download" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadCourses">
+                                        Download your published course data (CSV)
+                                    </a>
+                                </li>
+                            }
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="Template" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Download course data template (CSV)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.ShowNonLars)
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+                <h2 class="govuk-heading-s">Non (LARS) code </h2>
+                <p class="govuk-body-s">Published courses </p>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="nonlars-count">@Model.NonLarsCourseCount</p>
+                @if (Model.UnpublishedNonLarsCourseCount > 0)
+                {
+                    <h2 class="govuk-body-s govuk-!-margin-top-5">Unpublished courses</h2>
+                    <p class="pttcd-provider-dashboard__card__number" data-testid="unpublished-nonlars-count">@Model.UnpublishedNonLarsCourseCount</p>
+                }
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-s">Your published courses</h2>
+                    <p class="govuk-body-s">View and manage the courses you offer to learners.</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="AddCourse" asp-action="AddCourse" class="govuk-link">Add a course</a>
+                        </li>
+                        @if (Model.NonLarsCourseCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="true" class="govuk-link" data-testid="nonlars-view-edit-link">View and edit courses</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesDataManagement))
+        {
+            <div class="govuk-grid-column-one-third">
+                <div class="pttcd-provider-dashboard__card">
+                    <div class="pttcd-provider-dashboard__card__content">
+                        <h2 class="govuk-heading-s">Course data upload</h2>
+                        <p class="govuk-body-s">Upload your courses with a CSV file.</p>
+                    </div>
+                    <div class="pttcd-provider-dashboard__card__actions">
+                        <ul class="govuk-list pttcd-list--small">
+                            @if (Model.UnpublishedNonLarsCourseCount > 0)
+                            {
+                                <li>
+                                    <a asp-controller="CoursesDataManagement" asp-action="NonLarsCheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-unpublished-link">Your unpublished courses</a>
+                                    
+                                </li>
+                            }
+                            <li>
+                                @if (Model.NonLarsCourseUploadInProgress)
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="NonLarsInProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="nonlars-in-progress-link">Upload in progress</a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="CoursesDataManagement" asp-action="NonLars" asp-all-route-data="@ProviderContext.RouteValues" data-testid="nonlars-upload-new-link" class="govuk-link">Upload new course data</a>
+                                }
+                            </li>
+                            <li>
+                                <a asp-action="NonLarsFormatting" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Course file format requirements
+                                </a>
+                            </li>
+                            @if (Model.NonLarsCourseCount > 0)
+                            {
+                                <li>
+                                    <a asp-action="DownloadNonLars" asp-controller="CoursesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadNonLars">
+                                        Download your published course data (CSV)
+                                    </a>
+                                </li>
+                            }
+                            <li>
+                                <a asp-controller="CoursesDataManagement" asp-action="TemplateNonLars" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Download course data template (CSV)
+                                </a>
+                                
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (Model.ShowTLevels)
+{
+    <div class="govuk-grid-row" data-testid="tlevels-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m section-heading">T Levels</h2>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2 pttcd-provider-dashboard__row">
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+                <h2 class="govuk-heading-s">Published T Levels</h2>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="tlevel-count">@Model.TLevelCount</p>
+            </div>
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-s">Your T Levels</h2>
+                    <p class="govuk-body-s">View and manage the T Levels you offer to learners.</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        <li>
+                            <a asp-controller="AddTLevel" asp-action="SelectTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a T Level</a>
+                        </li>
+                        @if (Model.TLevelCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="tlevels-view-edit-link">View and edit T Levels</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-m section-heading">Venues</h2>
+    </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-4 pttcd-provider-dashboard__row">
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card pttcd-provider-dashboard__card--summary">
+            <h2 class="govuk-heading-s">Published venues</h2>
+            <p class="pttcd-provider-dashboard__card__number" data-testid="venue-count">@Model.VenueCount</p>
+            @if (Model.UnpublishedVenueCount > 0)
+            {
+                <h2 class="govuk-heading-s govuk-!-padding-top-2">Unpublished venues</h2>
+                <p class="pttcd-provider-dashboard__card__number" data-testid="UnpublishedVenueCount">@Model.UnpublishedVenueCount</p>
+            }
+        </div>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <div class="pttcd-provider-dashboard__card">
+            <div class="pttcd-provider-dashboard__card__content">
+                <h2 class="govuk-heading-s">Your venues</h2>
+                <p class="govuk-body-s">View and manage the venues for your learning and training.</p>
+            </div>
+            <div class="pttcd-provider-dashboard__card__actions">
+                <ul class="govuk-list pttcd-list--small">
+                    <li>
+                        <a asp-controller="AddVenue" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Add a venue</a>
+                    </li>
+                    @if (Model.VenueCount > 0)
+                    {
+                        <li>
+                            <a asp-controller="ViewVenues" asp-action="ViewVenues" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-view-edit-link">View and edit venues</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @if (FeatureFlagProvider.HaveFeature(FeatureFlags.VenuesDataManagement))
+    {
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-provider-dashboard__card">
+                <div class="pttcd-provider-dashboard__card__content">
+                    <h2 class="govuk-heading-s">Venue data upload</h2>
+                    <p class="govuk-body-s">Upload your venues with a CSV file.</p>
+                </div>
+                <div class="pttcd-provider-dashboard__card__actions">
+                    <ul class="govuk-list pttcd-list--small">
+                        @if (Model.UnpublishedVenueCount > 0)
+                        {
+                            <li>
+                                <a asp-controller="VenuesDataManagement" asp-action="CheckAndPublish" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="venues-unpublished-link">Your unpublished venues</a>
+                            </li>
+                        }
+                        <li>
+                            @if (Model.VenueUploadInProgress)
+                            {
+                                <a asp-controller="VenuesDataManagement" asp-action="InProgress" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                    Upload in progress
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">Upload new venue data</a>
+                            }
+                        </li>
+                        <li>
+                            <a asp-action="Formatting" asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                                Venue file format requirements
+                            </a>
+                        </li>
+                        @if (Model.VenueCount > 0)
+                        {
+                            <li>
+                                <a asp-action="Download" asp-controller="VenuesDataManagement" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link" data-testid="DownloadVenues">Download your published venue data (CSV)</a>
+                            </li>
+                        }
+                        <li>
+                            <a asp-action="Template" asp-controller="VenuesDataManagement" class="govuk-link">Download venue data template (CSV)</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="pttcd-provider-dashboard__contact-panel">
+            <h2 class="govuk-heading-m">Need help?</h2>
+            <p class="govuk-body">
+                If you’ve got a question about Publish to the course directory, <a asp-controller="Home" asp-action="Contact" class="govuk-link">contact the support team</a>.
+            </p>
+        </div>
+    </div>
+</div>

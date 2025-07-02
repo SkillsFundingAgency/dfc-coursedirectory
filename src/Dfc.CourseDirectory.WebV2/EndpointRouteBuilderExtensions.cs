@@ -1,6 +1,4 @@
-﻿using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses;
-using Dfc.CourseDirectory.WebV2.Features.DataManagement.Venues;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
 namespace Dfc.CourseDirectory.WebV2

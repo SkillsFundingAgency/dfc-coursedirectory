@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses;
 using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Dfc.CourseDirectory.WebV2.Tests.Extensions;
+using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses;
 using FluentAssertions;
 using Xunit;
 

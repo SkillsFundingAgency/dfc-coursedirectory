@@ -8,8 +8,11 @@ using CsvHelper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
+using Dfc.CourseDirectory.WebV2.Reporting;
 using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Dfc.CourseDirectory.WebV2.Tests.Data;
+using Dfc.CourseDirectory.WebV2.ViewModels.Courses;
+using Dfc.CourseDirectory.WebV2.ViewModels.Courses.AllCoursesReport;
 using FluentAssertions;
 using Xunit;
 
@@ -70,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
             records.Length.Should().Be(1);
         }
 
@@ -174,7 +177,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<ViewComponents.OpenData.Reporting.LiveCoursesWithRegionsAndVenuesReport.Csv>().ToArray();
             records.Length.Should().Be(1);
         }
 
@@ -203,7 +206,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.OpenData.Reporting
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             await csvReader.ReadAsync();
             csvReader.ReadHeader().Should().BeTrue();
-            var records = csvReader.GetRecords<Features.Courses.Reporting.AllCoursesReport.Csv>().ToArray();
+            var records = csvReader.GetRecords<Csv>().ToArray();
             records.Length.Should().Be(0);
         }
 

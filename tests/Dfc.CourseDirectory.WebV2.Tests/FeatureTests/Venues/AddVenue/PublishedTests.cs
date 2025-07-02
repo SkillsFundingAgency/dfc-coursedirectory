@@ -2,9 +2,9 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.WebV2.Features.Venues.AddVenue;
 using Dfc.CourseDirectory.WebV2.Tests.Core;
 using Dfc.CourseDirectory.WebV2.Tests.Extensions;
+using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.AddVenue;
 using FluentAssertions;
 using FormFlow;
 using Xunit;

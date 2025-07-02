@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var response = await HttpClient.GetAsync($"tlevels");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
 
             result.Should().NotBeNull();
@@ -96,7 +96,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var response = await HttpClient.GetAsync($"tlevels");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
 
             result.Should().NotBeNull();
