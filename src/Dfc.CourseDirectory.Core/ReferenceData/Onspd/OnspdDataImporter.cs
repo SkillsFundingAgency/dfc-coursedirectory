@@ -47,9 +47,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             var blobClient = _blobContainerClient.GetBlobClient(filename);
 
-            var blob = await blobClient.DownloadAsync();
+            var blob = await blobClient.DownloadStreamingAsync();
 
-            using var dataStream = blob.Value.Content;
+            await using var dataStream = blob.Value.Content;
             using var streamReader = new StreamReader(dataStream);
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
@@ -58,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
             {
-                // Some data has invalid lat/lngs that will fail if we try to import..
+                // Some data has invalid lat/lngs that will fail if we try to import.
                 var withValidLatLngs = records
                     .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
                     .ToArray();
@@ -76,9 +76,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
                 rowCount += records.Count;
                 importedCount += withValidLatLngs.Length;
+
+                if (rowCount % 100000 == 0)
+                {
+                    _logger.LogInformation("Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
+                        rowCount, importedCount);
+                }
             }
 
-            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.", rowCount, importedCount);
+            _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes", rowCount, importedCount);
         }
 
         public async Task AutomatedDataImport()
