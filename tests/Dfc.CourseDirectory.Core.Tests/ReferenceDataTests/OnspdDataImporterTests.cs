@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
@@ -21,66 +22,62 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         {
         }
 
-//        [Fact]
-//        public Task ImportData_ReadsCsvAndUpsertsToSql() => WithSqlQueryDispatcher(async sqlDispatcher =>
-//        {
-//            // Arrange
+        [Fact]
+        public Task ImportData_ReadsCsvAndUpsertsToSql() => WithSqlQueryDispatcher(async sqlDispatcher =>
+        {
+            // Arrange
 
-//            // Create a CSV with 4 records;
-//            // 2 valid inside England, 1 valid outside of England and one with invalid lat/lng
-//            var csv = $@"pcds,lat,long,ctry
-//AB1 2CD,1,-1,{OnspdDataImporter.EnglandCountryId}
-//BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId}
-//CD3 4EF,3,3,notenglandcountry
-//DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
+            var blobClient = new Mock<BlobClient>();
+            var blobContainerClient = new Mock<BlobContainerClient>();
+            var blobServiceClient = new Mock<BlobServiceClient>();
+            var downloadResponse = new Mock<Response<BlobDownloadStreamingResult>>();
 
-//            var csvStream = new MemoryStream(Encoding.UTF8.GetBytes(csv));
-//            csvStream.Seek(0L, SeekOrigin.Begin);
+            // Create a CSV with 4 records
+            // 2 valid inside England, 1 valid outside of England and one with invalid lat/lng
+            var csv = $@"pcds,lat,long,ctry
+AB1 2CD,1,-1,{OnspdDataImporter.EnglandCountryId}
+BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId}
+CD3 4EF,3,3,notenglandcountry
+DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
 
-//            var downloadResponse = new Mock<Response<BlobDownloadInfo>>();
+            var csvStream = new MemoryStream(Encoding.UTF8.GetBytes(csv));
+            csvStream.Seek(0L, SeekOrigin.Begin);
 
-//            var blobDownloadInfo = BlobsModelFactory.BlobDownloadInfo(content: csvStream);
+            var blobDownloadInfo = BlobsModelFactory.BlobDownloadStreamingResult(content: csvStream);
 
-//            downloadResponse.SetupGet(mock => mock.Value).Returns(blobDownloadInfo);
+            downloadResponse.SetupGet(mock => mock.Value).Returns(blobDownloadInfo);
 
-//            var blobClient = new Mock<BlobClient>();
+            blobClient
+                .Setup(mock => mock.DownloadStreamingAsync(null, CancellationToken.None))
+                .ReturnsAsync(downloadResponse.Object);
 
-//            blobClient
-//                .Setup(mock => mock.DownloadAsync())
-//                .ReturnsAsync(downloadResponse.Object);
+            blobContainerClient
+                .Setup(mock => mock.GetBlobClient(string.Empty))
+                .Returns(blobClient.Object);
 
-//            var blobContainerClient = new Mock<BlobContainerClient>();
+            blobServiceClient
+                .Setup(mock => mock.GetBlobContainerClient(OnspdDataImporter.ContainerName))
+                .Returns(blobContainerClient.Object);
 
-//            blobContainerClient
-//                .Setup(mock => mock.GetBlobClient(OnspdDataImporter.FileName))
-//                .Returns(blobClient.Object);
+            var importer = new OnspdDataImporter(
+                blobServiceClient.Object,
+                sqlDispatcher,
+                new NullLogger<OnspdDataImporter>());
 
-//            var blobServiceClient = new Mock<BlobServiceClient>();
+            // Act
+            await importer.ManualDataImport(string.Empty);
 
-//            blobServiceClient
-//                .Setup(mock => mock.GetBlobContainerClient(OnspdDataImporter.ContainerName))
-//                .Returns(blobContainerClient.Object);
+            // Assert
+            var imported = (await sqlDispatcher.Transaction.Connection.QueryAsync<PostcodeInfo>(
+                "select Postcode, Position.Lat Latitude, Position.Long Longitude, InEngland from Pttcd.Postcodes",
+                transaction: sqlDispatcher.Transaction)).AsList();
 
-//            var importer = new OnspdDataImporter(
-//                blobServiceClient.Object,
-//                sqlDispatcher,
-//                new NullLogger<OnspdDataImporter>());
-
-//            // Act
-//            await importer.ImportData();
-
-//            // Assert
-//            var imported = (await sqlDispatcher.Transaction.Connection.QueryAsync<PostcodeInfo>(
-//                "select Postcode, Position.Lat Latitude, Position.Long Longitude, InEngland from Pttcd.Postcodes",
-//                transaction: sqlDispatcher.Transaction)).AsList();
-
-//            imported.Should().BeEquivalentTo(new[]
-//            {
-//                new PostcodeInfo() { Postcode = "AB1 2CD", Latitude = 1, Longitude = -1, InEngland = true },
-//                new PostcodeInfo() { Postcode = "BC2 3DE", Latitude = -2, Longitude = 2, InEngland = true },
-//                new PostcodeInfo() { Postcode = "CD3 4EF", Latitude = 3, Longitude = 3, InEngland = false }
-//            });
-//        });
-
+            imported.Should().BeEquivalentTo(new[]
+            {
+                new PostcodeInfo() { Postcode = "AB1 2CD", Latitude = 1, Longitude = -1, InEngland = true },
+                new PostcodeInfo() { Postcode = "BC2 3DE", Latitude = -2, Longitude = 2, InEngland = true },
+                new PostcodeInfo() { Postcode = "CD3 4EF", Latitude = 3, Longitude = 3, InEngland = false }
+            });
+        });
     }
 }
