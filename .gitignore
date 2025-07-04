@@ -356,3 +356,4 @@ MigrationBackup/
 /.vscode
 /utils/Cosmos/**/appsettings.json
 utils/Cosmos/Dfc.CosmosBulkUtils/Properties/launchSettings.json
+src/Dfc.CourseDirectory.Functions/local.settings.json
