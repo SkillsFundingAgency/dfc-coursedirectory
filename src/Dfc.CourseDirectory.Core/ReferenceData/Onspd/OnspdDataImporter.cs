@@ -96,6 +96,54 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 throw;
             }
         }
+        public async Task BlobImportONSPD(Stream blobStream, string filename)
+        {
+            try
+            {
+                using var streamReader = new StreamReader(blobStream);
+                using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+                var rowCount = 0;
+                var importedCount = 0;
+
+                await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
+                {
+                    // Some data has invalid lat/lngs that will fail if we try to import.
+                    var withValidLatLngs = records
+                        .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
+                        .ToArray();
+
+                    await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                    {
+                        Records = withValidLatLngs
+                            .Select(r => new UpsertPostcodesRecord()
+                            {
+                                Postcode = r.Postcode,
+                                InEngland = r.Country == EnglandCountryId,
+                                Position = (r.Latitude, r.Longitude)
+                            })
+                    });
+
+                    rowCount += records.Count;
+                    importedCount += withValidLatLngs.Length;
+
+                    if (importedCount % 100000 == 0)
+                    {
+                        _logger.LogInformation(
+                            "Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
+                            rowCount, importedCount);
+                    }
+                }
+
+                _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes",
+                    rowCount, importedCount);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error has occurred during {FunctionName}: {ErrorMessage}", nameof(OnspdDataImporter), ex.Message);
+                throw;
+            }
+        }
 
         public async Task AutomatedDataImport()
         {
