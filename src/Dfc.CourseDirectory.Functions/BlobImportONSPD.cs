@@ -17,21 +17,21 @@ namespace Dfc.CourseDirectory.Functions
 
         [Function("BlobImportONSPD")]
         public async Task Run(
-            [BlobTrigger("onspd/{name}", Connection = "BlobStorageSettings__ConnectionString")]
+            [BlobTrigger("onspd/{fileName}.csv")]
             Stream blobStream,
-            string name)
+            string fileName)
         {
-            _logger.LogInformation("{FunctionName} function has been invoked for blob: {FileName}", nameof(ManualImportONSPD), name);
+            _logger.LogInformation("{FunctionName} function has been invoked for blob: {FileName}", nameof(ManualImportONSPD), fileName);
 
             try
             {
-                await _onspdDataImporter.BlobImportONSPD(blobStream, name);
+                await _onspdDataImporter.BlobImportONSPD(blobStream, fileName);
 
-                _logger.LogInformation("{FunctionName} has finished processing file: {FileName}", "BlobImportONSPD", name);
+                _logger.LogInformation("{FunctionName} has finished processing file: {FileName}", "BlobImportONSPD", fileName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while importing ONSPD file from blob: {FileName}. Error: {ErrorMessage}", name, ex.Message);
+                _logger.LogError(ex, "An error occurred while importing ONSPD file from blob: {FileName}. Error: {ErrorMessage}", fileName, ex.Message);
             }
         }
     }
