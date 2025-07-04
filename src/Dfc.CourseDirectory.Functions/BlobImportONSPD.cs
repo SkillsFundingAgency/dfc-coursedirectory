@@ -23,16 +23,9 @@ namespace Dfc.CourseDirectory.Functions
         {
             _logger.LogInformation("{FunctionName} function has been invoked for blob: {FileName}", nameof(ManualImportONSPD), fileName);
 
-            try
-            {
-                await _onspdDataImporter.BlobImportONSPD(blobStream, fileName);
+            await _onspdDataImporter.BlobImportONSPD(blobStream, fileName);
 
-                _logger.LogInformation("{FunctionName} has finished processing file: {FileName}", "BlobImportONSPD", fileName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while importing ONSPD file from blob: {FileName}. Error: {ErrorMessage}", fileName, ex.Message);
-            }
+            _logger.LogInformation("{FunctionName} has finished processing file: {FileName}", "BlobImportONSPD", fileName);
         }
     }
 }
