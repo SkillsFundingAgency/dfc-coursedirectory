@@ -1,6 +1,5 @@
 ﻿using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -44,26 +43,6 @@ namespace Dfc.CourseDirectory.Functions
 
             _logger.LogInformation("Successfully manually imported the ONSPD for file: {FileName}", filename);
             _logger.LogInformation("{FunctionName} function has finished invoking", nameof(ManualImportONSPD));
-        }
-
-        [Function("BlobImportONSPD")]
-        public async Task Run(
-            [BlobTrigger("onspd/{name}", Connection = "BlobStorageSettings__ConnectionString")]
-            Stream blobStream,
-            string name)
-        {
-            _logger.LogInformation("{FunctionName} function has been invoked for blob: {FileName}", nameof(ManualImportONSPD), name);
-
-            try
-            {
-                await _onspdDataImporter.BlobImportONSPD(blobStream, name);
-
-                _logger.LogInformation("{FunctionName} has finished processing file: {FileName}", "BlobImportONSPD", name);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while importing ONSPD file from blob: {FileName}. Error: {ErrorMessage}", name, ex.Message);
-            }
         }
     }
 }
