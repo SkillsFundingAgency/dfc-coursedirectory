@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     rowCount += records.Count;
                     importedCount += withValidLatLngs.Length;
 
-                    if (importedCount % 100000 == 0)
+                    if (rowCount % 100000 == 0)
                     {
                         _logger.LogInformation(
                             "Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
