@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         internal const string ContainerName = "onspd";
         internal const string EnglandCountryId = "E92000001";
 
-        private const int ChunkSize = 200;
+        private const int ChunkSize = 10000;
 
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
