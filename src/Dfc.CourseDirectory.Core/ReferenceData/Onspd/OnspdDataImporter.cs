@@ -45,46 +45,56 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         public async Task ManualDataImport(string filename)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(filename);
-
-            var blob = await blobClient.DownloadStreamingAsync();
-
-            await using var dataStream = blob.Value.Content;
-            using var streamReader = new StreamReader(dataStream);
-            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
-
-            var rowCount = 0;
-            var importedCount = 0;
-
-            await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
+            try
             {
-                // Some data has invalid lat/lngs that will fail if we try to import.
-                var withValidLatLngs = records
-                    .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
-                    .ToArray();
+                var blobClient = _blobContainerClient.GetBlobClient(filename);
 
-                await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                var blob = await blobClient.DownloadStreamingAsync();
+
+                await using var dataStream = blob.Value.Content;
+                using var streamReader = new StreamReader(dataStream);
+                using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+                var rowCount = 0;
+                var importedCount = 0;
+
+                await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
                 {
-                    Records = withValidLatLngs
-                        .Select(r => new UpsertPostcodesRecord()
-                        {
-                            Postcode = r.Postcode,
-                            InEngland = r.Country == EnglandCountryId,
-                            Position = (r.Latitude, r.Longitude)
-                        })
-                });
+                    // Some data has invalid lat/lngs that will fail if we try to import.
+                    var withValidLatLngs = records
+                        .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
+                        .ToArray();
 
-                rowCount += records.Count;
-                importedCount += withValidLatLngs.Length;
+                    await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                    {
+                        Records = withValidLatLngs
+                            .Select(r => new UpsertPostcodesRecord()
+                            {
+                                Postcode = r.Postcode,
+                                InEngland = r.Country == EnglandCountryId,
+                                Position = (r.Latitude, r.Longitude)
+                            })
+                    });
 
-                if (importedCount % 100000 == 0)
-                {
-                    _logger.LogInformation("Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
-                        rowCount, importedCount);
+                    rowCount += records.Count;
+                    importedCount += withValidLatLngs.Length;
+
+                    if (rowCount % 100000 == 0)
+                    {
+                        _logger.LogInformation(
+                            "Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
+                            rowCount, importedCount);
+                    }
                 }
-            }
 
-            _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes", rowCount, importedCount);
+                _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes",
+                    rowCount, importedCount);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error has occurred during {FunctionName}: {ErrorMessage}", nameof(OnspdDataImporter), ex.Message);
+                throw;
+            }
         }
 
         public async Task AutomatedDataImport()
