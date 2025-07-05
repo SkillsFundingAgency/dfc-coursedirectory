@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Functions
         [Function("AutomatedImportONSPD")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
         {
-            await _onspdDataImporter.AutomatedImportData();
+            await _onspdDataImporter.AutomatedDataImport();
             return new OkObjectResult("Automated ONSPD data import triggered");
         }
     }

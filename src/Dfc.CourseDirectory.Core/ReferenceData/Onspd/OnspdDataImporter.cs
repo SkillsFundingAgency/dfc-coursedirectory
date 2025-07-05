@@ -20,10 +20,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
     {
         // internal for testing
         internal const string ContainerName = "onspd";
-        internal const string FileName = "ONSPD_MAY_2023_UK.csv";
         internal const string EnglandCountryId = "E92000001";
 
-        private const int ChunkSize = 200;
+        private const int ChunkSize = 10000;
 
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
@@ -44,45 +43,61 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             };
         }
 
-        public async Task ImportData()
+        public async Task ManualDataImport(string filename)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(FileName);
-
-            var blob = await blobClient.DownloadAsync();
-
-            using var dataStream = blob.Value.Content;
-            using var streamReader = new StreamReader(dataStream);
-            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
-
-            var rowCount = 0;
-            var importedCount = 0;
-
-            await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
+            try
             {
-                // Some data has invalid lat/lngs that will fail if we try to import..
-                var withValidLatLngs = records
-                    .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
-                    .ToArray();
+                var blobClient = _blobContainerClient.GetBlobClient(filename);
 
-                await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                var blob = await blobClient.DownloadStreamingAsync();
+
+                await using var dataStream = blob.Value.Content;
+                using var streamReader = new StreamReader(dataStream);
+                using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+                var rowCount = 0;
+                var importedCount = 0;
+
+                await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
                 {
-                    Records = withValidLatLngs
-                        .Select(r => new UpsertPostcodesRecord()
-                        {
-                            Postcode = r.Postcode,
-                            InEngland = r.Country == EnglandCountryId,
-                            Position = (r.Latitude, r.Longitude)
-                        })
-                });
+                    // Some data has invalid lat/lngs that will fail if we try to import.
+                    var withValidLatLngs = records
+                        .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
+                        .ToArray();
 
-                rowCount += records.Count;
-                importedCount += withValidLatLngs.Length;
+                    await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                    {
+                        Records = withValidLatLngs
+                            .Select(r => new UpsertPostcodesRecord()
+                            {
+                                Postcode = r.Postcode,
+                                InEngland = r.Country == EnglandCountryId,
+                                Position = (r.Latitude, r.Longitude)
+                            })
+                    });
+
+                    rowCount += records.Count;
+                    importedCount += withValidLatLngs.Length;
+
+                    if (rowCount % 100000 == 0)
+                    {
+                        _logger.LogInformation(
+                            "Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
+                            rowCount, importedCount);
+                    }
+                }
+
+                _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes",
+                    rowCount, importedCount);
             }
-
-            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error has occurred during {FunctionName}: {ErrorMessage}", nameof(OnspdDataImporter), ex.Message);
+                throw;
+            }
         }
 
-        public async Task AutomatedImportData()
+        public async Task AutomatedDataImport()
         {
             string arcgisUrl = "https://www.arcgis.com/sharing/rest/search?f=json&filter=tags:\"PRD_ONSPD\"&sortField=created&sortOrder=desc&num=1";
 
@@ -121,7 +136,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private async Task DownloadZipFileToTempAsync(string downloadLink)
         {
             _logger.LogInformation("Zip file Url :{downloadLink}", downloadLink);
-          
+
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
 
@@ -199,7 +214,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 importedCount += withValidLatLngs.Length;
             }
 
-            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.",rowCount,importedCount);
+            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.", rowCount, importedCount);
         }
 
         private class Record
