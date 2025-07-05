@@ -1,6 +1,5 @@
 ﻿using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -18,22 +17,32 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("ManualImportONSPD")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
-
+        public async Task Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
         {
             _logger.LogInformation("{FunctionName} function has been invoked", nameof(ManualImportONSPD));
             string filename = request.Query["filename"];
 
             if (string.IsNullOrEmpty(filename))
             {
-                return new BadRequestObjectResult(
-                    "Please enter the target CSV filename with its file extension using the parameter 'filename'.");
+                _logger.LogWarning("Please enter the target CSV filename with its file extension using the parameter 'filename'.");
             }
 
-            await _onspdDataImporter.ManualDataImport(filename);
+            if (!filename!.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.LogWarning("The filename must include a '.csv' file extension");
+            }
 
+            try
+            {
+                await _onspdDataImporter.ManualDataImport(filename);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while importing ONSPD file: {FileName}", filename);
+            }
+
+            _logger.LogInformation("Successfully manually imported the ONSPD for file: {FileName}", filename);
             _logger.LogInformation("{FunctionName} function has finished invoking", nameof(ManualImportONSPD));
-            return new OkObjectResult($"Successfully manually imported the ONSPD for file: {filename}");
         }
     }
 }
