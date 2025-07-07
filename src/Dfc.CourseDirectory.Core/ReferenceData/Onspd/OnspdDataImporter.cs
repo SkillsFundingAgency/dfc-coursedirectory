@@ -24,18 +24,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private const int ChunkSize = 10000;
 
-        private readonly BlobContainerClient _blobContainerClient;
-        private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
+        private readonly BlobContainerClient _blobContainerClient; 
+        private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ILogger<OnspdDataImporter> _logger;
         private HttpClient _httpClient;
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
-            ISqlQueryDispatcher sqlQueryDispatcher,
+            ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ILogger<OnspdDataImporter> logger)
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
-            _sqlQueryDispatcher = sqlQueryDispatcher;
+            _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
             _logger = logger;
             _httpClient = new HttpClient()
             {
@@ -48,47 +48,11 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             try
             {
                 var blobClient = _blobContainerClient.GetBlobClient(filename);
-
                 var blob = await blobClient.DownloadStreamingAsync();
 
                 await using var dataStream = blob.Value.Content;
                 using var streamReader = new StreamReader(dataStream);
-                using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
-
-                var rowCount = 0;
-                var importedCount = 0;
-
-                await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
-                {
-                    // Some data has invalid lat/lngs that will fail if we try to import.
-                    var withValidLatLngs = records
-                        .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
-                        .ToArray();
-
-                    await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
-                    {
-                        Records = withValidLatLngs
-                            .Select(r => new UpsertPostcodesRecord()
-                            {
-                                Postcode = r.Postcode,
-                                InEngland = r.Country == EnglandCountryId,
-                                Position = (r.Latitude, r.Longitude)
-                            })
-                    });
-
-                    rowCount += records.Count;
-                    importedCount += withValidLatLngs.Length;
-
-                    if (rowCount % 100000 == 0)
-                    {
-                        _logger.LogInformation(
-                            "Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
-                            rowCount, importedCount);
-                    }
-                }
-
-                _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes",
-                    rowCount, importedCount);
+                await ProcessCsvToDbAsync(streamReader);
             }
             catch (Exception ex)
             {
@@ -166,7 +130,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         }
 
                         using StreamReader streamReader = new StreamReader(destination);
-                        await ProcessCSVtoDBAsync(streamReader);
+                        await ProcessCsvToDbAsync(streamReader);
 
                         //Remove the CSV when process done
                         using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
@@ -184,24 +148,24 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         }
 
-        private async Task ProcessCSVtoDBAsync(StreamReader streamReader)
+        private async Task ProcessCsvToDbAsync(StreamReader streamReader)
         {
-            _logger.LogInformation("Start import csv postcodes to DB.");
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+            using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
 
             var rowCount = 0;
             var importedCount = 0;
 
             await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
             {
-                // Some data has invalid lat/lngs that will fail if we try to import..
-                var withValidLatLngs = records
-                    .Where(r => r.Latitude >= -90 && r.Latitude <= 90 && r.Longitude >= -90 && r.Longitude <= 90)
+                // Some data has invalid lat/lngs that will fail if we try to import.
+                var validRecords = records
+                    .Where(IsValidRecord)
                     .ToArray();
 
-                await _sqlQueryDispatcher.ExecuteQuery(new UpsertPostcodes()
+                await sqlDispatcher.ExecuteQuery(new UpsertPostcodes()
                 {
-                    Records = withValidLatLngs
+                    Records = validRecords
                         .Select(r => new UpsertPostcodesRecord()
                         {
                             Postcode = r.Postcode,
@@ -211,10 +175,24 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 });
 
                 rowCount += records.Count;
-                importedCount += withValidLatLngs.Length;
-            }
+                importedCount += validRecords.Length;
 
-            _logger.LogInformation("Processed {rowCount} rows, imported {importedCount} postcodes.", rowCount, importedCount);
+                if (rowCount % 100000 == 0)
+                {
+                    _logger.LogInformation(
+                        "Currently processed {RowCount} rows & imported {ImportedCount} postcodes",
+                        rowCount, importedCount);
+                }
+            }
+            await sqlDispatcher.Commit();
+
+            _logger.LogInformation("Successfully processed {RowCount} rows & imported {ImportedCount} postcodes",
+                rowCount, importedCount);
+        }
+
+        private static bool IsValidRecord(Record record)
+        {
+            return record.Latitude >= -90 && record.Latitude <= 90 && record.Longitude >= -90 && record.Longitude <= 90;
         }
 
         private class Record
