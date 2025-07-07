@@ -20,6 +20,6 @@
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.11" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.FindACourseApi.csproj" />
+    <ProjectReference Include="..\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.FindACourseApi.csproj" />
   </ItemGroup>
 </Project>

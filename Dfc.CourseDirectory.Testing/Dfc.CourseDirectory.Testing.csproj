@@ -15,13 +15,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Faker.Net" Version="2.0.163" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.8" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="Respawn" Version="4.0.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
   </ItemGroup>
 </Project>

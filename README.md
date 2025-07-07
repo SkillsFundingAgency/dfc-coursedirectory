@@ -79,6 +79,6 @@ The projects in the `Legacy` solution folder were inherited without good test co
 
 New code is being written in the WebV2 project that is test-driven and uses modern patterns of development to achieve cleaner testable code.
 
-See the [WebV2 readme](src/Dfc.CourseDirectory.WebV2/README.md) for details of the patterns in use.
+See the [WebV2 readme](Dfc.CourseDirectory.WebV2/README.md) for details of the patterns in use.
 
 The WebV2 controllers are made available under the legacy `Dfc.CourseDirectory.Web` project so that we can move routes across one at time. As such to run the WebV2 code you actually need to run the original "Web" project.

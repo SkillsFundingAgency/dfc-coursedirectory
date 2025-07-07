@@ -29,12 +29,12 @@ trigger:
   paths:
     include:
     - Dfc.CourseDirectory.Api/*
-    - src/Dfc.CourseDirectory.Core/*
-    - src/Dfc.CourseDirectory.Database/*
-    - src/Dfc.CourseDirectory.Api/*
-    - tests/Dfc.CourseDirectory.Core.Tests/*
-    - tests/Dfc.CourseDirectory.Api.Tests/*
-    - tests/Dfc.CourseDirectory.Testing/*
+    - Dfc.CourseDirectory.Core/*
+    - Dfc.CourseDirectory.Database/*
+    - Dfc.CourseDirectory.Api/*
+    - Dfc.CourseDirectory.Core.Tests/*
+    - Dfc.CourseDirectory.Api.Tests/*
+    - Dfc.CourseDirectory.Testing/*
 
 pr:
   branches:
@@ -45,12 +45,12 @@ pr:
   paths:
     include:
     - Dfc.CourseDirectory.Api/*
-    - src/Dfc.CourseDirectory.Core/*
-    - src/Dfc.CourseDirectory.Database/*
-    - src/Dfc.CourseDirectory.Api/*
-    - tests/Dfc.CourseDirectory.Core.Tests/*
-    - tests/Dfc.CourseDirectory.Api.Tests/*
-    - tests/Dfc.CourseDirectory.Testing/*
+    - Dfc.CourseDirectory.Core/*
+    - Dfc.CourseDirectory.Database/*
+    - Dfc.CourseDirectory.Api/*
+    - Dfc.CourseDirectory.Core.Tests/*
+    - Dfc.CourseDirectory.Api.Tests/*
+    - Dfc.CourseDirectory.Testing/*
 
 workspace:
   clean: all
@@ -79,14 +79,14 @@ steps:
 - task: MSBuild@1
   displayName: Build database
   inputs:
-    solution: 'src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
+    solution: 'Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
 
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.Api.sln` explodes
 - powershell: |
-    dotnet sln Dfc.CourseDirectory.Api/$(SolutionBaseName).sln remove src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
+    dotnet sln Dfc.CourseDirectory.Api/$(SolutionBaseName).sln remove Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -127,7 +127,7 @@ steps:
   displayName: Publish Dfc.CourseDirectory.Api
   inputs:
     command: publish
-    projects: 'src/Dfc.CourseDirectory.Api/Dfc.CourseDirectory.Api.csproj'
+    projects: 'Dfc.CourseDirectory.Api/Dfc.CourseDirectory.Api.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
