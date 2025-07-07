@@ -152,9 +152,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
 
         [Theory]
         [InlineData("x")]
-        // Following data are commented out because it would be a breaking API change
-        //[InlineData("")]
-        //[InlineData(" ")]
         public async Task InvalidPostcode_ReturnsError(string postcode)
         {
             // Arrange

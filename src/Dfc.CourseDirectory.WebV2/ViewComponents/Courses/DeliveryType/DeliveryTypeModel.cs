@@ -4,7 +4,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewComponents.Courses.DeliveryType
 {
     public class DeliveryTypeModel
     {
-        //[Required(ErrorMessage = "Select Delivery Mode")]
         public CourseDeliveryMode? DeliveryMode { get; set; }
         public string LabelText { get; set; }
         public string HintText { get; set; }

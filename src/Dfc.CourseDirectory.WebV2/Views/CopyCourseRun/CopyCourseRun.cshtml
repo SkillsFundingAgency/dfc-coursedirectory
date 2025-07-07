@@ -565,11 +565,6 @@ else
 
                 var errorArray = $("[class*='govuk-error-message'");
                 if (errorArray.length > 0) {
-
-
-                    //var $errorField = $("#" + errorArray[0].closest('.section').id);
-                    //$('html,body').animate({ scrollTop: $errorField.offset().top }, 'slow');
-
                     var notificationBody = "";
                     $.each(errorArray, function (index, value) {
                         var $field = value.closest('.section').id;

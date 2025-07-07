@@ -151,8 +151,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.CopyCourse
                 AwardOrgCode = course.AwardOrgCode,
                 LearnAimRef = course.LearnAimRef,
                 LearnAimRefTitle = course.LearnAimRefTitle,
-
-                //Mode = mode,
                 CourseId = course.CourseId,
                 CourseRunId = courseRun.CourseRunId,
                 CourseName = courseRun?.CourseName,

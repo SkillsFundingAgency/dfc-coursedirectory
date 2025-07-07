@@ -1109,15 +1109,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 deliveryMode: "WorkBased",
                 nationalDelivery: null);
 
-            // SubRegions are weird since they don't have a single field with an error attached
-            // TODO figure out how to check for the error..
-            //yield return CreateRecord(
-            //    expectedErrorInputId: "SubRegionIds",
-            //    expectedErrorCode: "COURSERUN_SUBREGIONS_REQUIRED",
-            //    deliveryMode: "WorkBased",
-            //    nationalDelivery: "false",
-            //    subRegionIds: null);
-
             yield return CreateRecord(
                 expectedErrorInputId: "CourseWebPage",
                 expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_FORMAT",
@@ -1175,33 +1166,6 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
                 deliveryMode: "ClassroomBased",
                 specifyVenueId: false);
-
-            // yield return CreateRecord(
-            //     cost: "30.00",
-            //     duration: "3",
-            //     durationUnit: "Days",
-            //     expectedErrorInputId: "StudyMode",
-            //     expectedErrorCode: "COURSERUN_STUDY_MODE_REQUIRED",
-            //     deliveryMode: "BlendedLearning",
-            //     studyMode: null);
-
-            // yield return CreateRecord(
-            //     cost: "30.00",
-            //     duration: "3",
-            //     durationUnit: "Days",
-            //     expectedErrorInputId: "AttendancePattern",
-            //     expectedErrorCode: "COURSERUN_ATTENDANCE_PATTERN_REQUIRED",
-            //     deliveryMode: "BlendedLearning",
-            //     attendancePattern: null);
-
-            // yield return CreateRecord(
-            //     cost: "30.00",
-            //     duration: "3",
-            //     durationUnit: "Days",
-            //     expectedErrorInputId: "VenueId",
-            //     expectedErrorCode: "COURSERUN_VENUE_REQUIRED",
-            //     deliveryMode: "BlendedLearning",
-            //     specifyVenueId: false);
 
             static object[] CreateRecord(
                     string expectedErrorInputId,

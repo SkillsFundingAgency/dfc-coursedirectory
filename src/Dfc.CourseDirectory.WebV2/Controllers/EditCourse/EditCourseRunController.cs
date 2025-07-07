@@ -88,11 +88,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
                 CourseId = model.CourseId,
                 CourseRunId = model.CourseRunId,
                 CourseName = model.CourseName,
-                //Venues = availableVenues
                 VenueId = model.VenueId,
-                //SelectRegion = regions,
                 DeliveryMode = model.DeliveryMode,
-
                 CourseProviderReference = model.CourseProviderReference,
                 DurationUnit = model.DurationUnit,
                 DurationLength = model.DurationLength.ToString(),
@@ -160,8 +157,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
                 AwardOrgCode = cachedData.AwardOrgCode,
                 LearnAimRef = cachedData.LearnAimRef,
                 LearnAimRefTitle = cachedData.LearnAimRefTitle,
-
-                //Mode = mode,
                 CourseId = course.CourseId,
                 CourseRunId = courseRun.CourseRunId,
                 CourseName = courseRun?.CourseName,

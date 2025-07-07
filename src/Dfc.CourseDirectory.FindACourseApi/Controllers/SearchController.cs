@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.FindACourseApi.Controllers
             return result.Match<IActionResult>(
                 p =>
                 {
-                    //_log.LogWarning($"{nameof(CourseSearch)} failed. {nameof(p.Title)}: {{{nameof(p.Title)}}}, {nameof(p.Detail)}: {{{nameof(p.Detail)}}}.", p.Title, p.Detail);
                     _log.LogWarning("Failed to get the course deails. Response Code [BAD REQUEST]. Error Details : [{Title}/{Detail}] ",p.Title,p.Detail);
 
                     return new ObjectResult(p)
