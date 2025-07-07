@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly BlobContainerClient _blobContainerClient;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly ILogger<OnspdDataImporter> _logger;
+        private HttpClient _httpClient;
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
@@ -37,6 +38,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _logger = logger;
+            _httpClient = new HttpClient()
+            {
+                Timeout = TimeSpan.FromSeconds(300)
+            };
         }
 
         public async Task ImportData()
@@ -79,179 +84,89 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         public async Task AutomatedImportData()
         {
-            string geoportal_url = "https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-(month)-(year)(extra)/about";
+            string arcgisUrl = "https://www.arcgis.com/sharing/rest/search?f=json&filter=tags:\"PRD_ONSPD\"&sortField=created&sortOrder=desc&num=1";
 
-            string requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "");
+            _logger.LogInformation("Automated process generate request url at: {arcgisUrl}", arcgisUrl);
 
-            _logger.LogInformation("Automated process generate request url at: {requesturl}", requesturl);
+            var response = await _httpClient.GetAsync(arcgisUrl);
+            _logger.LogInformation("Response Code on GET from '{arcgisUrl}' is [{responseCode}]", arcgisUrl, response.StatusCode);
 
-            bool urlexist = await CheckURLExistsAndProcessAsync(requesturl);
-            if (!urlexist)
-            {
-                //sometime the url contains extra string at the end
-                _logger.LogInformation("Not found url at: {requesturl}", requesturl);
-                requesturl = await GenerateRequestURLAsync(DateTime.Now.Month, DateTime.Now.Year, geoportal_url, "-version-2");
-                _logger.LogInformation("Automated process generate request url at: {requesturl}", requesturl);
-                urlexist = await CheckURLExistsAndProcessAsync(requesturl);
-            }
-        }
-
-        private async Task<bool> CheckURLExistsAndProcessAsync(string requesturl)
-        {
-            bool returnvalue = false;
-            // Create a request for the URL. 		
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(requesturl);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                _logger.LogInformation("Find url at: {requesturl}", requesturl);
-                returnvalue = true;
-                
-                // Read the content.
                 string responseFromServer = await response.Content.ReadAsStringAsync();
-                string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
-                if (responseFromServer.Contains(arcgisurl))
+                var jsonResponse = JsonDocument.Parse(responseFromServer);
+                if (jsonResponse.RootElement.TryGetProperty("results", out JsonElement dataElement))
                 {
-                    int findindex = responseFromServer.IndexOf(arcgisurl);
-                    int arcgisurllength = arcgisurl.Length;
-                    string zipfileurl = arcgisurl + responseFromServer.Substring(findindex + arcgisurllength, 32) + "/data";
-                    _logger.LogInformation("Find arcgis download url at: {zipfileurl}", requesturl);
-
-                    //Download to temp folder
-                    await DownloadZipFileToTempAsync(zipfileurl);
-                }
-            }
-
-            return returnvalue;
-        }
-
-        public async Task<string> GenerateRequestURLAsync(int month,
-                                         int year,
-                                         string geoportal_url,
-                                         string extra)
-        {
-            if (month == 1 || month == 12 || month == 11)
-            {
-                if (month == 1)
-                    year--;
-                month = 11;
-            }
-            else if (month == 2 || month == 3 || month == 4)
-            {
-                month = 2;
-            }
-            else if (month == 5 || month == 6 || month == 7)
-            {
-                month = 5;
-            }
-            else if (month == 8 || month == 9 || month == 10)
-            {
-                month = 8;
-            }
-            string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month).ToLower();
-            string returnstring = geoportal_url.Replace("(month)", monthName);
-            returnstring = returnstring.Replace("(year)", year.ToString());
-            returnstring = await CheckURLContainsExtraAsync(returnstring);
-            return returnstring;
-        }
-
-        private async Task<string> CheckURLContainsExtraAsync(string datasetstring)
-        {
-            string returnvalue = datasetstring.Replace("(extra)", "");
-            _logger.LogInformation("In CheckURLContainsExtraAsync, starting");
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(returnvalue);
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                _logger.LogInformation("In CheckURLContainsExtraAsync - response.StatusCode == HttpStatusCode.OK");
-                // Read the content.
-                string responseFromServer = await response.Content.ReadAsStringAsync();
-                byte[] bytes = Encoding.Default.GetBytes(responseFromServer);
-                responseFromServer = Encoding.UTF8.GetString(bytes);
-                string arcgisurl = "https://www.arcgis.com/sharing/rest/content/items/";
-                if (responseFromServer.Contains(arcgisurl))
-                {
-                    return returnvalue;
-                }
-                else
-                {
-                    returnvalue = datasetstring.Replace("(extra)", "-version-2");
-                    HttpClient client1 = new HttpClient();
-                    var response1 = await client1.GetAsync(returnvalue);
-                    if (response1.StatusCode == HttpStatusCode.OK)
+                    var importObjects = JsonSerializer.Deserialize<ImportObject[]>(dataElement);
+                    if (importObjects != null)
                     {
-                        // Read the content.
-                        string responseFromServer1 = await response1.Content.ReadAsStringAsync();
-                        if (responseFromServer1.Contains(arcgisurl))
-                        {
-                            _logger.LogInformation("In CheckURLContainsExtraAsync - url does have extra '-version-2'");
-                            return returnvalue;
-                        }
-                        else
-                        {
-                            returnvalue = datasetstring.Replace("(extra)", "-1");
-                            HttpClient client2 = new HttpClient();
-                            var response2 = await client1.GetAsync(returnvalue);
-                            if (response2.StatusCode == HttpStatusCode.OK)
-                            {
-                                // Read the content.
-                                string responseFromServer2 = await response2.Content.ReadAsStringAsync();
-                                if (responseFromServer2.Contains(arcgisurl))
-                                {
-                                    _logger.LogInformation("In CheckURLContainsExtraAsync -  - url does have extra '-1'");
-                                    return returnvalue;
-                                }
-                                else
-                                {
-                                    _logger.LogInformation("In CheckURLContainsExtraAsync -  - url not found.");
-                                }
-                            }
-                        }
+                        var dataObject = importObjects[0];
+                        var downloadLink = $"https://www.arcgis.com/sharing/content/items/{dataObject.id}/data";
+                        _logger.LogInformation("Dataset found. Name: {name}. Title: {title}. Owner {Owner}", dataObject.name, dataObject.title, dataObject.owner);
+                        //Download to temp folder and then insert data to Sql table
+                        await DownloadZipFileToTempAsync(downloadLink);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to import / deserialize objects from {arcgisUrl}", arcgisUrl);
                     }
                 }
             }
-            return returnvalue;
+            else
+            {
+                _logger.LogWarning("Invalid Response code. Can not progress further. Import failed.");
+            }
         }
 
-        private async Task DownloadZipFileToTempAsync(string zipfileurl)
+        private async Task DownloadZipFileToTempAsync(string downloadLink)
         {
-            _logger.LogInformation("Start download zip file - {zipfileurl}.",zipfileurl);
+            _logger.LogInformation("Zip file Url :{downloadLink}", downloadLink);
+          
             var extractDirectory = Path.Join(Path.GetTempPath(), "Onspd");
             Directory.CreateDirectory(extractDirectory);
 
-            HttpClient _httpClient=new HttpClient();
-            using var resultStream = await _httpClient.GetStreamAsync(zipfileurl);
-            using var zip = new ZipArchive(resultStream);
+            var downloadResponse = await _httpClient.GetAsync(downloadLink);
 
-            foreach (var entry in zip.Entries)
+            _logger.LogInformation("Response Code on GET from '{downloadLink}' is [{responseCode}]", downloadLink, downloadResponse.StatusCode);
+
+            if (downloadResponse.StatusCode == HttpStatusCode.OK)
             {
-                if (entry.Name.EndsWith("_UK.csv") && entry.Name.StartsWith("ONSPD"))
+                var resultStream = await downloadResponse.Content.ReadAsStreamAsync();
+                using var zip = new ZipArchive(resultStream);
+                foreach (var entry in zip.Entries)
                 {
-                    _logger.LogInformation("Find csv file - {Name}.", entry.Name);
-                    var destination = Path.Combine(extractDirectory, entry.Name);
-                    _logger.LogInformation("Extract to file location - {destination}.",destination);
-                    try
+                    if (entry.Name.EndsWith("_UK.csv") && entry.Name.StartsWith("ONSPD"))
                     {
-                        entry.ExtractToFile(destination, overwrite: true);
-                        _logger.LogInformation("Extract csv file - {Name} complete.",entry.Name);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogInformation("Extract csv file error message - {Message}.", ex.Message);
-                    }
+                        _logger.LogInformation("Find csv file - {CsvName}.", entry.Name);
+                        var destination = Path.Combine(extractDirectory, entry.Name);
+                        _logger.LogInformation("Extract and saved in local drive.");
+                        try
+                        {
+                            entry.ExtractToFile(destination, overwrite: true);
+                            _logger.LogInformation("Extract csv file - {CsvName} complete.", entry.Name);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Extract csv file error message - {Message}.", ex.Message);
+                        }
 
-                    using StreamReader streamReader = new StreamReader(destination);
-                    await ProcessCSVtoDBAsync(streamReader);
+                        using StreamReader streamReader = new StreamReader(destination);
+                        await ProcessCSVtoDBAsync(streamReader);
 
-                    //Remove the CSV when process done
-                    using (FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None,
-       4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose))
-                    {
+                        //Remove the CSV when process done
+                        using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
                         // temp file exists
-                        _logger.LogInformation("Temp csv file - {Name} has been removed.", entry.Name);
+
+                        _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
+                        break;
                     }
                 }
             }
+            else
+            {
+                _logger.LogWarning("Invalid Response code from '{downloadLink}'. Can not progress further. Import failed.", downloadLink);
+            }
+
         }
 
         private async Task ProcessCSVtoDBAsync(StreamReader streamReader)
@@ -300,6 +215,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
             [Name("ctry")]
             public string Country { get; set; }
+        }
+        private class ImportObject
+        {
+            public string id { get; set; }
+            public string owner { get; set; }
+            public string name { get; set; }
+            public string title { get; set; }
         }
     }
 }
