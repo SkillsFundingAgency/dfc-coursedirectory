@@ -202,17 +202,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.EditProviderType.EditProviderType
                        : Enumerable.Empty<Guid>()
                });
 
-            //if (RemovedNonLarsSubTypeIds.Count != 0)
-            //{
-            //    await _sqlQueryDispatcher.ExecuteQuery(new DeleteTLevelsForProviderWithTLevelDefinitions()
-            //    {
-            //        ProviderId = request.ProviderId,
-            //        TLevelDefinitionIds = RemovedTLevelDefinitionIds,
-            //        DeletedBy = _currentUserProvider.GetCurrentUser(),
-            //        DeletedOn = _clock.UtcNow
-            //    });
-            //}
-
             // Remove this provider from the cache - subsequent requests will re-fetch updated record
             await _providerInfoCache.Remove(request.ProviderId);
 

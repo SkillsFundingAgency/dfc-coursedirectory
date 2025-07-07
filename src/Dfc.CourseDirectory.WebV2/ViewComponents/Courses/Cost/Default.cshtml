@@ -101,28 +101,16 @@
             $elementCost.on("blur", function () {
 
 
-                var trimmed = $elementCost.val().trim();//.replace(",", "");
+                var trimmed = $elementCost.val().trim();
 
                 if (trimmed !== "") {
 
                     if ($.isNumeric(trimmed))
                     {
-                        //if (trimmed.includes(".")) {
-                            //if (trimmed.length >= 7) {
-
-                            //    var formatted = parseFloat(trimmed / 100).toFixed(2);
-                            //}
-                            //else {
-                                var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
-                            //}
-
-                            $elementCost.val(formatted);
-                        //}
-                        //else {
-                            //Is a float
-                        //    trimmed = parseFloat(trimmed).toFixed(2);
-                        //    $elementCost.val(trimmed);
-                        //}
+                       var formatted = parseFloat(Math.floor(trimmed * 100) / 100).toFixed(2);
+                            
+                        $elementCost.val(formatted);
+                        
                     }
                     else
                     {
@@ -136,7 +124,7 @@
 
             $elementCost.on("keypress", function (event) {
                 var charCode = event.which ? event.which : event.keyCode;
-                var trimmed = $elementCost.val().trim();//.replace(".", "");
+                var trimmed = $elementCost.val().trim();
 
                 if (trimmed.indexOf(".")>= 0) {
                     if (charCode === 46) {

@@ -36,8 +36,5 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.EditCourse
 
         public PublishMode Mode { get; set; }
         public string CourseName { get; set; }
-
-       // public string NotionalNVQLevelv2 { get; set; }
-
     }   
 }
