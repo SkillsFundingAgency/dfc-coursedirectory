@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core
 
             var dacpacLocation = Path.GetFullPath(Path.Combine(
                 Environment.CurrentDirectory,
-                "../../../../../../Dfc.CourseDirectory.Database/bin",
+                "../../../Dfc.CourseDirectory.Database/bin",
 #if DEBUG
                 "Debug",
 #else
