@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-            var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
+            var responseContent = await (response?.Content?.ReadAsStringAsync());
             var sectorsResult = JsonConvert.DeserializeObject<List<Sector>>(responseContent, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
             sectorsResult.Should().NotBeNull();
@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
-            var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
+            var responseContent = await (response?.Content?.ReadAsStringAsync());
             var sectorsResult = JsonConvert.DeserializeObject<List<Sector>>(responseContent, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
             sectorsResult.Should().NotBeNull();
