@@ -16,7 +16,7 @@
 		<PackageReference Include="HtmlSanitizer" Version="9.0.886" />
 		<PackageReference Include="libphonenumber-csharp" Version="9.0.9" />
 		<PackageReference Include="Mapster" Version="7.4.0" />
-		<PackageReference Include="MediatR" Version="13.0.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Spatial" Version="8.2.4" />
 		<PackageReference Include="Microsoft.SqlServer.DACFx" Version="170.0.94" />

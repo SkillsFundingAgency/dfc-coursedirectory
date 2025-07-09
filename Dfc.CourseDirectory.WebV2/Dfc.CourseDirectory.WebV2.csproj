@@ -12,7 +12,7 @@
 		<PackageReference Include="FormFlow" Version="0.4.4" />
 		<PackageReference Include="GovUk.Frontend.AspNetCore" Version="1.5.0" />
 		<PackageReference Include="JWT" Version="11.0.0" />
-		<PackageReference Include="MediatR" Version="13.0.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.11" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.7" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
