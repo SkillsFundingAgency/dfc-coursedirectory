@@ -7,13 +7,13 @@
 	<ItemGroup>
 		<PackageReference Include="Azure.Search.Documents" Version="11.6.1" />
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.24.1" />
-		<PackageReference Include="CsvHelper" Version="33.0.1" />
+		<PackageReference Include="CsvHelper" Version="33.1.0" />
 		<PackageReference Include="Dapper" Version="2.1.66" />
 		<PackageReference Include="FastMember" Version="1.5.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Flurl" Version="4.0.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="HtmlSanitizer" Version="8.1.870" />
+		<PackageReference Include="HtmlSanitizer" Version="9.0.886" />
 		<PackageReference Include="libphonenumber-csharp" Version="9.0.9" />
 		<PackageReference Include="Mapster" Version="7.4.0" />
 		<PackageReference Include="MediatR" Version="13.0.0" />
@@ -22,15 +22,15 @@
 		<PackageReference Include="Microsoft.SqlServer.DACFx" Version="170.0.94" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="OneOf" Version="3.0.271" />
-		<PackageReference Include="Polly" Version="8.4.1" />
-		<PackageReference Include="Scrutor" Version="4.2.2" />
+		<PackageReference Include="Polly" Version="8.6.1" />
+		<PackageReference Include="Scrutor" Version="6.1.0" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-		<PackageReference Include="System.Interactive" Version="6.0.1" />
-		<PackageReference Include="System.Interactive.Async" Version="6.0.1" />
+		<PackageReference Include="System.Interactive" Version="6.0.3" />
+		<PackageReference Include="System.Interactive.Async" Version="6.0.3" />
 		<PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
 		<PackageReference Include="System.Reactive" Version="6.0.1" />
 		<PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
-		<PackageReference Include="System.ServiceModel.Federation" Version="8.0.0" />
+		<PackageReference Include="System.ServiceModel.Federation" Version="8.1.2" />
 		<PackageReference Include="System.ServiceModel.Http" Version="8.1.2" />
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
 		<PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
