@@ -2,20 +2,27 @@
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.Extensions.Logging;
 using OneOf.Types;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
     public class CreateProviderFromUkrlpDataHandler : ISqlQueryHandler<CreateProviderFromUkrlpData, Success>
     {
+        private readonly ILogger<CreateProviderFromUkrlpDataHandler> _logger;
+
+        public CreateProviderFromUkrlpDataHandler(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger<CreateProviderFromUkrlpDataHandler>();
+        }
+
         public async Task<Success> Execute(SqlTransaction transaction, CreateProviderFromUkrlpData query)
         {
-            var sqlProviders = $@"
+            var createProviderSql = $@"
                 INSERT INTO [Pttcd].[Providers]([ProviderId],[Ukprn],[ProviderName],[Alias],[ProviderStatus],[ProviderType],[UkrlpProviderStatusDescription],[UpdatedOn],[UpdatedBy])
                             VALUES (@ProviderId,@Ukprn,@ProviderName,@Alias,@Status,@ProviderType, @ProviderStatus,@UpdatedOn,@UpdatedBy); ";
 
-            var sqlProviderContact = $@"
-
+            var createContactDetailSql = $@"
                 INSERT INTO [Pttcd].[ProviderContacts]
                         ([ProviderId]
                           ,[ProviderContactIndex]
@@ -71,7 +78,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.UpdatedBy
             };
 
-            await transaction.Connection.ExecuteAsync(sqlProviders, paramz, transaction);
+            _logger.LogInformation("Creating [Pttcd].[Providers] table data for provider '{0}'", query.ProviderId.ToString());
+            await transaction.Connection.ExecuteAsync(createProviderSql, paramz, transaction);
 
             var providerContact = query?.Contact;
 
@@ -101,7 +109,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     providerContact.Email
                 };
 
-                await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
+                _logger.LogInformation("Creating [Pttcd].[ProviderContacts] table data for provider '{0}'", query.ProviderId.ToString());
+                await transaction.Connection.ExecuteAsync(createContactDetailSql, paramzContacts, transaction);
             }
 
             return new Success();

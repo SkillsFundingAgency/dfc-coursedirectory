@@ -8,47 +8,44 @@ using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class UpdateProviderFromUkrlpDataHandler :
-        ISqlQueryHandler<UpdateProviderFromUkrlpData, Success>
+    public class UpdateProviderFromUkrlpDataHandler : ISqlQueryHandler<UpdateProviderFromUkrlpData, Success>
     {
         private readonly ILogger<UkrlpSyncHelper> _logger;
 
         public UpdateProviderFromUkrlpDataHandler(ILoggerFactory loggerFactory)
         {
-                    _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
-
+            _logger = loggerFactory.CreateLogger<UkrlpSyncHelper>();
         }
-    public async Task<Success> Execute(
-            SqlTransaction transaction,
-            UpdateProviderFromUkrlpData query)
+
+        public async Task<Success> Execute(SqlTransaction transaction, UpdateProviderFromUkrlpData query)
         {
-            var sqlProvider = $@"UPDATE [Pttcd].[Providers]
-                            SET [ProviderName] = @ProviderName,
-                            [Alias] = @Alias,
-                            [UkrlpProviderStatusDescription] = @ProviderStatus,
-                            [UpdatedOn] = @UpdatedOn,
-                            [UpdatedBy] = @UpdatedBy
-                        WHERE [ProviderId] = @ProviderId;";
-            var sqlProviderContact = $@"
+            var updateProviderSql = $@"UPDATE [Pttcd].[Providers]
+                SET [ProviderName] = @ProviderName,
+                    [Alias] = @Alias,
+                    [UkrlpProviderStatusDescription] = @ProviderStatus,
+                    [UpdatedOn] = @UpdatedOn,
+                    [UpdatedBy] = @UpdatedBy
+                WHERE [ProviderId] = @ProviderId;";
+            
+            var updateContactDetailSql = $@"
             UPDATE [Pttcd].[ProviderContacts] 
-                                SET [ContactType] = @ContactType
-                                  ,[AddressSaonDescription] = @AddressSaonDescription
-                                  ,[AddressPaonDescription] = @AddressPaonDescription
-                                  ,[AddressStreetDescription] = @AddressStreetDescription
-                                  ,[AddressLocality] = @AddressLocality
-                                  ,[AddressItems] = @AddressItems
-                                  ,[AddressPostTown] = @AddressPostTown
-                                  ,[AddressCounty] = @AddressCounty
-                                  ,[AddressPostcode] = @AddressPostcode
-                                  ,[PersonalDetailsPersonNameTitle] = @PersonalDetailsPersonNameTitle
-                                  ,[PersonalDetailsPersonNameGivenName] = @PersonalDetailsPersonNameGivenName
-                                  ,[PersonalDetailsPersonNameFamilyName] = @PersonalDetailsPersonNameFamilyName
-                                  ,[Telephone1] = @Telephone1
-                                  ,[Fax] = @Fax
-                                  ,[WebsiteAddress] = @WebsiteAddress
-                                  ,[Email] = @Email
-                              WHERE [ProviderId] = @ProviderId  AND  ContactType = 'P';
-            ";
+                SET [ContactType] = @ContactType
+                    ,[AddressSaonDescription] = @AddressSaonDescription
+                    ,[AddressPaonDescription] = @AddressPaonDescription
+                    ,[AddressStreetDescription] = @AddressStreetDescription
+                    ,[AddressLocality] = @AddressLocality
+                    ,[AddressItems] = @AddressItems
+                    ,[AddressPostTown] = @AddressPostTown
+                    ,[AddressCounty] = @AddressCounty
+                    ,[AddressPostcode] = @AddressPostcode
+                    ,[PersonalDetailsPersonNameTitle] = @PersonalDetailsPersonNameTitle
+                    ,[PersonalDetailsPersonNameGivenName] = @PersonalDetailsPersonNameGivenName
+                    ,[PersonalDetailsPersonNameFamilyName] = @PersonalDetailsPersonNameFamilyName
+                    ,[Telephone1] = @Telephone1
+                    ,[Fax] = @Fax
+                    ,[WebsiteAddress] = @WebsiteAddress
+                    ,[Email] = @Email
+                WHERE [ProviderId] = @ProviderId  AND  ContactType = 'P';";
 
             var providerContact = query?.Contact;
             var paramz = new
@@ -60,11 +57,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.UpdatedBy,
                 query.ProviderId,
             };
+            
             if (query.UpdateProvider)
             {
-                _logger.LogInformation("Update Provider table starting...");
-                await transaction.Connection.ExecuteAsync(sqlProvider, paramz, transaction);
-                _logger.LogInformation("Update provider table finished!");
+                _logger.LogInformation("Updating [Pttcd].[Providers] table data for provider '{0}'", query.ProviderId.ToString());
+                await transaction.Connection.ExecuteAsync(updateProviderSql, paramz, transaction);
             }
             
             if (providerContact != null)
@@ -91,15 +88,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 };
                 if (query.UpdateProviderContact)
                 {
-                    _logger.LogInformation("Update ProviderContacts table starting...");
-                    await transaction.Connection.ExecuteAsync(sqlProviderContact, paramzContacts, transaction);
-                    _logger.LogInformation("Update ProviderContacts table finishe!.");
+                    _logger.LogInformation("Updating [Pttcd].[ProviderContacts] table data for provider '{0}'", query.ProviderId.ToString());
+                    await transaction.Connection.ExecuteAsync(updateContactDetailSql, paramzContacts, transaction);
                 }
             }
+
             return new Success();
-            
-
         }
-
     }
 }
