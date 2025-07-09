@@ -18,8 +18,8 @@
 		<PackageReference Include="Mapster" Version="7.4.0" />
 		<PackageReference Include="MediatR" Version="13.0.0" />
 		<PackageReference Include="Microsoft.Azure.Core.Spatial" Version="1.1.0" />
-		<PackageReference Include="Microsoft.Spatial" Version="8.0.1" />
-		<PackageReference Include="Microsoft.SqlServer.DACFx" Version="162.3.566" />
+		<PackageReference Include="Microsoft.Spatial" Version="8.2.4" />
+		<PackageReference Include="Microsoft.SqlServer.DACFx" Version="170.0.94" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="OneOf" Version="3.0.271" />
 		<PackageReference Include="Polly" Version="8.4.1" />
@@ -34,7 +34,7 @@
 		<PackageReference Include="System.ServiceModel.Http" Version="8.1.2" />
 		<PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
 		<PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Content.Designer.cs">
