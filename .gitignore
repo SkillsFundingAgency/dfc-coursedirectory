@@ -356,8 +356,12 @@ MigrationBackup/
 /.vscode
 /utils/Cosmos/**/appsettings.json
 utils/Cosmos/Dfc.CosmosBulkUtils/Properties/launchSettings.json
-src/Dfc.CourseDirectory.Web/wwwroot/lib/microsoft-signalr/signalr.min.js
-src/Dfc.CourseDirectory.Web/wwwroot/lib/microsoft-signalr/signalr.js
-tests/Dfc.CourseDirectory.Testing/appsettings.Testing.json
-src/Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.js
-src/Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.min.js
+Dfc.CourseDirectory.Testing/appsettings.Testing.json
+Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.js
+Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.min.js
+/Dfc.CourseDirectory.WebV2/wwwroot/dist/pttcd.min.css
+/Dfc.CourseDirectory.WebV2/appsettings.Development.json
+/Dfc.CourseDirectory.WebV2.Tests/appsettings.Testing.json
+/Dfc.CourseDirectory.WebV2/wwwroot/dist/pttcd.min.js
+/Dfc.CourseDirectory.WebV2/wwwroot/lib/jquery-validation/additional-methods.min.js
+/Dfc.CourseDirectory.WebV2/wwwroot/lib/jquery-validation/jquery.validate.min.js

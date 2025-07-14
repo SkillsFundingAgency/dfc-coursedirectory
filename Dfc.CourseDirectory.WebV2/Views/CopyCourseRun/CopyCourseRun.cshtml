@@ -1,0 +1,744 @@
+﻿@using Dfc.CourseDirectory.Core.Models
+@using Dfc.CourseDirectory.WebV2.ViewComponents.CourseName
+@using Dfc.CourseDirectory.WebV2.ViewComponents.CourseProviderReference
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.AddStartDate
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Attendance
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseRegion
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.ChooseVenue
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Cost
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.DeliveryType
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Duration
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.StudyMode
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Extensions
+@using Dfc.CourseDirectory.WebV2.ViewComponents.Notification
+@using Dfc.CourseDirectory.WebV2.ViewComponents.UrlInput
+@using Microsoft.AspNetCore.Html
+@using StudyMode = Dfc.CourseDirectory.Core.Models.CourseStudyMode
+@model Dfc.CourseDirectory.WebV2.ViewModels.CopyCourse.CopyCourseRunViewModel
+@{
+    ViewData["Title"] = "Copy course";
+    Layout = "_Layout_Your_Courses";
+}
+
+@{
+    var newVenueDescription = TempData[Dfc.CourseDirectory.WebV2.TempDataKeys.AddedVenueDescription] as string;
+
+    if (newVenueDescription != null)
+    {
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        {
+            NotificationTitle = "New location added:",
+            NotificationMessage = newVenueDescription,
+            ClassType = "success-summary"
+        })
+    }
+}
+
+@if (Model.NonLarsCourse)
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-5">
+        <div class="govuk-grid-column-full">
+
+            <pttcd-notification title="Course details">
+                <ul class="govuk-list govuk-!-margin-bottom-0">
+                    <li><span class="govuk-!-font-weight-bold">Course type:</span> @Model.CourseType.ToDescription()</li>
+                    <li><span class="govuk-!-font-weight-bold">Sector:</span> @Model.SectorDescription</li>
+                    <li><span class="govuk-!-font-weight-bold">Education level:</span> @Model.EducationLevel.ToDescription()</li>
+                    <li><span class="govuk-!-font-weight-bold">Awarding body:</span> @Model.AwardingBody</li>
+                </ul>
+            </pttcd-notification>
+
+        </div>
+    </div>
+}
+else
+{
+    <div class="govuk-grid-row govuk-!-margin-bottom-5">
+        <div class="govuk-grid-column-full">
+
+            <pttcd-notification title="Qualification details">
+                <ul class="govuk-list govuk-!-margin-bottom-0">
+                    <li><span class="govuk-!-font-weight-bold">LARS/QAN:</span> @Model.LearnAimRef</li>
+                    <li><span class="govuk-!-font-weight-bold">Qualification name:</span> @Model.LearnAimRefTitle</li>
+                    <li><span class="govuk-!-font-weight-bold">Qualification level:</span> @Model.NotionalNVQLevelv2</li>
+                    <li><span class="govuk-!-font-weight-bold">Awarding organisation:</span> @Model.AwardOrgCode</li>
+                </ul>
+            </pttcd-notification>
+
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">Copy course details</h1>
+
+        <p class="govuk-body-m">Copy and make changes to your course details and create a new course.</p>
+
+        <form asp-controller="CopyCourseRun" asp-action="Index" id="editCourseRun" onkeypress="return event.keyCode != 13;">
+
+            <div id="errorsummary" style="display:none">
+                @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+                {
+
+                NotificationTitle = "There is an issue with this qualification",
+                NotificationMessage = "",
+                ClassType = "error-summary"
+                })
+            </div>
+
+            @Html.HiddenFor(x => x.CourseId)
+            @Html.HiddenFor(x => x.CourseRunId)
+            @Html.HiddenFor(x => x.QualificationType)
+            @Html.HiddenFor(x => x.LearnAimRefTitle)
+            @Html.HiddenFor(x => x.NotionalNVQLevelv2)
+            @Html.HiddenFor(x => x.AwardOrgCode)
+            @Html.HiddenFor(x => x.LearnAimRef)
+            @Html.HiddenFor(x => x.RefererAbsolutePath)
+
+            <div class="section" id="sectionCourseName">
+                @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
+                {
+                CourseName = Model.CourseName,
+                LabelText = "Course name",
+                HintText = new HtmlString(ViewBag.LiveServiceURL),
+                AriaDescribedBy = "Please enter the course name."
+                })
+            </div>
+
+            <div class="section" id="sectionCourseProviderReference">
+                @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
+                {
+                CourseProviderReference = Model.CourseProviderReference,
+                LabelText = "Your reference",
+                HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
+                AriaDescribedBy = "Please enter your reference for this course"
+                })
+            </div>
+
+            <div class="section" id="sectionDeliveryType">
+                @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
+                {
+                DeliveryMode = Model.DeliveryMode,
+                LabelText = "Delivery mode",
+                HintText = "Select one option.",
+                SecondHintText = "Select how you will deliver this course",
+                AriaDescribedBy = "Select how you will deliver this course"
+                })
+            </div>
+
+            <div class="section" id="sectionStartDate">
+                @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
+                {
+                StartDateType = Model.StartDateType,
+                Day = Model.Day,
+                Month = Model.Month,
+                Year = Model.Year,
+                DayAriaDescribedBy = "",
+                DayLabelText = "Day",
+                MonthAriaDescribedBy = "",
+                MonthLabelText = "Month",
+                YearAriaDescribedBy = "",
+                YearLabelText = "Year",
+                AriaDescribedBy = "",
+                SpecifiedDateHintText = "e.g. For example, 30 9 2019",
+                FlexibleDateHintText = "Or select a flexible start date:",
+                LabelText = "Start date",
+                ValPastDateRef = DateTime.Now,
+                ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+                })
+            </div>
+
+            <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
+                @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
+                {
+                LabelText = "Venue",
+                AriaDescribedBy = "Venue",
+                HintText = null,
+                Venues = Model.Venues,
+                VenueId = Model.VenueId,
+                DisplayLink = true
+                })
+
+            </div>
+
+            <div class="section" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
+                @await Component.InvokeAsync(nameof(ChooseRegion), Model.ChooseRegion)
+            </div>
+
+            <div class="section" id="sectionUrl">
+                @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
+                {
+                Url = Model.Url,
+                LabelText = "Course webpage",
+                HintText = "The webpage for this course. For example, https://www.provider.com/coursename.",
+                AriaDescribedBy = "Enter the course webpage for this course"
+                })
+            </div>
+
+            <div class="section" id="sectionCost">
+                @await Component.InvokeAsync(nameof(Cost), new CostModel
+                {
+                Cost = Model.Cost,
+                CostDescription = Model.CostDescription,
+                CostLabelText = "Cost",
+                CostHintText = "Cost of the course to the learner.",
+                CostAriaDescribedBy = "Enter the cost in pounds and pence",
+                CostDescriptionLabelText = "Cost description",
+                CostDescriptionHintText = "A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.",
+                CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+                })
+            </div>
+
+            <div class="section" id="sectionDuration">
+                @await Component.InvokeAsync(nameof(Duration), new DurationModel
+                {
+                DurationLength = Model.DurationLength,
+                DurationUnit = Model.DurationUnit,
+                LabelText = "Duration",
+                AriaDescribedBy = "Select course duration"
+                })
+            </div>
+
+            <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
+                @await Component.InvokeAsync(nameof(Dfc.CourseDirectory.WebV2.ViewComponents.Courses.StudyMode.StudyMode), new StudyModeModel
+                {
+                    StudyMode = Model.StudyMode,
+                    LabelText = "Course hours",
+                    HintText = "Select one option."
+                })
+            </div>
+
+            <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
+                @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
+                {
+                AttendanceMode = Model.AttendanceMode,
+                LabelText = "Attendance pattern",
+                HintText = "Select one option."
+                })
+            </div>
+
+            <button name="saveButton" type="submit" class="govuk-button cd-cancel-btn" id="save">Continue</button>
+
+            @{
+                var cancelUrl = Model.NonLarsCourse ?
+                                Url.Action("Index", "ProviderCourses", new { nlc = "true" }) :
+                                Url.Action("Index", "ProviderCourses");
+            }
+
+            <a href="@(Model.RefererAbsolutePath == Url.Action("Index", "CourseSummary") ? @Url.Action("Index", "CourseSummary", new { Model.CourseId, Model.CourseRunId }) : cancelUrl)" class="cd-cancel-link-unset govuk-link cd-cancel-link">Cancel</a>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+            var $addNewVenueButton = $("#addNewVenue");
+            var $courseId = $("#@nameof(Model.CourseId)");
+            var $courseRunId = $("#@nameof(Model.CourseRunId)");
+
+            var $learnAimRefTitle = $("#@nameof(Model.LearnAimRefTitle)");
+            var $notionalNVQLevelv2 = $("#@nameof(Model.NotionalNVQLevelv2)");
+            var $awardOrgCode = $("#@nameof(Model.AwardOrgCode)");
+            var $learnAimRef = $("#@nameof(Model.LearnAimRef)");
+
+            var $day = $("#start_date_day");
+            var $month = $("#start_date_month");
+            var $year = $("#start_date_year");
+
+            var validStates = [];
+            var $courseName = $("#@nameof(Model.CourseName)").govUkInput();
+            var $URL = $("#@nameof(Model.Url)").govUkInput();
+            var $courseProviderReference = $("#@nameof(Model.CourseProviderReference)").govUkInput();
+            var $deliveryRadios = $("#DeliveryModeRadioButtons input[type=radio]");
+            var $regionItemsCheckboxList = $("#RegionItemsCheckboxList");
+            var $duration = $("#duration").govUkDurationInput();
+            var $regions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
+            var $durationDropdown = $("#durationDropDown").govUkSelect();
+
+            var $checkboxsregions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
+
+            var $radioDeliveryMode = $("#DeliveryModeRadioButtons").govUkRadios();
+            var $radioStudyMode = $("#StudyModeRadioButtons").govUkRadios();
+            var $radioAttendance = $("#AttendanceRadioButtons").govUkRadios();
+
+            var $selectedvenue = $("#@nameof(Model.VenueId)").govUkSelect();
+            var $national = $("#nationalRadioButtons").govUkCheckboxes();
+            var $startDate = $("#start_date").govUkDateInput();
+
+            var $cost = $("#@nameof(Model.Cost)").govUkInput();
+            var $costDescription = $("#@nameof(Model.CostDescription)").govUkTextarea();
+
+            var isClassroomBased = true;
+            var isOnline = false;
+            var isWorkBased = false;
+
+            var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+            var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+            var $startDateRadios = $("#StartDateOptions input[type=radio]");
+            var $radioStartDate = $("#StartDateOptions").govUkRadios();
+
+
+
+
+            switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                case "ClassroomBased":
+                case "BlendedLearning":
+                    {
+                        $fullPartTimeRadioButtons.show();
+                        $attendancePatternRadioButtons.show();
+                        isClassroomBased = true;
+                        isOnline = false;
+                        isWorkBased = false;
+                        break;
+                    }
+                case "Online":
+                    {
+                        $fullPartTimeRadioButtons.hide();
+                        $attendancePatternRadioButtons.hide();
+                        isClassroomBased = false;
+                        isOnline = true;
+                        isWorkBased = false;
+                        break;
+                    }
+                case "WorkBased":
+                    {
+                        $fullPartTimeRadioButtons.hide();
+                        $attendancePatternRadioButtons.hide();
+                        isClassroomBased = false;
+                        isOnline = false;
+                        isWorkBased = true;
+                        break;
+                    }
+            }
+
+            if (!isWorkBased) {
+                var $nationalTrue = $("#nationalTrue");
+                $nationalTrue.prop("checked", false);
+                var $nationalFalse = $("#nationalFalse");
+                $nationalFalse.prop("checked", false);
+                var $regionSection = $("#regions-section");
+                $regionSection.hide();
+            }
+
+            var $button = $("#save");
+
+            switch ($radioStartDate.find("input[type='radio']:checked").val()) {
+                case "SpecifiedStartDate":
+                    {
+
+                        break;
+                    }
+                case "FlexibleStartDate":
+                    {
+                        $("#govuk-label-start_date").hide();
+                        $("#Day").val("");
+                        $("#Month").val("");
+                        $("#Year").val("");
+                        break;
+                    }
+
+            }
+
+            validate();
+
+
+            function isAllValid(currentValue) {
+                return currentValue === true;
+            }
+
+            function validate() {
+
+                validStates = [];
+
+                $courseName.govUkInput("validState");
+                $courseProviderReference.govUkInput("validState");
+                $duration.govUkDurationInput("validState");
+                $durationDropdown.govUkSelect("validState");
+                $checkboxsregions.govUkCheckboxes("validState");
+                $selectedvenue.govUkSelect("validState");
+                $cost.govUkInput("validState");
+                $URL.govUkInput("validState");
+                $regions.govUkCheckboxes("validState");
+                $radioDeliveryMode.govUkRadios("validState");
+                $radioStudyMode.govUkRadios("validState");
+                $radioAttendance.govUkRadios("validState");
+                $startDate.govUkDateInput("validState");
+
+                if (isClassroomBased) {
+                    if ($.requiredValidate($selectedvenue.val())) {
+                        $selectedvenue.govUkSelect("validState");
+                        validStates.push(true);
+                    }
+                    else {
+                        $selectedvenue.govUkSelect("invalidState", $selectedvenue.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+                }
+
+
+
+                if ((!$.requiredValidate($cost.val()) && !$.requiredValidate($costDescription.val()))) {
+                    $cost.govUkInput("invalidState", $cost.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $costDescription.attr("val-regex") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $costDescription.attr("val-max-length") }, $costDescription.val())) {
+                    $costDescription.govUkTextarea("invalidState", $costDescription.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $cost.govUkInput("validState");
+                    $costDescription.govUkTextarea("validState");
+                    validStates.push(true);
+                }
+
+                // regions
+                $regions.govUkCheckboxes("validState");
+                var $nationalRadioChecked = $("#nationalRadioButtons input[type=radio]:checked").val();
+
+                $national.govUkCheckboxes("validState");
+                validStates.push(true);
+                if ($nationalRadioChecked == undefined && isWorkBased) {
+                    $national.govUkCheckboxes("invalidState", $national.attr("val-required-message"));
+                    validStates.push(false);
+                }
+                validStates.push(true);
+                if (isWorkBased & !$.requiredValidate($regions.find("input[type='checkbox']:checked").val()) & $nationalRadioChecked === "False") {
+                    $regions.govUkCheckboxes("invalidState", $regions.attr("val-required-message"));
+                    validStates.push(false);
+                }
+
+                if (!$.requiredValidate($courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-required-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.regexValidate({ regex: $courseName.attr("val-regex") }, $courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseName.attr("val-max-length") }, $courseName.val())) {
+                    $courseName.govUkInput("invalidState", $courseName.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+
+                    $courseName.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                if (!$.regexValidate({ regex: $courseProviderReference.attr("val-regex") }, $courseProviderReference.val())) {
+                    $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $courseProviderReference.attr("val-max-length") }, $courseProviderReference.val())) {
+                    $courseProviderReference.govUkInput("invalidState", $courseProviderReference.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+                    $courseProviderReference.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+                var enteredUrl = $URL.val();
+                var urlToValidate = "";
+                if ($URL.val().indexOf("http") >= 0) {
+                    urlToValidate = enteredUrl.substring(enteredUrl.indexOf("//") + 2, enteredUrl.length);
+                }
+                else {
+                    urlToValidate = $URL.val();
+                }
+
+                if (!$.regexValidate({ regex: $URL.attr("val-regex") }, urlToValidate)) {
+                    $URL.govUkInput("invalidState", $URL.attr("val-regex-message"));
+                    validStates.push(false);
+                } else if (
+                    !$.maxLengthValidate({ max: $URL.attr("val-max-length") }, urlToValidate)) {
+                    $URL.govUkInput("invalidState", $URL.attr("val-max-length-message"));
+                    validStates.push(false);
+                }
+                else {
+                    $URL.govUkInput("validState");
+                    validStates.push(true);
+                }
+
+
+                // duration
+                if (!$.requiredValidate($duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+
+                    validStates.push(false);
+                } else if (!$.rangeValidate({ min: $duration.attr("val-range-min"), max: $duration.attr("val-range-max") },
+                    $duration.find("input").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    validStates.push(false);
+                } else if (!$.requiredValidate($("#durationDropDown").val())) {
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-duration-message"));
+                    validStates.push(false);
+
+                } else if ($duration.find("input").val().indexOf(".") >= 0) {
+
+                    $duration.govUkDurationInput("invalidState", $duration.attr("val-decimal-message"));
+                    validStates.push(false);
+                }
+                else {
+                    $duration.govUkDurationInput("validState");
+
+                    validStates.push(true);
+                }
+
+                if ($.requiredValidate($radioDeliveryMode.find("input[type='radio']:checked").val())) {
+                    $radioDeliveryMode.govUkRadios("validState");
+                    validStates.push(true);
+                } else {
+                    $radioDeliveryMode.govUkRadios("invalidState", $radioDeliveryMode.attr("val-required-message"));
+                    validStates.push(false);
+                }
+
+                switch ($radioDeliveryMode.find("input[type='radio']:checked").val()) {
+                    case "ClassroomBased":
+                    case "BlendedLearning":
+                        {
+                            if ($.requiredValidate($radioStudyMode.find("input[type='radio']:checked").val())) {
+                                $radioStudyMode.govUkRadios("validState");
+                                validStates.push(true);
+                            } else {
+                                $radioStudyMode.govUkRadios("invalidState", $radioStudyMode.attr("val-required-message"));
+                                validStates.push(false);
+                            }
+
+                            if ($.requiredValidate($radioAttendance.find("input[type='radio']:checked").val())) {
+                                $radioAttendance.govUkRadios("validState");
+                                validStates.push(true);
+                            } else {
+                                $radioAttendance.govUkRadios("invalidState", $radioAttendance.attr("val-required-message"));
+                                validStates.push(false);
+                            }
+                            break;
+                        }
+                    case "Online":
+                        {
+                            break;
+                        }
+                    case "WorkBased":
+                        {
+                            break;
+                        }
+                }
+
+                var radioValue = $("input[name='StartDateType']:checked").val();
+                if (radioValue.toUpperCase() === "SPECIFIEDSTARTDATE") {
+
+                    var startDateValue = $startDate.govUkDateInput("getISODateString");
+
+                    if (startDateValue === "") {
+                        $startDate.govUkDateInput("invalidState", $startDate.attr("val-required-message"));
+                        validStates.push(false);
+                    }
+                    else {
+                        if (!$.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-date-message"));
+                            validStates.push(false);
+                        }
+                        else if ($.pastDateValidate({ ref: $startDate.attr("val-past-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-past-date-message"));
+                            validStates.push(false);
+                        }
+                        else if ($.futureDateValidate({ ref: $startDate.attr("val-future-date-ref") }, startDateValue)) {
+                            $startDate.govUkDateInput("invalidState", $startDate.attr("val-future-date-message"));
+                            validStates.push(false);
+                        }
+                        else if ($.dateValidate(startDateValue)) {
+                            $startDate.govUkDateInput("validState");
+                            validStates.push(true);
+                        }
+                    }
+                };
+
+                var errorArray = $("[class*='govuk-error-message'");
+                if (errorArray.length > 0) {
+                    var notificationBody = "";
+                    $.each(errorArray, function (index, value) {
+                        var $field = value.closest('.section').id;
+                        notificationBody = notificationBody + "<a href='#' id='error' class='govuk-link errorlink' style=color:#b10e1e data-error-field=" + $field + ">" + value.innerHTML + "</a></br>";
+                    });
+
+                    $('.cd-error-summary__body').html(notificationBody);
+
+                    $('#errorsummary').css({ "display": "block" });
+                }
+
+                if (!validStates.every(isAllValid)) {
+                    $("html, body").animate({
+                        scrollTop: $('#errorsummary').offset().top
+                    }, 600);
+                    $('#errorsummary').focus();
+                }
+
+                $('.errorlink').on("click",
+                    function (e) {
+                        e.preventDefault();
+
+                        var $field = $("#" + $(this).attr("data-error-field"));
+                        $('html,body').animate({ scrollTop: $field.offset().top }, 'slow');
+
+                    });
+            }
+
+
+
+            $button.on("click",
+                function (event) {
+                    event.preventDefault();
+
+                    validate();
+
+                    if (validStates.every(isAllValid)) {
+                        $("#editCourseRun").submit();
+                    }
+
+                });
+
+            $startDateRadios.change(function () {
+                if ($("#SpecifiedStartDate").prop("checked") === true) {
+                    $("#govuk-label-start_date").show();
+                }
+
+                if ($("#FlexibleStartDate").prop("checked") === true) {
+                    $("#govuk-label-start_date").hide();
+                    $("#Day").val("");
+                    $("#Month").val("");
+                    $("#Year").val("");
+
+                }
+            });
+
+            $deliveryRadios.change(function () {
+                var $venueChoice = $("#sectionVenue");
+                var $fullPartTimeRadioButtons = $("#FullPartTimeRadioButtons");
+                var $attendancePatternRadioButtons = $("#AttendancePatternRadioButtons");
+                var $specifiedStartDate = $("#SpecifiedStartDate");
+                var $flexibleStartDate = $("#FlexibleStartDate");
+
+                var $dayTimeAttendance = $("#@CourseAttendancePattern.Daytime");
+                var $studyMode = $("#@StudyMode.FullTime");
+                switch (this.id) {
+                    case "ClassroomBased":
+                    case "BlendedLearning":
+                        {
+                            $specifiedStartDate.prop("checked", true);
+                            $flexibleStartDate.prop("checked", false);
+                            $venueChoice.show();
+                            $regionItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.show();
+                            $attendancePatternRadioButtons.show();
+                            isClassroomBased = true;
+                            isOnline = false;
+                            isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", true);
+                            $studyMode.prop("checked", true);
+
+                            $("#govuk-label-start_date").show();
+                            break;
+                        }
+                    case "Online":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueChoice.hide();
+                            $regionItemsCheckboxList.hide();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+                            isClassroomBased = false;
+                            isOnline = true;
+                            isWorkBased = false;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
+
+                            $("#govuk-label-start_date").hide();
+                            break;
+                        }
+                    case "WorkBased":
+                        {
+                            $flexibleStartDate.prop("checked", true);
+                            $specifiedStartDate.prop("checked", false);
+                            $venueChoice.hide();
+                            $regionItemsCheckboxList.show();
+                            $fullPartTimeRadioButtons.hide();
+                            $attendancePatternRadioButtons.hide();
+                            isClassroomBased = false;
+                            isOnline = false;
+                            isWorkBased = true;
+                            $dayTimeAttendance.prop("checked", false);
+                            $studyMode.prop("checked", false);
+
+                            $("#govuk-label-start_date").hide();
+                            break;
+                        }
+                }
+
+
+            });
+
+            var replaceAll = function (search, find, replace) {
+                return search.split(find).join(replace);
+            };
+
+            var makeRequestWithPayload = function (payload, success) {
+                console.log(payload);
+                var qs = $.param(payload);
+                qs = replaceAll(qs, "%5B%5D", "");
+                $.get("/CopyCourseRun/AddNewVenue?" + qs, success);
+            };
+
+
+
+            var onSucess = function (data) {
+                window.location.href = data;
+            };
+
+            $addNewVenueButton.on("click", function (e) {
+                e.preventDefault();
+
+                makeRequestWithPayload({
+                    LearnAimRefTitle: $learnAimRefTitle.val(),
+                    NotionalNVQLevelv2: $notionalNVQLevelv2.val(),
+                    AwardOrgCode: $awardOrgCode.val(),
+                    LearnAimRef: $learnAimRef.val(),
+                    CourseName: $courseName.val(),
+                    CourseId: $courseId.val(),
+                    CourseRunId: $courseRunId.val(),
+                    CourseProviderReference: $courseProviderReference.val(),
+                    DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
+                    StartDateType: $("input[name='StartDateType']:checked").val(),
+                    VenueId: $selectedvenue.val(),
+                    Day: $day.val(),
+                    Month: $month.val(),
+                    Year: $year.val(),
+                    Url: $URL.val(),
+                    Cost: $cost.val(),
+                    CostDescription: $costDescription.val(),
+
+                    //AdvancedLearnerLoan
+                    DurationUnit: $duration.find("select").val(),
+                    DurationLength: $duration.find("input").val(),
+                    StudyMode: $radioStudyMode.find("input[type='radio']:checked").val(),
+                    AttendanceMode: $radioAttendance.find("input[type='radio']:checked").val()
+
+
+
+                },
+                    onSucess);
+
+            });
+        });
+    })(jQuery);
+</script>
