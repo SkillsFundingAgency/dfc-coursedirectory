@@ -9,7 +9,11 @@ namespace Dfc.CourseDirectory.Core.Models
         HTQs,
         FreeCoursesForJobs,
         Multiply,
-        SkillsBootcamp
+        SkillsBootcamp,
+        GCSEASLevel,
+        GCSEALevel,
+        RegulatedQualificationFramework,
+        VocationalRegulatedQualifications,
     }
 
     public static class CourseTypeExtensions
