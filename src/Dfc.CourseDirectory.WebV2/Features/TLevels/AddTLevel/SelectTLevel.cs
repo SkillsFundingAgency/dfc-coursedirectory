@@ -135,7 +135,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.SelectTLevel
         {
             RuleFor(c => c.SelectedTLevelDefinitionId)
                 .Must(value => value.HasValue && tLevelDefinitions.Any(tld => tld.TLevelDefinitionId == value))
-                .WithMessageForAllRules("Select the T Level qualification to publish to the course directory");
+                .WithMessage("Select the T Level qualification to publish to the course directory");
         }
     }
 }

@@ -1,43 +1,73 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
-using Microsoft.Azure.WebJobs;
+﻿using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Dfc.CourseDirectory.Functions
 {
     public class SyncUkrlp
     {
         private readonly UkrlpSyncHelper _ukrlpSyncHelper;
+        private readonly ILogger<SyncUkrlp> _logger;
 
-        public SyncUkrlp(UkrlpSyncHelper ukrlpSyncHelper)
+        public SyncUkrlp(UkrlpSyncHelper ukrlpSyncHelper, ILogger<SyncUkrlp> logger)
         {
             _ukrlpSyncHelper = ukrlpSyncHelper;
+            _logger = logger;
         }
 
-        [FunctionName("SyncUkrlpChanges")]
-        [Singleton]
-        public async Task RunNightly([TimerTrigger("0 0 3 * * *")] TimerInfo timer, ILogger logger)
+        // Select provider records to be synced (those modified in the past 7 days)
+        [Function("SyncAllRecentlyModifiedProviders")]
+        public async Task SyncAllRecentlyModifiedProviders([TimerTrigger("0 0 3 * * *")] TimerInfo timer)
         {
-            // Only get records updated in the past week.
-            // It times out if you try to pull the world back and doesn't support paging.
-            // We run every day but this gives some buffer to allow for any errors.
-            var updatedSince = DateTime.Today.AddDays(-7);
-            logger.LogInformation("Starting UKRLP Sync using cutoff date of {0}", updatedSince);
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncAllRecentlyModifiedProviders));
+
+            DateTime updatedSince = DateTime.Today.AddDays(-7);
+            
+            _logger.LogInformation("Starting UKRLP Sync using cutoff date of {0}", updatedSince);
 
             await _ukrlpSyncHelper.SyncAllProviderData(updatedSince);
 
-            logger.LogInformation("Function App completed successfully");
+            _logger.LogInformation("Function '{0}' finished invoking", nameof(SyncAllRecentlyModifiedProviders));
         }
 
-        [FunctionName("SyncKnownProviders")]
-        [Singleton]
-        [NoAutomaticTrigger]
-        public Task SyncKnownProviders(string input) => _ukrlpSyncHelper.SyncProviderData(int.Parse(input));
+        [Function("SyncAllProviders")]
+        public async Task<IActionResult> SyncAllProviders([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+        {
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncAllProviders));
 
-        [FunctionName("SyncAllKnownProvidersData")]
-        [Singleton]
-        [NoAutomaticTrigger]
-        public Task SyncAllKnownProvidersData(string input) => _ukrlpSyncHelper.SyncAllKnownProvidersData();
+            await _ukrlpSyncHelper.SyncAllKnownProvidersData();
+
+            _logger.LogInformation("Function '{0}' finished invoking", nameof(SyncAllProviders));
+
+            return new OkResult();
+        }
+
+        // Trigger the function using the following request body: { "Ukprn": <int> }
+        [Function("SyncProviderByUkprn")]
+        public async Task<IActionResult> SyncProviderByUkprn([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req)
+        {
+            _logger.LogInformation("Function '{0}' was invoked", nameof(SyncProviderByUkprn));
+
+            using StreamReader reader = new(req.Body);
+            string bodyStr = await reader.ReadToEndAsync();
+
+            ProviderToRefresh providerData = JsonConvert.DeserializeObject<ProviderToRefresh>(bodyStr);
+
+            _logger.LogInformation("UKPRN provided: {0}", providerData.Ukprn);
+
+            await _ukrlpSyncHelper.SyncProviderData(providerData.Ukprn);
+
+            _logger.LogInformation("Function '{0}' finished invoking", nameof(SyncProviderByUkprn));
+
+            return new OkResult();
+        }
+
+        public class ProviderToRefresh
+        {
+            public int Ukprn;
+        }
     }
 }

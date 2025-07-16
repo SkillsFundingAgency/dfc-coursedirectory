@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Dfc.CourseDirectory.Functions
 {
@@ -14,9 +13,8 @@ namespace Dfc.CourseDirectory.Functions
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
         }
 
-        [FunctionName(nameof(AddMissingProviderIdForeignKeys))]
-        [NoAutomaticTrigger]
-        public async Task Execute(string input)
+        [Function(nameof(AddMissingProviderIdForeignKeys))]
+        public async Task Execute([HttpTrigger(AuthorizationLevel.Function, "get", "post")] string input)
         {
             await ExecuteBatchedStatement(@"
 UPDATE Pttcd.Courses

@@ -35,11 +35,10 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             Request request,
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl)
         {
-            _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());            
-
+            _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
             return await _mediator.SendAndMapResponse(
                 request,
-                vm => View(vm));            
+                vm => View(vm));
         }
 
         [HttpPost("")]
@@ -60,13 +59,14 @@ namespace Dfc.CourseDirectory.WebV2.Features.DeleteCourseRun
             [FromServices] IProviderContextProvider providerContextProvider,
             [FromServices] IProviderInfoCache providerInfoCache,
             ConfirmedQuery request)
-        {            
-            var vm = await _mediator.Send(request);            
+        {
+            request.IsNonLars = IsCourseNonLars();
+
+            var vm = await _mediator.Send(request);
 
             var providerInfo = await providerInfoCache.GetProviderInfo(vm.ProviderId);
             providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
 
-            vm.NonLarsCourse = IsCourseNonLars();
             return View(vm);
         }
 

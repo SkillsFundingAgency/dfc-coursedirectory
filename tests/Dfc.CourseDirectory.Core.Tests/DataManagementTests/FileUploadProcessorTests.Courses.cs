@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
-using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
-using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
@@ -39,12 +34,12 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var rowInfo = new CourseDataUploadRowInfo(row, rowNumber: 2, courseId: Guid.NewGuid(), venueIdHint: venue.VenueId);
 
             // Act
-            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint,rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
+            var result = fileUploadProcessor.FindVenue(rowInfo.VenueIdHint, rowInfo.Data.VenueName, rowInfo.Data.ProviderVenueRef, new[] { venue });
 
             // Assert
             Assert.Equal(venue.VenueId, result?.VenueId);
         }
-        
+
         [Fact]
         public async Task FindVenue_RefProvidedButDoesNotMatch_ReturnsNull()
         {
@@ -362,7 +357,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var stream = DataManagementFileHelper.CreateCourseUploadCsvStream(uploadRows);
 
             // Act
-            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream );
+            await fileUploadProcessor.ProcessCourseFile(courseUpload.CourseUploadId, stream);
 
             // Assert
             courseUpload = await WithSqlQueryDispatcher(
@@ -388,7 +383,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await TestData.AddSectors();
             await TestData.CreateNonLarsCourse(provider.ProviderId, user);
 
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created, null, true);
 
             var uploadRows = DataManagementFileHelper.CreateNonLarsCourseUploadRows(rowCount: 3).ToArray();
             var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(uploadRows);
@@ -513,8 +508,8 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
 
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created,null,true);
-           
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, user, UploadStatus.Created, null, true);
+
             var stream = DataManagementFileHelper.CreateNonLarsCourseUploadCsvStream(
                 // Empty record will always yield errors
                 new CsvNonLarsCourseRow()
@@ -613,7 +608,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = this.CreateUploadProcessor();
 
             // Act
-            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false  );
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
@@ -629,7 +624,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             await TestData.CreateCourseUpload(
                 provider.ProviderId,
                 createdBy: user,
-                UploadStatus.ProcessedWithErrors,null,true);
+                UploadStatus.ProcessedWithErrors, null, true);
 
             var fileUploadProcessor = this.CreateUploadProcessor();
 
@@ -681,7 +676,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             var fileUploadProcessor = this.CreateUploadProcessor();
 
             // Act
-            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false  );
+            var result = await fileUploadProcessor.PublishCourseUploadForProvider(provider.ProviderId, user, false);
 
             // Assert
             result.Status.Should().Be(PublishResultStatus.UploadHasErrors);
@@ -702,7 +697,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                 UploadStatus.ProcessedSuccessfully,
                 rowBuilder =>
                 {
-                    rowBuilder.AddNonLarsRow( record =>
+                    rowBuilder.AddNonLarsRow(record =>
                     {
                         record.CourseType = "Skills Bootcamp";
                         record.ResolvedCourseType = CourseType.SkillsBootcamp;
@@ -711,7 +706,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
                         record.ProviderVenueRef = venue.ProviderVenueRef;
                         record.VenueId = venue.VenueId;
                     });
-                },true);
+                }, true);
 
             // Delete the venue linked to the row in the upload, triggering revalidation
             // (which should fail since the venue has gone away)
@@ -777,7 +772,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Arrange
             var provider = await TestData.CreateProvider();
             var user = await TestData.CreateUser(providerId: provider.ProviderId);
-            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null,null,null,null,null,true);
+            var (courseUpload, _) = await TestData.CreateCourseUpload(provider.ProviderId, createdBy: user, null, null, null, null, null, true);
 
 
             var fileUploadProcessor = this.CreateUploadProcessor();

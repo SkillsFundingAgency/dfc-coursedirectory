@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
-using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -62,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
                 "1st Line of Address\n2nd Line of Address\nThe Street\nThe Town\nUnited Kingdom\nAB1 2CD",
                 GetBlockLabelContent(doc, "ProviderInfoPanel-Address"));
             Assert.Equal(
-                "http://provider1.com",
+                "https://provider1.com",
                 GetBlockLabelContent(doc, "ProviderInfoPanel-Website"));
             Assert.Equal(
                 "The Contact",

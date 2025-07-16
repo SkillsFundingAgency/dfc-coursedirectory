@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         }
 
         [Theory]
@@ -40,7 +40,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             var downloadProviderTypeReportLink = doc.GetElementByTestId("download-provider-type-report-link");
@@ -73,7 +73,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             var downloadProviderTypeReportLink = doc.GetElementByTestId("download-providers-missing-contact-details-link");
@@ -93,7 +93,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             var downloadLiveTLevelsReportLink = doc.GetElementByTestId("download-live-tlevels-report-link");
@@ -113,7 +113,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             var downloadLiveTLevelsReportLink = doc.GetElementByTestId("download-opendata-live-courseproviders-report-link");
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             var downloadLiveTLevelsReportLink = doc.GetElementByTestId("download-opendata-live-courses-report-link");
@@ -153,7 +153,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.HelpdeskDashboard
             var response = await HttpClient.GetAsync("helpdesk-dashboard");
 
             //Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var doc = await response.GetDocument();
             var downloadOutofDateCoursesReportLink = doc.GetElementByTestId("download-all-courses-report-link");

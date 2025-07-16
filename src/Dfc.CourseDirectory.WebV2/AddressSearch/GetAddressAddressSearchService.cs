@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,15 +9,8 @@ using System.Threading.Tasks;
 using Flurl;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Globalization;
 using Newtonsoft.Json.Converters;
-using System.Collections;
-using System.Data;
-using Dfc.CourseDirectory.Core.Models;
-using FluentValidation.Resources;
-using System.Drawing.Drawing2D;
 using NullValueHandling = Newtonsoft.Json.NullValueHandling;
-using static Dfc.CourseDirectory.WebV2.AddressSearch.GetAddressAddressSearchService;
 
 
 namespace Dfc.CourseDirectory.WebV2.AddressSearch
@@ -59,7 +54,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
             {
                 return null;
             }
-          
+
             var result = results.Results.Where(x => x.Dpa != null && x.Dpa.Uprn == Convert.ToInt64(id));
             var _line1 = "";
             var _line2 = "";
@@ -78,20 +73,21 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
                 if (result.FirstOrDefault()?.Dpa.ORGANISATION_NAME != null && (result.FirstOrDefault()?.Dpa.BuildingNumber != 0 || result.FirstOrDefault()?.Dpa.BUILDING_NAME != null))
                     _line1 = _buildingNumber + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
                 else
-                    _line1 = result.FirstOrDefault()?.Dpa.ORGANISATION_NAME?.ToString() + " " + _buildingNumber +" "+ result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
+                    _line1 = result.FirstOrDefault()?.Dpa.ORGANISATION_NAME?.ToString() + " " + _buildingNumber + " " + result.FirstOrDefault()?.Dpa.BUILDING_NAME?.ToString() + " " + result.FirstOrDefault()?.Dpa.SUB_BUILDING_NAME?.ToString();
 
-                _line2 =  (result.FirstOrDefault()?.Dpa.ThoroughfareName ?? string.Empty);
+                _line2 = (result.FirstOrDefault()?.Dpa.ThoroughfareName ?? string.Empty);
                 _postTown = result.FirstOrDefault()?.Dpa.PostTown;
             }
 
             var addressLines = result;
 
-            return new AddressDetail { 
+            return new AddressDetail
+            {
                 Line1 = _line1,
                 Line2 = _line2,
                 PostTown = _postTown,
-                Postcode = postcode,         
-             };
+                Postcode = postcode,
+            };
         }
 
         public async Task<IReadOnlyCollection<PostcodeSearchResult>> SearchByPostcode(string postcode)
@@ -109,14 +105,14 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
                 string id = "";
                 string place = "";
 
-            if (dpa != null)
+                if (dpa != null)
                 {
                     if (dpa.ORGANISATION_NAME != null && (dpa.BuildingNumber != 0 || dpa.BUILDING_NAME != null))
-                         streetAddress = string.Join(" ", dpa.Address.Replace(dpa.ORGANISATION_NAME + ", ", "").Replace(", " + dpa.Postcode, "").Trim());
+                        streetAddress = string.Join(" ", dpa.Address.Replace(dpa.ORGANISATION_NAME + ", ", "").Replace(", " + dpa.Postcode, "").Trim());
                     else
                         streetAddress = string.Join(" ", dpa.Address.Replace(", " + dpa.Postcode, "").Trim());
-                    
-                        id = $"{postcode}{CompositeIdDelimiter}{dpa.Uprn}";
+
+                    id = $"{postcode}{CompositeIdDelimiter}{dpa.Uprn}";
                     place = $"{dpa.PostTown}";
                 }
                 return new PostcodeSearchResult
@@ -125,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
                     StreetAddress = streetAddress,
                     Place = place
                 };
-              
+
             })
             .Where(resultItem => resultItem != null)
             .OrderBy(resultItem => resultItem.Id).DistinctBy(resultItem => resultItem.StreetAddress)
@@ -137,7 +133,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
         {
             var url = new Url(string.Format(_options.ApiUrl, postcode))
             .SetQueryParam("key", _options.ApiKey);
-           
+
 
             using (var response = await _httpClient.GetAsync(url))
             {
@@ -149,7 +145,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
                 response.EnsureSuccessStatusCode();
 
                 return JsonConvert.DeserializeObject<OsGetAddress>(response.Content.ReadAsStringAsync().Result);
-               
+
 
             }
         }
@@ -201,11 +197,11 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
 
         public partial class Result
         {
-           
+
             [JsonProperty("DPA", NullValueHandling = NullValueHandling.Ignore)]
             public Dpa Dpa { get; set; }
         }
-       
+
         public partial class Dpa
         {
             [JsonProperty("UPRN")]
@@ -224,7 +220,7 @@ namespace Dfc.CourseDirectory.WebV2.AddressSearch
             public long BuildingNumber { get; set; }
 
             [JsonProperty("BUILDING_NAME", NullValueHandling = NullValueHandling.Ignore)]
-             public string BUILDING_NAME { get; set; }
+            public string BUILDING_NAME { get; set; }
 
             [JsonProperty("THOROUGHFARE_NAME", NullValueHandling = NullValueHandling.Ignore)]
             public string ThoroughfareName { get; set; }

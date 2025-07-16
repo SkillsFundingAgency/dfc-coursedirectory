@@ -87,7 +87,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         public async Task<OneOf<UploadHasNoErrors, ViewModel>> Handle(Query request, CancellationToken cancellationToken)
         {
             var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
-                _providerContextProvider.GetProviderId(),request.IsNonLars);
+                _providerContextProvider.GetProviderId(), request.IsNonLars);
 
             if (errorRows.Count == 0)
             {
@@ -105,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
             if (!validationResult.IsValid)
             {
                 var errorRows = await _fileUploadProcessor.GetCourseUploadRowsWithErrorsForProvider(
-                    _providerContextProvider.GetProviderId(),request.IsNonLars);
+                    _providerContextProvider.GetProviderId(), request.IsNonLars);
 
                 var vm = await CreateViewModel(errorRows, request.IsNonLars);
                 return new ModelWithErrors<ViewModel>(vm, validationResult);
@@ -125,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
                 return new ViewModel()
                 {
                     ErrorRows = rows
-                        .Select(r => 
+                        .Select(r =>
                         {
                             var errorsByComponent = r.Errors
                                 .Select(e => (ErrorCode: e, Field: Core.DataManagement.Errors.MapCourseErrorToFieldGroup(e)))
@@ -233,9 +233,12 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors
         {
             public CommandValidator()
             {
+                var errorMessage = "Select what you want to do";
                 RuleFor(c => c.WhatNext)
-                    .NotEmpty().IsInEnum()
-                        .WithMessageForAllRules("Select what you want to do");
+                    .NotEmpty()
+                        .WithMessage(errorMessage)
+                    .IsInEnum()
+                        .WithMessage(errorMessage);
             }
         }
     }

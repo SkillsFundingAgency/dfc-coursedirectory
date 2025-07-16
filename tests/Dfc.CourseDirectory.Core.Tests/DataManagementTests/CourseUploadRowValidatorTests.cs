@@ -400,7 +400,7 @@ namespace Dfc.CourseDirectory.Core.Tests.DataManagementTests
             // Assert
             Assert.Contains(
                 validationResult.Errors,
-                error =>error.ErrorCode == "COURSERUN_START_DATE_NOT_ALLOWED");
+                error => error.ErrorCode == "COURSERUN_START_DATE_NOT_ALLOWED");
         }
 
         [Fact]

@@ -6,10 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using CsvHelper;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -623,7 +621,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 {
                     await _blobContainerClient.CreateIfNotExistsAsync();
                     _containerIsKnownToExist = true;
-                }
+                }                
 
                 var blobName = $"{Constants.CoursesFolder}/{courseUploadId}.csv";
                 await _blobContainerClient.UploadBlobAsync(blobName, stream);
@@ -1028,6 +1026,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var courseRunId = Guid.NewGuid();
 
                 var parsedRow = ParsedCsvCourseRow.FromCsvCourseRow(row.Data, allRegions);
+                parsedRow.ProviderCourseRef = string.IsNullOrWhiteSpace(parsedRow.ProviderCourseRef) ? null : parsedRow.ProviderCourseRef;
 
                 var matchedVenue = FindVenue(row.VenueIdHint, row.Data.VenueName, row.Data.ProviderVenueRef, providerVenues);
 
@@ -1035,7 +1034,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var validator = new CourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
 
-                var rowValidationResult = validator.Validate(parsedRow);
+                var rowValidationResult = await validator.ValidateAsync(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;
@@ -1125,7 +1124,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var validator = new NonLarsCourseUploadRowValidator(_clock, matchedVenue?.VenueId, _webRiskService);
 
-                var rowValidationResult = validator.Validate(parsedRow);
+                var rowValidationResult = await validator.ValidateAsync(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
                 rowsAreValid &= rowIsValid;
@@ -1333,7 +1332,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode();
                 RuleFor(c => c.ResolvedStartDate)
-                    .Transform(d => d.HasValue ? new DateInput(d.Value) : null)
                     .StartDate(clock.UtcNow, c => c.ResolvedFlexibleStartDate);
                 RuleFor(c => c.ResolvedFlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMode, c => c.ProviderVenueRef, matchedVenueId);
@@ -1378,7 +1376,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 RuleFor(c => c.ProviderCourseRef).ProviderCourseRef();
                 RuleFor(c => c.ResolvedDeliveryMode).DeliveryMode();
                 RuleFor(c => c.ResolvedStartDate)
-                    .Transform(d => d.HasValue ? new DateInput(d.Value) : null)
                     .StartDate(clock.UtcNow, c => c.ResolvedFlexibleStartDate);
                 RuleFor(c => c.ResolvedFlexibleStartDate).FlexibleStartDate();
                 RuleFor(c => c.VenueName).VenueName(c => c.ResolvedDeliveryMode, c => c.ProviderVenueRef, matchedVenueId);

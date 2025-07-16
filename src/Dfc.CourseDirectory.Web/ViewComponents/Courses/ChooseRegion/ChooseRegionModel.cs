@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Dfc.CourseDirectory.Services.Models;
-using Dfc.CourseDirectory.Services.Models.Courses;
-using Dfc.CourseDirectory.Services.Models.Regions;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Dfc.CourseDirectory.Services.Models.Regions;
 
 namespace Dfc.CourseDirectory.Web.ViewComponents.Courses.ChooseRegion
 {

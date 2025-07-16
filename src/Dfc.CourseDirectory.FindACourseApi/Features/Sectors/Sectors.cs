@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
-using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.Sectors
 {
     public class Query : IRequest<IReadOnlyCollection<SectorViewModel>>
-    {       
+    {
     }
 
     public class Handler : IRequestHandler<Query, IReadOnlyCollection<SectorViewModel>>
@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Sectors
 
         public Handler(ISqlQueryDispatcher sqlQueryDispatcher)
         {
-            _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));            
+            _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
         }
 
         public async Task<IReadOnlyCollection<SectorViewModel>> Handle(Query request, CancellationToken cancellationToken)
