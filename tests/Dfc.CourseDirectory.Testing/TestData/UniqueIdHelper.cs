@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Testing
             {
                 do
                 {
-                    ukprn = RandomNumber.Next(1000000, 8999999);
+                    ukprn = RandomNumber.Next(1000000, 7999999);
                 }
                 while (!_providerUkprns.Add(ukprn));
             }

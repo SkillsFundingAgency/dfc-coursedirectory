@@ -19,7 +19,5 @@
 	[BulkUploadInProgress] BIT NULL,
 	[BulkUploadPublishInProgress] BIT NULL,
 	[BulkUploadStartedDateTime] DATETIME2 (7) NULL,
-	[BulkUploadTotalRowCount] INT NULL,
-	[LearnerSatisfaction] DECIMAL(18,1) NULL,
-    [EmployerSatisfaction] DECIMAL(18,1) NULL,
+	[BulkUploadTotalRowCount] INT NULL
 )

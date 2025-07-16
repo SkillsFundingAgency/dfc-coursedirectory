@@ -56,40 +56,34 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         [Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
-
-
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Test Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
-                contact:
-
-                    new ProviderContact
-                    {
-                        ContactType = "P",
-                        Telephone1 = "0123456789",
-                        WebsiteAddress = "http://www.example.com",
-                        Email = "test@example.com",
-                        AddressSaonDescription = "SAON Description",
-                        AddressPaonDescription = "PAON Description",
-                        AddressStreetDescription = "Street",
-                        AddressLocality = "Locality",
-                        AddressItems = "ItemDescription",
-                        AddressPostTown = "PostTown",
-                        AddressCounty = "County",
-                        AddressPostcode = "Postcode",
-                        PersonalDetailsPersonNameTitle = "Title",
-                        PersonalDetailsPersonNameFamilyName = "FamilyName",
-                        PersonalDetailsPersonNameGivenName = "GivenName"
-                    }
-                );
+                contact: new ProviderContact
+                {
+                    ContactType = "P",
+                    Telephone1 = "0123456789",
+                    WebsiteAddress = "http://www.example.com",
+                    Email = "test@example.com",
+                    AddressSaonDescription = "SAON Description",
+                    AddressPaonDescription = "PAON Description",
+                    AddressStreetDescription = "Street",
+                    AddressLocality = "Locality",
+                    AddressItems = "ItemDescription",
+                    AddressPostTown = "PostTown",
+                    AddressCounty = "County",
+                    AddressPostcode = "Postcode",
+                    PersonalDetailsPersonNameTitle = "Title",
+                    PersonalDetailsPersonNameFamilyName = "FamilyName",
+                    PersonalDetailsPersonNameGivenName = "GivenName"
+                }
+            );
 
             var ukrlpData = GenerateUkrlpProviderData(provider.Ukprn);
             var ukrlpContact = ukrlpData.ProviderContact.Single();
-
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
-
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
