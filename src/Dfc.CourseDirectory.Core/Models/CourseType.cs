@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.Core.Models
         GCSEALevel,
         RegulatedQualificationFramework,
         VocationalRegulatedQualifications,
+        Degree
     }
 
     public static class CourseTypeExtensions

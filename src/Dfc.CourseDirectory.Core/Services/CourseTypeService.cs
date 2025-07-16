@@ -19,6 +19,11 @@ namespace Dfc.CourseDirectory.Core.Services
         private const string GCSE_AS_Level = "GCE AS Level";
         private const string REGULATED_QUALIFICATION_FRAMEWORK = "RQF";
         private const string VOCATIONAL_REGULATED_QUALIFICATIONS = "VRQ";
+        private const string DEGREE = "Degree";
+        private const string BAHONS = "BA (Hons)";
+        private const string BSCHONS = "BSc (Hons)";
+        private const string BENGHONS = "BEng (Hons)";
+        private const string BSCORDHONS = "BSc (Ord/Hons)";
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public CourseTypeService(
@@ -52,6 +57,15 @@ namespace Dfc.CourseDirectory.Core.Services
                 if (learnAimRefTitle.Contains(VOCATIONAL_REGULATED_QUALIFICATIONS, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return Models.CourseType.VocationalRegulatedQualifications;
+                }
+
+                if (learnAimRefTitle.Contains(DEGREE, StringComparison.InvariantCultureIgnoreCase) ||
+                    learnAimRefTitle.Contains(BAHONS, StringComparison.InvariantCultureIgnoreCase) ||
+                    learnAimRefTitle.Contains(BSCHONS, StringComparison.InvariantCultureIgnoreCase) ||
+                    learnAimRefTitle.Contains(BENGHONS, StringComparison.InvariantCultureIgnoreCase) ||
+                    learnAimRefTitle.Contains(BSCORDHONS, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return Models.CourseType.Degree;
                 }
             }
             var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
