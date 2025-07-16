@@ -10,10 +10,12 @@
 @{
     ViewData["Title"] = "Complete qualification details";
     Layout = "_Layout_Your_Courses";
-
+    var backLinkHref = string.IsNullOrWhiteSpace(Model.LearnAimRef) ? Url.Action("Index", "ProviderDashboard", new { providerId = ProviderContext.ProviderInfo.ProviderId }) : Url.Action("Index", "Qualifications");
     ViewData.SetLayoutModel(new LayoutModel
     {
         BackLink = true,
+        BackLinkText = "Back",
+        BackLinkHref = backLinkHref
     });
 }
 
