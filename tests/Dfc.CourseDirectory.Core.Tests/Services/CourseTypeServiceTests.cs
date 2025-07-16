@@ -471,7 +471,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011111";
-            var expectedCourseType = CourseType.GCSEALevel;
+            var expectedCourseType = CourseType.GCEALevel;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
@@ -489,7 +489,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011113";
-            var expectedCourseType = CourseType.GCSEALevel;
+            var expectedCourseType = CourseType.GCEALevel;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
@@ -507,7 +507,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011114";
-            var expectedCourseType = CourseType.GCSEASLevel;
+            var expectedCourseType = CourseType.GCEASLevel;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 

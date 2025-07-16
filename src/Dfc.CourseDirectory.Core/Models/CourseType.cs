@@ -10,8 +10,8 @@ namespace Dfc.CourseDirectory.Core.Models
         FreeCoursesForJobs,
         Multiply,
         SkillsBootcamp,
-        GCSEASLevel,
-        GCSEALevel,
+        GCEASLevel,
+        GCEALevel,
         RegulatedQualificationFramework,
         VocationalRegulatedQualifications,
         Degree

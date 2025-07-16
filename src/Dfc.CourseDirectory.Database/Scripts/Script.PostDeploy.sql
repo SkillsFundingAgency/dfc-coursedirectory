@@ -119,6 +119,68 @@ WHERE
 	AND Live = 1
 	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
 
+--Update course type to GCE AS Level
+UPDATE 
+	c
+SET 
+	c.CourseType = 7
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
+WHERE 
+	larct.LearnAimRefTitle like 'GCE AS Level%'
+
+--Update course type to GCE A Level
+UPDATE 
+	c
+SET 
+	c.CourseType = 8
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
+WHERE 
+	larct.LearnAimRefTitle like 'GCE A Level%' OR larct.LearnAimRefTitle like  'GCE A2 Level%'
+
+--Update course type to RQF
+
+UPDATE 
+	c
+SET 
+	c.CourseType = 9
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
+WHERE 
+	larct.LearnAimRefTitle like '%RQF%' 
+
+--Update course type to VRQ
+
+UPDATE 
+	c
+SET 
+	c.CourseType = 10
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
+WHERE 
+	larct.LearnAimRefTitle like '%VRQ%' 
+
+--Update course type to Degree
+
+UPDATE 
+	c
+SET 
+	c.CourseType = 11
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
+WHERE 
+	larct.LearnAimRefTitle like '%Degree%' OR
+	larct.LearnAimRefTitle like '%BA (Hons)%' OR
+	larct.LearnAimRefTitle like '%BSc (Hons)%' OR
+	larct.LearnAimRefTitle like '%BEng (Hons)%' OR
+	larct.LearnAimRefTitle like '%BSc (Ord/Hons)%' 
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 

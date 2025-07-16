@@ -42,12 +42,12 @@ namespace Dfc.CourseDirectory.Core.Services
                 if (learnAimRefTitle.StartsWith(GCSE_A_Level,StringComparison.InvariantCultureIgnoreCase) ||
                     learnAimRefTitle.StartsWith(GCSE_A2_Level, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return Models.CourseType.GCSEALevel;
+                    return Models.CourseType.GCEALevel;
                 }
 
                 if (learnAimRefTitle.StartsWith(GCSE_AS_Level, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return Models.CourseType.GCSEASLevel;
+                    return Models.CourseType.GCEASLevel;
                 }
 
                 if (learnAimRefTitle.Contains(REGULATED_QUALIFICATION_FRAMEWORK, StringComparison.InvariantCultureIgnoreCase))
