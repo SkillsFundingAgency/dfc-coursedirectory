@@ -38,23 +38,19 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Act
             await ukrlpSyncHelper.SyncProviderData(ukprn);
 
-            using(var dispatcher = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot))
-            {
-                var result = await dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = ukprn });
+            var result = await _dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = ukprn });
 
 
-                // Assert
-                result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
-                result.ProviderName.Should().Be(ukrlpData.ProviderName);
-                result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-                result.ProviderType.Should().Be(ProviderType.None);
-                result.Status.Should().Be(ProviderStatus.Registered);
-                result.Ukprn.Should().Be(ukprn);
-                var actualContact = await dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
-                AssertContactMapping(actualContact, ukrlpContact);
-                _dispatcher.Dispose();
-            }
-            
+            // Assert
+            result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
+            result.ProviderName.Should().Be(ukrlpData.ProviderName);
+            result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
+            result.ProviderType.Should().Be(ProviderType.None);
+            result.Status.Should().Be(ProviderStatus.Registered);
+            result.Ukprn.Should().Be(ukprn);
+            var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
+            AssertContactMapping(actualContact, ukrlpContact);
+            _dispatcher.Dispose();
         }
 
         [Fact]
@@ -91,19 +87,17 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
-            using (var dispatcher = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot))
-            {
-                var result = await dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
 
-                // Assert
-                result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
-                result.ProviderName.Should().Be(ukrlpData.ProviderName);
-                result.ProviderId.Should().Be(provider.ProviderId);
-                result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-                var actualContact = await dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
-                AssertContactMapping(actualContact, ukrlpContact);
-                _dispatcher.Dispose();
-            }
+            var result = await _dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
+
+            // Assert
+            result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
+            result.ProviderName.Should().Be(ukrlpData.ProviderName);
+            result.ProviderId.Should().Be(provider.ProviderId);
+            result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
+            var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
+            AssertContactMapping(actualContact, ukrlpContact);
+            _dispatcher.Dispose();
         }
 
         [Fact]
@@ -147,19 +141,17 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
-            using (var dispatcher = SqlQueryDispatcherFactory.CreateDispatcher(IsolationLevel.Snapshot))
-            {
-                var result = await dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
 
-                // Assert
-                result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
-                result.ProviderName.Should().Be(ukrlpData.ProviderName);
-                result.ProviderId.Should().Be(provider.ProviderId);
-                result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
-                var actualContact = await dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
-                AssertContactMapping(actualContact, ukrlpContact);
-                _dispatcher.Dispose();
-            }
+            var result = await _dispatcher.ExecuteQuery(new GetProviderByUkprn { Ukprn = provider.Ukprn });
+
+            // Assert
+            result.Alias.Should().Be(ukrlpData.ProviderAliases.Single().ProviderAlias);
+            result.ProviderName.Should().Be(ukrlpData.ProviderName);
+            result.ProviderId.Should().Be(provider.ProviderId);
+            result.ProviderStatus.Should().Be(ukrlpData.ProviderStatus);
+            var actualContact = await _dispatcher.ExecuteQuery(new GetProviderContactById { ProviderId = result.ProviderId });
+            AssertContactMapping(actualContact, ukrlpContact);
+            _dispatcher.Dispose();
         }
 
         [Fact]
