@@ -57,13 +57,12 @@
 
         $(".govuk-header__menu-button").on("click",
             function () {
-                if ($(".govuk-header__navigation").is(":visible")) {
+                if ($(".govuk-header__navigation-list").is(":visible")) {
                     $("#menu").removeClass("govuk-header__menu-button--open");
-                    $(".govuk-header__navigation").hide();
+                    $(".govuk-header__navigation-list").hide();
                 } else {
-
                     $("#menu").addClass("govuk-header__menu-button--open");
-                    $(".govuk-header__navigation").show();
+                    $(".govuk-header__navigation-list").show();
                 }
 
 
