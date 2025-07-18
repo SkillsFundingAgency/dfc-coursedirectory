@@ -72,6 +72,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
         public async Task<IActionResult> AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
             RemoveSessionVariables();
+            Session.Remove(SessionPublishedCourse);
 
             var nonLarsCourse = string.IsNullOrWhiteSpace(learnAimRef);
 
@@ -829,24 +830,13 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             if (publishedCourse == null)
             {
-                var ukprn = Session.GetInt32("UKPRN");
-                return ukprn.HasValue
-                    ? RedirectToAction("Index", "ProviderDashboard")
-                    : RedirectToAction("ProviderSearch", "ProviderSearch");
+                return Redirect("/provider-search");
             }
 
             //Extract Live service URL from the environment variable
             ViewBag.LiveServiceURL = string.Format(_configuration[FindACourseUrlConfigName], publishedCourse.CourseId, publishedCourse.CourseRunId);
 
-            Session.Remove(SessionPublishedCourse);
-
-            return View(new PublishedCourseViewModel
-            {
-                CourseId = publishedCourse.CourseId,
-                CourseRunId = publishedCourse.CourseRunId,
-                CourseName = publishedCourse.CourseName,
-                NonLarsCourse = publishedCourse.NonLarsCourse
-            });
+            return View(publishedCourse);
         }
 
         #region Private methods
