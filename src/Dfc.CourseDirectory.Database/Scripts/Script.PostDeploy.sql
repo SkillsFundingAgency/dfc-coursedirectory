@@ -164,6 +164,18 @@ FROM
 	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
 WHERE 
 	larct.LearnAimRefTitle like '%VRQ%' 
+	
+--Update course type to VRQ
+
+UPDATE 
+	c
+SET 
+	c.CourseType = 13
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery larct ON larct.LearnAimRef = c.LearnAimRef
+WHERE 
+	larct.LearnAimRefTitle like '%NVQ%' 
 
 --Update course type to Degree
 

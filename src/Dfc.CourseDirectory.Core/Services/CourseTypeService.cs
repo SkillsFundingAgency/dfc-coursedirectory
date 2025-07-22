@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Microsoft.AspNetCore.Components;
 
@@ -19,11 +20,13 @@ namespace Dfc.CourseDirectory.Core.Services
         private const string GCSE_AS_Level = "GCE AS Level";
         private const string REGULATED_QUALIFICATION_FRAMEWORK = "RQF";
         private const string VOCATIONAL_REGULATED_QUALIFICATIONS = "VRQ";
+        private const string NATIONAL_VOCATIONAL_QUALIFICATIONS = "NVQ";
         private const string DEGREE = "Degree";
         private const string BAHONS = "BA (Hons)";
         private const string BSCHONS = "BSc (Hons)";
         private const string BENGHONS = "BEng (Hons)";
         private const string BSCORDHONS = "BSc (Ord/Hons)";
+        private const string NONREGULATED = "Non regulated";
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public CourseTypeService(
@@ -58,6 +61,10 @@ namespace Dfc.CourseDirectory.Core.Services
                 {
                     return Models.CourseType.VocationalRegulatedQualifications;
                 }
+                if (learnAimRefTitle.Contains(NATIONAL_VOCATIONAL_QUALIFICATIONS, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return Models.CourseType.NationalVocationalQualifications;
+                }
 
                 if (learnAimRefTitle.Contains(DEGREE, StringComparison.InvariantCultureIgnoreCase) ||
                     learnAimRefTitle.Contains(BAHONS, StringComparison.InvariantCultureIgnoreCase) ||
@@ -67,6 +74,7 @@ namespace Dfc.CourseDirectory.Core.Services
                 {
                     return Models.CourseType.Degree;
                 }
+                
             }
             var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
 

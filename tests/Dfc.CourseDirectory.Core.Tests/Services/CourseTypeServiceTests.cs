@@ -643,6 +643,24 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             Assert.Equal(expectedCourseType, courseType);
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
         }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleNVQ_ReturnsCourseTypeAsNationalVocationalQualifications()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011122";
+            var expectedCourseType = CourseType.NationalVocationalQualifications;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
         private void ArrangeObjects(string learnAimRef)
         {
             var larsCourseTypesList = new List<LarsCourseType>()
@@ -681,6 +699,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             new LearningDelivery { LearnAimRef = "0011119", LearnAimRefTitle ="BSc (Hons)" },
             new LearningDelivery { LearnAimRef = "0011120", LearnAimRefTitle ="BEng (Hons)" },
             new LearningDelivery { LearnAimRef = "0011121", LearnAimRefTitle ="BSc (Ord/Hons)" },
+            new LearningDelivery { LearnAimRef = "0011122", LearnAimRefTitle ="NVQ" },
             };
 
             var larsCourseTypesReadOnlyList = new ReadOnlyCollection<LarsCourseType>(larsCourseTypesList.Where(l => l.LearnAimRef == learnAimRef).ToList());
