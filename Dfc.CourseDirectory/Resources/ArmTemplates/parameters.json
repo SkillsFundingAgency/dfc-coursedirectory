@@ -14,29 +14,14 @@
     "postcodeApiUrl": {
       "value": "__postcodeApiUrl__"
     },
-    "postcodeApiKey": {
-      "value": "__postcodeApiKey__"
-    },
     "getAddressApiUrl": {
       "value": "__getaddressApiUrl__"
-    },
-    "getAddressApiKey": {
-      "value": "__getaddressApiKey__"
     },
     "larsApiUrl": {
       "value": "__larsApiUrl__"
     },
-    "larsApiKey": {
-      "value": "__azureSearchQueryKey__"
-    },
     "courseApiUrl": {
       "value": "__courseApiUrl__"
-    },
-    "courseApiKey": {
-      "value": "__ApimPublishCourseDirectoryKey__"
-    },
-    "apprenticeshipApiKey": {
-      "value": "__ApimPublishCourseDirectoryKey__"
     },
     "apprenticeshipApiUrl": {
       "value": "__apprenticeshipApiUrl__"
@@ -44,20 +29,11 @@
     "searchDomain": {
       "value": "__searchFqdn__"
     },
-    "searchAdminKey": {
-      "value": "__azureSearchAdminKey__"
-    },
     "larsDatasetUrl": {
       "value": "__larsDatasetUrl__"
     },
-    "searchQueryKey": {
-      "value": "__azureSearchQueryKey__"
-    },
     "dfeClientID": {
       "value": "__dfeClientID__"
-    },
-    "dfeClientSecret": {
-      "value": "__dfeClientSecret__"
     },
     "dfeEndpointUrl": {
       "value": "__dfeEndpointUrl__"
@@ -71,17 +47,11 @@
     "dfeSignedOutPath": {
       "value": "__dfeSignedOutPath__"
     },
-    "dfeApiSecret": {
-      "value": "__dfeApiSecret__"
-    },
     "dfeApiUri": {
       "value": "__dfeApiUri__"
     },
     "dfeIssuer": {
       "value": "__dfeIssuer__"
-    },
-    "sqlCourseDirectoryConnectionString": {
-      "value": "__sqlCourseDirectoryConnectionString__"
     },
     "findCourseApiUrl": {
       "value": "__apimCoursesUrl__"
@@ -89,20 +59,11 @@
     "findCourseApiKey": {
       "value": "__ApimFindACourseKey__"
     },
-    "findCourseApiPassword": {
-      "value": "__findCourseApiPassword__"
-    },
-    "appHostName": {
-      "value": "__appHostName__"
-    },
     "keyVaultName": {
       "value": "__SharedKeyVaultName__"
     },
     "keyVaultResourceGroup": {
       "value": "__SharedResourceGroup__"
-    },
-    "appServicePlanName": {
-      "value": "__providerPortalAppServicePlan__"
     },
     "blobStorageSettingsContainerName": {
       "value": "provider-files"
@@ -116,28 +77,8 @@
     "BulkUploadSecondsPerRecord": {
       "value": "__BulkUploadSecondsPerRecord__"
     },
-    "ProviderPortalSharedResourceGroupName": {
-      "value": "__providerPortalResourceGroup__"
-    },
-
-    "RedisCacheName": {
-      "value": "__providerPortalRedisCacheName__"
-    },
-
-    "providerPortalApplicationInsights": {
-      "value": "__providerportalApplicationInsights__"
-    },
     "FindACourseUrl": {
       "value": "__FindACourseUrl__"
-    },
-    "workspaceName": {
-      "value": "__sharedLogAnalyticsWorkspace__"
-    },
-    "workspaceResourceGroup": {
-      "value": "__sharedLogAnalyticsResourceGroup__"
-    },
-    "GoogleWebRiskApiKey": {
-      "value": "__GoogleWebRiskApiKey__"
     }
   }
 }
