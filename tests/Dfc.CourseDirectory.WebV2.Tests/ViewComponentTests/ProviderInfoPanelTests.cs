@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests
                 "1st Line of Address\n2nd Line of Address\nThe Street\nThe Town\nUnited Kingdom\nAB1 2CD",
                 GetBlockLabelContent(doc, "ProviderInfoPanel-Address"));
             Assert.Equal(
-                "http://provider1.com",
+                "https://provider1.com",
                 GetBlockLabelContent(doc, "ProviderInfoPanel-Website"));
             Assert.Equal(
                 "The Contact",

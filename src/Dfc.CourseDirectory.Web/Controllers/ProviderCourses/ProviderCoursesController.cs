@@ -53,7 +53,6 @@ namespace Dfc.CourseDirectory.Web.Controllers.ProviderCourses
             _providerContextProvider = providerContextProvider;
         }
 
-
         internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.VenueId == id);
 
         internal string FormatAddress(Venue venue)
