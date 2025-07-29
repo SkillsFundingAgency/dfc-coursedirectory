@@ -20,13 +20,13 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Upload
 {
     public class Query : IRequest<ViewModel>
     {
-        
+
     }
 
     public class ViewModel : Command
     {
         public int CourseCount { get; set; }
-        
+
     }
 
 

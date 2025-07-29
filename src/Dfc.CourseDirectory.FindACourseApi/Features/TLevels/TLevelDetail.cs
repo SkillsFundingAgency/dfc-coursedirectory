@@ -33,7 +33,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                 return new NotFound();
             }
 
-           
+
 
             var getSqlProvider = _sqlQueryDispatcher.ExecuteQuery(
                 new Core.DataStore.Sql.Queries.GetProviderById { ProviderId = tLevel.ProviderId });
@@ -78,9 +78,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.TLevels.TLevelDetail
                     Email = providerContact?.Email,
                     Telephone = providerContact?.Telephone1,
                     Fax = providerContact?.Fax,
-                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress),
-                    LearnerSatisfaction = sqlProvider?.LearnerSatisfaction,
-                    EmployerSatisfaction = sqlProvider?.EmployerSatisfaction
+                    Website = ViewModelFormatting.EnsureHttpPrefixed(providerContact?.WebsiteAddress)
                 },
                 WhoFor = HtmlEncode(tLevel.WhoFor),
                 EntryRequirements = HtmlEncode(tLevel.EntryRequirements),

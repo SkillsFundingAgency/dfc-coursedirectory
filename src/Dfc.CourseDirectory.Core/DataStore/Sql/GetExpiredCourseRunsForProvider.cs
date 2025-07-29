@@ -28,5 +28,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
         public string AwardOrgCode { get; set; }
         public string LearnAimRefTypeDesc { get; set; }
         public DateTime StartDate { get; set; }
+        public string Type { get; set; }
     }
 }

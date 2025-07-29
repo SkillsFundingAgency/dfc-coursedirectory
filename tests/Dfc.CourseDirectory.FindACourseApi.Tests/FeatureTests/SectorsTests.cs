@@ -4,13 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using Dfc.CourseDirectory.Core.Models;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 
@@ -34,14 +31,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var response = await HttpClient.GetAsync($"sectors");
 
             // Assert
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);            
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
 
             var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
             var sectorsResult = JsonConvert.DeserializeObject<List<Sector>>(responseContent, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
             sectorsResult.Should().NotBeNull();
             sectorsResult.Count().Should().Be(0);
-        }        
+        }
 
         [Fact]
         public async Task TLevels_Get_WithSectors_ReturnsOkWithExpectedSectorsCollection()

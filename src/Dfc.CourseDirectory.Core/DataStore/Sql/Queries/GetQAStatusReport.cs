@@ -1,5 +1,4 @@
-﻿using Dfc.CourseDirectory.Core.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries

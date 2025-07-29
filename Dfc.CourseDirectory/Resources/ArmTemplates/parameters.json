@@ -17,10 +17,10 @@
     "postcodeApiKey": {
       "value": "__postcodeApiKey__"
     },
-    "getAddressApiUrl":{
+    "getAddressApiUrl": {
       "value": "__getaddressApiUrl__"
     },
-    "getAddressApiKey":{
+    "getAddressApiKey": {
       "value": "__getaddressApiKey__"
     },
     "larsApiUrl": {
@@ -77,6 +77,9 @@
     "dfeApiUri": {
       "value": "__dfeApiUri__"
     },
+    "dfeIssuer": {
+      "value": "__dfeIssuer__"
+    },
     "sqlCourseDirectoryConnectionString": {
       "value": "__sqlCourseDirectoryConnectionString__"
     },
@@ -97,9 +100,6 @@
     },
     "keyVaultResourceGroup": {
       "value": "__SharedResourceGroup__"
-    },
-    "certificateName": {
-      "value": "__certificateName__"
     },
     "appServicePlanName": {
       "value": "__providerPortalAppServicePlan__"
@@ -131,10 +131,10 @@
       "value": "__FindACourseUrl__"
     },
     "workspaceName": {
-        "value": "__sharedLogAnalyticsWorkspace__"
+      "value": "__sharedLogAnalyticsWorkspace__"
     },
     "workspaceResourceGroup": {
-        "value": "__sharedLogAnalyticsResourceGroup__"
+      "value": "__sharedLogAnalyticsResourceGroup__"
     },
     "GoogleWebRiskApiKey": {
       "value": "__GoogleWebRiskApiKey__"

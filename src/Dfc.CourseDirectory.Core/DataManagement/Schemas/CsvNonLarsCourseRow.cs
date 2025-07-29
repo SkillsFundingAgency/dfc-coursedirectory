@@ -11,6 +11,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
     {
         public const char SubRegionDelimiter = ';';
 
+        private string _providerCourseRef;
+        private string _courseName;
+        private string _courseWebPage;
+
         [Index(0), Name("COURSE_TYPE")]
         public string CourseType { get; set; }
         [Index(1), Name("SECTOR")]
@@ -34,9 +38,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(10), Name("WHERE_NEXT")]
         public string WhereNext { get; set; }
         [Index(11), Name("COURSE_NAME")]
-        public string CourseName { get; set; }
+        public string CourseName
+        {
+            get => string.IsNullOrWhiteSpace(_courseName) ? null : _courseName;
+            set => _courseName = value;
+        }
         [Index(12), Name("YOUR_REFERENCE")]
-        public string ProviderCourseRef { get; set; }
+        public string ProviderCourseRef
+        {
+            get => string.IsNullOrWhiteSpace(_providerCourseRef) ? null : _providerCourseRef;
+            set => _providerCourseRef = value;
+        }
         [Index(13), Name("DELIVERY_MODE")]
         public string DeliveryMode { get; set; }
         [Index(14), Name("START_DATE")]
@@ -52,7 +64,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         [Index(19), Name("SUB_REGION")]
         public string SubRegions { get; set; }
         [Index(20), Name("COURSE_WEBPAGE")]
-        public string CourseWebPage { get; set; }
+        public string CourseWebPage
+        {
+            get => string.IsNullOrWhiteSpace(_courseWebPage) ? null : _courseWebPage;
+            set => _courseWebPage = value;
+        }
         [Index(21), Name("COST")]
         public string Cost { get; set; }
         [Index(22), Name("COST_DESCRIPTION")]

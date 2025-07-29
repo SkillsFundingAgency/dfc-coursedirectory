@@ -77,6 +77,9 @@
     "dfeApiUri": {
       "value": "https://my.loginsite.net/endpoint"
     },
+    "dfeIssuer": {
+      "value": "CourseDirectory"
+    },
     "sqlCourseDirectoryConnectionString": {
       "value": "Server=tcp:dfc-foo-shared-sql-01.database.windows.net,1433;Initial Catalog=database;Persist Security Info=False;User ID=username;Password=password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
     },
@@ -91,15 +94,6 @@
     },
     "appHostName": {
       "value": "some.host.name"
-    },
-    "keyVaultName": {
-      "value": "a-keyvault"
-    },
-    "keyVaultResourceGroup": {
-      "value": "keyvault-rg"
-    },
-    "certificateName": {
-      "value": "certificate-name"
     },
     "appServicePlanName": {
       "value": "dfc-foo-prov-shared-asp"

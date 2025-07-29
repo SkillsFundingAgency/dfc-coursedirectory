@@ -6,11 +6,11 @@ using MediatR;
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Published
 {
     public class Query : IRequest<ViewModel>
-    {       
+    {
     }
 
     public class ViewModel
-    {       
+    {
         public int PublishedCount { get; set; }
     }
 
@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Published
             var journeyInstance = _journeyInstanceProvider.GetInstance<PublishJourneyModel>();
 
             return Task.FromResult(new ViewModel()
-            {                
+            {
                 PublishedCount = journeyInstance.State.CoursesPublished
             });
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Search.AzureSearch;
 using FluentAssertions;
 using Xunit;

@@ -4,19 +4,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.WebV2.Security;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 using SqlModels = Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using SqlQueries = Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
-using System.ComponentModel.DataAnnotations;
-using FluentValidation.Results;
 
 namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
 {
@@ -122,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             if (!validationResult.IsValid)
             {
                 return new ModelWithErrors<ViewModel>(
-                    CreateViewModel(request.ProviderId, request.ProviderType,nonLarsSubtypes, request.SelectedNonLarsSubTypeIds, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
+                    CreateViewModel(request.ProviderId, request.ProviderType, nonLarsSubtypes, request.SelectedNonLarsSubTypeIds, tLevelDefinitions, request.SelectedProviderTLevelDefinitionIds),
                     validationResult);
             }
 
@@ -229,7 +228,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.Providers.EditProviderType
             {
                 ProviderId = providerId,
                 ProviderType = providerType,
-                ProviderNonLarsSubTypes = nonLarsSubType.Select(n => new ProviderNonLarsSubTypeViewModel { 
+                ProviderNonLarsSubTypes = nonLarsSubType.Select(n => new ProviderNonLarsSubTypeViewModel
+                {
                     NonLarsSubTypeId = n.NonLarsSubTypeId,
                     Name = n.Name,
                     Selected = providerSubTypes?.Any(id => id == n.NonLarsSubTypeId) ?? false

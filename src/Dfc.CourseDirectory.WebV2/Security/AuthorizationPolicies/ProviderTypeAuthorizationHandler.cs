@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.WebV2.Security.AuthorizationPolicies
             ProviderTypeRequirement requirement)
         {
             var providerContext = _providerContextProvider.GetProviderContext(withLegacyFallback: true);
-            
+
             if (providerContext == null)
             {
                 context.Fail();

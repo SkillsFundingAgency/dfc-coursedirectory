@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration.Provider;
 using System.Data;
-using System.Drawing.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -12,8 +10,6 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.ReferenceData.Ukrlp;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
-using FluentAssertions.Common;
-using FluentAssertions.Execution;
 using Microsoft.Extensions.Logging;
 using Moq;
 using UkrlpService;
@@ -60,40 +56,34 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         [Fact]
         public async Task SyncProviderData_ProviderAlreadyExists_UpdatesProviderInfo()
         {
-
-
             // Arrange
             var provider = await TestData.CreateProvider(
                 providerName: "Test Provider",
                 providerType: ProviderType.FE,
                 providerStatus: "Provider deactivated, not verified",
-                contact: 
-                
-                    new ProviderContact
-                    {
-                        ContactType = "P",
-                        Telephone1 = "0123456789",
-                        WebsiteAddress = "http://www.example.com",
-                        Email = "test@example.com",
-                        AddressSaonDescription = "SAON Description",
-                        AddressPaonDescription = "PAON Description",
-                        AddressStreetDescription = "Street",
-                        AddressLocality = "Locality",
-                        AddressItems = "ItemDescription",
-                        AddressPostTown = "PostTown",
-                        AddressCounty = "County",
-                        AddressPostcode = "Postcode",
-                        PersonalDetailsPersonNameTitle = "Title",
-                        PersonalDetailsPersonNameFamilyName = "FamilyName",
-                        PersonalDetailsPersonNameGivenName = "GivenName"
-                    }
-                );
+                contact: new ProviderContact
+                {
+                    ContactType = "P",
+                    Telephone1 = "0123456789",
+                    WebsiteAddress = "http://www.example.com",
+                    Email = "test@example.com",
+                    AddressSaonDescription = "SAON Description",
+                    AddressPaonDescription = "PAON Description",
+                    AddressStreetDescription = "Street",
+                    AddressLocality = "Locality",
+                    AddressItems = "ItemDescription",
+                    AddressPostTown = "PostTown",
+                    AddressCounty = "County",
+                    AddressPostcode = "Postcode",
+                    PersonalDetailsPersonNameTitle = "Title",
+                    PersonalDetailsPersonNameFamilyName = "FamilyName",
+                    PersonalDetailsPersonNameGivenName = "GivenName"
+                }
+            );
 
             var ukrlpData = GenerateUkrlpProviderData(provider.Ukprn);
             var ukrlpContact = ukrlpData.ProviderContact.Single();
-
             var ukrlpSyncHelper = SetupUkrlpSyncHelper(provider.Ukprn, ukrlpData);
-
 
             // Act
             await ukrlpSyncHelper.SyncProviderData(provider.Ukprn);
@@ -223,7 +213,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             actualContact?.AddressPostTown.Should().Be(ukrlpContact?.ContactAddress.Town);
             actualContact?.AddressCounty.Should().Be(ukrlpContact?.ContactAddress.County);
             actualContact?.AddressItems.Should().BeEquivalentTo(
-            
+
                 ukrlpContact?.ContactAddress.Town + " " +
                 ukrlpContact?.ContactAddress.County
             );
@@ -261,7 +251,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             UnitedKingdomProviderReferenceNumber = ukprn.ToString(),
             ProviderName = "Ukrlp Test Provider",
             ProviderStatus = "Active",
-            ProviderAliases = new[] { new ProviderAliasesStructure {ProviderAlias = "Ukrlp ProviderAliasHere"} },
+            ProviderAliases = new[] { new ProviderAliasesStructure { ProviderAlias = "Ukrlp ProviderAliasHere" } },
             ProviderContact = new[]
             {
                 new ProviderContactStructure

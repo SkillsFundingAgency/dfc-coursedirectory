@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
@@ -35,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
         public bool CourseUploadInProgress { get; set; }
         public bool NonLarsCourseUploadInProgress { get; set; }
         public int PastStartDateNonLarsCourseRunCount { get; set; }
+        public int PastStartDateTLevelRunCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -50,8 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var provider = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetProviderById() { ProviderId = request.ProviderId });
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderById() { ProviderId = request.ProviderId });
 
             if (provider == null)
             {
@@ -77,6 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                     ProviderId = provider.ProviderId,
                     IsNonLars = false
                 });
+
             var nonlarsUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestUnpublishedCourseUploadForProvider()
                 {
@@ -95,6 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.ProviderDashboard.Dashboard
                 NonLarsCourseCount = dashboardCounts.NonLarsCourseCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
                 PastStartDateNonLarsCourseRunCount = dashboardCounts.PastStartDateNonLarsCourseRunCount,
+                PastStartDateTLevelRunCount = dashboardCounts.PastStartDateTLevelRunCount,
                 TLevelCount = dashboardCounts.TLevelCount,
                 VenueCount = dashboardCounts.VenueCount,
                 IsNewProvider = provider.ProviderType == ProviderType.None,

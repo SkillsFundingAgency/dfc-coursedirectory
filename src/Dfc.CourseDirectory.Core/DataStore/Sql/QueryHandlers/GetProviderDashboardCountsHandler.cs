@@ -1,5 +1,4 @@
 ﻿using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -76,6 +75,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 WHERE c.ProviderId = @ProviderId
                 AND cr.CourseRunStatus = {(int)CourseStatus.Live}
                 AND cr.StartDate < @{nameof(query.Date)}
+
+                SELECT COUNT(*)
+                FROM Pttcd.TLevels t
+                WHERE ProviderId = @ProviderId
+                AND t.TLevelStatus = {(int)TLevelStatus.Live}
+                AND t.StartDate < @{nameof(query.Date)}
                 ";
 
             using (var reader = await transaction.Connection.QueryMultipleAsync(sql, query, transaction))
@@ -89,6 +94,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 var unpublishedCourseCount = reader.ReadSingle<int>();
                 var unpublishedNonLarsCount = reader.ReadSingle<int>();
                 var pastStartDateNonLarsCourseRunCount = reader.ReadSingle<int>();
+                var pastStartDateTLevelRunCount = reader.ReadSingle<int>(); 
 
                 return new DashboardCounts
                 {
@@ -100,7 +106,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     UnpublishedVenueCount = unpublishedVenueCount,
                     UnpublishedCourseCount = unpublishedCourseCount,
                     UnpublishedNonLarsCourseCount = unpublishedNonLarsCount,
-                    PastStartDateNonLarsCourseRunCount = pastStartDateNonLarsCourseRunCount
+                    PastStartDateNonLarsCourseRunCount = pastStartDateNonLarsCourseRunCount,
+                    PastStartDateTLevelRunCount = pastStartDateTLevelRunCount,
                 };
             }
         }

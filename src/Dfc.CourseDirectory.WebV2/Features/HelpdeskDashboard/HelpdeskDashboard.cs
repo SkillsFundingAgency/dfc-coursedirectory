@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Dfc.CourseDirectory.Core;
-using Dfc.CourseDirectory.Core.DataStore;
-using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 
 namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
@@ -23,7 +15,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.HelpdeskDashboard
 
     public class Handler : IRequestHandler<Query, ViewModel>
     {
-        
+
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
             return Task.FromResult(new ViewModel());

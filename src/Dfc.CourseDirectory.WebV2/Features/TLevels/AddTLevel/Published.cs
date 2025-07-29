@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.TLevels.AddTLevel.Published
                 TLevelId = _journeyInstance.State.TLevelId.Value,
                 TLevelName = _journeyInstance.State.TLevelName,
                 YourReference = _journeyInstance.State.YourReference
-            }) ;
+            });
         }
 
         private void ThrowIfFlowStateNotValid()
