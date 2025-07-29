@@ -14,12 +14,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             var sql = @"SELECT Id, Code, [Description] 
                         FROM Pttcd.Sectors 
                         WHERE Id IN (
-                        SELECT DISTINCT SectorId FROM Pttcd.Courses Where SectorId IS NOT NULL AND CourseStatus = 1
-                        )";
+                        SELECT DISTINCT SectorId FROM Pttcd.Courses Where SectorId IS NOT NULL AND CourseStatus = 1)
+                        ORDER BY [Description]";
 
             var sectors = (await transaction.Connection.QueryAsync<Sector>(sql, transaction: transaction)).AsList();
 
             return sectors;
-        }        
+        }
     }
 }
