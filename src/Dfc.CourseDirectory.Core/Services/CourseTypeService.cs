@@ -27,6 +27,10 @@ namespace Dfc.CourseDirectory.Core.Services
         private const string BENGHONS = "BEng (Hons)";
         private const string BSCORDHONS = "BSc (Ord/Hons)";
         private const string NONREGULATED = "Non regulated";
+        private const string NOREGCATEGORY_27 = "27";
+        private const string NOREGCATEGORY_23 = "23";
+        private const string NOREGCATEGORY_28 = "28";
+        private const string NOREGCATEGORY_75 = "75";
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public CourseTypeService(
@@ -38,6 +42,7 @@ namespace Dfc.CourseDirectory.Core.Services
         public async Task<Models.CourseType?> GetCourseType(string learnAimRef, Guid providerId)
         {
             var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = new List<string> { learnAimRef } });
+            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
 
             if (learningDeliveries.ContainsKey(learnAimRef))
             {
@@ -74,9 +79,15 @@ namespace Dfc.CourseDirectory.Core.Services
                 {
                     return Models.CourseType.Degree;
                 }
-                
+                if (learnAimRefTitle.StartsWith(NONREGULATED, StringComparison.InvariantCultureIgnoreCase) &&
+                   larsCourseTypes.Any(lc => lc.CategoryRef == NOREGCATEGORY_23 ||
+                                             lc.CategoryRef == NOREGCATEGORY_27 ||
+                                             lc.CategoryRef == NOREGCATEGORY_28 ||
+                                             lc.CategoryRef == NOREGCATEGORY_75))
+                {
+                    return Models.CourseType.NonRegulatedCoursetype;
+                }
             }
-            var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
 
             foreach (var larsCourseType in larsCourseTypes)
             {
