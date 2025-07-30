@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.Models
         RegulatedQualificationFramework,
         VocationalRegulatedQualifications,
         Degree,
-        NonRegulatedCoursetype,
+        NonRegulated,
         NationalVocationalQualifications
     }
 
@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.Core.Models
                 CourseType.RegulatedQualificationFramework => "Regulated Qualification Framework (RQF)",
                 CourseType.VocationalRegulatedQualifications => "Vocational Regulated Qualifications (VRQ)",
                 CourseType.Degree => "Degree",
-                CourseType.NonRegulatedCoursetype => "Non-Regulated Course type",
+                CourseType.NonRegulated => "Non-Regulated",
                 CourseType.NationalVocationalQualifications => "NationalVocationalQualifications",
                 _ => throw new NotImplementedException($"Unknown value: '{courseType}'.")
             };

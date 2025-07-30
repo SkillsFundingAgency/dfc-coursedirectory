@@ -85,7 +85,7 @@ namespace Dfc.CourseDirectory.Core.Services
                                              lc.CategoryRef == NOREGCATEGORY_28 ||
                                              lc.CategoryRef == NOREGCATEGORY_75))
                 {
-                    return Models.CourseType.NonRegulatedCoursetype;
+                    return Models.CourseType.NonRegulated;
                 }
             }
 
