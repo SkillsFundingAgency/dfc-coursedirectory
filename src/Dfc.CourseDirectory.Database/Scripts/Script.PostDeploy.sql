@@ -466,20 +466,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with real experience of the workplace.',
 		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You''ll work with your tutor to decide when you''re ready to be assessed on the core.' + CHAR(13) + CHAR(13) + 'Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
 		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Technical support scientist' + CHAR(13) + 'Metrology technician ' + CHAR(13) + 'Food technician' + CHAR(13) + CHAR(13) + 'Speak to your careers adviser to find out more.' + CHAR(13) + CHAR(13) + 'You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
-	(
-		N'4c96995d-1193-44c8-a618-85b37890e8ce',
-		44,
-		31,
-		3,
-		N'T Level Construction - Onsite construction',
-		N'This T Level is suitable for anyone wanting a career in construction, specifically in bricklaying, carpentry and joinery, plastering or painting and decorating.' + CHAR(13) + CHAR(13) + 'The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose your specialist occupation.',
-		N'There are no national entry requirements for starting a T Level. These are set by the individual college or school. Contact us to find out more.',
-		N'You will develop a general understanding of construction, including;' + CHAR(13) + CHAR(13) + 'Health and safety' + CHAR(13) + 'The science behind building design, surveying and planning' + CHAR(13) + 'Making accurate and appropriate measurements' + CHAR(13) + 'Construction methods' + CHAR(13) + 'Building regulations and standards' + CHAR(13) + 'Data management and information standards in construction' + CHAR(13) + 'Relationship management and customer service' + CHAR(13) + 'How the Internet of Things (IoT) impacts construction' + CHAR(13) + 'Digital engineering techniques' + CHAR(13) + 'Mathematical techniques to solve construction problems' + CHAR(13) + 'Construction design principles and processes' + CHAR(13) + 'The construction industry and its role in the economy' + CHAR(13) + 'Sustainability and the environmental impact of construction' + CHAR(13) + 'Business, commerce and corporate social responsibility' + CHAR(13) + CHAR(13) + 'In addition to the core content, each student will also complete at least one module of occupation-specific content:' + CHAR(13) + CHAR(13) + 'Bricklaying' + CHAR(13) + 'Carpentry and joinery' + CHAR(13) + 'Plastering' + CHAR(13) + 'Painting and decorating',
-		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with real experience of the workplace.',
-		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You''ll work with your tutor to decide when you''re ready to be assessed on the core.' + CHAR(13) + CHAR(13) + 'Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
-		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Advanced site carpenter' + CHAR(13) + 'Joiner' + CHAR(13) + 'Construction assembly and installation operative' + CHAR(13) + CHAR(13) + 'Speak to your careers adviser to find out more.' + CHAR(13) + CHAR(13) + 'You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
+	),	
 	(
 		N'1d1fcdec-6f23-4a0a-973a-aafc04608aee',
 		45,
@@ -596,19 +583,6 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
 		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
 		N'You will have the industry knowledge and experience to progress into roles like: Animal care worker, Assistance dog trainer, Zookeeper, Dog handler, Horse riding instructor, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
-	(
-		N'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6',
-		56,
-		31,
-		3,
-		N'T Level in Catering',
-		N'This T Level is suitable for anyone wanting a career in the catering sector. The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose a specialist occupation.',
-		N'There are no national entry requirements for starting a T Level. These are set by the individual college or school. Contact us to find out more',
-		N'You will develop an understanding of a broad range of issues relevant to catering, including culinary quality, kitchen operations, nutritional analysis and food safety practices and procedures. In addition to the core content, each student will also complete at least one module of occupation-specific content. Students are expected to develop understanding and advanced skills to work with different food groups. The specialism available in the Catering T Level is: Professional Catering',
-		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
-		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
-		N'You will have the industry knowledge and experience to progress into roles like: Chef, Chef de partie, Senior production chef, Kitchen Manager / Supervisor, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
 	),
 	(
 		N'b142ce79-bb94-43b6-8475-546438c50e77',
