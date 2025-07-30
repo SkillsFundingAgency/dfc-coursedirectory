@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             CourseType.RegulatedQualificationFramework => "Regulated Qualification Framework (RQF)",
             CourseType.VocationalRegulatedQualifications => "Vocational Regulated Qualifications (VRQ)",
             CourseType.Degree => "Degree",
-            CourseType.NonRegulatedCoursetype => "Non-Regulated Course type",
+            CourseType.NonRegulated => "Non-Regulated",
             CourseType.NationalVocationalQualifications => "NationalVocationalQualifications",
             null => null,
             _ => throw new NotSupportedException($"Unknown value: '{value}'."),

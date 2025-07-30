@@ -668,7 +668,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011123";
-            var expectedCourseType = CourseType.NonRegulatedCoursetype;
+            var expectedCourseType = CourseType.NonRegulated;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
@@ -686,7 +686,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011124";
-            var expectedCourseType = CourseType.NonRegulatedCoursetype;
+            var expectedCourseType = CourseType.NonRegulated;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
@@ -704,7 +704,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011125";
-            var expectedCourseType = CourseType.NonRegulatedCoursetype;
+            var expectedCourseType = CourseType.NonRegulated;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
@@ -722,7 +722,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Arrange
             var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
             var learnAimRef = "0011126";
-            var expectedCourseType = CourseType.NonRegulatedCoursetype;
+            var expectedCourseType = CourseType.NonRegulated;
             var providerId = new Guid();
             ArrangeObjects(learnAimRef);
 
