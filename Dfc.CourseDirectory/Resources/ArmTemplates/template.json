@@ -201,7 +201,7 @@
         "DFESignInSettings__APISecret": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=DfeSignInApiSecret)', parameters('keyVaultName'))]",
         "DFESignInSettings__APIUri": "[parameters('dfeApiUri')]",
         "FindACourseServiceSettings__ApiUrl": "[parameters('findCourseApiUrl')]",
-        "FindACourseServiceSettings__ApiKey": "[parameters('findCourseApiKey')]",
+        "FindACourseServiceSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=FindACourseApimPrimaryKey)', parameters('keyVaultName'))]",
         "FindACourseServiceSettings__UserName": "APIUser",
         "FindACourseServiceSettings__Password": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=FindaCourseServicePassword)', parameters('keyVaultName'))]",
         "BlobStorageSettings__AccountName": "[parameters('storageAccountName')]",
