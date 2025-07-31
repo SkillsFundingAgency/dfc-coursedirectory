@@ -62,9 +62,6 @@
     "keyVaultName": {
       "value": "__SharedKeyVaultName__"
     },
-    "keyVaultResourceGroup": {
-      "value": "__SharedResourceGroup__"
-    },
     "blobStorageSettingsContainerName": {
       "value": "provider-files"
     },
