@@ -361,6 +361,23 @@ WHEN NOT MATCHED THEN
 	VALUES (source.RegionId, source.Name, source.ParentRegionId, source.Position)
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
+-- 
+
+-- Delete T Level Data for T Level Construction - Onsite construction (DISCONTINUED)
+delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
+
+delete from Pttcd.TLevelLocations where TLevelId in (Select TLevelId from Pttcd.TLevels where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce')
+
+delete from Pttcd.TLevels where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
+
+-- Delete T Level Data for T Level in Catering (DISCONTINUED)
+delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6'
+
+delete from Pttcd.TLevelLocations where TLevelId in (Select TLevelId from Pttcd.TLevels where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6')
+
+delete from Pttcd.TLevels where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6'
+
+
 ;WITH TLevelDefinitionsCte AS (
 	SELECT * FROM (VALUES
 	(
