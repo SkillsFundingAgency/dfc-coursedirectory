@@ -361,8 +361,6 @@ WHEN NOT MATCHED THEN
 	VALUES (source.RegionId, source.Name, source.ParentRegionId, source.Position)
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
--- 
-
 -- Delete T Level Data for T Level Construction - Onsite construction (DISCONTINUED)
 delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
 
