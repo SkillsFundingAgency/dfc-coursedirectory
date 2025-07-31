@@ -175,7 +175,7 @@
         "LarsSearchSettings__PageParamName": "PageNo",
         "PostCodeSearchSettings__FindAddressesBaseUrl": "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws?",
         "PostCodeSearchSettings__RetrieveAddressBaseUrl": "[parameters('postcodeApiUrl')]",
-        "PostCodeSearchSettings__Key": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=PostcodeAnywhereApiKey)', parameters('keyVaultName'))]",
+        "PostCodeSearchSettings__Key": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=PostCodeSearchApiKey)', parameters('keyVaultName'))]",
         "GetAddressSettings__ApiUrl": "[parameters('getAddressApiUrl')]",
         "GetAddressSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GetAddressApiKey)', parameters('keyVaultName'))]",
         "CourseServiceSettings__ApiUrl": "[parameters('courseApiUrl')]",
