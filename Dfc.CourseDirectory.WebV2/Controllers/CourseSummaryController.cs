@@ -24,7 +24,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IConfiguration _configuration;
 
-
         public CourseSummaryController(
             ICourseService courseService,
             ISqlQueryDispatcher sqlQueryDispatcher,
@@ -43,7 +42,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         {
             Course course = null;
             CourseRun courseRun = null;
-            
+
             var nonLarsCourse = IsCourseNonLars();
             course = await GetCourse(courseId, nonLarsCourse);
             courseRun = course.CourseRuns.Where(x => x.CourseRunId == courseRunId.Value).FirstOrDefault();
@@ -110,7 +109,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 }
             }
 
-            if(!string.IsNullOrEmpty(courseRun.CourseWebsite))
+            if (!string.IsNullOrEmpty(courseRun.CourseWebsite))
             {
                 if (courseRun.CourseWebsite.Contains("http") || courseRun.CourseWebsite.Contains("https"))
                 {
@@ -122,7 +121,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 }
             }
 
-            if(courseRun.SubRegionIds?.Count > 0)
+            if (courseRun.SubRegionIds?.Count > 0)
             {
                 var allRegions = _courseService.GetRegions().RegionItems;
                 var regions = GetRegions().RegionItems.Select(x => x.Id);

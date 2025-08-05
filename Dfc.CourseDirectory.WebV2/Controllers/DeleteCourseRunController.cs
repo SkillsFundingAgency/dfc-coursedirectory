@@ -40,7 +40,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl)
         {
             _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
-
             return await _mediator.SendAndMapResponse(
                 request,
                 vm => View("~/Views/DeleteCourseRun/View.cshtml", vm));
@@ -65,6 +64,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             [FromServices] IProviderInfoCache providerInfoCache,
             ConfirmedQuery request)
         {
+            request.IsNonLars = IsCourseNonLars();
+
             var vm = await _mediator.Send(request);
 
             var providerInfo = await providerInfoCache.GetProviderInfo(vm.ProviderId);

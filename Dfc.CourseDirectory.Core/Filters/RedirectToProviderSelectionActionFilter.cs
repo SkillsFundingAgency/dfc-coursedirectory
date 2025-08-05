@@ -41,10 +41,7 @@ namespace Dfc.CourseDirectory.Core.Filters
 
                 if (providerContext == null)
                 {
-                    context.Result = new RedirectToActionResult(
-                        "ProviderSearch",
-                        "ProviderSearch",
-                        new { returnUrl = context.HttpContext.Request.GetEncodedUrl() });
+                    context.Result = new RedirectResult("/provider-search");
                 }
             }
         }

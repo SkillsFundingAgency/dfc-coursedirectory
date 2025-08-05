@@ -35,6 +35,5 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 new ViewModels.Courses.ExpiredCourseRuns.Query() { IsNonLars = isNonLars },
                 vm => View("~/Views/Courses/ExpiredCourseRuns.cshtml", vm));
         }
-
     }
 }

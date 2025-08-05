@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderDashboard
         public bool CourseUploadInProgress { get; set; }
         public bool NonLarsCourseUploadInProgress { get; set; }
         public int PastStartDateNonLarsCourseRunCount { get; set; }
+        public int PastStartDateTLevelRunCount { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, ViewModel>
@@ -49,8 +50,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderDashboard
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
         {
-            var provider = await _sqlQueryDispatcher.ExecuteQuery(
-                new GetProviderById() { ProviderId = request.ProviderId });
+            var provider = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderById() { ProviderId = request.ProviderId });
 
             if (provider == null)
             {
@@ -76,6 +76,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderDashboard
                     ProviderId = provider.ProviderId,
                     IsNonLars = false
                 });
+
             var nonlarsUploadStatus = await _sqlQueryDispatcher.ExecuteQuery(
                 new GetLatestUnpublishedCourseUploadForProvider()
                 {
@@ -94,6 +95,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderDashboard
                 NonLarsCourseCount = dashboardCounts.NonLarsCourseCount,
                 PastStartDateCourseRunCount = dashboardCounts.PastStartDateCourseRunCount,
                 PastStartDateNonLarsCourseRunCount = dashboardCounts.PastStartDateNonLarsCourseRunCount,
+                PastStartDateTLevelRunCount = dashboardCounts.PastStartDateTLevelRunCount,
                 TLevelCount = dashboardCounts.TLevelCount,
                 VenueCount = dashboardCounts.VenueCount,
                 IsNewProvider = provider.ProviderType == ProviderType.None,

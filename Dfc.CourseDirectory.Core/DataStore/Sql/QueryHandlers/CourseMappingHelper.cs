@@ -23,8 +23,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 .GroupBy(r => r.CourseRunId)
                 .ToDictionary(g => g.Key, g => g.Select(r => r.RegionId).AsEnumerable());
 
-           
-
             return courses.Select(MapCourse).ToArray();
 
             Course MapCourse(CourseResult row)

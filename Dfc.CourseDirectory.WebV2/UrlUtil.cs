@@ -11,14 +11,16 @@ namespace Dfc.CourseDirectory.WebV2
                 throw new ArgumentException("Value cannot be empty.", nameof(website));
             }
 
-            if (website.StartsWith("http://") || website.StartsWith("https://"))
-            {
+            if (website.StartsWith("https://"))
                 return website;
-            }
-            else
+
+            if (website.StartsWith("http://"))
             {
-                return "http://" + website;
+                string websiteWithoutProtocol = website.Substring(4, website.Length - 4);
+                return $"https{websiteWithoutProtocol}";
             }
+
+            return "https://" + website;
         }
     }
 }

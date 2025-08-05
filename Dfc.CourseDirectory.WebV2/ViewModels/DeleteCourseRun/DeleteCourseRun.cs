@@ -58,6 +58,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DeleteCourseRun
 
     public class ConfirmedQuery : IRequest<ConfirmedViewModel>
     {
+        public bool IsNonLars { get; set; }
     }
 
     public class ConfirmedViewModel
@@ -144,20 +145,32 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DeleteCourseRun
         public async Task<ConfirmedViewModel> Handle(ConfirmedQuery request, CancellationToken cancellationToken)
         {
             var providerId = _journeyInstance.State.ProviderId;
-
-            var liveCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
+            bool hasCourses;
+            if (request.IsNonLars)
             {
-                ProviderId = providerId
-            });
+                var nonlarsCourse = await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider()
+                {
+                    ProviderId = providerId
+                });
+                hasCourses = nonlarsCourse.Count != 0;
+            }
+            else
+            {
+                var liveCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider()
+                {
+                    ProviderId = providerId
+                });
+                hasCourses = liveCourses.Count != 0;
+            }
 
             return new ConfirmedViewModel()
             {
                 ProviderId = _journeyInstance.State.ProviderId,
                 CourseName = _journeyInstance.State.CourseName,
-                HasOtherCourseRuns = liveCourses.Any()
+                HasOtherCourseRuns = hasCourses,
+                NonLarsCourse = request.IsNonLars
             };
         }
-
         private async Task<ViewModel> CreateViewModel(Course course, CourseRun courseRun)
         {
             Venue venue = default;

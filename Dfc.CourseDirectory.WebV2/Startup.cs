@@ -17,6 +17,7 @@ using Dfc.CourseDirectory.Core.ViewHelpers;
 using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.WebV2.Configuration;
 using Dfc.CourseDirectory.WebV2.Helpers;
+using Dfc.CourseDirectory.WebV2.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -148,6 +149,9 @@ namespace Dfc.CourseDirectory.WebV2
             services.Configure<FormOptions>(x => x.ValueCountLimit = 10000);
 
             services.AddResponseCaching();
+
+            services.AddHttpContextAccessor();
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(40);
@@ -305,6 +309,8 @@ namespace Dfc.CourseDirectory.WebV2
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<NcsSessionCookieMiddleware>();
 
             app.UseMiddleware<ProviderContextMiddleware>();
 
