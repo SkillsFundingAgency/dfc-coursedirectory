@@ -166,7 +166,7 @@
       "apiVersion": "2023-12-01",
       "name": "[format('{0}/{1}/{2}', variables('appServiceName'), 'staging', 'appsettings')]",
       "properties": {
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components', variables('appInsightsName')), '2015-05-01').ConnectionString]",
         "LarsSearchSettings__ApiUrl": "[parameters('larsApiUrl')]",
         "LarsSearchSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchQueryPrimaryKey)', parameters('keyVaultName'))]",
         "LarsSearchSettings__ApiVersion": "2017-11-11",
