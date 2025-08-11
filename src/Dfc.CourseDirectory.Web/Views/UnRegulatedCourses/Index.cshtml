@@ -34,6 +34,7 @@
 
                 <div class="zcodesearch--container">
                     <input class=" zcodesearch--container-input govuk-input govuk-!-padding-bottom-4 govuk-input--width-10" asp-for="@Model.Search" type="text" aria-label="unregulated-search"
+                           val-required-message="Enter a z code to search"
                            val-regex="@regex"
                            val-regex-message="Enter a valid LARS code" />
 
@@ -87,7 +88,8 @@
 
                 if (!$.requiredValidate($code.val()) // Text box is empty.
                     || !$.regexValidate({ regex: $code.attr("val-regex") }, $code.val())) { // Format is incorrect.
-                    showError();
+                    const errorMessage = $code.attr("val-regex-message");
+                    showError(errorMessage);
                     return false;
                 } else {
                     $code.govUkInput("validState");
@@ -96,10 +98,10 @@
                 }
             }
 
-            function showError() {
+            function showError(errorMessage) {
                 var $anchor = document.createElement("a");
                 $anchor.href = "#Search";
-                $anchor.innerHTML = $code.attr("val-regex-message");
+                $anchor.innerHTML = errorMessage;
                 $anchor.id = "error-hash-link-" + "a" + "-" + 1;
                 $errorSummary.govUkErrorSummary("add", $anchor);
                 $errorSummary.govUkErrorSummary("show");
