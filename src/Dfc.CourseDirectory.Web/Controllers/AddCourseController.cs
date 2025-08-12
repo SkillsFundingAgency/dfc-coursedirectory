@@ -94,7 +94,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             return View(vm);
         }
-        
+
         [Authorize]
         [HttpPost]
         public IActionResult AddCourse(AddCourseSection1RequestModel model)
@@ -119,7 +119,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             }
 
             int UKPRN = Session.GetInt32("UKPRN").Value;
-            bool nonLarsCourse = IsCourseNonLars();            
+            bool nonLarsCourse = IsCourseNonLars();
 
             var viewModel = new AddCourseDetailsViewModel
             {
@@ -133,7 +133,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 },
                 NonLarsCourse = nonLarsCourse,
                 Sectors = await GetSectors()
-            };            
+            };
 
             if (!nonLarsCourse)
             {
@@ -146,7 +146,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             Session.SetObject(SessionVenues, viewModel.SelectVenue);
             Session.SetObject(SessionRegions, viewModel.ChooseRegion.Regions);
-            
+
             if (addCourseSection2Session != null)
             {
                 viewModel.CourseName = addCourseSection2Session.CourseName;
@@ -233,7 +233,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize]        
+        [Authorize]
         public IActionResult AddNewVenue(AddCourseRequestModel model)
         {
             // var model = new AddCourseRequestModel();
@@ -362,7 +362,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
 
             // sort regions out
             model.SelectedRegions = availableRegions.SubRegionsDataCleanse(model.SelectedRegions?.ToList() ?? new List<string>());
-            
+
             var summaryViewModel = new AddCourseSummaryViewModel
             {
                 LearnAimRef = addCourse.LearnAimRef,
@@ -452,7 +452,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             Session.Remove("AddNewVenue");
             Session.Remove("Option");
             return View("Summary", summaryViewModel);
-        }        
+        }
 
         // Summary - can go to AddCourse, AddCourseRun or Edit screen
         [Authorize]
@@ -584,7 +584,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             string learnAimRef = null;
             var notionalNvqLevelv2 = string.Empty;
             var awardOrgCode = string.Empty;
-            var learnAimRefTitle = string.Empty;            
+            var learnAimRefTitle = string.Empty;
 
             var nonLarsCourse = IsCourseNonLars();
             if (!nonLarsCourse)
@@ -592,7 +592,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 learnAimRef = Session.GetString(SessionLearnAimRef);
                 notionalNvqLevelv2 = Session.GetString(SessionNotionalNvqLevelV2);
                 awardOrgCode = Session.GetString(SessionAwardOrgCode);
-                learnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);                
+                learnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);
 
                 // TODO - Add error message, if use this check
                 if (string.IsNullOrEmpty(learnAimRef) ||
@@ -707,7 +707,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                     CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
                     DurationValue = addCourseSection2.DurationLength
-                };                
+                };
 
                 if (addCourseSection2.National == false)
                 {
@@ -749,7 +749,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
             var courseId = Guid.NewGuid();
             var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
-            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef, providerId);            
+            var courseType = nonLarsCourse ? addCourseSection2.CourseType : await _courseTypeService.GetCourseType(learnAimRef, providerId);
 
             await _sqlQueryDispatcher.ExecuteQuery(new CreateCourse()
             {
@@ -780,7 +780,7 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 NonLarsCourse = IsCourseNonLars()
             });
 
-            RemoveSessionVariables();            
+            RemoveSessionVariables();
 
             return RedirectToAction("Published");
         }
@@ -904,55 +904,50 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseFor = new CourseForModel
                 {
                     LabelText = "Who this course is for",
-                    HintText =
-                        "Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.",
+                    HintText = "An overview of who this course would be suitable for and what they'll get out of the course.",
                     AriaDescribedBy = "Please enter who this course is for.",
                     CourseFor = course?.CourseDescription ?? defaultCourseText?.CourseDescription
                 },
 
                 EntryRequirements = new EntryRequirementsModel
                 {
-                    LabelText = "Entry requirements",
-                    HintText =
-                        "Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.",
+                    LabelText = "Entry requirements (optional)",
+                    HintText = "Anything needed before being accepted to this course including skills, licences, qualifications.",
                     AriaDescribedBy = "Please list entry requirements.",
                     EntryRequirements = course?.EntryRequirements ?? defaultCourseText?.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
-                    LabelText = "What you’ll learn",
-                    HintText = "The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.",
+                    LabelText = "What you’ll learn (optional)",
+                    HintText = "The main topics, units or modules covered during this course.",
                     AriaDescribedBy = "Please enter what will be learned",
                     WhatWillLearn = course?.WhatYoullLearn ?? defaultCourseText?.WhatYoullLearn
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
-                    LabelText = "How you’ll learn",
-                    HintText = "The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.",
+                    LabelText = "How you’ll learn (optional)",
+                    HintText = "Course delivery details such as classroom based, online or on site.",
                     AriaDescribedBy = "Please enter how you’ll learn",
                     HowYouWillLearn = course?.HowYoullLearn ?? defaultCourseText?.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
-                    LabelText = "What you’ll need to bring",
-                    HintText =
-                        "What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.",
+                    LabelText = "What you’ll need to bring (optional)",
+                    HintText = "Anything the applicant may need to access or bring to the course including uniform and devices.",
                     AriaDescribedBy = "Please enter what you need",
                     WhatYouNeed = course?.WhatYoullNeed ?? defaultCourseText?.WhatYoullNeed
                 },
                 HowAssessed = new HowAssessedModel()
                 {
-                    LabelText = "How you'll be assessed",
-                    HintText =
-                        "The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.",
+                    LabelText = "How you'll be assessed (optional)",
+                    HintText = "Any ways the course is assessed, such as workplace assessment or written assignments.",
                     AriaDescribedBy = "Please enter 'How you’ll be assessed'",
                     HowAssessed = course?.HowYoullBeAssessed ?? defaultCourseText?.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "What you can do next",
-                    HintText =
-                        "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course or entry to employment.",
+                    LabelText = "What you can do next (optional)",
+                    HintText = "Expected next steps following completion of this course such as qualifications or jobs.",
                     AriaDescribedBy = "Please enter 'What you can do next'",
                     WhereNext = course?.WhereNext ?? defaultCourseText?.WhereNext
                 },
@@ -1006,51 +1001,50 @@ namespace Dfc.CourseDirectory.Web.Controllers
                 CourseFor = new CourseForModel
                 {
                     LabelText = "Who this course is for",
-                    HintText = "Please provide useful information that helps a learner to make a decision about the suitability of this course. For example learners new to the subject / sector or those with some experience? Any age restrictions?",
+                    HintText = "An overview of who this course would be suitable for and what they'll get out of the course.",
                     AriaDescribedBy = "Please enter who this course is for."
                 },
                 EntryRequirements = new EntryRequirementsModel()
                 {
-                    LabelText = "Entry requirements",
-                    HintText = "Please provide details of specific academic or vocational entry qualification requirements. Also do learners need specific skills, attributes or evidence? e.g. DBS clearance, driving licence",
+                    LabelText = "Entry requirements (optional)",
+                    HintText = "Anything needed before being accepted to this course including skills, licences, qualifications.",
                     AriaDescribedBy = "Please list entry requirements."
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
-                    LabelText = "What you’ll learn",
-                    HintText = "Give learners a taste of this course. What are the main topics covered?",
+                    LabelText = "What you’ll learn (optional)",
+                    HintText = "The main topics, units or modules covered during this course.",
                     AriaDescribedBy = "Please enter what will be learned"
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
-                    LabelText = "How you’ll learn",
-                    HintText =
-                        "Will it be classroom based exercises, practical on the job, practical but in a simulated work environment, online or a mixture of methods?",
+                    LabelText = "How you’ll learn (optional)",
+
+                    HintText = "Course delivery details such as classroom based, online or on site.",
                     AriaDescribedBy = "Please enter how you’ll learn"
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
-                    LabelText = "What you’ll need to bring",
-                    HintText = "Please detail anything your learners will need to provide or pay for themselves such as uniform, personal protective clothing, tools or kit",
+                    LabelText = "What you’ll need to bring (optional)",
+                    HintText = "Anything the applicant may need to access or bring to the course including uniform and devices.",
                     AriaDescribedBy = "Please enter what you need"
                 },
                 HowAssessed = new HowAssessedModel()
                 {
-                    LabelText = "How you’ll be assessed",
-                    HintText = "Please provide details of all the ways your learners will be assessed for this course. E.g. assessment in the workplace, written assignments, group or individual project work, exam, portfolio of evidence, multiple choice tests.",
+                    LabelText = "How you’ll be assessed (optional)",
+                    HintText = "Any ways the course is assessed, such as workplace assessment or written assignments.",
                     AriaDescribedBy = "Please enter 'How you’ll be assessed'"
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "What you can do next",
-                    HintText = "What are the opportunities beyond this course? Progression to a higher level course or direct entry to employment?",
+                    LabelText = "What you can do next (optional)",
+                    HintText = "Expected next steps following completion of this course such as qualifications or jobs.",
                     AriaDescribedBy = "Please enter 'What you can do next'"
                 },
                 FundingOptions = new FundingOptionsModel
                 {
                     FundingOptionsLabelText = "Funding options"
                 }
-
             };
 
             if (addCourseSection1 != null)
