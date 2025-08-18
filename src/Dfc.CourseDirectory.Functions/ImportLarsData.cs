@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("ImportLarsData")]
-        public async Task<IActionResult> Run([TimerTrigger("%ImportLarsDataTriggerTimer%", RunOnStartup = true)] TimerInfo timer)
+        public async Task<IActionResult> Run([TimerTrigger("0 3 * * *", RunOnStartup = true)] TimerInfo timer)
         {
             await _dataImporter.ImportData();
             return new OkObjectResult("LARS data import triggered");
