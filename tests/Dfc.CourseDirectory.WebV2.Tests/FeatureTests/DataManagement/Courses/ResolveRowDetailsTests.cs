@@ -1116,15 +1116,15 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
             //    nationalDelivery: "false",
             //    subRegionIds: null);
 
-            //yield return CreateRecord(
-            //    expectedErrorInputId: "CourseWebPage",
-            //    expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_FORMAT",
-            //    courseWebPage: "notarealwebsite");
-            
-            //yield return CreateRecord(
-            //    expectedErrorInputId: "CourseWebPage",
-            //    expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH",
-            //    courseWebPage: "www." + new string('x', 256) + ".com");
+            yield return CreateRecord(
+                expectedErrorInputId: "CourseWebPage",
+                expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_FORMAT",
+                courseWebPage: "notarealwebsite");
+
+            yield return CreateRecord(
+                expectedErrorInputId: "CourseWebPage",
+                expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH",
+                courseWebPage: "www." + new string('x', 256) + ".com");
 
             yield return CreateRecord(
                 expectedErrorInputId: "Cost",
