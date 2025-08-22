@@ -61,7 +61,7 @@
 
             <div id="errorsummary" class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary" style="display: none;">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
-                    There is an issue with this qualification
+                    There is a problem
                 </h2>
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list"></ul>
@@ -179,7 +179,7 @@
                 FlexibleDateHintText = "Or select a flexible start date:",
                 LabelText = "Start date",
                 ValPastDateRef = DateTime.Now,
-                ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+               ValPastDateMessage = "Check start date. Date must not be in the past"
                 })
             </div>
             <div class="govuk-form-group" id="VenueItemsCheckboxList" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">

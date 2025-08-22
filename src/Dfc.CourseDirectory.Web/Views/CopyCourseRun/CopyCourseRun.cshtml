@@ -86,7 +86,7 @@ else
                 @await Component.InvokeAsync(nameof(Notification), new NotificationModel
                 {
 
-                NotificationTitle = "There is an issue with this qualification",
+               NotificationTitle = "There is a problem",
                 NotificationMessage = "",
                 ClassType = "error-summary"
                 })
@@ -150,7 +150,7 @@ else
                 FlexibleDateHintText = "Or select a flexible start date:",
                 LabelText = "Start date",
                 ValPastDateRef = DateTime.Now,
-                ValPastDateMessage = "Start Date cannot be earlier than today’s date"
+                ValPastDateMessage = "Check start date. Date must not be in the past"
                 })
             </div>
 
