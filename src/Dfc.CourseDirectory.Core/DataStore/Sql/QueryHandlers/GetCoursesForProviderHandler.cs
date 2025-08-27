@@ -17,7 +17,16 @@ SELECT
     c.CourseId, c.CreatedOn, c.UpdatedOn, c.ProviderId, c.ProviderUkprn, c.LearnAimRef,
     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
     c.WhereNext, c.DataIsHtmlEncoded,
-    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle
+    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle,
+    Case when ld.LearnAimRef in  
+    (
+    select LearnAimRef from LARS.Validity where LastNewStartDate =''
+    UNION ALL
+    select LearnAimRef from LARS.Validity where LearnAimRef not in (
+    select LearnAimRef from LARS.Validity where LastNewStartDate ='') group by LearnAimRef HAVING max(convert(varchar, LastNewStartDate ,105))>GETDATE()
+    ) Then 'false'
+    Else 'true'
+    End as IsExpired
 FROM Pttcd.Courses c
 JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
 JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
