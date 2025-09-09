@@ -28,5 +28,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public int? SectorId { get; set; }
         public EducationLevel? EducationLevel { get; set; }
         public string AwardingBody { get; set; }
+        public bool IsExpired { get; set; } = false;
     }
 }

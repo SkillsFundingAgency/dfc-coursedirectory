@@ -487,18 +487,19 @@
         </dl>
 
         <div class="govuk-!-margin-bottom-6">
-            <a asp-controller="CopyCourseRun"
-               asp-action="Index"
-               asp-route-learnAimRef="@Model.LearnAimRef"
-               asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
-               asp-route-awardOrgCode="@Model.AwardOrgCode"
-               asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
-               asp-route-learnAimRefTypeDesc="@Model.QualificationType"
-               asp-route-courseId="@Model.CourseId"
-               asp-route-courseRunId="@Model.CourseInstanceId"
-               asp-route-publishMode="@PublishMode.Summary"
-               class="govuk-button govuk-button--secondary govuk-!-margin-right-1" data-module="govuk-button">Copy course details<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
-
+            @if(!@Model.IsExpired) {
+                <a asp-controller="CopyCourseRun"
+                   asp-action="Index"
+                   asp-route-learnAimRef="@Model.LearnAimRef"
+                   asp-route-notionalNVQLevelv2="@Model.NotionalNVQLevelv2"
+                   asp-route-awardOrgCode="@Model.AwardOrgCode"
+                   asp-route-learnAimRefTitle="@Model.QualificationCourseTitle"
+                   asp-route-learnAimRefTypeDesc="@Model.QualificationType"
+                   asp-route-courseId="@Model.CourseId"
+                   asp-route-courseRunId="@Model.CourseInstanceId"
+                   asp-route-publishMode="@PublishMode.Summary"
+                   class="govuk-button govuk-button--secondary govuk-!-margin-right-1" data-module="govuk-button">Copy course details<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
+            }
             <a asp-controller="DeleteCourseRun"
                asp-action="Get"
                asp-route-courseId="@Model.CourseId"
