@@ -53,7 +53,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     CourseType = row.CourseType,
                     SectorId = row.SectorId,
                     EducationLevel = row.EducationLevel,
-                    AwardingBody = DecodeIfNecessary(row.AwardingBody)
+                    AwardingBody = DecodeIfNecessary(row.AwardingBody),
+                    IsExpired = row.IsExpired
                 };
 
                 string DecodeIfNecessary(string field) => row.DataIsHtmlEncoded != false ? HtmlDecode(field) : field;
@@ -135,6 +136,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
             public string SectorDescription { get; set; }
             public EducationLevel? EducationLevel { get; set; }
             public string AwardingBody { get; set; }
+            public bool IsExpired { get; set; } = false;
         }
 
         private class CourseRunResult
