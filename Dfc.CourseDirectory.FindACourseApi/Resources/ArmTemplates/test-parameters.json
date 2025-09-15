@@ -8,35 +8,20 @@
     "webAppSuffix": {
       "value": "vernum"
     },
-    "appServicePlanName": {
-      "value": "dfc-dev-prov-asp"
-    },
     "appServicePlanResourceGroup": {
       "value": "dfc-dev-prov-rg"
     },
     "environmentName": {
       "value": "Development"
     },
-    "sqlCourseDirectoryConnectionString": {
-      "value": "Server=tcp:dfc-foo-shared-sql-01.database.windows.net,1433;Initial Catalog=database;Persist Security Info=False;User ID=username;Password=password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-    },
     "searchName": {
       "value": "dev-dev-prov-sch"
-    },
-    "searchAdminKey": {
-      "value": "not-a-real-key"
-    },
-    "searchQueryKey": {
-      "value": "not-a-real-key"
     },
     "providerPortalApplicationInsights": {
       "value": "dfc-dev-prov-as-ai"
     },
-    "workspaceName": {
-        "value": "aTestLogAnalyticsAccount"
-    },
-    "workspaceResourceGroup": {
-        "value": "aResourceGroup"
+    "keyVaultName": {
+      "value": "dfc-dev-shared-kv"
     }
   }
 }

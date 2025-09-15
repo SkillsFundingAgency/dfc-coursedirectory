@@ -576,6 +576,7 @@
         </dl>
 
         <div>
+            @if(!@Model.IsExpired) {
             <a asp-controller="CopyCourseRun"
                asp-action="Index"
                asp-route-learnAimRef="@Model.LearnAimRef"
@@ -587,7 +588,7 @@
                asp-route-courseRunId="@Model.CourseInstanceId"
                asp-route-publishMode="@PublishMode.Summary"
                class="govuk-button govuk-button--secondary govuk-!-margin-right-1" data-module="govuk-button">Copy course<span class="govuk-visually-hidden"> @Model.QualificationCourseTitle</span></a>
-
+             }
             <a asp-controller="DeleteCourseRun"
                asp-action="Get"
                asp-route-courseId="@Model.CourseId"

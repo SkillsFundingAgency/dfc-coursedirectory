@@ -8,35 +8,20 @@
     "webAppSuffix": {
       "value": "__webAppSuffix__"
     },
-    "appServicePlanName": {
-      "value": "__providerPortalAppServicePlan__"
-    },
     "appServicePlanResourceGroup": {
       "value": "__providerPortalResourceGroup__"
     },
     "environmentName": {
       "value": "__environmentName__"
     },
-    "sqlCourseDirectoryConnectionString": {
-      "value": "__sqlCourseDirectoryConnectionString__"
-    },
     "searchName": {
       "value": "__searchName__"
-    },
-    "searchAdminKey": {
-      "value": "__searchAdminKey__"
-    },
-    "searchQueryKey": {
-      "value": "__searchQueryKey__"
     },
     "providerPortalApplicationInsights": {
       "value": "__providerportalApplicationInsights__"
     },
-    "workspaceName": {
-        "value": "__sharedLogAnalyticsWorkspace__"
-    },
-    "workspaceResourceGroup": {
-        "value": "__sharedLogAnalyticsResourceGroup__"
+    "keyVaultName": {
+      "value": "__sharedKeyVaultName__"
     }
   }
 }

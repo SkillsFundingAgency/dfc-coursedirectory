@@ -22,7 +22,7 @@ namespace Dfc.CourseDirectory.Web.ViewModels.CourseSummary
         public string WhereNext { get; set; }
         public bool IsValid { get; set; }
         public string QualificationType { get; set; }
-
+        public bool IsExpired { get; set; } = false;
         //CourseRun Details
         public Guid? CourseInstanceId { get; set; }
         public string CourseName { get; set; }

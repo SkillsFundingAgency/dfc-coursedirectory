@@ -682,7 +682,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start date cannot be earlier than today&apos;s date.
+        ///   Looks up a localized string similar to Check start date. Date must not be in the past.
         /// </summary>
         public static string ERROR_COURSERUN_START_DATE_INVALID {
             get {

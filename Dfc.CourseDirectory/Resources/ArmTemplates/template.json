@@ -26,32 +26,14 @@
         "description": "API URL for the postcode search"
       }
     },
-    "postcodeApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the postcode search"
-      }
-    },
     "getAddressApiUrl": {
       "type": "string",
       "metadata": {
         "description": "API URL for the GetAddress postcode search"
       }
     },
-    "getAddressApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the GetAddress postcode search"
-      }
-    },
     "larsApiUrl": {
       "type": "string",
-      "metadata": {
-        "description": "API URL for the provider search"
-      }
-    },
-    "larsApiKey": {
-      "type": "securestring",
       "metadata": {
         "description": "API URL for the provider search"
       }
@@ -62,22 +44,10 @@
         "description": "API URL for the course services"
       }
     },
-    "courseApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the course service function app (REST API)"
-      }
-    },
     "apprenticeshipApiUrl": {
       "type": "string",
       "metadata": {
         "description": "API URL for the apprentischip services"
-      }
-    },
-    "apprenticeshipApiKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "API host key (code) needed to access the apprenticeship service function app (REST API)"
       }
     },
     "searchDomain": {
@@ -86,34 +56,16 @@
         "description": "URL for the search services"
       }
     },
-    "searchAdminKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin key for updating seach (REST API)"
-      }
-    },
     "larsDatasetUrl": {
       "type": "string",
       "metadata": {
         "description": "Url to download current LARs dataset"
       }
     },
-    "searchQueryKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Query key for reading seach (REST API)"
-      }
-    },
     "dfeClientID": {
       "type": "string",
       "metadata": {
         "description": "DfE Signin client ID"
-      }
-    },
-    "dfeClientSecret": {
-      "type": "securestring",
-      "metadata": {
-        "description": "DfE Signin client secret (key)"
       }
     },
     "dfeEndpointUrl": {
@@ -140,12 +92,6 @@
         "description": "Path in URL that DfE Signin calls back after sign out"
       }
     },
-    "dfeApiSecret": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Shared secret for DfE Signin"
-      }
-    },
     "dfeApiUri": {
       "type": "string",
       "metadata": {
@@ -156,12 +102,6 @@
       "type": "string",
       "metadata": {
         "description": "DfE Signin issuer"
-      }
-    },
-    "sqlCourseDirectoryConnectionString": {
-      "type": "string",
-      "metadata": {
-        "description": "ADO.NET connection string for the course directory database"
       }
     },
     "findCourseApiUrl": {
@@ -176,44 +116,11 @@
         "description": "API host key for above"
       }
     },
-    "findCourseApiPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password for accessing the findacourse backend api"
-      }
-    },
-    "appServicePlanName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the provider portal shared ASP in this environment"
-      }
-    },
-    "appHostName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Custom host name for the website"
-      }
-    },
     "keyVaultName": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Key vault with the certificate in - only used if appHostName is specified"
-      }
-    },
-    "keyVaultResourceGroup": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().name]",
-      "metadata": {
-        "description": "Resource group for the key vault - only used if appHostName is specified"
-      }
-    },
-    "certificateName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Name of the secret (certificate) as it appears in key vault - only used if appHostName is specified"
+        "description": "Key vault containing secrets"
       }
     },
     "blobStorageSettingsContainerName": {
@@ -240,35 +147,11 @@
         "description": "The CourseServiceSettings__BulkUploadSecondsPerRecord app setting"
       }
     },
-    "ProviderPortalSharedResourceGroupName": {
-      "type": "string"
-    },
-    "providerPortalApplicationInsights": {
-      "type": "string",
-      "metadata": {
-        "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
-      }
-    },
-    "RedisCacheName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the project-wide shared redis cache instance"
-      }
-    },
     "FindACourseUrl": {
       "type": "string",
       "metadata": {
         "description": "The URL for FindACourse for specific environment"
       }
-    },
-    "workspaceName": {
-      "type": "string"
-    },
-    "workspaceResourceGroup": {
-      "type": "string"
-    },
-    "googleWebRiskApiKey": {
-      "type": "securestring"
     }
   },
   "variables": {
@@ -285,20 +168,20 @@
       "properties": {
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
         "LarsSearchSettings__ApiUrl": "[parameters('larsApiUrl')]",
-        "LarsSearchSettings__ApiKey": "[parameters('larsApiKey')]",
+        "LarsSearchSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchQueryPrimaryKey)', parameters('keyVaultName'))]",
         "LarsSearchSettings__ApiVersion": "2017-11-11",
         "LarsSearchSettings__Indexes": "azuresql-index",
         "LarsSearchSettings__ItemsPerPage": 25,
         "LarsSearchSettings__PageParamName": "PageNo",
         "PostCodeSearchSettings__FindAddressesBaseUrl": "https://services.postcodeanywhere.co.uk/PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws?",
         "PostCodeSearchSettings__RetrieveAddressBaseUrl": "[parameters('postcodeApiUrl')]",
-        "PostCodeSearchSettings__Key": "[parameters('postcodeApiKey')]",
+        "PostCodeSearchSettings__Key": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=PostCodeSearchApiKey)', parameters('keyVaultName'))]",
         "GetAddressSettings__ApiUrl": "[parameters('getAddressApiUrl')]",
-        "GetAddressSettings__ApiKey": "[parameters('getAddressApiKey')]",
+        "GetAddressSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GetAddressApiKey)', parameters('keyVaultName'))]",
         "CourseServiceSettings__ApiUrl": "[parameters('courseApiUrl')]",
-        "CourseServiceSettings__ApiKey": "[parameters('courseApiKey')]",
+        "CourseServiceSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryPttcdApiPrimaryKey)', parameters('keyVaultName'))]",
         "ApprenticeshipServiceSettings__ApiUrl": "[parameters('apprenticeshipApiUrl')]",
-        "ApprenticeshipServiceSettings__ApiKey": "[parameters('apprenticeshipApiKey')]",
+        "ApprenticeshipServiceSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryPttcdApiPrimaryKey)', parameters('keyVaultName'))]",
         "AppUISettings__VenueNameComponentSettings__VenueName_Label": "Venue name",
         "AppUISettings__CourseForComponentSettings__TextFieldMaxChars": "2000",
         "AppUISettings__EntryRequirementsComponentSettings__TextFieldMaxChars": "500",
@@ -308,19 +191,19 @@
         "AppUISettings__HowAssessedComponentSettings__TextFieldMaxChars": "500",
         "AppUISettings__WhereNextComponentSettings__TextFieldMaxChars": "500",
         "DFESignInSettings__ClientID": "[parameters('dfeClientID')]",
-        "DFESignInSettings__ClientSecret": "[parameters('dfeClientSecret')]",
+        "DFESignInSettings__ClientSecret": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=DfeSignInClientSecret)', parameters('keyVaultName'))]",
         "DFESignInSettings__TokenEndpoint": "[parameters('dfeEndpointUrl')]",
         "DFESignInSettings__MetadataAddress": "[parameters('dfeMetadataUrl')]",
         "DFESignInSettings__CallbackPath": "[parameters('dfeCallBackPath')]",
         "DFESignInSettings__SignedOutCallbackPath": "[parameters('dfeSignedOutPath')]",
         "DFESignInSettings__Issuer": "[parameters('dfeIssuer')]",
         "DFESignInSettings__Audience": "signin.education.gov.uk",
-        "DFESignInSettings__APISecret": "[parameters('dfeApiSecret')]",
+        "DFESignInSettings__APISecret": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=DfeSignInApiSecret)', parameters('keyVaultName'))]",
         "DFESignInSettings__APIUri": "[parameters('dfeApiUri')]",
         "FindACourseServiceSettings__ApiUrl": "[parameters('findCourseApiUrl')]",
-        "FindACourseServiceSettings__ApiKey": "[parameters('findCourseApiKey')]",
+        "FindACourseServiceSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=FindACourseApimPrimaryKey)', parameters('keyVaultName'))]",
         "FindACourseServiceSettings__UserName": "APIUser",
-        "FindACourseServiceSettings__Password": "[parameters('findCourseApiPassword')]",
+        "FindACourseServiceSettings__Password": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=FindaCourseServicePassword)', parameters('keyVaultName'))]",
         "BlobStorageSettings__AccountName": "[parameters('storageAccountName')]",
         "BlobStorageSettings__AccountKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageAccountKey)', parameters('keyVaultName'))]",
         "BlobStorageSettings__Container": "[parameters('blobStorageSettingsContainerName')]",
@@ -336,7 +219,7 @@
         "BlobStorageBinaryStorageProviderSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
         "BlobStorageBinaryStorageProviderSettings__ContainerName": "[parameters('blobStorageSettingsContainerName')]",
         "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
-        "AzureSearchQueryKey": "[parameters('searchQueryKey')]",
+        "AzureSearchQueryKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchQueryPrimaryKey)', parameters('keyVaultName'))]",
         "FindACourse__Url": "[parameters('FindACourseUrl')]",
         "Logging__ApplicationInsights__LogLevel__Default": "Information",
         "WEBSITE_RUN_FROM_PACKAGE": "1",
@@ -349,7 +232,7 @@
       "name": "[format('{0}/{1}/{2}', variables('appServiceName'), 'staging' , 'connectionstrings')]",
       "properties": {
         "DefaultConnection": {
-          "value": "[parameters('sqlCourseDirectoryConnectionString')]",
+          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryConnectionString)', parameters('keyVaultName'))]",
           "type": "SQLServer"
         }
       }
@@ -358,23 +241,24 @@
       "type": "Microsoft.Web/sites/slots/config",
       "apiVersion": "2023-12-01",
       "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'appsettings')]",
-      "properties": {
-        "FUNCTIONS_EXTENSION_VERSION": "~4",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-        "MSDEPLOY_RENAME_LOCKED_FILES": "1",
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
-        "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-        "BlobStorageSettings__ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]",
-        "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
-        "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
-        "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
-        "WEBSITE_RUN_FROM_PACKAGE": "1",
-        "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
-        "CampaignDataContainerName": "campaign-data",
-        "DataUploadsContainerName": "data-uploads",
-        "CourseUploadsFolderName": "courses",
-        "VenueUploadsFolderName": "venues"
-      }
+        "properties": {
+            "FUNCTIONS_EXTENSION_VERSION": "~4",
+            "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+            "MSDEPLOY_RENAME_LOCKED_FILES": "1",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
+            "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+            "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+            "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
+            "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
+            "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
+            "CampaignDataContainerName": "campaign-data",
+            "DataUploadsContainerName": "data-uploads",
+            "CourseUploadsFolderName": "courses",
+            "VenueUploadsFolderName": "venues",
+            "ImportLarsDataTriggerTimer": "0 3 * * *"
+        }
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
@@ -382,7 +266,7 @@
       "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'connectionstrings')]",
       "properties": {
         "DefaultConnection": {
-          "value": "[parameters('sqlCourseDirectoryConnectionString')]",
+          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySqlConnectionString)', parameters('keyVaultName'))]",
           "type": "SQLServer"
         }
       }
