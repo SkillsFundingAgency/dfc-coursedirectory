@@ -218,7 +218,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.Search
                 "StartDate desc" : request.SortBy == SearchSortBy.StartDateAscending ?
                 "StartDate asc" : request.SortBy == SearchSortBy.Distance ?
                 $"geo.distance({nameof(FindACourseOffering.Position)}, geography'POINT({longitude.Value} {latitude.Value})')" :
-                null;
+                "search.score() desc";
 
             if (!TryResolvePagingParams(request.Limit, request.Start, out var size, out var skip, out var problem))
             {

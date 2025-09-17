@@ -49,7 +49,6 @@ namespace Dfc.CourseDirectory.Core.Search
                     searchOptions.Facets.Add(facet);
                 }
             }
-            searchOptions.OrderBy.Add("search.score() desc");
 
             if (OrderBy != null)
             {
