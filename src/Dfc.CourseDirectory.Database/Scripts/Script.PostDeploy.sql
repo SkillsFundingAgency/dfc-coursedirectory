@@ -203,7 +203,7 @@ FROM
 	INNER JOIN LARS.LearningDelivery lar ON lar.LearnAimRef = c.LearnAimRef
 	Inner join Lars.LearningDeliveryCategory ct on ct.LearnAimRef = c.LearnAimRef
 WHERE 
-	lar.LearnAimRefTitle like 'Non-regulated%'  
+	lar.LearnAimRefTitle like 'Non regulated%'  
 	and ct.categoryRef in (23, 27, 28,75)
 
 ---------------------------------------------------------------------------------------------------------------------------------
