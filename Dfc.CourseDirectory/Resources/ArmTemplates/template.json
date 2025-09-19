@@ -247,7 +247,7 @@
             "MSDEPLOY_RENAME_LOCKED_FILES": "1",
             "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
             "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-            "BlobStorageSettings__ConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId(parameters('providerPortalSharedResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]",
+            "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
             "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
             "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
             "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
@@ -266,7 +266,7 @@
       "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'connectionstrings')]",
       "properties": {
         "DefaultConnection": {
-          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySqlConnectionString)', parameters('keyVaultName'))]",
+          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryConnectionString)', parameters('keyVaultName'))]",
           "type": "SQLServer"
         }
       }
