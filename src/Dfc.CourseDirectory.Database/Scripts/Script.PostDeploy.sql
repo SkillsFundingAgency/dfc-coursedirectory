@@ -361,6 +361,21 @@ WHEN NOT MATCHED THEN
 	VALUES (source.RegionId, source.Name, source.ParentRegionId, source.Position)
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
+-- Delete T Level Data for T Level Construction - Onsite construction (DISCONTINUED)
+delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
+
+delete from Pttcd.TLevelLocations where TLevelId in (Select TLevelId from Pttcd.TLevels where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce')
+
+delete from Pttcd.TLevels where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
+
+-- Delete T Level Data for T Level in Catering (DISCONTINUED)
+delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6'
+
+delete from Pttcd.TLevelLocations where TLevelId in (Select TLevelId from Pttcd.TLevels where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6')
+
+delete from Pttcd.TLevels where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6'
+
+
 ;WITH TLevelDefinitionsCte AS (
 	SELECT * FROM (VALUES
 	(
@@ -466,20 +481,7 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with real experience of the workplace.',
 		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You''ll work with your tutor to decide when you''re ready to be assessed on the core.' + CHAR(13) + CHAR(13) + 'Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
 		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Technical support scientist' + CHAR(13) + 'Metrology technician ' + CHAR(13) + 'Food technician' + CHAR(13) + CHAR(13) + 'Speak to your careers adviser to find out more.' + CHAR(13) + CHAR(13) + 'You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
-	(
-		N'4c96995d-1193-44c8-a618-85b37890e8ce',
-		44,
-		31,
-		3,
-		N'T Level Construction - Onsite construction',
-		N'This T Level is suitable for anyone wanting a career in construction, specifically in bricklaying, carpentry and joinery, plastering or painting and decorating.' + CHAR(13) + CHAR(13) + 'The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose your specialist occupation.',
-		N'There are no national entry requirements for starting a T Level. These are set by the individual college or school. Contact us to find out more.',
-		N'You will develop a general understanding of construction, including;' + CHAR(13) + CHAR(13) + 'Health and safety' + CHAR(13) + 'The science behind building design, surveying and planning' + CHAR(13) + 'Making accurate and appropriate measurements' + CHAR(13) + 'Construction methods' + CHAR(13) + 'Building regulations and standards' + CHAR(13) + 'Data management and information standards in construction' + CHAR(13) + 'Relationship management and customer service' + CHAR(13) + 'How the Internet of Things (IoT) impacts construction' + CHAR(13) + 'Digital engineering techniques' + CHAR(13) + 'Mathematical techniques to solve construction problems' + CHAR(13) + 'Construction design principles and processes' + CHAR(13) + 'The construction industry and its role in the economy' + CHAR(13) + 'Sustainability and the environmental impact of construction' + CHAR(13) + 'Business, commerce and corporate social responsibility' + CHAR(13) + CHAR(13) + 'In addition to the core content, each student will also complete at least one module of occupation-specific content:' + CHAR(13) + CHAR(13) + 'Bricklaying' + CHAR(13) + 'Carpentry and joinery' + CHAR(13) + 'Plastering' + CHAR(13) + 'Painting and decorating',
-		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with real experience of the workplace.',
-		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You''ll work with your tutor to decide when you''re ready to be assessed on the core.' + CHAR(13) + CHAR(13) + 'Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
-		N'You''ll have the industry knowledge and experience to progress into roles like:' + CHAR(13) + CHAR(13) + 'Advanced site carpenter' + CHAR(13) + 'Joiner' + CHAR(13) + 'Construction assembly and installation operative' + CHAR(13) + CHAR(13) + 'Speak to your careers adviser to find out more.' + CHAR(13) + CHAR(13) + 'You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
+	),	
 	(
 		N'1d1fcdec-6f23-4a0a-973a-aafc04608aee',
 		45,
@@ -598,19 +600,6 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'You will have the industry knowledge and experience to progress into roles like: Animal care worker, Assistance dog trainer, Zookeeper, Dog handler, Horse riding instructor, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
 	),
 	(
-		N'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6',
-		56,
-		31,
-		3,
-		N'T Level in Catering',
-		N'This T Level is suitable for anyone wanting a career in the catering sector. The T Level is a 2 year programme and will include a 9 week (minimum) industry placement and a Technical Qualification, where you will also choose a specialist occupation.',
-		N'There are no national entry requirements for starting a T Level. These are set by the individual college or school. Contact us to find out more',
-		N'You will develop an understanding of a broad range of issues relevant to catering, including culinary quality, kitchen operations, nutritional analysis and food safety practices and procedures. In addition to the core content, each student will also complete at least one module of occupation-specific content. Students are expected to develop understanding and advanced skills to work with different food groups. The specialism available in the Catering T Level is: Professional Catering',
-		N'Your learning will combine classroom theory and practical learning and include 9 weeks (minimum) of industry placement. The placement will provide you with a real experience of the workplace.',
-		N'Your core knowledge and skills will be assessed through exams and an employer-set project. You will work with your tutor to decide when you are ready to be assessed on the core. Assessment of occupational specialist knowledge and skills will vary depending on the occupation. It may involve tests, practical assignments and projects. Your occupational specialist knowledge and skills will be assessed in the second year.',
-		N'You will have the industry knowledge and experience to progress into roles like: Chef, Chef de partie, Senior production chef, Kitchen Manager / Supervisor, or go onto an apprenticeship or higher education. Speak to your careers adviser to find out more. You can also use this T Level to progress to a related higher-level apprenticeship or course of study at a higher level, including a university degree.'
-	),
-	(
 		N'b142ce79-bb94-43b6-8475-546438c50e77',
 		54,
 		31,
@@ -661,6 +650,45 @@ WHEN NOT MATCHED BY SOURCE THEN DELETE;
 		N'80% will be spent in the classroom and 20% on a 45-day placement with an employer. T Levels comprise 2 parts – the Technical Qualification (core and occupational specialism) and industry placement. The occupational specialism available in this T Level is Marketing Assistant (Multi-Channel). Most industry placements last a minimum of 315 hours (approx. 45 days) and can be offered as a block, day release or a mix, and can discuss sharing part of the placement with another employer if necessary.',
 		N'You will be assessed by written examination and task-based assessments throughout the T Level. Core exams of the Technical Qualification account for no more than a third of the total marks for the TQ including an employer-set project, designed to assess skills in a real-world context. The Occupational Specialism accounts for at least half of the TQ guided learning hours, to assess knowledge and skills required to enter employment in specific occupations assessed through projects and assignments',
 		N'On successful completion of the T Level, students can progress onto apprenticeships, higher education or skilled employment. Career options in the marketing sector might include: Advertising and media executive, Digital marketer. E-commerce, Marketing manager/assistant and Market research.'
+	),
+	(
+		N'912C77F7-248B-41B8-931D-592888697AF3',
+		61,
+		31,
+		3,
+		N'T Level in Digital – Digital Software Development',
+		N'T Levels are a 2-year (Level 3) qualification that you can do after GCSEs as an alternative to A levels, other post-16 courses or an apprenticeship.' + CHAR(13) + CHAR(13) + 'This course is suitable for anyone interested in a career in digital. You''ll spend 80% of your time in the classroom and 20% on a 45-day (9 week minimum) placement with an employer to give you the skills and knowledge companies look for.',
+		N'Schools and colleges set their own entry requirements for T Levels. Visit their websites to find out the entry requirements for the Digital T Level.' + CHAR(13) + CHAR(13) + 'Students who have not already achieved grade 4 maths and English at GCSE, will be required to work towards them alongside their T Level.' + CHAR(13) + CHAR(13) + 'And if you aren''t ready to start a T Level after GCSEs, the 1-year T Level Foundation Year can provide additional support to help them prepare.',
+		N'Students will develop an understanding of a broad range of issues relevant to the digital sector, including:' + CHAR(13) + CHAR(13) + 'Problem Solving' + CHAR(13) + 'Introduction to Digital Business Support' + CHAR(13) + 'Data' + CHAR(13) + 'Business Context' + CHAR(13) + 'Legislation and Regulatory Requirements' + CHAR(13) + 'Emerging Issues' + CHAR(13) + 'Digital Environment' + CHAR(13) + 'Security' + CHAR(13) + CHAR(13) + 'All students will develop the knowledge and skills of a Data Analytics Technician:' + CHAR(13) + CHAR(13) + 'Source, organise and format data securely in a relevant way for analysis' + CHAR(13) + 'Blend data from multiple sources' + CHAR(13) + 'Analyse structured and unstructured data to support business outcomes' + CHAR(13) + 'Interpret data and communicate a result appropriate to the audience' + CHAR(13) + 'Can apply legal, ethical and professional principles when manipulating data' + CHAR(13) + 'Discover, evaluate and apply reliable sources of knowledge.',
+		N'80% will be spent in the classroom and 20% on a 45-day placement with an employer. T Levels comprise 2 parts – the Technical Qualification (core and occupational specialism) and industry placement.' + CHAR(13) + CHAR(13) + 'The Occupational specialism for this T Level is Digital Software Development' + CHAR(13) + CHAR(13) + 'Most industry placements last a minimum of 315 hours (approx. 45 days) and can be offered as a block, day release or a mix, and can discuss sharing part of the placement with another employer if necessary.',
+		N'You will be assessed by written examination and task-based assessments throughout the T Level. Core exams of the Technical Qualification account for no more than a third of the total marks for the TQ including an employer-set project, designed to assess skills in a real-world context. The Occupational Specialism accounts for at least half of the TQ guided learning hours, to assess knowledge and skills required to enter employment in specific occupations assessed through projects and assignments.',
+		N'On successful completion of the T Level, students can progress onto apprenticeships, higher education or skilled employment. Career options in the digital sector might include:' + CHAR(13) + CHAR(13) + 'web developer' + CHAR(13) + 'web designer' + CHAR(13) + 'software developer' + CHAR(13) + 'computer games tester' + CHAR(13) + 'computer games developer' + CHAR(13) + 'e-learning developer' + CHAR(13) + 'user experience (ux) designer' + CHAR(13) + CHAR(13) + 'View other career progression routes on the Skills England website'
+	),
+	(
+		N'313A7582-9DB7-4314-80E5-3A04B1743850',
+		62,
+		31,
+		3,
+		N'T Level in Digital – Digital Support and Security',
+		N'T Levels are a 2-year (Level 3) qualification that you can do after GCSEs as an alternative to A levels, other post-16 courses or an apprenticeship.' + CHAR(13) + CHAR(13) + 'This course is suitable for anyone interested in a career in digital. You''ll spend 80% of your time in the classroom and 20% on a 45-day (9 week minimum) placement with an employer to give you the skills and knowledge companies look for.',
+		N'Schools and colleges set their own entry requirements for T Levels. Visit their websites to find out the entry requirements for the Digital T Level.' + CHAR(13) + CHAR(13) + 'Students who have not already achieved grade 4 maths and English at GCSE, will be required to work towards them alongside their T Level.' + CHAR(13) + CHAR(13) + 'And if you aren''t ready to start a T Level after GCSEs, the 1-year T Level Foundation Year can provide additional support to help them prepare.',
+		N'Students will develop an understanding of a broad range of issues relevant to the digital sector, including:' + CHAR(13) + CHAR(13) + 'Problem Solving' + CHAR(13) + 'Introduction to Digital Business Support' + CHAR(13) + 'Data' + CHAR(13) + 'Business Context' + CHAR(13) + 'Legislation and Regulatory Requirements' + CHAR(13) + 'Emerging Issues' + CHAR(13) + 'Digital Environment' + CHAR(13) + 'Security' + CHAR(13) + CHAR(13) + 'Occupational specialism options are:' + CHAR(13) + CHAR(13) + 'digital infrastructure' + CHAR(13) + 'network cabling' + CHAR(13) + 'digital support' + CHAR(13) + 'cyber security',
+		N'80% will be spent in the classroom and 20% on a 45-day placement with an employer. T Levels comprise 2 parts – the Technical Qualification (core and occupational specialism) and industry placement.' + CHAR(13) + CHAR(13) + 'Choose one Occupational specialism from the above.' + CHAR(13) + CHAR(13) + 'Most industry placements last a minimum of 315 hours (approx. 45 days) and can be offered as a block, day release or a mix, and can discuss sharing part of the placement with another employer if necessary.',
+		N'You will be assessed by written examination and task-based assessments throughout the T Level. Core exams of the Technical Qualification account for no more than a third of the total marks for the TQ including an employer-set project, designed to assess skills in a real-world context. The Occupational Specialism accounts for at least half of the TQ guided learning hours, to assess knowledge and skills required to enter employment in specific occupations assessed through projects and assignments.',
+		N'On successful completion of the T Level, students can progress onto apprenticeships, higher education or skilled employment. Career options in the digital sector might include:' + CHAR(13) + CHAR(13) + 'IT security' + CHAR(13) + 'IT support' + CHAR(13) + 'Cyber security' + CHAR(13) + CHAR(13) + 'View other career progression routes on the Skills England website'
+	),
+	(
+		N'80467CDF-C70B-40AB-AC28-CA9B6DC40FB5',
+		63,
+		31,
+		3,
+		N'T Level in Digital – Digital Data Analytics',
+		N'T Levels are a 2-year (Level 3) qualification that you can do after GCSEs as an alternative to A levels, other post-16 courses or an apprenticeship.' + CHAR(13) + CHAR(13) + 'This course is suitable for anyone interested in a career in digital. You''ll spend 80% of your time in the classroom and 20% on a 45-day (9 week minimum) placement with an employer to give you the skills and knowledge companies look for.',
+		N'Schools and colleges set their own entry requirements for T Levels. Visit their websites to find out the entry requirements for the Digital T Level.' + CHAR(13) + CHAR(13) + 'Students who have not already achieved grade 4 maths and English at GCSE, will be required to work towards them alongside their T Level.' + CHAR(13) + CHAR(13) + 'And if you aren''t ready to start a T Level after GCSEs, the 1-year T Level Foundation Year can provide additional support to help them prepare.',
+		N'Students will develop an understanding of a broad range of issues relevant to the digital sector, including:' + CHAR(13) + CHAR(13) + 'Problem Solving' + CHAR(13) + 'Introduction to Digital Business Support' + CHAR(13) + 'Data' + CHAR(13) + 'Business Context' + CHAR(13) + 'Legislation and Regulatory Requirements' + CHAR(13) + 'Emerging Issues' + CHAR(13) + 'Digital Environment' + CHAR(13) + 'Security' + CHAR(13) + CHAR(13) + 'All students will develop the knowledge and skills of a Data Analytics Technician:' + CHAR(13) + CHAR(13) + 'Source, organise and format data securely in a relevant way for analysis' + CHAR(13) + 'Blend data from multiple sources' + CHAR(13) + 'Analyse structured and unstructured data to support business outcomes' + CHAR(13) + 'Interpret data and communicate a result appropriate to the audience' + CHAR(13) + 'Can apply legal, ethical and professional principles when manipulating data' + CHAR(13) + 'Discover, evaluate and apply reliable sources of knowledge.',
+		N'80% will be spent in the classroom and 20% on a 45-day placement with an employer. T Levels comprise 2 parts – the Technical Qualification (core and occupational specialism) and industry placement.' + CHAR(13) + CHAR(13) + 'The Occupational specialism for this T Level is Data Analytics Technician' + CHAR(13) + CHAR(13) + 'Most industry placements last a minimum of 315 hours (approx. 45 days) and can be offered as a block, day release or a mix, and can discuss sharing part of the placement with another employer if necessary.',
+		N'You will be assessed by written examination and task-based assessments throughout the T Level. Core exams of the Technical Qualification account for no more than a third of the total marks for the TQ including an employer-set project, designed to assess skills in a real-world context. The Occupational Specialism accounts for at least half of the TQ guided learning hours, to assess knowledge and skills required to enter employment in specific occupations assessed through projects and assignments.',
+		N'On successful completion of the T Level, students can progress onto apprenticeships, higher education or skilled employment. Career options in the digital sector might include:' + CHAR(13) + CHAR(13) + 'data analyst - statistician' + CHAR(13) + 'market research data analyst' + CHAR(13) + CHAR(13) + 'View other career progression routes on the Skills England website'
 	)
 ) AS TLevelDefinitions(
 	TLevelDefinitionId,

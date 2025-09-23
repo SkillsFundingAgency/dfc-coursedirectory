@@ -14,12 +14,6 @@
         "description": "Suffix for the function app resources, in the form dfc-env-proj-fnapp"
       }
     },
-    "appServicePlanName": {
-      "type": "string",
-      "metadata": {
-        "description": "App service plan to run the function app under"
-      }
-    },
     "appServicePlanResourceGroup": {
       "type": "string",
       "metadata": {
@@ -32,28 +26,10 @@
         "description": "EnvironmentName to be used in the EnvironmentSetting__EnvironmentName config setting.  This may be different to the Azure DevOps environment"
       }
     },
-    "sqlCourseDirectoryConnectionString": {
-      "type": "string",
-      "metadata": {
-        "description": "ADO.NET connection string for the course directory database"
-      }
-    },
     "searchName": {
       "type": "string",
       "metadata": {
         "description": "Name of the Azure Search service"
-      }
-    },
-    "searchAdminKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin key for updating search (REST API)"
-      }
-    },
-    "searchQueryKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Query key for reading search (REST API)"
       }
     },
     "providerPortalApplicationInsights": {
@@ -62,11 +38,11 @@
         "description": "Application Insights Reference for Course Directory i.e. dfc-<env>-prov-as-ai"
       }
     },
-    "workspaceName": {
-        "type": "string"
-    },
-    "workspaceResourceGroup": {
-        "type": "string"
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the key vault containing secrets"
+      }
     }
   },
   "variables": {
@@ -82,7 +58,7 @@
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'microsoft.insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01').InstrumentationKey]",
         "WEBSITE_RUN_FROM_PACKAGE": "1",
         "AzureSearchUrl": "[concat('https://', parameters('searchName'), '.search.windows.net')]",
-        "AzureSearchQueryKey": "[parameters('searchQueryKey')]",
+        "AzureSearchQueryKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchQueryPrimaryKey)', parameters('keyVaultName'))]",
         "EnvironmentSettings__EnvironmentName": "[parameters('environmentName')]",
         "Logging__ApplicationInsights__LogLevel__Default": "Information"
       }
@@ -93,7 +69,7 @@
       "name": "[format('{0}/{1}/{2}', variables('webAppName'), 'staging' , 'connectionstrings')]",
       "properties": {
         "DefaultConnection": {
-          "value": "[parameters('sqlCourseDirectoryConnectionString')]",
+          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryConnectionString)', parameters('keyVaultName'))]",
           "type": "SQLServer"
         }
       }

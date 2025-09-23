@@ -36,7 +36,8 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
             this IRuleBuilderInitial<T, DateInput> field,
             Guid? tLevelId,
             Guid providerId,
-            Guid tLevelDefinitionId,
+            Guid tLevelDefinitionId, 
+            DateTime now,
             ISqlQueryDispatcher sqlQueryDispatcher)
         {
             field
@@ -95,74 +96,9 @@ namespace Dfc.CourseDirectory.Core.Validation.TLevelValidation
                     {
                         ctx.AddFailure("Start date already exists");
                     }
-                });
-        }
-
-        public static void StartDate<T>(
-            this IRuleBuilderInitial<T, DateTime?> field,
-            Guid? tLevelId,
-            Guid providerId,
-            Guid tLevelDefinitionId,
-            ISqlQueryDispatcher sqlQueryDispatcher)
-        {
-            field
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                    .WithMessage("Enter a start date")
-                // Must be valid
-                .Custom((v, ctx) => {
-                    var date = new DateInput(v.Value);
-                    if (v == null || date.IsValid)
-                    {
-                        return;
-                    }
-                    var displayName = "Start date";
-                    Debug.Assert(date.InvalidReasons != InvalidDateInputReasons.None);
-
-                    // A date was provided but it's invalid; figure out an appropriate message.
-                    // We expect to have InvalidReasons to be either: InvalidDate OR
-                    // 1-2 of MissingDay, MissingMonth and MissingYear.
-
-                    if ((date.InvalidReasons & InvalidDateInputReasons.InvalidDate) != 0)
-                    {
-                        ctx.AddFailure($"{displayName} must be a real date");
-                        return;
-                    }
-
-                    var missingFields = EnumHelper.SplitFlags(date.InvalidReasons)
-                        .Aggregate(
-                            Enumerable.Empty<string>(),
-                            (acc, r) =>
-                            {
-                                var elementName = r switch
-                                {
-                                    InvalidDateInputReasons.MissingDay => "day",
-                                    InvalidDateInputReasons.MissingMonth => "month",
-                                    InvalidDateInputReasons.MissingYear => "year",
-                                    _ => throw new NotSupportedException($"Unexpected {nameof(InvalidDateInputReasons)}: '{r}'.")
-                                };
-
-                                return acc.Append(elementName);
-                            })
-                        .ToArray();
-
-                    Debug.Assert(missingFields.Length <= 2 && missingFields.Length > 0);
-
-                    ctx.AddFailure($"{displayName} must include a {string.Join(" and ", missingFields)}");
-                })
-                .CustomAsync(async (v, ctx, _) =>
-                {
-                    var existingTLevels = await sqlQueryDispatcher.ExecuteQuery(
-                        new GetTLevelsForProvider() { ProviderId = providerId });
-
-                    if (existingTLevels.Any(tl =>
-                        tl.TLevelDefinition.TLevelDefinitionId == tLevelDefinitionId &&
-                        tl.StartDate == v.Value &&
-                        tl.TLevelId != tLevelId))
-                    {
-                        ctx.AddFailure("Start date already exists");
-                    }
-                });
+                })// Must not be a past date
+                .Must(date => date.Value >= now.Date)
+                    .WithMessageFromErrorCode("COURSERUN_START_DATE_INVALID"); ;
         }
 
         public static void Website<T>(this IRuleBuilderInitial<T, string> field, IWebRiskService webRiskService)
