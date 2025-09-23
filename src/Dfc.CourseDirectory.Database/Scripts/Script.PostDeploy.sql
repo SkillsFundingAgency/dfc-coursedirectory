@@ -193,6 +193,19 @@ WHERE
 	larct.LearnAimRefTitle like '%BEng (Hons)%' OR
 	larct.LearnAimRefTitle like '%BSc (Ord/Hons)%' 
 
+--Update course type to non-regulated
+	UPDATE
+c
+SET 
+ c.CourseType = 12
+FROM 
+	Pttcd.Courses c 
+	INNER JOIN LARS.LearningDelivery lar ON lar.LearnAimRef = c.LearnAimRef
+	Inner join Lars.LearningDeliveryCategory ct on ct.LearnAimRef = c.LearnAimRef
+WHERE 
+	lar.LearnAimRefTitle like 'Non regulated%'  
+	and ct.categoryRef in (23, 27, 28,75)
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 
