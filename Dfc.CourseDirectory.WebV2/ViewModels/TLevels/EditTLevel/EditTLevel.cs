@@ -4,9 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Validation.TLevelValidation;
@@ -28,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
     {
         public string YourReference { get; set; }
         [DisplayName("Start date")]
-        public DateTime StartDate { get; set; }
+        public DateInput StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         public bool IsSecureWebsite { get; set; }
@@ -60,15 +62,18 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
         private readonly JourneyInstance<EditTLevelJourneyModel> _journeyInstance;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IWebRiskService _webRiskService;
+        private readonly IClock _clock;
 
         public Handler(
             JourneyInstance<EditTLevelJourneyModel> journeyInstance,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IWebRiskService webRiskService)
+            IWebRiskService webRiskService, 
+            IClock clock)
         {
             _journeyInstance = journeyInstance;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _webRiskService = webRiskService;
+            _clock = clock;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -92,7 +97,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
                 _journeyInstance.State.ProviderId,
                 _journeyInstance.State.TLevelDefinitionId,
                 _sqlQueryDispatcher,
-                _webRiskService);
+                _webRiskService,
+                _clock);
 
             var validationResult = await validator.ValidateAsync(request);
             request.IsSecureWebsite = await _webRiskService.CheckForSecureUri(request.Website);
@@ -108,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
             _journeyInstance.UpdateState(state =>
             {
                 state.YourReference = request.YourReference;
-                state.StartDate = request.StartDate;
+                state.StartDate = request.StartDate.Value;
                 state.LocationVenueIds = request.LocationVenueIds.ToList();
                 state.Website = request.Website;
                 state.WhoFor = request.WhoFor;
@@ -155,12 +161,12 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService)
+            public CommandValidator(Guid tLevelId, Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService, IClock clock)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
                 RuleFor(c => c.StartDate)
-                    .StartDate(tLevelId, providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                    .StartDate(tLevelId, providerId, tLevelDefinitionId, clock.UtcNow, sqlQueryDispatcher);
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()
