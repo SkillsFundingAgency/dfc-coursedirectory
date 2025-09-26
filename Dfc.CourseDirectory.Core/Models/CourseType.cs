@@ -9,7 +9,14 @@ namespace Dfc.CourseDirectory.Core.Models
         HTQs,
         FreeCoursesForJobs,
         Multiply,
-        SkillsBootcamp
+        SkillsBootcamp,
+        GCEASLevel,
+        GCEALevel,
+        RegulatedQualificationFramework,
+        VocationalRegulatedQualifications,
+        Degree,
+        NonRegulated,
+        NationalVocationalQualifications
     }
 
     public static class CourseTypeExtensions
@@ -29,6 +36,13 @@ namespace Dfc.CourseDirectory.Core.Models
                 CourseType.FreeCoursesForJobs => "Free Courses for Jobs",                
                 CourseType.Multiply => "Multiply",
                 CourseType.SkillsBootcamp => "Skills Bootcamp",
+                CourseType.GCEASLevel => "AS  Levels",
+                CourseType.GCEALevel => "A  Levels",
+                CourseType.RegulatedQualificationFramework => "Regulated Qualification Framework (RQF)",
+                CourseType.VocationalRegulatedQualifications => "Vocational Regulated Qualifications (VRQ)",
+                CourseType.Degree => "Degree",
+                CourseType.NonRegulated => "Non-Regulated",
+                CourseType.NationalVocationalQualifications => "NationalVocationalQualifications",
                 _ => throw new NotImplementedException($"Unknown value: '{courseType}'.")
             };
         }

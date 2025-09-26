@@ -56,11 +56,10 @@
             <govuk-input asp-for="Telephone" type="tel" input-class="govuk-!-width-one-third">
                 <govuk-input-label>Phone</govuk-input-label>
             </govuk-input>
-
             <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
                 <govuk-input-label>Website</govuk-input-label>
             </govuk-input>
-
+            
             <div class="govuk-button-group">            
                 <govuk-button type="submit" class="cd-cancel-btn">Resolve errors</govuk-button>
                 <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
