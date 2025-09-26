@@ -1,9 +1,8 @@
 ﻿using System;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
 {
-    public class GetProviderUpload : ISqlQuery<ProviderUpload>
+    public class GetProviderUploadInvalidRowCount : ISqlQuery<int>
     {
         public Guid ProviderUploadId { get; set; }
     }

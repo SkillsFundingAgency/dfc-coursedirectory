@@ -98,6 +98,13 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                         .Where(m => !m.Data.Ignore)
                         .Select(m => m.Data.Names.Single())
                         .ToArray();
+                    if (expectedHeaders != null &&
+                        csvReader.Context.Reader.HeaderRecord != null&&
+                        expectedHeaders.Length != csvReader.Context.Reader.HeaderRecord.Length)
+                    {
+                        return (FileMatchesSchemaResult.InvalidHeader, new string[] {"Expected no of headers do not match"});
+
+                    }
 
                     var missingHeaders = expectedHeaders.Except(csvReader.Context.Reader.HeaderRecord).ToArray();
                     if (missingHeaders.Length != 0)
