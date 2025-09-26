@@ -1120,7 +1120,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.DataManagement.Courses
                 expectedErrorInputId: "CourseWebPage",
                 expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_FORMAT",
                 courseWebPage: "notarealwebsite");
-            
+
             yield return CreateRecord(
                 expectedErrorInputId: "CourseWebPage",
                 expectedErrorCode: "COURSERUN_COURSE_WEB_PAGE_MAXLENGTH",

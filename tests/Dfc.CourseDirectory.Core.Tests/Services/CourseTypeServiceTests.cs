@@ -465,6 +465,274 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLarsCourseType>()), Times.Once);
         }
 
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleGCSEALevel_ReturnsCourseTypeAsGCSEALevel()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011111";
+            var expectedCourseType = CourseType.GCEALevel;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleGCSEA2Level_ReturnsCourseTypeAsGCSEALevel()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011113";
+            var expectedCourseType = CourseType.GCEALevel;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleGCSEASLevel_ReturnsCourseTypeAsGCSEASLevel()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011114";
+            var expectedCourseType = CourseType.GCEASLevel;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleRQF_ReturnsCourseTypeAsRegulatedQualificationFramework()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011115";
+            var expectedCourseType = CourseType.RegulatedQualificationFramework;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleVRQ_ReturnsCourseTypeAsVocationalRegulatedQualifications()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011116";
+            var expectedCourseType = CourseType.VocationalRegulatedQualifications;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleDegree_ReturnsCourseTypeAsDegree()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011117";
+            var expectedCourseType = CourseType.Degree;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleBAHons_ReturnsCourseTypeAsDegree()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011118";
+            var expectedCourseType = CourseType.Degree;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleBScHons_ReturnsCourseTypeAsDegree()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011119";
+            var expectedCourseType = CourseType.Degree;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleBEEng_ReturnsCourseTypeAsDegree()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011120";
+            var expectedCourseType = CourseType.Degree;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleBScOrdHons_ReturnsCourseTypeAsDegree()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011121";
+            var expectedCourseType = CourseType.Degree;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleNVQ_ReturnsCourseTypeAsNationalVocationalQualifications()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011122";
+            var expectedCourseType = CourseType.NationalVocationalQualifications;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleNonReg23_ReturnsCourseTypeAsNonRegulated()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011123";
+            var expectedCourseType = CourseType.NonRegulated;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleNonReg27_ReturnsCourseTypeAsNonRegulated()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011124";
+            var expectedCourseType = CourseType.NonRegulated;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleNonReg28_ReturnsCourseTypeAsNonRegulated()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011125";
+            var expectedCourseType = CourseType.NonRegulated;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCourseType_WhenLARSRefTitleNonReg75_ReturnsCourseTypeAsNonRegulated()
+        {
+            // Arrange
+            var courseTypeService = new CourseTypeService(_mockSqlQueryDispatcher.Object);
+            var learnAimRef = "0011126";
+            var expectedCourseType = CourseType.NonRegulated;
+            var providerId = new Guid();
+            ArrangeObjects(learnAimRef);
+
+            // Act
+            var courseType = await courseTypeService.GetCourseType(learnAimRef, providerId);
+
+            // Assert
+            Assert.Equal(expectedCourseType, courseType);
+            _mockSqlQueryDispatcher.Verify(p => p.ExecuteQuery(It.IsAny<GetLearningDeliveries>()), Times.Once);
+        }
         private void ArrangeObjects(string learnAimRef)
         {
             var larsCourseTypesList = new List<LarsCourseType>()
@@ -490,12 +758,44 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
                 { new LarsCourseType { LearnAimRef = "0021464", CategoryRef = "56", CourseType = CourseType.FreeCoursesForJobs, LearnAimRefTitle = "Title" }},
                 { new LarsCourseType { LearnAimRef = "0021463", CategoryRef = "63", CourseType = CourseType.Multiply, LearnAimRefTitle = "Title" }},
                 { new LarsCourseType { LearnAimRef = "0021221", CategoryRef = "3", CourseType = CourseType.TLevels, LearnAimRefTitle = "Title Title Title" }},
-                { new LarsCourseType { LearnAimRef = "0021221", CategoryRef = "24", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }}
+                { new LarsCourseType { LearnAimRef = "0021221", CategoryRef = "24", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }},
+                { new LarsCourseType { LearnAimRef = "0011123", CategoryRef = "23", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }},
+                { new LarsCourseType { LearnAimRef = "0011124", CategoryRef = "27", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }},
+                { new LarsCourseType { LearnAimRef = "0011125", CategoryRef = "28", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }},
+                { new LarsCourseType { LearnAimRef = "0011126", CategoryRef = "75", CourseType = CourseType.EssentialSkills, LearnAimRefTitle = "Title" }}
+
+
+            };
+            var learningDelivery = new List<LearningDelivery>() { new LearningDelivery { LearnAimRef = "0011111", LearnAimRefTitle ="GCE A Level" },
+            new LearningDelivery { LearnAimRef = "0011112", LearnAimRefTitle ="GCE A Level" },
+            new LearningDelivery { LearnAimRef = "0011113", LearnAimRefTitle ="GCE A2 Level" },
+            new LearningDelivery { LearnAimRef = "0011114", LearnAimRefTitle ="GCE AS Level" },
+            new LearningDelivery { LearnAimRef = "0011115", LearnAimRefTitle ="RQF" },
+            new LearningDelivery { LearnAimRef = "0011116", LearnAimRefTitle ="VRQ" },
+            new LearningDelivery { LearnAimRef = "0011117", LearnAimRefTitle ="Degree" },
+            new LearningDelivery { LearnAimRef = "0011118", LearnAimRefTitle ="BA (Hons)" },
+            new LearningDelivery { LearnAimRef = "0011119", LearnAimRefTitle ="BSc (Hons)" },
+            new LearningDelivery { LearnAimRef = "0011120", LearnAimRefTitle ="BEng (Hons)" },
+            new LearningDelivery { LearnAimRef = "0011121", LearnAimRefTitle ="BSc (Ord/Hons)" },
+            new LearningDelivery { LearnAimRef = "0011122", LearnAimRefTitle ="NVQ" },
+            new LearningDelivery { LearnAimRef = "0011123", LearnAimRefTitle ="Non regulated" },
+            new LearningDelivery { LearnAimRef = "0011124", LearnAimRefTitle ="Non regulated" },
+            new LearningDelivery { LearnAimRef = "0011125", LearnAimRefTitle ="Non regulated" },
+            new LearningDelivery { LearnAimRef = "0011126", LearnAimRefTitle ="Non regulated" },
             };
 
             var larsCourseTypesReadOnlyList = new ReadOnlyCollection<LarsCourseType>(larsCourseTypesList.Where(l => l.LearnAimRef == learnAimRef).ToList());
+            var ldDictonary = new Dictionary<string, LearningDelivery>();
+            if (learningDelivery.Any(x => x.LearnAimRef == learnAimRef))
+            {
+                ldDictonary.Add(learnAimRef, learningDelivery.First(x => x.LearnAimRef == learnAimRef));
+            }
+            var learningDeliveries = new ReadOnlyDictionary<string, LearningDelivery>(ldDictonary);
+    
             _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetLarsCourseType>()))
                 .ReturnsAsync(larsCourseTypesReadOnlyList);
+            _mockSqlQueryDispatcher.Setup(m => m.ExecuteQuery(It.IsAny<GetLearningDeliveries>()))
+                .ReturnsAsync(learningDeliveries);
         }
     }
 }

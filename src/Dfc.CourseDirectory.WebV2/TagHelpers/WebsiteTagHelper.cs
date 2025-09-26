@@ -44,15 +44,7 @@ namespace Dfc.CourseDirectory.WebV2.TagHelpers
             {
                 errorMessage = ModelStateEntry.Errors[0].ErrorMessage;
 
-                webSecurityRiskError = errorMessage.Contains("security issue.");
-
-                if (webSecurityRiskError)
-                {
-                    int firstFullStopIndex = errorMessage.IndexOf('.');
-                    errorMessage = firstFullStopIndex != -1
-                        ? errorMessage.Substring(0, firstFullStopIndex + 1)
-                        : errorMessage;
-                }
+                webSecurityRiskError = errorMessage.Contains("security issue");
 
                 output.Attributes.SetAttribute("class", "govuk-form-group--error govuk-form-group");
                 errorHtml = $@"
