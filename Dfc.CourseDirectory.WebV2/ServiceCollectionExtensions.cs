@@ -90,12 +90,8 @@ namespace Dfc.CourseDirectory.WebV2
                     options.ViewLocationExpanders.Add(new FeatureViewLocationExpander());
                 });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(
-                    AuthorizationPolicyNames.Admin,
-                    policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
-            });
+            services.AddAuthorizationBuilder()
+                .AddPolicy(AuthorizationPolicyNames.Admin, policy => policy.RequireRole(RoleNames.Developer, RoleNames.Helpdesk));
 
             // SignInActions - order here is the order they're executed in
             services.AddTransient<ISignInAction, DfeUserInfoHelper>();
@@ -125,8 +121,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.AddGovUkFrontend(options =>
             {
-                options.AddImportsToHtml = false;
-                options.DateInputModelConverters.Add(new ModelBinding.DateInputModelConverter());
+                options.AddImportsToHtml = false;               
             });
             services.AddHttpClient();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));

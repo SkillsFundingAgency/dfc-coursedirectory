@@ -30,7 +30,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
     {
         public Guid ProviderId { get; set; }
         public string YourReference { get; set; }
-        public DateInput StartDate { get; set; }
+        [DisplayName("Start date")]
+        public DateTime? StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         // If any additional data is added here be sure to replicate in SaveDetails.Command
@@ -162,7 +163,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
 
                 RuleFor(c => c.StartDate)
                     .StartDate(tLevelId: null, providerId, tLevelDefinitionId, clock.UtcNow, sqlQueryDispatcher);
-
 
                 RuleFor(c => c.LocationVenueIds)
                     .NotEmpty()

@@ -30,7 +30,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.EditTLevel.EditTLevel
     {
         public string YourReference { get; set; }
         [DisplayName("Start date")]
-        public DateInput StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         public bool IsSecureWebsite { get; set; }
