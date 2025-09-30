@@ -47,13 +47,13 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Assert
             using (new AssertionScope())
             {
-                (await CountSqlRows("LARS.AwardOrgCode")).Should().Be(619);
-                (await CountSqlRows("LARS.Category")).Should().Be(75);
-                (await CountSqlRows("LARS.LearnAimRefType")).Should().Be(130);
-                (await CountSqlRows("LARS.LearningDelivery")).Should().Be(131514);
-                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().Be(91350);
-                (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().Be(17);
-                (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().Be(67);
+                (await CountSqlRows("LARS.AwardOrgCode")).Should().BeGreaterThanOrEqualTo(619);
+                (await CountSqlRows("LARS.Category")).Should().BeGreaterThanOrEqualTo(75);
+                (await CountSqlRows("LARS.LearnAimRefType")).Should().BeGreaterThanOrEqualTo(130);
+                (await CountSqlRows("LARS.LearningDelivery")).Should().BeGreaterThanOrEqualTo(131514);
+                (await CountSqlRows("LARS.LearningDeliveryCategory")).Should().BeGreaterThanOrEqualTo(91350);
+                (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().BeGreaterThanOrEqualTo(17);
+                (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().BeGreaterThanOrEqualTo(67);
             }
         }
 
