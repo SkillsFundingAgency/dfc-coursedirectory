@@ -30,7 +30,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
     {
         public Guid ProviderId { get; set; }
         public string YourReference { get; set; }
-        public DateInput StartDate { get; set; }
+        [DisplayName("Start date")]
+        public DateTime? StartDate { get; set; }
         public HashSet<Guid> LocationVenueIds { get; set; }
         public string Website { get; set; }
         // If any additional data is added here be sure to replicate in SaveDetails.Command
@@ -109,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
 
             _journeyInstance.UpdateState(state => state.SetDetails(
                 request.YourReference,
-                request.StartDate.Value,
+                request.StartDate,
                 request.LocationVenueIds,
                 request.Website,
                 isComplete: true));
@@ -153,6 +154,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
                 throw new InvalidStateException();
             }
         }
+        
 
         private class CommandValidator : AbstractValidator<Command>
         {

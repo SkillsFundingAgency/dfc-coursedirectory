@@ -125,8 +125,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.AddGovUkFrontend(options =>
             {
-                options.AddImportsToHtml = false;
-                options.DateInputModelConverters.Add(new ModelBinding.DateInputModelConverter());
+                options.AddImportsToHtml = false;                
             });
             services.AddHttpClient();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
