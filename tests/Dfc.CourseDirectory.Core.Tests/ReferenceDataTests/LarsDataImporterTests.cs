@@ -11,6 +11,7 @@ using JustEat.HttpClientInterception;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xunit;
+using Azure.Storage.Blobs; // Add this at the top with other using statements
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
@@ -35,11 +36,15 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 Url = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F010%2FLearningDelivery_V010_CSV.Zip"
             });
 
+            // Add a BlobServiceClient instance for the new required parameter
+            var blobServiceClient = new BlobServiceClient("UseDevelopmentStorage=true"); // Use a local emulator or test connection string
+
             var importer = new LarsDataImporter(
                 client,
                 SqlQueryDispatcherFactory,
                 GetLogger(),
-                larsDataSetOption);
+                larsDataSetOption,
+                blobServiceClient    );
 
             // Act
             await importer.ImportData();
