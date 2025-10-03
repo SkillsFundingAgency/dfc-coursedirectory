@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dapper;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
@@ -10,15 +11,19 @@ using FluentAssertions.Execution;
 using JustEat.HttpClientInterception;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
     public class LarsDataImporterTests : DatabaseTestBase
     {
+        private BlobServiceClient blobServiceClient;
         public LarsDataImporterTests(DatabaseTestBaseFixture databaseFixture)
             : base(databaseFixture)
         {
+            var mock = new Mock<BlobServiceClient>();
+            blobServiceClient = mock.Object;
         }
 
         [Fact]
@@ -39,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 client,
                 SqlQueryDispatcherFactory,
                 GetLogger(),
-                larsDataSetOption);
+                larsDataSetOption, blobServiceClient);
 
             // Act
             await importer.ImportData();
