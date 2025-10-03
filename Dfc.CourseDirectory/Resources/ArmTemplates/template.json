@@ -256,7 +256,8 @@
         "CampaignDataContainerName": "campaign-data",
         "DataUploadsContainerName": "data-uploads",
         "CourseUploadsFolderName": "courses",
-        "VenueUploadsFolderName": "venues"
+        "VenueUploadsFolderName": "venues",
+        "ImportLarsDataTriggerTimer": "0 3 * * *"
       }
     },
     {
