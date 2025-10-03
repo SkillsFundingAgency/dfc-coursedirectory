@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using Dapper;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
@@ -16,6 +17,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 {
     public class LarsDataImporterTests : DatabaseTestBase
     {
+        private BlobServiceClient blobServiceClient;
+
         public LarsDataImporterTests(DatabaseTestBaseFixture databaseFixture)
             : base(databaseFixture)
         {
@@ -39,7 +42,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 client,
                 SqlQueryDispatcherFactory,
                 GetLogger(),
-                larsDataSetOption);
+                larsDataSetOption,blobServiceClient);
 
             // Act
             await importer.ImportData();
