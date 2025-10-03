@@ -48,7 +48,7 @@ var host = new HostBuilder()
             configuration.GetSection(nameof(GoogleWebRiskSettings)));
         services.AddScoped<IWebRiskService, WebRiskService>();
         services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
-        services.AddSingleton<CampaignDataImporter>();
+        //services.AddSingleton<CampaignDataImporter>();
 
         services.AddSingleton(
             _ => new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));

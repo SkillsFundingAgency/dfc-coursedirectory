@@ -11,6 +11,7 @@ using FluentAssertions.Execution;
 using JustEat.HttpClientInterception;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
@@ -22,6 +23,8 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
         public LarsDataImporterTests(DatabaseTestBaseFixture databaseFixture)
             : base(databaseFixture)
         {
+            var mock = new Mock<BlobServiceClient>();
+            blobServiceClient = mock.Object;
         }
 
         [Fact]
