@@ -15,7 +15,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public int ProviderStatus { get; set; }
         public int ProviderType { get; set; }
         public string ProviderName { get; set; }
-        public string TradingName { get; set; } 
+        public string TradingName { get; set; }
+        public string LegalName { get; set; }
 
     }
 }

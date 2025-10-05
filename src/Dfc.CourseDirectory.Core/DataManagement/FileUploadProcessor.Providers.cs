@@ -6,14 +6,18 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Security.Policy;
+using System.ServiceModel.Channels;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Css.Values;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Helpers;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
@@ -24,6 +28,24 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        private string[] FundNames = new string[]
+        {
+            "14-16 in FE",
+            "16-19 Funding",
+            "16-19 Learner Responsive Funding",
+            "24+ Advanced Learning Loans Bursary",
+            "24+ Advanced Learning Loans Bursary (College)",
+            "24+ Advanced Learning Loans Facility",
+            "Academy Funding",
+            "Adult Education Budget (Procured)",
+            "Adult Skills (College)",
+            "AEB Devolution",
+            "Community Learning Funding",
+            "Multiply",
+            "Non-Mainstream Funding EFA",
+            "School Sixth Form Funding",
+            "Skills Boot Camp",
+        };
         public async Task ProcessProviderFile(Guid providerUploadId, Stream stream)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
@@ -121,7 +143,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 var onboardedOn = _clock.UtcNow;
 
-                var onboardProviderResult = await dispatcher.ExecuteQuery(new OnboardProvidedUpload()
+                var onboardProviderResult = await dispatcher.ExecuteQuery(new OnboardProviderUpload()
                 {
                     ProviderUploadId = providerUpload.ProviderUploadId,
                     OnboardedBy = onBoardedBy,
@@ -240,14 +262,26 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var rowsAreValid = true;
 
             var upsertRecords = new List<UpsertProviderUploadRowsRecord>();
+            var filterByPreviousMonth = DateTime.Now.Month -1;
 
             foreach (var row in rows)
             {
                 var rowNumber = row.RowNumber;
-                var courseRunId = Guid.NewGuid();
 
                 var parsedRow = ParsedCsvProviderRow.FromCsvProviderRow(row.Data);
-
+                if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN)) {
+                    continue;
+                }
+                var firstDayOfMonth = new DateTime(1, DateTime.Now.Month - 1, DateTime.Now.Year);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+                var isPreviousMOnthData = parsedRow.ResolvedFundStartDate.HasValue &&
+                parsedRow.ResolvedFundStartDate.Value >= firstDayOfMonth &&
+                parsedRow.ResolvedFundStartDate <= lastDayOfMonth;
+                var allowedFundNames = FundNames.Any(x => string.Equals(parsedRow.FundName, x, StringComparison.InvariantCultureIgnoreCase));
+                if (!isPreviousMOnthData && !allowedFundNames)
+                {
+                    continue;
+                } 
 
                 var validator = new ProviderUploadRowValidator(_clock);
 

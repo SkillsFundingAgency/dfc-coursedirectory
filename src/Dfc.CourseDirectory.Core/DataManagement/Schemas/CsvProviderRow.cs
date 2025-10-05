@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
         public string OrgUPIN { get; set; }
 
         [Index(1), Name("Org UKPRN")]
-        public string OrgUKPRN { get; set; }
+        public int OrgUKPRN { get; set; }
 
         [Index(2), Name("Org Legal Name")]
         public string OrgLegalName { get; set; }
@@ -51,10 +51,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement.Schemas
                 {
                     return false;
                 }
-                if (string.IsNullOrEmpty(x.OrgUKPRN) || string.IsNullOrEmpty(y.OrgUKPRN))
-                {
-                    return false;
-                }
+               
                 if (string.IsNullOrEmpty(x.OrgTradingName) || string.IsNullOrEmpty(y.OrgTradingName))
                 {
                     return false;

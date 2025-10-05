@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public Guid ProviderId { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastValidated { get; set; }
-        public string Ukprn { get; set; }
+        public int Ukprn { get; set; }
         public int ProviderStatus { get; set; }
         public int ProviderType { get; set; }
         public string ProviderName { get; set; }
