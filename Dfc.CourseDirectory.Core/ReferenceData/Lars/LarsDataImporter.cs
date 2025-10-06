@@ -44,7 +44,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         }
         public async Task ImportData()
         {
-            _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("LarsDataImport started at: {time}", DateTimeOffset.Now);
             try
             {
                 var downloadDate = string.Empty;
@@ -56,7 +56,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     var downloadInfoJson = downloadInfoContent.Value.Content.ToString();
                     var downloadInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(downloadInfoJson);
                     downloadDate = downloadInfo["LastDownloadDate"];
-                    _logger.LogTrace("Lars last downloaded on {downloadDate} ", downloadDate);
+                    _logger.LogInformation("Lars last downloaded on {downloadDate} ", downloadDate);
                 }
                 else
                 {
@@ -71,7 +71,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 _httpClient.BaseAddress = new Uri(baseUrl);
 
-                _logger.LogTrace("Lars baseurl {baseUrl}", baseUrl); 
+                _logger.LogInformation("Lars baseurl {baseUrl}", baseUrl); 
 
                 var result = await _httpClient.GetStringAsync(link);
 
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 {
                     var downloadLink = baseUrl+  csvRow.SelectSingleNode("//td[4]/a").GetAttributeValue("href", string.Empty);
                     var data = await _httpClient.GetByteArrayAsync(downloadLink);
-                    _logger.LogTrace("Lars new data found. Downloading from {downloadLink}", downloadLink);
+                    _logger.LogInformation("Lars new data found. Downloading from {downloadLink}", downloadLink);
                     //Check of the check if the file is already downloaded
                     var extractDirectory = Path.Join(Path.GetTempPath(), "lars");
                     Directory.CreateDirectory(extractDirectory);
@@ -128,7 +128,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     async Task DownloadFiles(string downlaodFile)
                     {
-                        _logger.LogTrace("Lars URL- " + downlaodFile);
+                        _logger.LogInformation("Lars URL- " + downlaodFile);
                         using var resultStream = await _httpClient.GetStreamAsync(downlaodFile);
                         using var zip = new ZipArchive(resultStream);
 
@@ -140,6 +140,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                                 entry.ExtractToFile(destination, overwrite: true);
                             }
                         }
+                        _logger.LogInformation("end Lars URL- " + downlaodFile);
                     }
 
 
@@ -285,12 +286,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 }
                 else
                 {
-                    _logger.LogTrace("LarsDataImport did not run. Last uploaded on {downloadDate} ", downloadDate);
+                    _logger.LogInformation("LarsDataImport did not run. Last uploaded on {downloadDate} ", downloadDate);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "LarsDataImport Error occurred during Lars data import");
+                _logger.LogInformation(ex, "LarsDataImport Error occurred during Lars data import"+ex.Message);
                 throw;
 
 
