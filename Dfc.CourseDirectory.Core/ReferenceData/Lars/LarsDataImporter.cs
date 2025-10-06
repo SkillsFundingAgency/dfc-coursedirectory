@@ -44,6 +44,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         }
         public async Task ImportData()
         {
+            _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
             try
             {
                 var downloadDate = string.Empty;
@@ -55,11 +56,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     var downloadInfoJson = downloadInfoContent.Value.Content.ToString();
                     var downloadInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(downloadInfoJson);
                     downloadDate = downloadInfo["LastDownloadDate"];
+                    _logger.LogTrace("Lars last downloaded on {downloadDate} ", downloadDate);
                 }
                 else
                 {
                     downloadDate = "01/01/1900";
                 }
+             
 
                 var lastDownloadDay = DateOnly.Parse(downloadDate);
                 var baseUrl = _larsDataset.Url;
@@ -67,6 +70,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var link = "/find-a-learning-aim/DownloadData";
 
                 _httpClient.BaseAddress = new Uri(baseUrl);
+
+                _logger.LogTrace("Lars baseurl {baseUrl}", baseUrl); 
 
                 var result = await _httpClient.GetStringAsync(link);
 
@@ -87,6 +92,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 {
                     var downloadLink = csvRow.SelectSingleNode("//td[4]/a").GetAttributeValue("href", string.Empty);
                     var data = await _httpClient.GetByteArrayAsync(downloadLink);
+                    _logger.LogTrace("Lars new data found. Downloading from {downloadLink}", downloadLink);
                     //Check of the check if the file is already downloaded
                     var extractDirectory = Path.Join(Path.GetTempPath(), "lars");
                     Directory.CreateDirectory(extractDirectory);
@@ -284,7 +290,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "Error occurred during Lars data import");
+                _logger.LogInformation(ex, "LarsDataImport Error occurred during Lars data import");
                 throw;
 
 
