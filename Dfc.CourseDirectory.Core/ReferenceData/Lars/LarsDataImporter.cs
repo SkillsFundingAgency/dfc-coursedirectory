@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                 if (DateOnly.Parse(csvUpdated).CompareTo(lastDownloadDay) > 0)
                 {
-                    var downloadLink = csvRow.SelectSingleNode("//td[4]/a").GetAttributeValue("href", string.Empty);
+                    var downloadLink = baseUrl+  csvRow.SelectSingleNode("//td[4]/a").GetAttributeValue("href", string.Empty);
                     var data = await _httpClient.GetByteArrayAsync(downloadLink);
                     _logger.LogTrace("Lars new data found. Downloading from {downloadLink}", downloadLink);
                     //Check of the check if the file is already downloaded
