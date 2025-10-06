@@ -54,7 +54,7 @@
         $(document).ready(function () {
             window.GOVUKFrontend.initAll();
         });
-
+        $(".govuk-header__navigation-list").hide();
         $(".govuk-header__menu-button").on("click",
             function () {
                 if ($(".govuk-header__navigation-list").is(":visible")) {
