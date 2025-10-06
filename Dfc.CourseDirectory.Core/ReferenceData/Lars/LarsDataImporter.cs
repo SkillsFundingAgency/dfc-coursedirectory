@@ -94,8 +94,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     var data = await _httpClient.GetByteArrayAsync(downloadLink);
                     _logger.LogInformation("Lars new data found. Downloading from {downloadLink}", downloadLink);
                     //Check of the check if the file is already downloaded
-                    //var extractDirectory = Path.Join(Path.GetTempPath(), "lars");
-                    //Directory.CreateDirectory(extractDirectory);
+                    var extractDirectory = Path.Join(Path.GetTempPath(), "lars");
+                    Directory.CreateDirectory(extractDirectory);
 
                     await DownloadFiles(downloadLink);
 
