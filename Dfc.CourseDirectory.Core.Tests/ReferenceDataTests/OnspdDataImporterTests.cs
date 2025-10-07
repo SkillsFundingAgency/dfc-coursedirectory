@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Arrange
             // Create a CSV with 4 records
             // 2 valid inside England, 1 valid outside of England and one with invalid lat/lng
-            var csv = $@"pcds,lat,long,ctry
+            var csv = $@"pcds,lat,long,ctry25cd
 AB1 2CD,1,-1,{OnspdDataImporter.EnglandCountryId}
 BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId}
 CD3 4EF,3,3,notenglandcountry
