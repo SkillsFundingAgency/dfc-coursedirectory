@@ -138,7 +138,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         //Update the blob storage with new download date
                         var updatedDownloadInfo = new Dictionary<string, string>
                         {
-                            ["LastDownloadDate"] = DateTime.UtcNow.ToString("dd/MM/yyyy")
+                            [LastDownloadDate] = DateTime.UtcNow.ToString("dd/MM/yyyy")
                         };
 
                         var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
