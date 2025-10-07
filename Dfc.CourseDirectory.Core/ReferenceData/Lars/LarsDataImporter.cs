@@ -34,7 +34,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             HttpClient httpClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ILogger<LarsDataImporter> logger,
-            IOptions<LarsDataset> larsDatasetOption, BlobServiceClient blobServiceClient)
+            IOptions<LarsDataset> larsDatasetOption, 
+            BlobServiceClient blobServiceClient)
         {
             _httpClient = httpClient;
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
@@ -49,7 +50,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             {
                 var downloadDate = string.Empty;
                 //Read from blob storage
-                var blobClient = _blobContainerClient.GetBlobClient("larsdownloadinfo.json");
+                var blobClient = _blobContainerClient.GetBlobClient(_larsDataset.DownloadInfo);
                 if (await blobClient.ExistsAsync())
                 {
                     var downloadInfoContent = await blobClient.DownloadContentAsync();
@@ -65,7 +66,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var lastDownloadDay = DateOnly.Parse(downloadDate);
                 var baseUrl = _larsDataset.Url;
 
-                var link = "/find-a-learning-aim/DownloadData";
+                var link = _larsDataset.UrlSuffix;
 
                 _httpClient.BaseAddress = new Uri(baseUrl);
 
@@ -124,10 +125,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     }
 
 
-                    async Task DownloadFiles(string downlaodFile)
+                    async Task DownloadFiles(string downloadFile)
                     {
-                        _logger.LogTrace("Lars URL- " + downlaodFile);
-                        using var resultStream = await _httpClient.GetStreamAsync(downlaodFile);
+                        _logger.LogTrace("Lars URL- " + downloadFile);
+                        using var resultStream = await _httpClient.GetStreamAsync(downloadFile);
                         using var zip = new ZipArchive(resultStream);
 
                         foreach (var entry in zip.Entries)
@@ -143,7 +144,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     Task ImportAwardOrgCodeToSql()
                     {
-                        var records = ReadCsv<UpsertLarsAwardOrgCodesRecord>("AwardOrgCode.csv");
+                        var records = ReadCsv<UpsertLarsAwardOrgCodesRecord>(_larsDataset.AwardOrgCodeCsv);
 
 
 
@@ -155,7 +156,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     async Task<HashSet<string>> ImportCategoryToSql()
                     {
-                        var records = ReadCsv<UpsertLarsCategoriesRecord>("Category.csv");
+                        var records = ReadCsv<UpsertLarsCategoriesRecord>(_larsDataset.CategoryCsv);
 
                         await WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsCategories()
                         {
@@ -166,11 +167,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     Task ImportLearnAimRefTypeToSql()
                     {
-                        const string csv = "LearnAimRefType.csv";
-                        var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(csv).ToList();
+                        var records = ReadCsv<UpsertLarsLearnAimRefTypesRecord>(_larsDataset.LearnAimRefTypeCsv).ToList();
 
                         var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRefType);
-                        _logger.LogTrace("{csv} - Excluded {LearnAimRefType}s: {excluded} (T Level detected in {LearnAimRefTypeDesc})", csv, nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType), string.Join(",", excluded), nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc));
+                        _logger.LogTrace("{csv} - Excluded {LearnAimRefType}s: {excluded} (T Level detected in {LearnAimRefTypeDesc})", _larsDataset.LearnAimRefTypeCsv, nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefType), string.Join(",", excluded), nameof(UpsertLarsLearnAimRefTypesRecord.LearnAimRefTypeDesc));
 
                         return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsLearnAimRefTypes()
                         {
@@ -183,11 +183,10 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     async Task<HashSet<string>> ImportLearningDeliveryToSql()
 
                     {
-                        const string csv = "LearningDelivery.csv";
-                        var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(csv);
+                        var records = ReadCsv<UpsertLarsLearningDeliveriesRecord>(_larsDataset.LearningDeliveryCsv);
 
                         var excluded = records.Where(IsTLevel).Select(r => r.LearnAimRef);
-                        _logger.LogInformation("{csv} - Excluded {LearnAimRef}s: {Excluded} (T Level detected in {LearnAimRefTitle})", csv, nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef), string.Join(", ", excluded), nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle));
+                        _logger.LogInformation("{csv} - Excluded {LearnAimRef}s: {Excluded} (T Level detected in {LearnAimRefTitle})", _larsDataset.LearningDeliveryCsv, nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRef), string.Join(", ", excluded), nameof(UpsertLarsLearningDeliveriesRecord.LearnAimRefTitle));
 
                         var includedRecords = records.Where(r => !IsTLevel(r)).ToList();
                         await WithSqlQueryDispatcher(dispatcher =>
@@ -206,16 +205,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     Task ImportLearningDeliveryCategoryToSql(HashSet<string> categoriesRefs, HashSet<string> learningDeliveryRefs)
                     {
-                        const string csv = "LearningDeliveryCategory.csv";
                         var records = ReadCsv<UpsertLarsLearningDeliveryCategoriesRecord>(
-                            csv,
+                            _larsDataset.LearningDeliveryCategoryCsv,
                             configuration => configuration.RegisterClassMap<UpsertLarsLearningDeliveryCategoriesRecordClassMap>());
 
                         // check referential integrity
                         var validRecords = records.Where(r =>
                             categoriesRefs.Contains(r.CategoryRef) && learningDeliveryRefs.Contains(r.LearnAimRef));
 
-                        _logger.LogInformation("{csv} - Excluded {Count} of {ActualCount} rows due to referential integrity violations", csv, records.Count() - validRecords.Count(), records.Count());
+                        _logger.LogInformation("{csv} - Excluded {Count} of {ActualCount} rows due to referential integrity violations", _larsDataset.LearningDeliveryCategoryCsv, records.Count() - validRecords.Count(), records.Count());
 
 
 
@@ -227,7 +225,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     Task ImportSectorSubjectAreaTier1ToSql()
                     {
-                        var records = ReadCsv<UpsertLarsSectorSubjectAreaTier1sRecord>("SectorSubjectAreaTier1.csv");
+                        var records = ReadCsv<UpsertLarsSectorSubjectAreaTier1sRecord>(_larsDataset.SectorSubjectAreaTier1Csv);
 
 
 
@@ -239,7 +237,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     Task ImportSectorSubjectAreaTier2ToSql()
                     {
-                        var records = ReadCsv<UpsertLarsSectorSubjectAreaTier2sRecord>("SectorSubjectAreaTier2.csv");
+                        var records = ReadCsv<UpsertLarsSectorSubjectAreaTier2sRecord>(_larsDataset.SectorSubjectAreaTier2Csv);
 
 
 
@@ -261,7 +259,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     Task ImportValidityToSql()
                     {
                         _logger.LogTrace("Start import validity.csv");
-                        var records = ReadCsv<UpsertLarsValidityRecord>("Validity.csv");
+                        var records = ReadCsv<UpsertLarsValidityRecord>(_larsDataset.ValidityCsv);
 
                         _logger.LogTrace("Start import validity.csv records count - {Count} ", records.Count());
 
