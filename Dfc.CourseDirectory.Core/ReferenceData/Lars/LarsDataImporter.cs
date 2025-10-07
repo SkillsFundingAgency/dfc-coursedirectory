@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
             try
             {
-                var downloadDate = string.Empty;
+                var downloadDate = "01/01/1900";
                 //Read from blob storage
                 var blobClient = _blobContainerClient.GetBlobClient(_larsDataset.DownloadInfo);
                 if (await blobClient.ExistsAsync())
@@ -59,10 +59,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     downloadDate = downloadInfo["LastDownloadDate"];
                     _logger.LogTrace("Lars last downloaded on {downloadDate} ", downloadDate);
                 }
-                else
-                {
-                    downloadDate = "01/01/1900";
-                }
+
                 var lastDownloadDay = DateOnly.Parse(downloadDate);
                 var baseUrl = _larsDataset.Url;
 
