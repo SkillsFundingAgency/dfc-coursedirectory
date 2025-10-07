@@ -98,7 +98,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
                 await OnboardProviderUpload(providerUploadId);
 
-
             await DeleteBlob();
 
             Task DeleteBlob()
@@ -106,8 +105,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var blobName = $"{Constants.ProvidersFolder}/{providerUploadId}.csv";
                 return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
             }
-
-            
         }
 
         public async Task<OnboardResult> OnboardProviderUpload(Guid providerUploadId)
@@ -225,9 +222,21 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             Observable.Interval(_statusUpdatesPollInterval)
                 .SelectMany(_ => Observable.FromAsync(() => GetProviderUploadStatus(providerUploadId)));
 
-        private int GetProviderType(ParsedCsvProviderRow row)
+        private int GetProviderType(ParsedCsvProviderRow row, string[] fundNames)
         {
-            return (int)ProviderType.FE;
+            var providerType = 0;
+            if (fundNames.Any(fName => string.Equals(fName, "Skills Boot Camp", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                    providerType = providerType + (int)ProviderType.NonLARS;
+
+            }
+            if (fundNames.Any(fName => !string.Equals(fName, "Skills Boot Camp", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                providerType = providerType + (int)ProviderType.FE;
+
+            }
+
+            return providerType;
         }
 
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<ProviderUploadRow> Rows)> ValidateProviderUploadRows(
@@ -249,19 +258,19 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN)) {
                     continue;
                 }
+                var fundNames = rows.Where(x => x.Data.OrgUKPRN ==  parsedRow.OrgUKPRN).Select(x => x.Data.FundName).ToArray();
                 var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
                 var isPreviousMOnthData = parsedRow.ResolvedFundStartDate.HasValue &&
                 parsedRow.ResolvedFundStartDate.Value >= firstDayOfMonth &&
                 parsedRow.ResolvedFundStartDate <= lastDayOfMonth;
                 var allowedFundNames = FundNames.Any(x => string.Equals(parsedRow.FundName, x, StringComparison.InvariantCultureIgnoreCase));
-                if (!isPreviousMOnthData && !allowedFundNames)
+                if (!isPreviousMOnthData || !allowedFundNames)
                 {
                     continue;
                 } 
 
                 var validator = new ProviderUploadRowValidator(_clock);
-
                 var rowValidationResult = await validator.ValidateAsync(parsedRow);
                 var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
                 var rowIsValid = rowValidationResult.IsValid;
@@ -277,7 +286,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ProviderName = parsedRow.OrgLegalName,
                     TradingName = parsedRow.OrgTradingName,
                     ProviderStatus = 1,
-                    ProviderType = GetProviderType(parsedRow),
+                    ProviderType = GetProviderType(parsedRow, fundNames),
                     LastUpdated = _clock.UtcNow,
                     LastValidated = _clock.UtcNow,
                 });
