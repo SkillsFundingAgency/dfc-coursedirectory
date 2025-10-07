@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Validation;
@@ -17,6 +18,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OneOf;
+using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers.Upload
 {
@@ -26,7 +28,7 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers.Upload
 
     public class ViewModel : Command
     {
-        public int VenueCount { get; set; }
+        public int ProviderCount { get; set; }
     }
 
     public class Command : IRequest<OneOf<UploadFailedResult, UploadSucceededResult>>
@@ -94,12 +96,58 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers.Upload
             Command request,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var validator = new CommandValidator();
+            var result = new ValidationResult { Errors = new List<ValidationFailure>()};//await validator.ValidateAsync(request);
+
+            if (!result.IsValid)
+            {
+                return new UploadFailedResult(await CreateViewModel(), result);
+            }
+
+            using var stream = request.File.OpenReadStream();
+           // Test
+             // await _fileUploadProcessor.ProcessProviderFile(new Guid("2124DB7B-D2E9-42DB-87F2-1BB13E2F6277"), stream);
+
+
+            var saveFileResult = await _fileUploadProcessor.SaveProviderFile(
+                                stream,
+                _currentUserProvider.GetCurrentUser());
+
+            if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidFile)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(),
+                    "The selected file must be a CSV");
+            }
+            else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidRows)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(),
+                    "The selected file must use the template");
+            }
+            else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(),
+                    "Enter headings in the correct format",
+                    saveFileResult.MissingHeaders);
+            }
+            else if (saveFileResult.Status == SaveProviderFileResultStatus.EmptyFile)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(),
+                    "The selected file is empty");
+            }
+
+            return UploadSucceededResult.ProcessingCompletedSuccessfully;
         }
 
         private async Task<ViewModel> CreateViewModel()
         {
-            throw new NotImplementedException();
+            return new ViewModel()
+            {
+                ProviderCount = 0,
+            };
         }
     }
 
@@ -110,8 +158,8 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers.Upload
             RuleFor(x => x.File)
                 .NotNull()
                     .WithMessage("Select a CSV")
-                .Must(file => file == null || file.Length <= Constants.VenueFileMaxSizeBytes)
-                    .WithMessage($"The selected file must be smaller than {Constants.VenueFileMaxSizeLabel}");
+                .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
+                    .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
         }
     }
 }

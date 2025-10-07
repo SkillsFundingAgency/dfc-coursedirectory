@@ -12,6 +12,7 @@ using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Dac.Model;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.Features.DataManagement.Courses.Errors.WhatNext;
 
 namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers
@@ -28,17 +29,33 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers
             _providerContextProvider = providerContextProvider;
         }
 
+        [HttpGet("")]
+        public async Task<IActionResult> Index() =>
+            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
+
         [HttpPost("upload")]
-        public IActionResult Upload(Upload.Command command)
+        public async  Task<IActionResult>  Upload(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
 
-            if (file != null && !file.FileName.Contains("Active_Providers"))
+            if (file != null && !file.FileName.Contains("Active_Providers", StringComparison.CurrentCultureIgnoreCase))
             {
-                ModelState.AddModelError(nameof(command.File), "The file name doesn't contain");
+                ModelState.AddModelError(nameof(command.File), "The file name doesn't contain Active_Providers");
+                return View();
 
             }
-            return View(command);
+            return await _mediator.SendAndMapResponse(
+                new Upload.Command()
+                {
+                    File = file,
+                },
+                response => response.Match<IActionResult>(
+                    errors =>
+                    {
+                        ViewBag.MissingHeaders = errors.MissingHeaders;
+                        return this.ViewFromErrors(errors);
+                    },
+                    success =>  View()));
         }
     }
 }

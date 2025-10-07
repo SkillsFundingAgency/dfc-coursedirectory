@@ -310,6 +310,7 @@
     <Build Include="Pttcd\StoredProcedures\ArchiveProviderCourses.sql" />
     <Build Include="Pttcd\Tables\ProviderUploads.sql" />
     <Build Include="Pttcd\Tables\ProviderUploadRows.sql" />
+    <Build Include="Pttcd\Types\ProviderUploadRowTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

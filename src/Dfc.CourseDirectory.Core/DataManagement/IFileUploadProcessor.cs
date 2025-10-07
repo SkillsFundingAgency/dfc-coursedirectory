@@ -39,5 +39,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         //Providers
         Task ProcessProviderFile(Guid providerUploadId, Stream stream);
+        Task<SaveProviderFileResult> SaveProviderFile(Stream stream, UserInfo uploadedBy);
     }
 }

@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
                 UPDATE Pttcd.ProviderUploads
-                SET UploadStatus = {(int)UploadStatus.Published}, PublishedOn = @PublishedOn
+                SET UploadStatus = {(int)UploadStatus.Published}, PublishedOn = @OnboardedOn
                 WHERE ProviderUploadId = @ProviderUploadId
 
                 IF @@ROWCOUNT = 0
@@ -23,21 +23,25 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     SELECT 0 AS Status
                     RETURN
                 END
+                DECLARE @UploadedBy UNIQUEIDENTIFIER
 
+                SELECT @UploadedBy = CreatedByUserId from pttcd.providerUploads 
+                WHERE ProviderUploadId = @ProviderUploadId
 
                 -- Create new providers from the Provider Upload's rows
 
-                ;WITH ProviderCte AS (
+                ;WITH ProvidersCte AS (
                     SELECT
                         ProviderId,
                         ProviderStatus,
                         ProviderType,
                         Ukprn,
                         ProviderName,
-                        LegalName,
+                        TradingName,
                         ROW_NUMBER() OVER (PARTITION BY ProviderId ORDER BY RowNumber) AS GroupRowNumber
                     FROM Pttcd.ProviderUploadRows
                     WHERE ProviderUploadId = @ProviderUploadId
+                    AND Ukprn not in (Select Ukprn from Pttcd.Providers )
                     AND ProviderUploadRowStatus = {(int)UploadRowStatus.Default}
                 )
                 INSERT INTO Pttcd.Providers (
@@ -65,17 +69,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ProviderId,
                     NULL,
                     Ukprn,
-                    {(int)CourseStatus.Live},
+                    {(int)ProviderStatus.Onboarded},
                     ProviderType,
                     ProviderName,
-                    NULL,
+                    'Active',
                     NULL,
                     NULL,
                     TradingName,
                     NULL,
-                    @PublishedOn,
-                    @PublishedByUserId,
-                    NULL,
+                    @OnboardedOn,
+                    @UploadedBy,
+                    0,
                     NULL,
                     NULL,
                     NULL,
@@ -86,16 +90,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
                 SELECT 1 AS Status
 
-                SELECT CourseRunId FROM Pttcd.CourseUploadRows
-                WHERE CourseUploadId = @CourseUploadId
-                AND CourseUploadRowStatus = {(int)UploadRowStatus.Default}
+                SELECT ProviderId FROM Pttcd.ProviderUploadRows
+                WHERE ProviderUploadId = @ProviderUploadId
+                AND ProviderUploadRowStatus = {(int)UploadRowStatus.Default}
                 ";
 
             var paramz = new
             {
                 query.ProviderUploadId,
                 query.OnboardedOn,
-                PublishedByUserId = query.OnboardedBy.UserId
             };
 
             using var reader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);

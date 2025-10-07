@@ -28,6 +28,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
+        //TODO Could be moved to cofig or DB
         private string[] FundNames = new string[]
         {
             "14-16 in FE",
@@ -91,15 +92,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
 
-                  //  var venueUpload = await dispatcher.ExecuteQuery(new GetCourseUpload() { CourseUploadId = courseUploadId });
-                    //var providerId = venueUpload.ProviderId;
-
-                    //await AcquireExclusiveCourseUploadLockForProvider(providerId, dispatcher);
-
                     await ValidateProviderUploadRows(dispatcher, providerUploadId, rowsCollection);
 
                     await dispatcher.Commit();
                 }
+                await OnboardProviderUpload(providerUploadId);
+
 
             await DeleteBlob();
 
@@ -112,7 +110,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             
         }
 
-        public async Task<OnboardResult> OnboardProviderUpload(Guid providerUploadId, UserInfo onBoardedBy)
+        public async Task<OnboardResult> OnboardProviderUpload(Guid providerUploadId)
         {
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
@@ -146,7 +144,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var onboardProviderResult = await dispatcher.ExecuteQuery(new OnboardProviderUpload()
                 {
                     ProviderUploadId = providerUpload.ProviderUploadId,
-                    OnboardedBy = onBoardedBy,
                     OnboardedOn = onboardedOn
                 });
 
@@ -182,26 +179,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
-                // Check there isn't an existing unprocessed upload for this provider
-
-                var existingUpload = await dispatcher.ExecuteQuery(new GetLatestProviderUploadInProcessing()
-                {
-                });
-
-                if (existingUpload != null && existingUpload.UploadStatus.IsUnprocessed())
-                {
-                    return SaveProviderFileResult.ExistingFileInFlight();
-                }
-
-                // Abandon any existing un-published upload (there will be one at most)
-                if (existingUpload != null)
-                {
-                    await dispatcher.ExecuteQuery(new SetProviderUploadAbandoned()
-                    {
-                        ProviderUploadId = existingUpload.ProviderUploadId,
-                        AbandonedOn = _clock.UtcNow
-                    });
-                }
 
                 await dispatcher.ExecuteQuery(new CreateProviderUpload()
                 {
@@ -272,7 +249,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN)) {
                     continue;
                 }
-                var firstDayOfMonth = new DateTime(1, DateTime.Now.Month - 1, DateTime.Now.Year);
+                var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);
                 var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
                 var isPreviousMOnthData = parsedRow.ResolvedFundStartDate.HasValue &&
                 parsedRow.ResolvedFundStartDate.Value >= firstDayOfMonth &&
@@ -313,7 +290,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 Records = upsertRecords
             });
 
-            var uploadStatus = await RefreshCourseUploadValidationStatus(providerUploadId, sqlQueryDispatcher);
+            var uploadStatus = await RefreshProviderUploadValidationStatus(providerUploadId, sqlQueryDispatcher);
 
             return (uploadStatus, updatedRows);
         }
