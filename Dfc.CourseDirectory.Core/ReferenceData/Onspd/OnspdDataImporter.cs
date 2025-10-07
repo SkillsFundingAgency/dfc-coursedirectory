@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
@@ -21,13 +23,18 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         // internal for testing
         internal const string ContainerName = "onspd";
         internal const string EnglandCountryId = "E92000001";
+        private const string LastDownloadDate = "LastDownloadDate";
+        private const string OnsDownloadBlobFile = "OnsLastDownloadInfo.json";
 
         private const int ChunkSize = 10000;
+        private const long DefaultEpochMs = -2208988800000; // "01/01/1900"
 
         private readonly BlobContainerClient _blobContainerClient; 
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ILogger<OnspdDataImporter> _logger;
         private HttpClient _httpClient;
+        private readonly BlobClient _lastDownloadDateBlobClient;
+
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
@@ -41,6 +48,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 Timeout = TimeSpan.FromSeconds(300)
             };
+            _lastDownloadDateBlobClient = _blobContainerClient.GetBlobClient(OnsDownloadBlobFile);
         }
 
         public async Task ManualDataImport(string filename)
@@ -63,37 +71,28 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         public async Task AutomatedDataImport()
         {
-            string arcgisUrl = "https://www.arcgis.com/sharing/rest/search?f=json&filter=tags:\"PRD_ONSPD\"&sortField=created&sortOrder=desc&num=1";
-
-            _logger.LogInformation("Automated process generate request url at: {arcgisUrl}", arcgisUrl);
-
-            var response = await _httpClient.GetAsync(arcgisUrl);
-            _logger.LogInformation("Response Code on GET from '{arcgisUrl}' is [{responseCode}]", arcgisUrl, response.StatusCode);
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                string responseFromServer = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JsonDocument.Parse(responseFromServer);
-                if (jsonResponse.RootElement.TryGetProperty("results", out JsonElement dataElement))
+                var queryLink = "https://hub.arcgis.com/api/search/v1/collections/all/items?filter=((type%20IN%20(%27CSV%20Collection%27)))%20AND%20((categories%20IN%20(%27/categories/postcode%20products/ons%20postcode%20directory%27)))&limit=12&sortBy=-properties.created";
+                _logger.LogTrace("Automated process generate request url at: {queryLink}", queryLink);
+                var downloadLink = "https://www.arcgis.com/sharing/rest/content/items/{0}/data";
+
+                var downloadDate = await GetDownloadDate();
+
+                var onsMetadata = await _httpClient.GetFromJsonAsync<Feature>(queryLink);
+                var latestModifiedOns = onsMetadata.Features.MaxBy(x => x.Properties.Created);
+
+                if (latestModifiedOns.Properties.Modified.CompareTo(downloadDate) > 0)
                 {
-                    var importObjects = JsonSerializer.Deserialize<ImportObject[]>(dataElement);
-                    if (importObjects != null)
-                    {
-                        var dataObject = importObjects[0];
-                        var downloadLink = $"https://www.arcgis.com/sharing/content/items/{dataObject.id}/data";
-                        _logger.LogInformation("Dataset found. Name: {name}. Title: {title}. Owner {Owner}", dataObject.name, dataObject.title, dataObject.owner);
-                        //Download to temp folder and then insert data to Sql table
-                        await DownloadZipFileToTempAsync(downloadLink);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Failed to import / deserialize objects from {arcgisUrl}", arcgisUrl);
-                    }
+                    var datasetLink = string.Format(downloadLink, latestModifiedOns.Id);
+                    _logger.LogTrace("New Version of ONS data found, beginning import with dataset: {datasetLink}", datasetLink);
+
+                    await DownloadZipFileToTempAsync(datasetLink);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Invalid Response code. Can not progress further. Import failed.");
+                _logger.LogError(ex, "Error occurred importing ONS Data.");
             }
         }
 
@@ -135,6 +134,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         //Remove the CSV when process done
                         using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
                         // temp file exists
+
+                        //Update the blob storage with new download date
+                        var updatedDownloadInfo = new Dictionary<string, string>
+                        {
+                            ["LastDownloadDate"] = DateTime.UtcNow.ToString("dd/MM/yyyy")
+                        };
+
+                        var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        await _lastDownloadDateBlobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
 
                         _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
                         break;
@@ -190,10 +198,32 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 rowCount, importedCount);
         }
 
+        private async Task<long> GetDownloadDate()
+        {
+            try
+            {
+                if (!_lastDownloadDateBlobClient.Exists()) { return DefaultEpochMs; }
+
+                var blobData = await _lastDownloadDateBlobClient.DownloadContentAsync();
+                var LastOnsDownloadDate = JsonSerializer.Deserialize<Dictionary<string, string>>(blobData.Value.Content.ToString(), 
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true});
+
+                return DateTime.TryParse(LastOnsDownloadDate[LastDownloadDate], out var downloadDate)
+                    ? ((DateTimeOffset)downloadDate).ToUnixTimeMilliseconds()
+                    : DefaultEpochMs;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Error occurred retrieving Ons Blob storage data.");
+                return DefaultEpochMs;
+            }
+        }
+
         private static bool IsValidRecord(Record record)
         {
             return record.Latitude >= -90 && record.Latitude <= 90 && record.Longitude >= -90 && record.Longitude <= 90;
         }
+
 
         private class Record
         {
@@ -215,6 +245,23 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             public string owner { get; set; }
             public string name { get; set; }
             public string title { get; set; }
+        }
+
+        private class Ons
+        {
+            public string Id { get; set; }
+            public Properties Properties { get; set; }
+        }
+
+        private class Feature
+        {
+            public List<Ons> Features { get; set; }
+        }
+
+        private class Properties
+        {
+            public long Created { get; set; }
+            public long Modified { get; set; }
         }
     }
 }
