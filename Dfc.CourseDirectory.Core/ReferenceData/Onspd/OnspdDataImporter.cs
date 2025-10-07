@@ -110,43 +110,41 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             if (downloadResponse.StatusCode == HttpStatusCode.OK)
             {
                 var resultStream = await downloadResponse.Content.ReadAsStreamAsync();
-                using var zip = new ZipArchive(resultStream);
-                foreach (var entry in zip.Entries)
+                var zip = new ZipArchive(resultStream);
+                var entry = zip.Entries.FirstOrDefault(x => x.FullName.StartsWith("data/onspd_", StringComparison.OrdinalIgnoreCase) && x.FullName.EndsWith("_UK.csv", StringComparison.OrdinalIgnoreCase));
+
+                if (entry != null)
                 {
-                    if (entry.Name.EndsWith("_UK.csv") && entry.Name.StartsWith("ONSPD"))
+                    _logger.LogInformation("Find csv file - {CsvName}.", entry.Name);
+                    var destination = Path.Combine(extractDirectory, entry.Name);
+                    _logger.LogInformation("Extract and saved in local drive.");
+                    try
                     {
-                        _logger.LogInformation("Find csv file - {CsvName}.", entry.Name);
-                        var destination = Path.Combine(extractDirectory, entry.Name);
-                        _logger.LogInformation("Extract and saved in local drive.");
-                        try
-                        {
-                            entry.ExtractToFile(destination, overwrite: true);
-                            _logger.LogInformation("Extract csv file - {CsvName} complete.", entry.Name);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Extract csv file error message - {Message}.", ex.Message);
-                        }
-
-                        using StreamReader streamReader = new StreamReader(destination);
-                        await ProcessCsvToDbAsync(streamReader);
-
-                        //Remove the CSV when process done
-                        using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
-                        // temp file exists
-
-                        //Update the blob storage with new download date
-                        var updatedDownloadInfo = new Dictionary<string, string>
-                        {
-                            [LastDownloadDate] = DateTime.UtcNow.ToString("dd/MM/yyyy")
-                        };
-
-                        var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        await _lastDownloadDateBlobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
-
-                        _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
-                        break;
+                        entry.ExtractToFile(destination, overwrite: true);
+                        _logger.LogInformation("Extract csv file - {CsvName} complete.", entry.Name);
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Extract csv file error message - {Message}.", ex.Message);
+                    }
+
+                    using StreamReader streamReader = new StreamReader(destination);
+                    await ProcessCsvToDbAsync(streamReader);
+
+                    //Remove the CSV when process done
+                    using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
+                    // temp file exists
+
+                    //Update the blob storage with new download date
+                    var updatedDownloadInfo = new Dictionary<string, string>
+                    {
+                        [LastDownloadDate] = DateTime.UtcNow.ToString("dd/MM/yyyy")
+                    };
+
+                    var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    await _lastDownloadDateBlobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
+
+                    _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
                 }
             }
             else
