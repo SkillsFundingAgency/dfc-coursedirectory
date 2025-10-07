@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             [Name("long")]
             public double Longitude { get; set; }
 
-            [Name("ctry")]
+            [Name("ctry25cd")]
             public string Country { get; set; }
         }
         private class ImportObject
