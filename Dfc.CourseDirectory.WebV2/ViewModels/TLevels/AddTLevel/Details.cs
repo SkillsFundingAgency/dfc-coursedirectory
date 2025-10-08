@@ -57,15 +57,18 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
         private readonly JourneyInstance<AddTLevelJourneyModel> _journeyInstance;
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IWebRiskService _webRiskService;
+        private readonly IClock _clock;
 
         public Handler(
             JourneyInstance<AddTLevelJourneyModel> journeyInstance,
             ISqlQueryDispatcher sqlQueryDispatcher,
-            IWebRiskService webRiskService)
+            IWebRiskService webRiskService,
+            IClock clock)
         {
             _journeyInstance = journeyInstance;
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _webRiskService = webRiskService;
+            _clock = clock;
         }
 
         public async Task<ViewModel> Handle(Query request, CancellationToken cancellationToken)
@@ -92,7 +95,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
                 request.ProviderId,
                 _journeyInstance.State.TLevelDefinitionId.Value,
                 _sqlQueryDispatcher,
-                _webRiskService);
+                _webRiskService,
+                _clock);
 
             var validationResult = await validator.ValidateAsync(request);
 
@@ -150,15 +154,16 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Details
                 throw new InvalidStateException();
             }
         }
+        
 
         private class CommandValidator : AbstractValidator<Command>
         {
-            public CommandValidator(Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService)
+            public CommandValidator(Guid providerId, Guid tLevelDefinitionId, ISqlQueryDispatcher sqlQueryDispatcher, IWebRiskService webRiskService, IClock clock)
             {
                 RuleFor(c => c.YourReference).YourReference();
 
                 RuleFor(c => c.StartDate)
-                    .StartDate(tLevelId: null, providerId, tLevelDefinitionId, sqlQueryDispatcher);
+                    .StartDate(tLevelId: null, providerId, tLevelDefinitionId, clock.UtcNow, sqlQueryDispatcher);
 
 
                 RuleFor(c => c.LocationVenueIds)

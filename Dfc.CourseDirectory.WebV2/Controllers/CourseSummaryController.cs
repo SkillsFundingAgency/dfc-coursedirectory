@@ -64,6 +64,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 WhereNext = course.WhereNext,
                 IsValid = true,
                 QualificationType = course.LearnAimRefTypeDesc,
+                IsExpired = course.IsExpired,
 
                 //Course run deets
                 CourseInstanceId = courseRunId,
