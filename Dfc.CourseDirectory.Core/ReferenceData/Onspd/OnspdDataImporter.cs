@@ -251,8 +251,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 var line = csvReader.Parser.RawRecord.Split(",");
                 yield return new Record
                 {
-                    Country = line[dic["ctry"]],
-                    Postcode = line[dic["pcds"]],
+                    Country = line[dic["ctry"]].Trim('"'),
+                    Postcode = line[dic["pcds"]].Trim('"'),
                     Latitude = Double.TryParse(line[dic["lat"]], out var latRes) ? latRes : Double.MaxValue,
                     Longitude = Double.TryParse(line[dic["long"]], out var longRes) ? longRes : Double.MaxValue
                 };
