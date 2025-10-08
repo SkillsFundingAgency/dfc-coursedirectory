@@ -156,7 +156,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private async Task ProcessCsvToDbAsync(StreamReader streamReader)
         {
-            var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
             using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
             
             var rowCount = 0;
