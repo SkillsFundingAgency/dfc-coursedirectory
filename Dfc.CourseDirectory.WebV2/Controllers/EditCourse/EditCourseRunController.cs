@@ -189,7 +189,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
             };
 
             vm.ValPastDateRef = DateTime.Now;
-            vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+            vm.ValPastDateMessage = "Check start date. Date must not be in the past";
 
             vm.CourseName = cachedData.CourseName;
             vm.AttendanceMode = cachedData.AttendanceMode;
@@ -338,7 +338,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
                     };
 
                     vm.ValPastDateRef = DateTime.Now;
-                    vm.ValPastDateMessage = "Start Date cannot be earlier than today’s date";
+                    vm.ValPastDateMessage = "Check start date. Date must not be in the past";
 
                     if ((courseRun.SubRegionIds?.Count ?? 0) == 0) return View("EditCourseRun", vm);
 

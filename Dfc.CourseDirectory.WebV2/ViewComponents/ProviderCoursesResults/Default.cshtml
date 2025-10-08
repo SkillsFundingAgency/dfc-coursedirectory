@@ -65,11 +65,11 @@ else
                             }
 
 
-                    </div>
-                </fieldset>
-            </div>
+                        </div>
+                    </fieldset>
+                </div>
 
-        </div>
+            </div>
         }
         @if (Model.DeliveryModes.Any())
         {
@@ -303,6 +303,8 @@ else
                     <span id="@Html.Raw(courseRun.CourseRunId+"_name")" style="position: absolute; left: -99em; height: 0;">@courseRun.CourseName</span>
 
                     <a class="govuk-link" href="@Url.Action("Index", "CourseSummary",new { courseRun.CourseId, courseRun.CourseRunId})" aria-label="View or edit course: @courseRun.CourseName">View or edit course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
+                    @if (!courseRun.IsExpired)
+                    {
                     <a class="govuk-link"
                        asp-controller="CopyCourseRun"
                        asp-action="Index"
@@ -314,7 +316,7 @@ else
                        asp-route-courseId="@courseRun.CourseId"
                        asp-route-courseRunId="@courseRun.CourseRunId"
                        asp-route-publishMode="@PublishMode.Summary" aria-label="Copy course: @courseRun.CourseName">Copy course <span class="govuk-visually-hidden">@courseRun.CourseName</span></a>
-
+                     }
                     @{
                         var returnUrl = Model.NonLarsCourse ?
                                         Url.Action("Index", "ProviderCourses", new { nlc = "true" }) :

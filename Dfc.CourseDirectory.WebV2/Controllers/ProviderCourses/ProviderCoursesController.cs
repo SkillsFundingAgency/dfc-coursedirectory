@@ -185,7 +185,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                         CourseType = course.CourseType.ToDescription(),
                         SectorId = course.SectorId,
                         EducationLevel = course.EducationLevel.ToDescription(),
-                        AwardingBody = course.AwardingBody
+                        AwardingBody = course.AwardingBody,
+                        IsExpired = course.IsExpired
                     };
                     //If National
                     if (national)
