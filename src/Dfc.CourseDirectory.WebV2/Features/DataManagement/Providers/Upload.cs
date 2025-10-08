@@ -144,10 +144,15 @@ namespace Dfc.CourseDirectory.WebV2.Features.DataManagement.Providers.Upload
 
         private async Task<ViewModel> CreateViewModel()
         {
-            return new ViewModel()
+           var model =  await Task.Run(() =>
             {
-                ProviderCount = 0,
-            };
+                return new ViewModel()
+                {
+                    ProviderCount = 0,
+                };
+
+            });
+            return model;
         }
     }
 
