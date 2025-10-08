@@ -221,6 +221,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             return record.Latitude >= -90 && record.Latitude <= 90 && record.Longitude >= -90 && record.Longitude <= 90;
         }
 
+        // Recent ONS header field changes prevented the previous logic from retrieving the CSV data.
+        // To prevent future issues with new changes, created new CSV reader logic to handle recent and any future changes to the ONS headers, allowing the CSV data to be read.
         private IEnumerable<Record> GetCsv(StreamReader streamReader)
         {
             using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
@@ -252,7 +254,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                     Country = line[dic["ctry"]],
                     Postcode = line[dic["pcds"]],
                     Latitude = Double.TryParse(line[dic["lat"]], out var latRes) ? latRes : Double.MaxValue,
-                    Longitude = Double.TryParse(line[dic["lat"]], out var longRes) ? longRes : Double.MaxValue
+                    Longitude = Double.TryParse(line[dic["long"]], out var longRes) ? longRes : Double.MaxValue
                 };
             }
         }
@@ -260,16 +262,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private class Record
         {
-            [Name("pcds")]
             public string Postcode { get; set; }
 
-            [Name("lat")]
             public double Latitude { get; set; }
 
-            [Name("long")]
             public double Longitude { get; set; }
 
-            [Name("ctry25cd")]
             public string Country { get; set; }
         }
         private class ImportObject
