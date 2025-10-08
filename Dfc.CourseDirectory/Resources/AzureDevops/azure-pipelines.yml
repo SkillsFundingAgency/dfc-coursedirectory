@@ -29,17 +29,15 @@ trigger:
   paths:
     include:
     - Dfc.CourseDirectory/*
-    - src/Dfc.CourseDirectory.Core/*
-    - src/Dfc.CourseDirectory.Database/*
-    - src/Dfc.CourseDirectory.Functions/*
-    - src/Dfc.CourseDirectory.Services/*
-    - src/Dfc.CourseDirectory.Web/*
-    - src/Dfc.CourseDirectory.WebV2/*
-    - tests/Dfc.CourseDirectory.Core.Tests/*
-    - tests/Dfc.CourseDirectory.Services.Tests/*
-    - tests/Dfc.CourseDirectory.Testing/*
-    - tests/Dfc.CourseDirectory.Web.Tests/*
-    - tests/Dfc.CourseDirectory.WebV2.Tests/*
+    - Dfc.CourseDirectory.Core/*
+    - Dfc.CourseDirectory.Database/*
+    - Dfc.CourseDirectory.Functions/*
+    - Dfc.CourseDirectory.Services/*
+    - Dfc.CourseDirectory.WebV2/*
+    - Dfc.CourseDirectory.Core.Tests/*
+    - Dfc.CourseDirectory.Services.Tests/*
+    - Dfc.CourseDirectory.Testing/*
+    - Dfc.CourseDirectory.WebV2.Tests/*
 
 pr:
   branches:
@@ -49,17 +47,15 @@ pr:
   paths:
     include:
     - Dfc.CourseDirectory/*
-    - src/Dfc.CourseDirectory.Core/*
-    - src/Dfc.CourseDirectory.Database/*
-    - src/Dfc.CourseDirectory.Functions/*
-    - src/Dfc.CourseDirectory.Services/*
-    - src/Dfc.CourseDirectory.Web/*
-    - src/Dfc.CourseDirectory.WebV2/*
-    - tests/Dfc.CourseDirectory.Core.Tests/*
-    - tests/Dfc.CourseDirectory.Services.Tests/*
-    - tests/Dfc.CourseDirectory.Testing/*
-    - tests/Dfc.CourseDirectory.Web.Tests/*
-    - tests/Dfc.CourseDirectory.WebV2.Tests/*
+    - Dfc.CourseDirectory.Core/*
+    - Dfc.CourseDirectory.Database/*
+    - Dfc.CourseDirectory.Functions/*
+    - Dfc.CourseDirectory.Services/*
+    - Dfc.CourseDirectory.WebV2/*
+    - Dfc.CourseDirectory.Core.Tests/*
+    - Dfc.CourseDirectory.Services.Tests/*
+    - Dfc.CourseDirectory.Testing/*
+    - Dfc.CourseDirectory.WebV2.Tests/*
 
 workspace:
   clean: all
@@ -85,24 +81,17 @@ steps:
     Contents: 'Dfc.CourseDirectory/Resources/AzureSearch/*'
     TargetFolder: '$(build.artifactstagingdirectory)'
 
-# restore symlink
-- script: |
-    del v2 /F /Q
-    mklink /D v2 ..\..\$(SolutionBaseName).WebV2\Content
-  displayName: 'Restore v2 content symlink'
-  workingDirectory: src/$(SolutionBaseName).Web/wwwroot
-
 - task: MSBuild@1
   displayName: Build database
   inputs:
-    solution: 'src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj'
+    solution: '$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
 
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.sln` explodes
 - powershell: |
-    dotnet sln Dfc.CourseDirectory/$(SolutionBaseName).sln remove src/$(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
+    dotnet sln Dfc.CourseDirectory/$(SolutionBaseName).sln remove $(SolutionBaseName).Database/$(SolutionBaseName).Database.sqlproj
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -140,10 +129,10 @@ steps:
   condition: succeededOrFailed()
 
 - task: DotNetCoreCLI@2
-  displayName: Publish Dfc.CourseDirectory.Web
+  displayName: Publish Dfc.CourseDirectory.WebV2
   inputs:
     command: publish
-    projects: 'src/$(SolutionBaseName).Web/$(SolutionBaseName).Web.csproj'
+    projects: '$(SolutionBaseName).WebV2/$(SolutionBaseName).WebV2.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
@@ -152,7 +141,7 @@ steps:
   displayName: Publish Dfc.CourseDirectory.Functions
   inputs:
     command: publish
-    projects: 'src/$(SolutionBaseName).Functions/$(SolutionBaseName).Functions.csproj'
+    projects: '$(SolutionBaseName).Functions/$(SolutionBaseName).Functions.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
@@ -160,7 +149,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy files: database'
   inputs:
-    SourceFolder: 'src/$(SolutionBaseName).Database/bin/$(BuildConfiguration)'
+    SourceFolder: '$(SolutionBaseName).Database/bin/$(BuildConfiguration)'
     Contents: '*'
     TargetFolder: '$(build.artifactstagingdirectory)/database'
 

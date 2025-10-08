@@ -1,0 +1,37 @@
+﻿@using Dfc.CourseDirectory.Core.Models;
+
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Attendance.AttendanceModel
+
+<div class="govuk-form-group" id="Attendance">
+
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
+                @Model.LabelText
+            </h2>
+            <span class="govuk-hint govuk-!-margin-top-3">
+                @Model.HintText
+            </span>
+        </legend>
+        <div class="govuk-radios govuk-radios" val-required-message="Select Attendance Mode" id="AttendanceRadioButtons">
+
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.Daytime, new { @class = "govuk-radios__input", id = CourseAttendancePattern.Daytime })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.Daytime">@CourseAttendancePattern.Daytime.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.Evening, new { @class = "govuk-radios__input", id = CourseAttendancePattern.Evening })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.Evening">@CourseAttendancePattern.Evening.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.Weekend, new { @class = "govuk-radios__input", id = CourseAttendancePattern.Weekend })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.Weekend">@CourseAttendancePattern.Weekend.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.AttendanceMode, CourseAttendancePattern.DayOrBlockRelease, new { @class = "govuk-radios__input", id = CourseAttendancePattern.DayOrBlockRelease })
+                <label class="govuk-label govuk-radios__label" for="@CourseAttendancePattern.DayOrBlockRelease">@CourseAttendancePattern.DayOrBlockRelease.ToDescription()</label>
+            </div>
+
+        </div>
+    </fieldset>
+</div>
