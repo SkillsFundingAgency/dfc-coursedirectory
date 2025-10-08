@@ -29,11 +29,13 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Arrange
             // Create a CSV with 4 records
             // 2 valid inside England, 1 valid outside of England and one with invalid lat/lng
-            var csv = $@"pcds,lat,long,ctry25cd
-AB1 2CD,1,-3,{OnspdDataImporter.EnglandCountryId}
-BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId}
-CD3 4EF,3,3,notenglandcountry
-DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
+            //Added ignore due to "/r/n" being added to end of line causing issue with csv reader.
+            var csv = $@"
+pcds,lat,long,ctry25cd,ignore
+AB1 2CD,1,-3,{OnspdDataImporter.EnglandCountryId},ignore
+BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId},ignore
+CD3 4EF,3,3,notenglandcountry,ignore
+DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId},ignore";
 
             var blobClient = new Mock<BlobClient>();
             var blobContainerClient = new Mock<BlobContainerClient>();
