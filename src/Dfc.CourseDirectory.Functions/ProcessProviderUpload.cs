@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Functions
 
         [Function(nameof(ProcessProviderUpload))]
         public Task Run(
-            [BlobTrigger("%DataUploadsContainerName%/%ProviderUploadsFolderName%/{courseUploadId}.csv")] Stream file,
+            [BlobTrigger("%DataUploadsContainerName%/%ProviderUploadsFolderName%/{providerUploadId}.csv")] Stream file,
             Guid providerUploadId)
         {
             return _fileUploadProcessor.ProcessProviderFile(providerUploadId, file);
