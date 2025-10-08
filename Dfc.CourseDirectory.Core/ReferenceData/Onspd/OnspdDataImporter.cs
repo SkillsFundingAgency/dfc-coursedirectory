@@ -156,13 +156,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private async Task ProcessCsvToDbAsync(StreamReader streamReader)
         {
-            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+            var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
             using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
-
+            
             var rowCount = 0;
             var importedCount = 0;
 
-            await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
+            foreach (var records in GetCsv(streamReader).Chunk(ChunkSize))
             {
                 // Some data has invalid lat/lngs that will fail if we try to import.
                 var validRecords = records
@@ -180,7 +180,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         })
                 });
 
-                rowCount += records.Count;
+                rowCount += records.Length;
                 importedCount += validRecords.Length;
 
                 if (rowCount % 100000 == 0)
@@ -220,6 +220,42 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private static bool IsValidRecord(Record record)
         {
             return record.Latitude >= -90 && record.Latitude <= 90 && record.Longitude >= -90 && record.Longitude <= 90;
+        }
+
+        private IEnumerable<Record> GetCsv(StreamReader streamReader)
+        {
+            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+            csvReader.Read(); // Need to read before able to get fields
+
+            var dic = new Dictionary<string, int> { { "ctry", -1 }, { "pcds", -1 }, { "lat", -1 }, { "long", -1 } };
+            for (int i = 0; i < csvReader.ColumnCount; i++)
+            {
+                foreach (var k in dic.Keys)
+                {
+                    if (csvReader.GetField(i).StartsWith(k))
+                    {
+                        dic[k] = i;
+                    }
+                }
+            }
+
+            if (dic.Values.Any(x => x == -1))
+            {
+                throw new Exception("Error retrieving ONS Header Field.");
+            }
+
+            while (csvReader.Parser.Read())
+            {
+                var line = csvReader.Parser.RawRecord.Split(",");
+                yield return new Record
+                {
+                    Country = line[dic["ctry"]],
+                    Postcode = line[dic["pcds"]],
+                    Latitude = Double.TryParse(line[dic["lat"]], out var latRes) ? latRes : Double.MaxValue,
+                    Longitude = Double.TryParse(line[dic["lat"]], out var longRes) ? longRes : Double.MaxValue
+                };
+            }
         }
 
 
