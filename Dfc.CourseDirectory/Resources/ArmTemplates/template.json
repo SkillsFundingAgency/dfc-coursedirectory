@@ -241,24 +241,25 @@
       "type": "Microsoft.Web/sites/slots/config",
       "apiVersion": "2023-12-01",
       "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'appsettings')]",
-      "properties": {
-        "FUNCTIONS_EXTENSION_VERSION": "~4",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-        "MSDEPLOY_RENAME_LOCKED_FILES": "1",
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
-        "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-        "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-        "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
-        "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
-        "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
-        "WEBSITE_RUN_FROM_PACKAGE": "1",
-        "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
-        "CampaignDataContainerName": "campaign-data",
-        "DataUploadsContainerName": "data-uploads",
-        "CourseUploadsFolderName": "courses",
-        "VenueUploadsFolderName": "venues",
-        "ImportLarsDataTriggerTimer": "0 3 * * *"
-      }
+        "properties": {
+            "FUNCTIONS_EXTENSION_VERSION": "~4",
+            "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+            "MSDEPLOY_RENAME_LOCKED_FILES": "1",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
+            "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+            "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+            "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
+            "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
+            "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
+            "CampaignDataContainerName": "campaign-data",
+            "DataUploadsContainerName": "data-uploads",
+            "CourseUploadsFolderName": "courses",
+            "VenueUploadsFolderName": "venues",
+            "ImportLarsDataTriggerTimer": "0 3 * * *",
+            "ImportOnsDataTriggerTimer": "0 4 * * *"
+        }
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
