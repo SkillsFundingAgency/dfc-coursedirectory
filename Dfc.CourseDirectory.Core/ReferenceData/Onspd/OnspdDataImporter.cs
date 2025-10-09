@@ -78,6 +78,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 var downloadLink = "https://www.arcgis.com/sharing/rest/content/items/{0}/data";
 
                 var downloadDate = await GetDownloadDate();
+                _logger.LogInformation("Download Date Epoch Ms: " + downloadDate.ToString());
 
                 var onsMetadata = await _httpClient.GetFromJsonAsync<Feature>(queryLink);
                 var latestModifiedOns = onsMetadata.Features.MaxBy(x => x.Properties.Created);
@@ -199,8 +200,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             try
             {
-                if (!_lastDownloadDateBlobClient.Exists()) { return DefaultEpochMs; }
-
                 var blobData = await _lastDownloadDateBlobClient.DownloadContentAsync();
                 var LastOnsDownloadDate = JsonSerializer.Deserialize<Dictionary<string, string>>(blobData.Value.Content.ToString(), 
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true});
