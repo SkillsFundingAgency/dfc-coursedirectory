@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
         public string SectorDescription { get; set; }
         public string EducationLevel { get; set; }
         public string AwardingBody { get; set; }
+        public bool IsExpired { get; set; } = false;
     }
 }
 
