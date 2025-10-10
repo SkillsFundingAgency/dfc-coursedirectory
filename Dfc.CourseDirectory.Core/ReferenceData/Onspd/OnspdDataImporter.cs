@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             if (downloadResponse.StatusCode == HttpStatusCode.OK)
             {
                 var resultStream = await downloadResponse.Content.ReadAsStreamAsync();
-                var zip = new ZipArchive(resultStream);
+                using var zip = new ZipArchive(resultStream);
                 var entry = zip.Entries.FirstOrDefault(x => x.FullName.StartsWith("data/onspd_", StringComparison.OrdinalIgnoreCase) && x.FullName.EndsWith("_UK.csv", StringComparison.OrdinalIgnoreCase));
 
                 if (entry != null)
