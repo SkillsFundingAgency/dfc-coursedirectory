@@ -41,53 +41,7 @@ namespace Dfc.CourseDirectory.Core.Services
 
         public async Task<Models.CourseType?> GetCourseType(string learnAimRef, Guid providerId)
         {
-            var learningDeliveries = await _sqlQueryDispatcher.ExecuteQuery(new GetLearningDeliveries() { LearnAimRefs = new List<string> { learnAimRef } });
             var larsCourseTypes = await _sqlQueryDispatcher.ExecuteQuery(new GetLarsCourseType() { LearnAimRef = learnAimRef });
-
-            if (learningDeliveries.ContainsKey(learnAimRef))
-            {
-                var learnAimRefTitle = learningDeliveries[learnAimRef].LearnAimRefTitle;
-                if (learnAimRefTitle.StartsWith(GCSE_A_Level,StringComparison.InvariantCultureIgnoreCase) ||
-                    learnAimRefTitle.StartsWith(GCSE_A2_Level, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Models.CourseType.GCEALevel;
-                }
-
-                if (learnAimRefTitle.StartsWith(GCSE_AS_Level, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Models.CourseType.GCEASLevel;
-                }
-
-                if (learnAimRefTitle.Contains(REGULATED_QUALIFICATION_FRAMEWORK, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Models.CourseType.RegulatedQualificationFramework;
-                }
-                if (learnAimRefTitle.Contains(VOCATIONAL_REGULATED_QUALIFICATIONS, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Models.CourseType.VocationalRegulatedQualifications;
-                }
-                if (learnAimRefTitle.Contains(NATIONAL_VOCATIONAL_QUALIFICATIONS, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Models.CourseType.NationalVocationalQualifications;
-                }
-
-                if (learnAimRefTitle.Contains(DEGREE, StringComparison.InvariantCultureIgnoreCase) ||
-                    learnAimRefTitle.Contains(BAHONS, StringComparison.InvariantCultureIgnoreCase) ||
-                    learnAimRefTitle.Contains(BSCHONS, StringComparison.InvariantCultureIgnoreCase) ||
-                    learnAimRefTitle.Contains(BENGHONS, StringComparison.InvariantCultureIgnoreCase) ||
-                    learnAimRefTitle.Contains(BSCORDHONS, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return Models.CourseType.Degree;
-                }
-                if (learnAimRefTitle.StartsWith(NONREGULATED, StringComparison.InvariantCultureIgnoreCase) &&
-                   larsCourseTypes.Any(lc => lc.CategoryRef == NOREGCATEGORY_23 ||
-                                             lc.CategoryRef == NOREGCATEGORY_27 ||
-                                             lc.CategoryRef == NOREGCATEGORY_28 ||
-                                             lc.CategoryRef == NOREGCATEGORY_75))
-                {
-                    return Models.CourseType.NonRegulated;
-                }
-            }
 
             foreach (var larsCourseType in larsCourseTypes)
             {
@@ -118,7 +72,7 @@ namespace Dfc.CourseDirectory.Core.Services
             var courseType = distinctLarsCourseTypes.FirstOrDefault(l => l.HasValue);
 
             if (courseType.HasValue && courseType.Value == Models.CourseType.FreeCoursesForJobs)
-            {                
+            {
                 var eligibleProvidersList = await _sqlQueryDispatcher.ExecuteQuery(new GetFcfjEligibleProvidersList());
 
                 if (!eligibleProvidersList.Contains(providerId))
