@@ -258,19 +258,17 @@
         "CourseUploadsFolderName": "courses",
         "VenueUploadsFolderName": "venues",
         "ImportLarsDataTriggerTimer": "0 3 * * *",
-        "LarsDataset": {
-          "AwardOrgCodeCsv": "AwardOrgCode.csv",
-          "CategoryCsv": "Category.csv",
-          "DownloadInfo": "larsdownloadinfo.json",
-          "LearnAimRefTypeCsv": "LearnAimRefType.csv",
-          "LearningDeliveryCategoryCsv": "LearningDeliveryCategory.csv",
-          "LearningDeliveryCsv": "LearningDelivery.csv",
-          "SectorSubjectAreaTier1Csv": "SectorSubjectAreaTier1.csv",
-          "SectorSubjectAreaTier2Csv": "SectorSubjectAreaTier2.csv",
-          "Url": "https://submit-learner-data.service.gov.uk/",
-          "UrlSuffix": "/find-a-learning-aim/DownloadData",
-          "ValidityCsv": "Validity.csv"
-        }
+        "LarsDataset:AwardOrgCodeCsv": "AwardOrgCode.csv",
+        "LarsDataset:CategoryCsv": "Category.csv",
+        "LarsDataset:DownloadInfo": "larsdownloadinfo.json",
+        "LarsDataset:LearnAimRefTypeCsv": "LearnAimRefType.csv",
+        "LarsDataset:LearningDeliveryCategoryCsv": "LearningDeliveryCategory.csv",
+        "LarsDataset:LearningDeliveryCsv": "LearningDelivery.csv",
+        "LarsDataset:SectorSubjectAreaTier1Csv": "SectorSubjectAreaTier1.csv",
+        "LarsDataset:SectorSubjectAreaTier2Csv": "SectorSubjectAreaTier2.csv",
+        "LarsDataset:Url": "https://submit-learner-data.service.gov.uk/",
+        "LarsDataset:UrlSuffix": "/find-a-learning-aim/DownloadData",
+        "LarsDataset:ValidityCsv": "Validity.csv"
       }
     },
     {
