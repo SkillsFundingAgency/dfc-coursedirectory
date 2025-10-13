@@ -257,7 +257,20 @@
         "DataUploadsContainerName": "data-uploads",
         "CourseUploadsFolderName": "courses",
         "VenueUploadsFolderName": "venues",
-        "ImportLarsDataTriggerTimer": "0 3 * * *"
+        "ImportLarsDataTriggerTimer": "0 3 * * *",
+        "LarsDataset": {
+          "AwardOrgCodeCsv": "AwardOrgCode.csv",
+          "CategoryCsv": "Category.csv",
+          "DownloadInfo": "larsdownloadinfo.json",
+          "LearnAimRefTypeCsv": "LearnAimRefType.csv",
+          "LearningDeliveryCategoryCsv": "LearningDeliveryCategory.csv",
+          "LearningDeliveryCsv": "LearningDelivery.csv",
+          "SectorSubjectAreaTier1Csv": "SectorSubjectAreaTier1.csv",
+          "SectorSubjectAreaTier2Csv": "SectorSubjectAreaTier2.csv",
+          "Url": "https://submit-learner-data.service.gov.uk/",
+          "UrlSuffix": "/find-a-learning-aim/DownloadData",
+          "ValidityCsv": "Validity.csv"
+        }
       }
     },
     {
