@@ -83,8 +83,16 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                 var csvUpdated = csvRow
                     .SelectSingleNode("//td[3]")
                     .InnerHtml;
+                _logger.LogTrace("Lars csv updated date {csvUpdated}", csvUpdated);
 
-                if (DateOnly.Parse(csvUpdated).CompareTo(lastDownloadDay) > 0)
+
+                var validFrom = csvRow
+                    .SelectSingleNode("//td[2]")
+                    .InnerHtml;
+                _logger.LogTrace("Lars csv valid from date {validFrom}", validFrom);
+
+
+                if ( DateOnly.Parse(csvUpdated).CompareTo(lastDownloadDay) > 0 && DateOnly.Parse(validFrom) <= DateOnly.FromDateTime(DateTime.Today))
                 {
                     var downloadLink = baseUrl+  csvRow.SelectSingleNode("//td[4]/a").GetAttributeValue("href", string.Empty);
                     var data = await _httpClient.GetByteArrayAsync(downloadLink);
