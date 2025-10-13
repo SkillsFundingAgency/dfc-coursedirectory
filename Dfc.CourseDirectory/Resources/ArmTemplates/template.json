@@ -257,6 +257,7 @@
             "DataUploadsContainerName": "data-uploads",
             "CourseUploadsFolderName": "courses",
             "VenueUploadsFolderName": "venues",
+            "ProviderUploadsFolderName": "providers",
             "ImportLarsDataTriggerTimer": "0 3 * * *"
         }
     },

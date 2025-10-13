@@ -28,5 +28,6 @@ namespace Dfc.CourseDirectory.Core
         NoUnpublishedVenueUpload,
         VenueUploadRowCannotBeDeleted,
         NoUnpublishedCourseUpload,
+        ProviderUploadNotFound
     }
 }

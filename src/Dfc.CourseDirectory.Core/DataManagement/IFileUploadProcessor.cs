@@ -36,5 +36,9 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         Task<SaveVenueFileResult> SaveVenueFile(Guid providerId, Stream stream, UserInfo uploadedBy);
         Task<UploadStatus> UpdateVenueUploadRowForProvider(Guid providerId, int rowNumber, CsvVenueRow updatedRow);
         Task<UploadStatus> WaitForVenueProcessingToCompleteForProvider(Guid providerId, CancellationToken cancellationToken);
+
+        //Providers
+        Task ProcessProviderFile(Guid providerUploadId, Stream stream);
+        Task<SaveProviderFileResult> SaveProviderFile(Stream stream, UserInfo uploadedBy);
     }
 }
