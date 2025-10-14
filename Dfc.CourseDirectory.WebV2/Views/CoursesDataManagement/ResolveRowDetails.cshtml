@@ -11,6 +11,8 @@
     };
 
     ViewContext.SetLayoutData(title: title);
+    var isSecurityError = ViewContext.ModelState.Keys.Any(x => x == "CourseWebPage") &&
+           ViewContext.ModelState["CourseWebPage"].Errors.Any(y => y.ErrorMessage == "Check website URL. We've identified a security issue");
 }
 
 <div class="govuk-grid-row">
@@ -117,12 +119,32 @@
                 </govuk-radios>
             }
 
-            <govuk-input asp-for="CourseWebPage">
-                <govuk-input-label class="govuk-label--m">Course webpage</govuk-input-label>
-                <govuk-input-hint>
-                    The webpage for this course. For example, https://www.provider.com/coursename.
-                </govuk-input-hint>
-            </govuk-input>
+            @if(isSecurityError)
+            {
+                <govuk-input asp-for="CourseWebPage">
+                    <govuk-input-label class="govuk-label--m">Course webpage</govuk-input-label>
+                    <govuk-input-hint>
+                        The webpage for this course. For example, https://www.provider.com/coursename.
+                        <span class="govuk-hint govuk-!-margin-top-3 web-url-hint">
+                            This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
+                        </span>
+                        <span class="govuk-hint govuk-!-margin-top-3">
+                            Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
+                            You cannot upload this URL to the course directory until it can pass this security check.
+                        </span>
+                    </govuk-input-hint>
+                </govuk-input>
+            } 
+            else
+            {
+                <govuk-input asp-for="CourseWebPage">
+                    <govuk-input-label class="govuk-label--m">Course webpage</govuk-input-label>
+                    <govuk-input-hint>
+                        The webpage for this course. For example, https://www.provider.com/coursename.
+                    </govuk-input-hint>
+                </govuk-input>
+            }
+          
 
             <govuk-input asp-for="Cost" input-class="govuk-input--width-10">
                 <govuk-input-label class="govuk-label--m">Cost</govuk-input-label>
