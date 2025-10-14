@@ -7,9 +7,9 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dfc.CourseDirectory.Databas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Core", "..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj", "{B15BDE09-4023-4B9B-9D5A-F4F2EC74DF1C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "..\tests\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.Testing", "..\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj", "{6CF1AD20-2EA1-4275-8E99-BAF0B07D364E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi.Tests", "..\tests\Dfc.CourseDirectory.FindACourseApi.Tests\Dfc.CourseDirectory.FindACourseApi.Tests.csproj", "{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi.Tests", "..\Dfc.CourseDirectory.FindACourseApi.Tests\Dfc.CourseDirectory.FindACourseApi.Tests.csproj", "{98F51BB5-F2CD-451E-B1F1-D2FCA92042E7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dfc.CourseDirectory.FindACourseApi", "..\Dfc.CourseDirectory.FindACourseApi\Dfc.CourseDirectory.FindACourseApi.csproj", "{D25F7C06-1A1F-4CC0-9CC6-DD20E26BB9E1}"
 EndProject
