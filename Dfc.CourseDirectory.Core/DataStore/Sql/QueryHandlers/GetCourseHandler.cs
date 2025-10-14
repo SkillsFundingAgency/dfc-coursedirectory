@@ -17,7 +17,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     c.CourseId, c.CreatedOn, c.UpdatedOn, c.ProviderId, c.ProviderUkprn, c.LearnAimRef,
                     c.CourseDescription, c.EntryRequirements, c.WhatYoullLearn, c.HowYoullLearn, c.WhatYoullNeed, c.HowYoullBeAssessed,
                     c.WhereNext, c.DataIsHtmlEncoded,
-                    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle, c.CourseType
+                    lart.LearnAimRefTypeDesc, ld.AwardOrgCode, ld.NotionalNVQLevelv2, ld.LearnAimRefTitle, c.CourseType,
+                    CASE WHEN ld.LearnAimRef IN  
+                    (
+                    SELECT LearnAimRef FROM LARS.Validity WHERE LastNewStartDate =''
+                    UNION ALL
+                    SELECT LearnAimRef FROM LARS.Validity WHERE LearnAimRef NOT IN (
+                    SELECT LearnAimRef FROM LARS.Validity WHERE LastNewStartDate ='') GROUP BY LearnAimRef HAVING MAX(CONVERT(varchar, LastNewStartDate ,105))>GETDATE()
+                    ) THEN 'false'
+                    ELSE 'true'
+                    END AS IsExpired
                 FROM Pttcd.Courses c
                 JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
                 JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType

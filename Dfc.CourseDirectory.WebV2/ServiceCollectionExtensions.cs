@@ -29,6 +29,7 @@ using Dfc.CourseDirectory.WebV2.ViewComponents.EditTLevel;
 using Dfc.CourseDirectory.WebV2.ViewComponents.Venues.EditVenue;
 using FormFlow;
 using GovUk.Frontend.AspNetCore;
+using GovUk.Frontend.AspNetCore.ModelBinding;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -124,7 +125,7 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.AddGovUkFrontend(options =>
             {
-                options.AddImportsToHtml = false;
+                options.AddImportsToHtml = false;                
             });
             services.AddHttpClient();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
