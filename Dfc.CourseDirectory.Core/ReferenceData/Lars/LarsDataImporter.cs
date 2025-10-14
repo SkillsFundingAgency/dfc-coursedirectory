@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     _logger.LogTrace("Lars last downloaded on {downloadDate} ", downloadDate);
                 }
 
-                var lastDownloadDay = DateOnly.Parse(downloadDate);
+                var lastDownloadDay = DateOnly.ParseExact(downloadDate, "dd/MM/yyyy");
                 var baseUrl = _larsDataset.Url;
 
                 var link = _larsDataset.UrlSuffix;
