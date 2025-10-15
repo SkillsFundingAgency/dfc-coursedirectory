@@ -277,7 +277,7 @@
       "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'connectionstrings')]",
       "properties": {
         "DefaultConnection": {
-          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySqlConnectionString)', parameters('keyVaultName'))]",
+          "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryConnectionString)', parameters('keyVaultName'))]",
           "type": "SQLServer"
         }
       }

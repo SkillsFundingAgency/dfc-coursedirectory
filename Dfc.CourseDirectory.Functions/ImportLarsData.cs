@@ -1,5 +1,4 @@
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 
