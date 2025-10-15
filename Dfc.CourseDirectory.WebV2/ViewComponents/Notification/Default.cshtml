@@ -1,0 +1,28 @@
+﻿
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Notification.NotificationModel
+
+@{
+    var divClass = "cd-" + Model.ClassType;
+    var h2Class = divClass + "__title";
+    var divBodyClass = divClass + "__body";
+    var h2Id = divClass + "-title";
+
+    <div class="@divClass" role="alert"  data-module="@Model.ClassType">
+        @if (!string.IsNullOrEmpty(Model.NotificationTitle))
+        {
+            <h2 class="@h2Class">
+                @Model.NotificationTitle
+            </h2>
+        }
+    <div class="@divBodyClass">
+
+        <span style="color:black">
+
+            @* Opens the site to XSS attacks.*@
+                @Html.Raw(@Model.NotificationMessage) 
+          
+        </span>
+        <span>@Html.Raw(@Model.Link)</span>
+    </div>
+    </div>
+}

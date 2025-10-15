@@ -1,0 +1,92 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Venues.ResolveRowErrors.Command
+@{
+    ViewContext.SetLayoutData(title: "Resolve errors in venue details");
+    var isSecurityError = ViewContext.ModelState.Keys.Any(x => x == "Website") &&
+          ViewContext.ModelState["Website"].Errors.Any(y => y.ErrorMessage == "Check website URL. We've identified a security issue");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Resolve errors in venue details</h1>
+
+        <form asp-action="ResolveRowErrors" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber">
+            <govuk-error-summary>
+                <govuk-error-summary-item asp-for="ProviderVenueRef" />
+                <govuk-error-summary-item asp-for="Name" />
+                <govuk-error-summary-item asp-for="AddressLine1" />
+                <govuk-error-summary-item asp-for="AddressLine2" />
+                <govuk-error-summary-item asp-for="Town" />
+                <govuk-error-summary-item asp-for="County" />
+                <govuk-error-summary-item asp-for="Postcode" />
+                <govuk-error-summary-item asp-for="Email" />
+                <govuk-error-summary-item asp-for="Telephone" />
+                <govuk-error-summary-item asp-for="Website" />
+            </govuk-error-summary>
+
+            <govuk-input asp-for="ProviderVenueRef">
+                <govuk-input-label>Your venue reference</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Name">
+                <govuk-input-label>Venue name</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="AddressLine1">
+                <govuk-input-label>Address line 1</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="AddressLine2">
+                <govuk-input-label>Address line 2</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Town" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label>Town or city</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="County" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label>County</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Postcode" input-class="govuk-!-width-one-quarter">
+                <govuk-input-label>Postcode</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Email" type="email" input-class="govuk-!-width-two-thirds">
+                <govuk-input-label>Email</govuk-input-label>
+            </govuk-input>
+
+            <govuk-input asp-for="Telephone" type="tel" input-class="govuk-!-width-one-third">
+                <govuk-input-label>Phone</govuk-input-label>
+            </govuk-input>
+
+            @if (!isSecurityError)
+            {
+                <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
+                    <govuk-input-label>Website</govuk-input-label>
+                    <govuk-input-hint>For example https://www.venue.com</govuk-input-hint>
+                </govuk-input>
+            }
+            else
+            {
+                <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
+                    <govuk-input-label>Website</govuk-input-label>
+                    <govuk-input-hint>
+                        For example https://www.venue.com
+                        <span class="govuk-hint govuk-!-margin-top-3 web-url-hint">
+                            This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
+                        </span>
+                        <span class="govuk-hint govuk-!-margin-top-3">
+                            Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
+                            You cannot upload this URL to the course directory until it can pass this security check.
+                        </span>
+                    </govuk-input-hint>
+                </govuk-input>
+            }
+
+            <div class="govuk-button-group">            
+                <govuk-button type="submit" class="cd-cancel-btn">Resolve errors</govuk-button>
+                <a asp-action="ResolveList" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link cd-cancel-link">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

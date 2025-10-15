@@ -1,0 +1,84 @@
+﻿using System;
+using System.Threading.Tasks;
+using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.Filters;
+using FormFlow;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Dfc.CourseDirectory.Core.Middleware;
+using Dfc.CourseDirectory.Core.Extensions;
+using Dfc.CourseDirectory.WebV2.ViewModels.DeleteCourseRun;
+
+namespace Dfc.CourseDirectory.WebV2.Controllers
+{
+    [Route("courses/{courseId}/course-runs/{courseRunId}/delete")]
+    [JourneyMetadata(
+        journeyName: "DeleteCourseRun",
+        stateType: typeof(JourneyModel),
+        appendUniqueKey: false,
+        requestDataKeys: new[] { "courseId", "courseRunId" })]
+    public class DeleteCourseRunController : Controller
+    {
+        private readonly IMediator _mediator;
+        private readonly JourneyInstanceProvider _journeyInstanceProvider;
+        private JourneyInstance _journeyInstance;
+
+        public DeleteCourseRunController(
+            IMediator mediator,
+            JourneyInstanceProvider journeyInstanceProvider)
+        {
+            _mediator = mediator;
+            _journeyInstanceProvider = journeyInstanceProvider;
+            _journeyInstance = journeyInstanceProvider.GetInstance();
+        }
+
+        [HttpGet("")]
+        [AuthorizeCourse]
+        public async Task<IActionResult> Get(
+            Request request,
+            [LocalUrl(viewDataKey: "ReturnUrl")] string returnUrl)
+        {
+            _journeyInstance = _journeyInstanceProvider.GetOrCreateInstance(() => new JourneyModel());
+            return await _mediator.SendAndMapResponse(
+                request,
+                vm => View("~/Views/DeleteCourseRun/View.cshtml", vm));
+        }
+
+        [HttpPost("")]
+        [AuthorizeCourse]
+        [RequireJourneyInstance]
+        public Task<IActionResult> Post(Guid courseId, Guid courseRunId, Command request) =>
+            _mediator.SendAndMapResponse(
+                request,
+                response => response.Match<IActionResult>(
+                    errors => this.ViewFromErrors("~/Views/DeleteCourseRun/View.cshtml", errors),
+                    vm => RedirectToAction(
+                        nameof(Confirmed),
+                        new { courseId, courseRunId })));
+
+        [HttpGet("confirmed")]
+        [RequireJourneyInstance]
+        public async Task<IActionResult> Confirmed(
+            [FromServices] IProviderContextProvider providerContextProvider,
+            [FromServices] IProviderInfoCache providerInfoCache,
+            ConfirmedQuery request)
+        {
+            request.IsNonLars = IsCourseNonLars();
+
+            var vm = await _mediator.Send(request);
+
+            var providerInfo = await providerInfoCache.GetProviderInfo(vm.ProviderId);
+            providerContextProvider.SetProviderContext(new ProviderContext(providerInfo));
+
+            vm.NonLarsCourse = IsCourseNonLars();
+            return View("~/Views/DeleteCourseRun/Confirmed.cshtml", vm);
+        }
+
+        private bool IsCourseNonLars()
+        {
+            var nonLarsCourseString = HttpContext.Session.GetString("NonLarsCourse");
+            return !string.IsNullOrWhiteSpace(nonLarsCourseString) && nonLarsCourseString == "true";
+        }
+    }
+}

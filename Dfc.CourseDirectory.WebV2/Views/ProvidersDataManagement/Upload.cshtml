@@ -1,0 +1,55 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload.ViewModel;
+@{
+    ViewBag.Title = "Data Upload - Upload provider data";
+
+}
+
+<govuk-error-summary>
+    @* The message when headers are missing is unusual; this summary needs to list the missing headers
+        whereas the inline message below does not.
+        The list of missing headers is in ViewData; if they're not empty we use them to construct the message. *@
+    @if (ViewBag.MissingHeaders is IReadOnlyCollection<string> missingHeaders && missingHeaders.Count != 0)
+    {
+        <govuk-error-summary-item>
+            <a href="#@(Html.IdFor(m => m.File))">@Html.ValidationMessageFor(m => m.File)</a>
+            <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+                <govuk-details-summary>CSV headings</govuk-details-summary>
+                <govuk-details-text>
+                    <ul class="govuk-list govuk-!-margin-0">
+                        @foreach (var header in missingHeaders)
+                        {
+                            <li data-testid="MissingHeader">@header</li>
+                        }
+                    </ul>
+                </govuk-details-text>
+            </govuk-details>
+        </govuk-error-summary-item>
+    }
+    else
+    {
+        <govuk-error-summary-item asp-for="File" />
+    }
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">Upload your provider data</h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+        <form asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" enctype="multipart/form-data">
+
+            <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
+            <p class="govuk-body">To ensure an upload is successful you must:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
+                <li>include providers in the data file</li>
+                <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">file format requirements</a></li>
+            </ul>
+            <govuk-file-upload asp-for="File" input-accept=".csv">
+                <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
+            </govuk-file-upload>
+
+            <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
+        </form>
+
+    </div>
+</div>

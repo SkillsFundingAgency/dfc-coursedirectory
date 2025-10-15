@@ -1,0 +1,65 @@
+﻿@using Dfc.CourseDirectory.WebV2.TagHelpers
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@using AnchorTagHelper = GovUk.Frontend.AspNetCore.TagHelpers.AnchorTagHelper
+@model Dfc.CourseDirectory.WebV2.ViewModels.DeleteCourseRun.ConfirmedViewModel
+@{
+    Layout = "_V2LayoutProviderContext";
+    ViewBag.Title = "Your course has been deleted";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <govuk-panel>
+            <govuk-panel-title>Your course has been deleted</govuk-panel-title>
+            <govuk-panel-body>
+                <span data-testid="CourseName">@Model.CourseName</span>
+            </govuk-panel-body>
+            
+        </govuk-panel>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+
+        <ul class="govuk-list">
+            @if (Model.NonLarsCourse)
+            {
+                <li>
+                    <a asp-controller="AddCourse" asp-action="AddCourse" class="govuk-link">
+                        Add a new course
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a asp-controller="RegulatedQualification" asp-action="Index" class="govuk-link">
+                        Add a new course
+                    </a>
+                </li>
+            }
+            @if (Model.HasOtherCourseRuns)
+            {
+                if (Model.NonLarsCourse)
+                {
+                    <li>
+                        <a asp-controller="ProviderCourses" asp-action="Index" asp-route-nlc="true" class="govuk-link" data-testid="ViewEditCopyDeleteLink">
+                            View, edit, copy or delete a course
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a asp-controller="ProviderCourses" asp-action="Index" class="govuk-link" data-testid="ViewEditCopyDeleteLink">
+                            View, edit, copy or delete a course
+                        </a>
+                    </li>
+                }
+            }
+            <li>
+                <a href="/" class="govuk-link">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
