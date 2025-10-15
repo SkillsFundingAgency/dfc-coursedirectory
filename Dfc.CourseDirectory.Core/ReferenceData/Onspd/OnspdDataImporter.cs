@@ -11,9 +11,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
-using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
@@ -24,7 +25,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         internal const string ContainerName = "onspd";
         internal const string EnglandCountryId = "E92000001";
         private const string LastDownloadDate = "LastDownloadDate";
-        private const string OnsDownloadBlobFile = "OnsLastDownloadInfo.json";
 
         private const int ChunkSize = 10000;
         private const long DefaultEpochMs = -2208988800000; // "01/01/1900"
@@ -34,12 +34,14 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         private readonly ILogger<OnspdDataImporter> _logger;
         private HttpClient _httpClient;
         private readonly BlobClient _lastDownloadDateBlobClient;
+        private readonly IConfiguration _configuration;
 
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            ILogger<OnspdDataImporter> logger)
+            ILogger<OnspdDataImporter> logger,
+            IConfiguration configuration)
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
@@ -48,7 +50,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 Timeout = TimeSpan.FromSeconds(300)
             };
-            _lastDownloadDateBlobClient = _blobContainerClient.GetBlobClient(OnsDownloadBlobFile);
+            _configuration = configuration;
+            _lastDownloadDateBlobClient = _blobContainerClient.GetBlobClient(_configuration[OnsConfigurationKeys.OnsDownloadInfoBlobFile]);
         }
 
         public async Task ManualDataImport(string filename)
@@ -73,9 +76,9 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         {
             try
             {
-                var queryLink = "https://hub.arcgis.com/api/search/v1/collections/all/items?filter=((type%20IN%20(%27CSV%20Collection%27)))%20AND%20((categories%20IN%20(%27/categories/postcode%20products/ons%20postcode%20directory%27)))&limit=12&sortBy=-properties.created";
+                var queryLink = _configuration[OnsConfigurationKeys.OnsQueryLink];
                 _logger.LogTrace("Automated process generate request url at: {queryLink}", queryLink);
-                var downloadLink = "https://www.arcgis.com/sharing/rest/content/items/{0}/data";
+                var downloadLink = _configuration[OnsConfigurationKeys.OnsDownloadLink];
 
                 var downloadDate = await GetDownloadDate();
 
