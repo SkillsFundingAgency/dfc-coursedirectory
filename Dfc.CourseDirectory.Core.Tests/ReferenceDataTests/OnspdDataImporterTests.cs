@@ -10,6 +10,7 @@ using Azure.Storage.Blobs.Models;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -41,6 +42,7 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId},ignore";
             var blobContainerClient = new Mock<BlobContainerClient>();
             var blobServiceClient = new Mock<BlobServiceClient>();
             var downloadResponse = new Mock<Response<BlobDownloadStreamingResult>>();
+            var mockConfig = new Mock<IConfiguration>();
 
             var csvStream = new MemoryStream(Encoding.UTF8.GetBytes(csv));
             csvStream.Seek(0L, SeekOrigin.Begin);
@@ -65,7 +67,8 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId},ignore";
             var importer = new OnspdDataImporter(
                 blobServiceClient.Object,
                 SqlQueryDispatcherFactory,
-                new NullLogger<OnspdDataImporter>());
+                new NullLogger<OnspdDataImporter>(),
+                mockConfig.Object);
 
             // Act
             await importer.ManualDataImport(string.Empty);
