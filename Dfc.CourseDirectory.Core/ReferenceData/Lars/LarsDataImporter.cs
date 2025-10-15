@@ -29,12 +29,15 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ILogger<LarsDataImporter> _logger;
         private readonly BlobContainerClient _blobContainerClient;
+        private string _larsApplicableFrom;
+        private string _larsDateUploaded;
+        private string _larsDownloadlink;
 
         public LarsDataImporter(
             HttpClient httpClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
             ILogger<LarsDataImporter> logger,
-            IOptions<LarsDataset> larsDatasetOption, 
+            IOptions<LarsDataset> larsDatasetOption,
             BlobServiceClient blobServiceClient)
         {
             _httpClient = httpClient;
@@ -43,35 +46,19 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
             _larsDataset = larsDatasetOption.Value;
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(Constants.LarsContainerName);
         }
-        public async Task ImportData()
+        private async Task GetDownloadFileDetails()
         {
-            _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
             try
             {
-                var downloadDate = "01/01/1900";
-                //Read from blob storage
-                var blobClient = _blobContainerClient.GetBlobClient(_larsDataset.DownloadInfo);
-                if (await blobClient.ExistsAsync())
-                {
-                    var downloadInfoContent = await blobClient.DownloadContentAsync();
-                    var downloadInfoJson = downloadInfoContent.Value.Content.ToString();
-                    var downloadInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(downloadInfoJson);
-                    downloadDate = downloadInfo["LastDownloadDate"];
-                    _logger.LogTrace("Lars last downloaded on {downloadDate} ", downloadDate);
-                }
-
-                var lastDownloadDay = DateOnly.ParseExact(downloadDate, "dd/MM/yyyy");
-                var baseUrl = _larsDataset.Url;
-
                 var link = _larsDataset.UrlSuffix;
 
-                _httpClient.BaseAddress = new Uri(baseUrl);
+                _httpClient.BaseAddress = new Uri(_larsDataset.Url);
 
-                _logger.LogTrace("Lars baseurl {baseUrl}", baseUrl); 
+                _logger.LogTrace("Lars baseurl {baseUrl}", _larsDataset.Url);
 
                 var result = await _httpClient.GetStringAsync(link);
 
-                var html = new HtmlDocument(); // using HtmlAgilityPack
+                var html = new HtmlDocument();
                 html.LoadHtml(result);
 
                 var table = html.DocumentNode.SelectSingleNode("//table[1]");
@@ -80,28 +67,80 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     .First()
                     .ParentNode;
 
-                var csvUpdated = csvRow
+                _larsDateUploaded = csvRow
                     .SelectSingleNode("//td[3]")
                     .InnerHtml;
-                _logger.LogTrace("Lars csv updated date {csvUpdated}", csvUpdated);
+                _logger.LogTrace("Lars csv updated date {csvUpdated}", _larsDateUploaded);
 
 
-                var validFrom = csvRow
+                _larsApplicableFrom = csvRow
                     .SelectSingleNode("//td[2]")
                     .InnerHtml;
-                _logger.LogTrace("Lars csv valid from date {validFrom}", validFrom);
+                _logger.LogTrace("Lars csv valid from date {validFrom}", _larsApplicableFrom);
+
+                _larsDownloadlink = _larsDataset.Url + csvRow
+                    .SelectSingleNode("//td[4]/a")
+                    .GetAttributeValue("href", string.Empty);
+                _logger.LogTrace("Lars csv download link {downloadLink}", _larsDownloadlink);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Error occurred retrieving Lars data file details.");
+                throw;
+
+            }
+        }
+        public async Task ImportData()
+        {
+            _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
 
 
-                if ( DateOnly.Parse(csvUpdated).CompareTo(lastDownloadDay) > 0 && DateOnly.Parse(validFrom) <= DateOnly.FromDateTime(DateTime.Today))
+            var _blobClient = _blobContainerClient.GetBlobClient(_larsDataset.DownloadInfo);
+            var defaultDate = "01/01/1900";
+            DateOnly lastDownloadDay;
+            try
+            {
+                _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
+
+                if (await _blobClient.ExistsAsync())
                 {
-                    var downloadLink = baseUrl+  csvRow.SelectSingleNode("//td[4]/a").GetAttributeValue("href", string.Empty);
-                    var data = await _httpClient.GetByteArrayAsync(downloadLink);
-                    _logger.LogTrace("Lars new data found. Downloading from {downloadLink}", downloadLink);
-                    //Check of the check if the file is already downloaded
+                    var downloadInfoContent = await _blobClient.DownloadContentAsync();
+                    var downloadInfoJson = downloadInfoContent.Value.Content.ToString();
+                    var downloadInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(downloadInfoJson);
+                    defaultDate = downloadInfo["LastDownloadDate"];
+                    _logger.LogTrace("Lars last downloaded on {downloadDate} ", defaultDate);
+                }
+                lastDownloadDay = DateOnly.ParseExact(defaultDate, "dd/MM/yyyy");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Error occurred retrieving Blob storage data.");
+                lastDownloadDay = DateOnly.ParseExact(defaultDate, "dd/MM/yyyy"); ;
+            }
+
+            try
+            {
+                await GetDownloadFileDetails();
+
+                if (DateOnly.Parse(_larsDateUploaded).CompareTo(lastDownloadDay) > 0 && DateOnly.Parse(_larsApplicableFrom) <= DateOnly.FromDateTime(DateTime.Today))
+                {
+
+                    var request = new HttpRequestMessage(HttpMethod.Get, _larsDownloadlink);
+                    var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("Download link is not valid: {statusCode}", response.StatusCode);
+                        throw new HttpRequestException($"Download link is not valid: {_larsDownloadlink}");
+                    }
+                    var data = await _httpClient.GetByteArrayAsync(_larsDownloadlink);
+                    _logger.LogTrace("Lars new data found. Downloading from {downloadLink}", _larsDownloadlink);
+
                     var extractDirectory = Path.Join(Path.GetTempPath(), "lars");
                     Directory.CreateDirectory(extractDirectory);
 
-                    await DownloadFiles(downloadLink);
+                    await DownloadFiles(_larsDownloadlink);
 
                     await ImportValidityToSql();
                     await ImportAwardOrgCodeToSql();
@@ -129,7 +168,6 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         }
                     }
 
-
                     async Task DownloadFiles(string downloadFile)
                     {
                         _logger.LogTrace("Lars URL- " + downloadFile);
@@ -143,15 +181,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                                 var destination = Path.Combine(extractDirectory, entry.Name);
                                 entry.ExtractToFile(destination, overwrite: true);
                             }
-                        }                       
+                        }
                     }
 
 
                     Task ImportAwardOrgCodeToSql()
                     {
                         var records = ReadCsv<UpsertLarsAwardOrgCodesRecord>(_larsDataset.AwardOrgCodeCsv);
-
-
 
                         return WithSqlQueryDispatcher(dispatcher => dispatcher.ExecuteQuery(new UpsertLarsAwardOrgCodes()
                         {
@@ -282,16 +318,17 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
 
                     // Serialize and upload the updated content
                     var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo);
-                    await blobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
+                    await _blobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
+                    _logger.LogInformation("LarsDataImport successfully completed");
                 }
                 else
                 {
-                    _logger.LogInformation("LarsDataImport did not run. Last uploaded on {downloadDate} ", downloadDate);
+                    _logger.LogInformation("LarsDataImport did not run. Last uploaded on {downloadDate} ", lastDownloadDay);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex, "LarsDataImport Error occurred during Lars data import"+ex.Message);
+                _logger.LogInformation(ex, "LarsDataImport Error occurred during Lars data import" + ex.Message);
                 throw;
 
 
