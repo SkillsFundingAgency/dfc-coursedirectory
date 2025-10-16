@@ -268,7 +268,11 @@
         "LarsDataset:SectorSubjectAreaTier2Csv": "SectorSubjectAreaTier2.csv",
         "LarsDataset:Url": "https://submit-learner-data.service.gov.uk/",
         "LarsDataset:UrlSuffix": "/find-a-learning-aim/DownloadData",
-        "LarsDataset:ValidityCsv": "Validity.csv"
+        "LarsDataset:ValidityCsv": "Validity.csv",
+        "ImportOnsDataTriggerTimer": "0 4 * * *",
+        "Ons:QueryLink": "https://hub.arcgis.com/api/search/v1/collections/all/items?filter=((type%20IN%20(%27CSV%20Collection%27)))%20AND%20((categories%20IN%20(%27/categories/postcode%20products/ons%20postcode%20directory%27)))&limit=12&sortBy=-properties.created",
+        "Ons:DownloadLink": "https://www.arcgis.com/sharing/rest/content/items/{0}/data",
+        "Ons:DownloadInfoBlobFile": "OnsLastDownloadInfo.json"
       }
     },
     {
