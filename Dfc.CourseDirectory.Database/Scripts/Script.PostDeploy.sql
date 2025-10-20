@@ -1,39 +1,4 @@
-﻿
---- This is the script to insert/update mapping data between Lars Category and CourseType -----------------
-DECLARE @CourseTypeCategory TABLE (
-	CourseType TINYINT,
-	CategoryRef NVARCHAR(50)
-)
-
-INSERT INTO @CourseTypeCategory (CourseType, CategoryRef) 
-VALUES
-	(1, '24'),
-	(1, '29'),
-	(1, '37'),
-	(1, '39'),	
-	(1, '42'),
-	(1, '40'),
-	(2, '3'),
-	(3, '55'),
-	(4, '45'),
-	(4, '46'),
-	(4, '48'),
-	(4, '49'),
-	(4, '56'),
-	(5, '63');
-
-
-MERGE Pttcd.CourseTypeCategory AS target
-USING (SELECT * FROM @CourseTypeCategory) AS source
-ON source.CourseType = target.CourseType AND source.CategoryRef = target.CategoryRef
-WHEN NOT MATCHED THEN
-	INSERT ([CourseType], [CategoryRef])
-	VALUES (source.CourseType, source.CategoryRef)
-WHEN NOT MATCHED BY SOURCE THEN DELETE;
-----------------------------------------------------------------------------------------------------------
-
-
---------- This script updates CourseType column value in Pttcd.Courses table for already existing courses. It derives CourseType from the mapping inserted in above table i.e. Pttcd.CourseTypeCategory -----------------
+﻿--------- This script updates CourseType column value in Pttcd.Courses table for already existing courses. It derives CourseType from the mapping inserted in above table i.e. Pttcd.CourseTypeCategory -----------------
 SELECT ldc.LearnAimRef,
 CASE 
 	WHEN ldc.CategoryRef IN (24, 29, 39, 42, 45, 46, 48, 49, 56, 55, 63) THEN ctc.CourseType
