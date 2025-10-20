@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
@@ -94,8 +95,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
         public async Task ImportData()
         {
             _logger.LogTrace("LarsDataImport started at: {time}", DateTimeOffset.Now);
-
-
+       
             var _blobClient = _blobContainerClient.GetBlobClient(_larsDataset.DownloadInfo);
             var defaultDate = "01/01/1900";
             DateOnly lastDownloadDay;
@@ -310,7 +310,13 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                         }));
                     }
 
-                    //Update the blob storage with new download date
+                   // Get a reference to the container
+                    var containerClient = _blobClient.GetParentBlobContainerClient();
+
+                    // Check if the container exists, and create it if it doesn't
+                    await containerClient.CreateIfNotExistsAsync();
+
+                    // Update the blob storage with new download date
                     var updatedDownloadInfo = new Dictionary<string, string>
                     {
                         ["LastDownloadDate"] = DateTime.UtcNow.ToString("dd/MM/yyyy") // or use downloadDate if needed
@@ -320,6 +326,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Lars
                     var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo);
                     await _blobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
                     _logger.LogInformation("LarsDataImport successfully completed");
+
+
                 }
                 else
                 {
