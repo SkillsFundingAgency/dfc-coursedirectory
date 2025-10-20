@@ -1,15 +1,4 @@
-﻿---------------- UPDATE COURSETYPE TO 2 FOR EXISTING T LEVEL COURSES--------------------------------
-IF (EXISTS (SELECT TLevelId FROM [Pttcd].[FindACourseIndex] Where TLevelId IS NOT NULL AND TLevelLocationId IS NOT NULL AND  Live = 1 AND CourseType IS NULL))
-BEGIN
-	UPDATE fac
-		SET fac.CourseType = 2
-	  FROM [Pttcd].[FindACourseIndex] as fac
-	  WHERE fac.TLevelId IS NOT NULL AND 
-		fac.TLevelLocationId IS NOT NULL AND  
-		Live = 1 AND 
-		fac.CourseType IS NULL
-END
-
+﻿
 --- This is the script to insert/update mapping data between Lars Category and CourseType -----------------
 DECLARE @CourseTypeCategory TABLE (
 	CourseType TINYINT,
