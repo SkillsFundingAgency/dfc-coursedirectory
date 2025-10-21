@@ -250,7 +250,6 @@
         "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
         "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
         "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
-        "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
         "WEBSITE_RUN_FROM_PACKAGE": "1",
         "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
         "CampaignDataContainerName": "campaign-data",
