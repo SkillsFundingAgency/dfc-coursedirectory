@@ -56,12 +56,7 @@
         "description": "URL for the search services"
       }
     },
-    "larsDatasetUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Url to download current LARs dataset"
-      }
-    },
+
     "dfeClientID": {
       "type": "string",
       "metadata": {
@@ -241,24 +236,38 @@
       "type": "Microsoft.Web/sites/slots/config",
       "apiVersion": "2023-12-01",
       "name": "[format('{0}/{1}/{2}', variables('functionAppName'), 'staging', 'appsettings')]",
-        "properties": {
-            "FUNCTIONS_EXTENSION_VERSION": "~4",
-            "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-            "MSDEPLOY_RENAME_LOCKED_FILES": "1",
-            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
-            "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-            "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-            "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
-            "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
-            "LarsDataset__Url": "[parameters('larsDatasetUrl')]",
-            "WEBSITE_RUN_FROM_PACKAGE": "1",
-            "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
-            "CampaignDataContainerName": "campaign-data",
-            "DataUploadsContainerName": "data-uploads",
-            "CourseUploadsFolderName": "courses",
-            "VenueUploadsFolderName": "venues",
-            "ImportLarsDataTriggerTimer": "0 3 * * *"
-        }
+      "properties": {
+        "FUNCTIONS_EXTENSION_VERSION": "~4",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+        "MSDEPLOY_RENAME_LOCKED_FILES": "1",
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
+        "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+        "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+        "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
+        "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
+        "WEBSITE_RUN_FROM_PACKAGE": "1",
+        "GoogleWebRiskSettings:ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
+        "CampaignDataContainerName": "campaign-data",
+        "DataUploadsContainerName": "data-uploads",
+        "CourseUploadsFolderName": "courses",
+        "VenueUploadsFolderName": "venues",
+        "ImportLarsDataTriggerTimer": "0 3 * * *",
+        "LarsDataset:AwardOrgCodeCsv": "AwardOrgCode.csv",
+        "LarsDataset:CategoryCsv": "Category.csv",
+        "LarsDataset:DownloadInfo": "larsdownloadinfo.json",
+        "LarsDataset:LearnAimRefTypeCsv": "LearnAimRefType.csv",
+        "LarsDataset:LearningDeliveryCategoryCsv": "LearningDeliveryCategory.csv",
+        "LarsDataset:LearningDeliveryCsv": "LearningDelivery.csv",
+        "LarsDataset:SectorSubjectAreaTier1Csv": "SectorSubjectAreaTier1.csv",
+        "LarsDataset:SectorSubjectAreaTier2Csv": "SectorSubjectAreaTier2.csv",
+        "LarsDataset:Url": "https://submit-learner-data.service.gov.uk/",
+        "LarsDataset:UrlSuffix": "/find-a-learning-aim/DownloadData",
+        "LarsDataset:ValidityCsv": "Validity.csv",
+        "ImportOnsDataTriggerTimer": "0 4 * * *",
+        "Ons:QueryLink": "https://hub.arcgis.com/api/search/v1/collections/all/items?filter=((type%20IN%20(%27CSV%20Collection%27)))%20AND%20((categories%20IN%20(%27/categories/postcode%20products/ons%20postcode%20directory%27)))&limit=12&sortBy=-properties.created",
+        "Ons:DownloadLink": "https://www.arcgis.com/sharing/rest/content/items/{0}/data",
+        "Ons:DownloadInfoBlobFile": "OnsLastDownloadInfo.json"
+      }
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
