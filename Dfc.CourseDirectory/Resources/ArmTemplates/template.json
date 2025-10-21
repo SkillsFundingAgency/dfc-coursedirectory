@@ -56,12 +56,7 @@
         "description": "URL for the search services"
       }
     },
-    "larsDatasetUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Url to download current LARs dataset"
-      }
-    },
+
     "dfeClientID": {
       "type": "string",
       "metadata": {
