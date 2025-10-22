@@ -265,7 +265,7 @@ USING (SELECT * FROM @Regions) AS source
 ON source.RegionId = target.RegionId
 WHEN MATCHED AND (target.Name != source.Name OR
 	target.ParentRegionId != source.ParentRegionId OR
-	target.Position != source.Position) THEN
+	target.Position.ToString() != source.Position.ToString()) THEN
 	UPDATE SET
 	target.Name = source.Name,
 	target.ParentRegionId = source.ParentRegionId,
