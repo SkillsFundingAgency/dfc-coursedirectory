@@ -8511,7 +8511,20 @@ USING (
 	FROM CourseTextCte
 ) AS source
 ON target.LearnAimRef = source.LearnAimRef
-WHEN MATCHED 
+WHEN MATCHED AND (
+		target.LearnAimRef != source.LearnAimRef OR
+		target.AwardOrgCode != source.AwardOrgCode OR
+		target.QualificationCourseTitle != source.QualificationCourseTitle OR
+		target.NotionalNVQLevelv2 != source.NotionalNVQLevelv2 OR
+		target.TypeName != source.TypeName OR
+		target.CourseDescription != source.CourseDescription OR
+		target.EntryRequirements != source.EntryRequirements OR
+		target.WhatYoullLearn != source.WhatYoullLearn OR
+		target.HowYoullLearn != source.HowYoullLearn OR
+		target.WhatYoullNeed != source.WhatYoullNeed OR
+		target.HowYoullBeAssessed != source.HowYoullBeAssessed OR
+		target.WhereNext != source.WhereNext
+		)
 THEN UPDATE SET
 		target.LearnAimRef = source.LearnAimRef,
 		target.AwardOrgCode = source.AwardOrgCode,
