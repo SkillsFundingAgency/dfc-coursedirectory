@@ -608,8 +608,19 @@ USING (
 	FROM TLevelDefinitionsCte
 ) AS source
 ON target.TLevelDefinitionId = source.TLevelDefinitionId
-WHEN MATCHED
-	THEN UPDATE SET
+WHEN MATCHED AND (
+	target.FrameworkCode != source.FrameworkCode OR
+	target.ProgType != source.ProgType OR
+	target.QualificationLevel != source.QualificationLevel OR
+	target.Name != source.Name OR
+	target.ExemplarWhoFor != source.ExemplarWhoFor OR
+	target.ExemplarEntryRequirements != source.ExemplarEntryRequirements OR
+	target.ExemplarWhatYoullLearn != source.ExemplarWhatYoullLearn OR
+	target.ExemplarHowYoullLearn != source.ExemplarHowYoullLearn OR
+	target.ExemplarHowYoullBeAssessed != source.ExemplarHowYoullBeAssessed OR
+	target.ExemplarWhatYouCanDoNext != source.ExemplarWhatYouCanDoNext
+)
+THEN UPDATE SET
 		target.FrameworkCode = source.FrameworkCode,
 		target.ProgType = source.ProgType,
 		target.QualificationLevel = source.QualificationLevel,
@@ -8500,8 +8511,8 @@ USING (
 	FROM CourseTextCte
 ) AS source
 ON target.LearnAimRef = source.LearnAimRef
-WHEN MATCHED
-	THEN UPDATE SET
+WHEN MATCHED 
+THEN UPDATE SET
 		target.LearnAimRef = source.LearnAimRef,
 		target.AwardOrgCode = source.AwardOrgCode,
 		target.QualificationCourseTitle = source.QualificationCourseTitle,
