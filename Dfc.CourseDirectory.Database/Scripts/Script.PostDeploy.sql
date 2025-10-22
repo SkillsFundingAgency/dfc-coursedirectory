@@ -80,7 +80,7 @@ INSERT INTO @Sectors ([Id], [Code], [Description])
 MERGE Pttcd.Sectors AS target
 USING (SELECT * FROM @Sectors) AS source
 ON source.Id = target.Id
-WHEN MATCHED AND (target.Code != source.Code OR target.[Description] != source.[Description] THEN
+WHEN MATCHED AND (target.Code != source.Code OR target.[Description] != source.[Description]) THEN
 	UPDATE SET
 	target.Code = source.Code,
 	target.[Description] = source.[Description]
@@ -89,24 +89,7 @@ WHEN NOT MATCHED THEN
 	VALUES (source.Id, source.Code, source.[Description])
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
-
------ Script below will insert Non LARS Provider SubTypes----------------------------
-IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Pttcd' AND  TABLE_NAME = 'NonLarsSubType'))
-BEGIN
-    Delete from Pttcd.[NonLarsSubType]
-END
-
-INSERT INTO [Pttcd].[NonLarsSubType]
-           ([NonLarsSubTypeId]
-           ,[Name]
-           ,[AddedOn]
-           ,[IsActive])
-     VALUES
-           ('7BEEC516-77D6-4115-A3B4-401D929F15FB'
-           ,'Skills Bootcamp'
-           ,'2023-12-27 13:16:33.797'
-           ,1)
-
+----- Script below will insert, update or delete region data ----------------------------
 DECLARE @Regions TABLE (
 	RegionId VARCHAR(12),
 	Name NVARCHAR(100),
@@ -292,22 +275,7 @@ WHEN NOT MATCHED THEN
 	VALUES (source.RegionId, source.Name, source.ParentRegionId, source.Position)
 WHEN NOT MATCHED BY SOURCE THEN DELETE;
 
--- Delete T Level Data for T Level Construction - Onsite construction (DISCONTINUED)
-delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
-
-delete from Pttcd.TLevelLocations where TLevelId in (Select TLevelId from Pttcd.TLevels where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce')
-
-delete from Pttcd.TLevels where TLevelDefinitionId = '4c96995d-1193-44c8-a618-85b37890e8ce'
-
--- Delete T Level Data for T Level in Catering (DISCONTINUED)
-delete from Pttcd.ProviderTLevelDefinitions where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6'
-
-delete from Pttcd.TLevelLocations where TLevelId in (Select TLevelId from Pttcd.TLevels where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6')
-
-delete from Pttcd.TLevels where TLevelDefinitionId = 'e654dfa3-2a58-4d28-a5b0-39427e5a1ad6'
-
-
-;WITH TLevelDefinitionsCte AS (
+WITH TLevelDefinitionsCte AS (
 	SELECT * FROM (VALUES
 	(
 		N'fc9fefe1-ee86-4df9-9d09-c275ccbf5940',
