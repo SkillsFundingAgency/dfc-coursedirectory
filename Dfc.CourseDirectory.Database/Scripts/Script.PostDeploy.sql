@@ -80,7 +80,7 @@ INSERT INTO @Sectors ([Id], [Code], [Description])
 MERGE Pttcd.Sectors AS target
 USING (SELECT * FROM @Sectors) AS source
 ON source.Id = target.Id
-WHEN MATCHED THEN
+WHEN MATCHED AND (target.Code != source.Code OR target.[Description] != source.[Description] THEN
 	UPDATE SET
 	target.Code = source.Code,
 	target.[Description] = source.[Description]
