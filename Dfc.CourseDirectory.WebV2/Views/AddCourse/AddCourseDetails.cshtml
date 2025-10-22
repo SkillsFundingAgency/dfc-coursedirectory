@@ -850,7 +850,7 @@
                     Day: $("#Day").val(),
                     Month: $("#Month").val(),
                     Year: $("#Year").val(),
-                    Url: $url.val(),
+                    Url: encodeURIComponent($url.val()),
                     Cost: $cost.val(),
                     CostDescription: $costDescription.val(),
                     DurationUnit: $duration.find("select").val(),

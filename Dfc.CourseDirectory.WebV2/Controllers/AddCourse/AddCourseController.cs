@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -242,6 +243,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             //Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
 
             // AddCourseRun - going to Summary
+            model.Url = HttpUtility.UrlDecode(model.Url);
             Session.SetObject(SessionAddCourseSection2, model);
             var addCourse = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             var availableVenues = Session.GetObject<SelectVenueModel>(SessionVenues);
