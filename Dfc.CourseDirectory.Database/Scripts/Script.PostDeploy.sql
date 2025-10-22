@@ -280,7 +280,9 @@ INSERT INTO @Regions (RegionId, Name, ParentRegionId, Position) VALUES
 MERGE Pttcd.Regions AS target
 USING (SELECT * FROM @Regions) AS source
 ON source.RegionId = target.RegionId
-WHEN MATCHED THEN
+WHEN MATCHED AND (target.Name != source.Name OR
+	target.ParentRegionId != source.ParentRegionId OR
+	target.Position != source.Position) THEN
 	UPDATE SET
 	target.Name = source.Name,
 	target.ParentRegionId = source.ParentRegionId,
