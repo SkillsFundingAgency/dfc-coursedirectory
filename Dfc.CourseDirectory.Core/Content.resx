@@ -1,0 +1,431 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ERROR_APPRENTICESHIP_CONTACTUS_FORMAT" xml:space="preserve">
+    <value>The contact us webpage must be a real website</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_MUSTBE_DAY_OR_BLOCK" xml:space="preserve">
+    <value>Enter day, block or employer for delivery mode</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_DELIVERYMODE_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove delivery mode</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_DELIVERY_METHOD_REQUIRED" xml:space="preserve">
+    <value>Enter a Delivery method</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_DUPLICATE_STANDARDCODE" xml:space="preserve">
+    <value>Standards delivered at an employer’s location cannot be duplicated.  You must remove duplicates and enter national or sub-regions.</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_EMAIL_FORMAT" xml:space="preserve">
+    <value>Enter an email address in the correct format</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_EMAIL_REQUIRED" xml:space="preserve">
+    <value>You must enter an email address</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_INFORMATION_MAXLENGTH" xml:space="preserve">
+    <value>Apprenticeship information must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_INFORMATION_REQUIRED" xml:space="preserve">
+    <value>Enter apprenticeship information for employers</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove National Delivery</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALDELIVERY_REQUIRED" xml:space="preserve">
+    <value>Select National</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_NATIONALORRADIUS_REQUIRED" xml:space="preserve">
+    <value>Enter national or a radius</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
+    <value>Enter a Venue reference</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Venue Reference</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_RADIUS_INVALID" xml:space="preserve">
+    <value>You must enter a radius between {0} and {1}</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_RADIUS_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Radius</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_RADIUS_REQUIRED" xml:space="preserve">
+    <value>Enter a Radius</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_STANDARD_CODE_REQUIRED" xml:space="preserve">
+    <value>Enter standard code</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_STANDARD_VERSION_REQUIRED" xml:space="preserve">
+    <value>Enter standard version</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_SUBREGIONS_INVALID" xml:space="preserve">
+    <value>Enter a real Sub region</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_SUBREGIONS_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Sub Regions</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_SUBREGIONS_REQUIRED" xml:space="preserve">
+    <value>Select at least one sub region</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_TELEPHONE_FORMAT" xml:space="preserve">
+    <value>Enter a telephone number in the correct format</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_TELEPHONE_REQUIRED" xml:space="preserve">
+    <value>Enter a UK telephone number</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NAME_INVALID" xml:space="preserve">
+    <value>You must enter a Venue that is in Publish to the course directory</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Venue name</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NAME_NOT_ALLOWED_WITH_REF" xml:space="preserve">
+    <value>You must remove Venue name</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Venue name</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_VENUE_REQUIRED" xml:space="preserve">
+    <value>Select a venue</value>
+  </data>
+  <data name="ERROR_APPRENTICESHIP_WEBSITE_FORMAT" xml:space="preserve">
+    <value>The website must be a real webpage</value>
+  </data>
+  <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove attendance pattern</value>
+  </data>
+  <data name="ERROR_COURSERUN_ATTENDANCE_PATTERN_REQUIRED" xml:space="preserve">
+    <value>Select an attendance pattern</value>
+  </data>
+  <data name="ERROR_COURSERUN_COST_DESCRIPTION_MAXLENGTH" xml:space="preserve">
+    <value>Cost description must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSERUN_COST_INVALID" xml:space="preserve">
+    <value>Enter a real cost</value>
+  </data>
+  <data name="ERROR_COURSERUN_COST_REQUIRED" xml:space="preserve">
+    <value>Enter a cost or cost description</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_NAME_FORMAT" xml:space="preserve">
+    <value>Course name must only include letters, numbers, hyphens, brackets and spaces</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_NAME_MAXLENGTH" xml:space="preserve">
+    <value>Course name must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_NAME_REQUIRED" xml:space="preserve">
+    <value>Enter a Course name</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_REQUIRED" xml:space="preserve">
+    <value>Enter a Course Web Page Url</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_FORMAT" xml:space="preserve">
+    <value>Course webpage must be a real website</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_MAXLENGTH" xml:space="preserve">
+    <value>Course webpage must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_COURSE_TYPE_REQUIRED" xml:space="preserve">
+    <value>Select a course type</value>
+  </data>
+  <data name="ERROR_COURSE_EDUCATION_LEVEL_REQUIRED" xml:space="preserve">
+    <value>Select an education level</value>
+  </data>
+  <data name="ERROR_COURSE_AWARDING_BODY_MAXLENGTH" xml:space="preserve">
+    <value>Awarding body must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_AWARDING_BODY_REQUIRED" xml:space="preserve">
+    <value>Enter course awarding body</value>
+  </data>
+  <data name="ERROR_COURSERUN_DELIVERY_MODE_REQUIRED" xml:space="preserve">
+    <value>Select a delivery mode</value>
+  </data>
+  <data name="ERROR_COURSERUN_DURATION_RANGE" xml:space="preserve">
+    <value>Enter duration between 1-999</value>
+  </data>
+  <data name="ERROR_COURSERUN_DURATION_REQUIRED" xml:space="preserve">
+    <value>Enter duration</value>
+  </data>
+  <data name="ERROR_COURSERUN_DURATION_UNIT_REQUIRED" xml:space="preserve">
+    <value>Enter a duration unit</value>
+  </data>
+  <data name="ERROR_COURSERUN_FLEXIBLE_START_DATE_REQUIRED" xml:space="preserve">
+    <value>Enter start date</value>
+  </data>
+  <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove National delivery</value>
+  </data>
+  <data name="ERROR_COURSERUN_NATIONAL_DELIVERY_REQUIRED" xml:space="preserve">
+    <value>Select National or at least one sub region</value>
+  </data>
+  <data name="ERROR_COURSERUN_PROVIDER_COURSE_REF_FORMAT" xml:space="preserve">
+    <value>Your reference must only include letters, numbers, hyphens, brackets and spaces</value>
+  </data>
+  <data name="ERROR_COURSERUN_PROVIDER_COURSE_REF_MAXLENGTH" xml:space="preserve">
+    <value>Your reference must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_INVALID" xml:space="preserve">
+    <value>Enter a Venue reference</value>
+  </data>
+  <data name="ERROR_COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Venue reference</value>
+  </data>
+  <data name="ERROR_COURSERUN_START_DATE_INVALID" xml:space="preserve">
+    <value>Check start date. Date must not be in the past</value>
+  </data>
+  <data name="ERROR_COURSERUN_START_DATE_NOT_ALLOWED" xml:space="preserve">
+    <value>Start date cannot be earlier than today's date</value>
+  </data>
+  <data name="ERROR_COURSERUN_START_DATE_REQUIRED" xml:space="preserve">
+    <value>Enter start date</value>
+  </data>
+  <data name="ERROR_COURSERUN_STUDY_MODE_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Study mode</value>
+  </data>
+  <data name="ERROR_COURSERUN_STUDY_MODE_REQUIRED" xml:space="preserve">
+    <value>Select course hours</value>
+  </data>
+  <data name="ERROR_COURSERUN_SUBREGIONS_INVALID" xml:space="preserve">
+    <value>Enter a real Sub region</value>
+  </data>
+  <data name="ERROR_COURSERUN_SUBREGIONS_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Sub regions</value>
+  </data>
+  <data name="ERROR_COURSERUN_SUBREGIONS_REQUIRED" xml:space="preserve">
+    <value>Select at least one sub region</value>
+  </data>
+  <data name="ERROR_COURSERUN_VENUE_NAME_INVALID" xml:space="preserve">
+    <value>You must enter a Venue that is in Publish to the course directory</value>
+  </data>
+  <data name="ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED" xml:space="preserve">
+    <value>You must remove Venue name</value>
+  </data>
+  <data name="ERROR_COURSERUN_VENUE_NAME_NOT_ALLOWED_WITH_REF" xml:space="preserve">
+    <value>You must remove Venue name</value>
+  </data>
+  <data name="ERROR_COURSERUN_VENUE_REQUIRED" xml:space="preserve">
+    <value>Select a venue</value>
+  </data>
+  <data name="ERROR_COURSE_ENTRY_REQUIREMENTS_MAXLENGTH" xml:space="preserve">
+    <value>Entry requirements must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH" xml:space="preserve">
+    <value>How you'll be assesssed must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH" xml:space="preserve">
+    <value>How you'll learn must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_LARS_QAN_INVALID" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>
+  <data name="ERROR_COURSE_LARS_QAN_REQUIRED" xml:space="preserve">
+    <value>&lt;TODO&gt;</value>
+  </data>
+  <data name="ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH" xml:space="preserve">
+    <value>What you can do next must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH" xml:space="preserve">
+    <value>What you'll learn must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH" xml:space="preserve">
+    <value>What you will need to bring must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_WHERE_NEXT_MAXLENGTH" xml:space="preserve">
+    <value>Where next must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH" xml:space="preserve">
+    <value>Who this course is for must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED" xml:space="preserve">
+    <value>Enter who this course is for</value>
+  </data>
+  <data name="ERROR_VENUE_ADDRESS_LINE1_FORMAT" xml:space="preserve">
+    <value>Address line 1 must only include letters, numbers, hyphens and spaces</value>
+  </data>
+  <data name="ERROR_VENUE_ADDRESS_LINE1_MAXLENGTH" xml:space="preserve">
+    <value>Address line 1 must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_ADDRESS_LINE1_REQUIRED" xml:space="preserve">
+    <value>You must enter an address for your venue</value>
+  </data>
+  <data name="ERROR_VENUE_ADDRESS_LINE2_FORMAT" xml:space="preserve">
+    <value>Address line 2 must only include letters, numbers, hyphens and spaces</value>
+  </data>
+  <data name="ERROR_VENUE_ADDRESS_LINE2_MAXLENGTH" xml:space="preserve">
+    <value>Address line 2 must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_COUNTY_FORMAT" xml:space="preserve">
+    <value>County must only include letters, numbers, hyphens and spaces</value>
+  </data>
+  <data name="ERROR_VENUE_COUNTY_MAXLENGTH" xml:space="preserve">
+    <value>County must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_EMAIL_FORMAT" xml:space="preserve">
+    <value>Enter an email address in the correct format</value>
+  </data>
+  <data name="ERROR_VENUE_NAME_MAXLENGTH" xml:space="preserve">
+    <value>Venue name must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_NAME_REQUIRED" xml:space="preserve">
+    <value>You must enter a name for your venue</value>
+  </data>
+  <data name="ERROR_VENUE_NAME_UNIQUE" xml:space="preserve">
+    <value>Venue name must be unique</value>
+  </data>
+  <data name="ERROR_VENUE_POSTCODE_FORMAT" xml:space="preserve">
+    <value>You must enter a real postcode for your venue</value>
+  </data>
+  <data name="ERROR_VENUE_POSTCODE_REQUIRED" xml:space="preserve">
+    <value>You must enter a postcode for your venue</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_MAXLENGTH" xml:space="preserve">
+    <value>Your venue reference must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_REQUIRED" xml:space="preserve">
+    <value>You must enter a reference for your venue</value>
+  </data>
+  <data name="ERROR_VENUE_PROVIDER_VENUE_REF_UNIQUE" xml:space="preserve">
+    <value>Your venue reference must be unique</value>
+  </data>
+  <data name="ERROR_VENUE_TELEPHONE_FORMAT" xml:space="preserve">
+    <value>Enter a phone number in the correct format</value>
+  </data>
+  <data name="ERROR_VENUE_TOWN_FORMAT" xml:space="preserve">
+    <value>Town or city must only include letters, numbers, hyphens and spaces</value>
+  </data>
+  <data name="ERROR_VENUE_TOWN_MAXLENGTH" xml:space="preserve">
+    <value>Town or city must be {0} characters or fewer</value>
+  </data>
+  <data name="ERROR_VENUE_TOWN_REQUIRED" xml:space="preserve">
+    <value>You must enter a town or city</value>
+  </data>
+  <data name="ERROR_VENUE_WEBSITE_FORMAT" xml:space="preserve">
+    <value>Enter a website in the correct format</value>
+  </data>
+  <data name="ERROR_COURSE_SECTOR_REQUIRED" xml:space="preserve">
+    <value>Select a sector</value>
+  </data>
+  <data name="ERROR_GENERIC_WEBSITE_INSECURE" xml:space="preserve">
+    <value>Website has been reported as having a security issue.
+    Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website. You cannot upload this URL to the course directory until it can pass this security check.</value>
+  </data>
+  <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_INSECURE" xml:space="preserve">
+    <value>Course webpage has been reported as having a security issue.
+    Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website. You cannot upload this URL to the course directory until it can pass this security check.</value>
+  </data>
+</root>

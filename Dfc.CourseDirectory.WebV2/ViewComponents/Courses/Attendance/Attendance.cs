@@ -1,0 +1,12 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Attendance
+{
+    public class Attendance : ViewComponent
+    {
+        public IViewComponentResult Invoke(AttendanceModel model)
+        {
+            return View("~/ViewComponents/Courses/Attendance/Default.cshtml", model);
+        }
+    }
+}

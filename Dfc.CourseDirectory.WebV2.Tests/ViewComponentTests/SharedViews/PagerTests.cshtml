@@ -1,0 +1,13 @@
+﻿@using Dfc.CourseDirectory.WebV2.SharedViews.Components
+@using Dfc.CourseDirectory.WebV2.TagHelpers
+@{
+    Layout = null;
+}
+<!doctype html>
+<html>
+<body>
+
+    <vc:pager current-page=@ViewBag.currentPage total-pages=@ViewBag.totalPages get-page-url="@(pageNumber => Url.Action("SomeAction", new { page = pageNumber }))" />
+
+</body>
+</html>

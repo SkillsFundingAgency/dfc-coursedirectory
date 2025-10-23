@@ -29,27 +29,28 @@ trigger:
   paths:
     include:
     - Dfc.CourseDirectory.FindACourseApi/*
-    - src/Dfc.CourseDirectory.Core/*
-    - src/Dfc.CourseDirectory.Database/*
-    - src/Dfc.CourseDirectory.FindACourseApi/*
-    - tests/Dfc.CourseDirectory.Core.Tests/*
-    - tests/Dfc.CourseDirectory.FindACourseApi.Tests/*
-    - tests/Dfc.CourseDirectory.Testing/*
+    - Dfc.CourseDirectory.Core/*
+    - Dfc.CourseDirectory.Database/*
+    - Dfc.CourseDirectory.FindACourseApi/*
+    - Dfc.CourseDirectory.Core.Tests/*
+    - Dfc.CourseDirectory.FindACourseApi.Tests/*
+    - Dfc.CourseDirectory.Testing/*
 
 pr:
   branches:
     include:
     - release/*
     - main
+    - develop
   paths:
     include:
     - Dfc.CourseDirectory.FindACourseApi/*
-    - src/Dfc.CourseDirectory.Core/*
-    - src/Dfc.CourseDirectory.Database/*
-    - src/Dfc.CourseDirectory.FindACourseApi/*
-    - tests/Dfc.CourseDirectory.Core.Tests/*
-    - tests/Dfc.CourseDirectory.FindACourseApi.Tests/*
-    - tests/Dfc.CourseDirectory.Testing/*
+    - Dfc.CourseDirectory.Core/*
+    - Dfc.CourseDirectory.Database/*
+    - Dfc.CourseDirectory.FindACourseApi/*
+    - Dfc.CourseDirectory.Core.Tests/*
+    - Dfc.CourseDirectory.FindACourseApi.Tests/*
+    - Dfc.CourseDirectory.Testing/*
 
 workspace:
   clean: all
@@ -78,14 +79,14 @@ steps:
 - task: MSBuild@1
   displayName: Build database
   inputs:
-    solution: 'src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
+    solution: 'Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj'
     platform: '${{ variables.BuildPlatform }}'
     configuration: '${{ variables.BuildConfiguration }}'
     msbuildArguments: '-p:OutputPath=bin/${{ variables.BuildConfiguration }}/'
 
 # Remove the sqlproj from the solution otherwise `dotnet build Dfc.CourseDirectory.FindACourseApi.sln` explodes
 - powershell: |
-    dotnet sln Dfc.CourseDirectory.FindACourseApi/$(SolutionBaseName).sln remove src/Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
+    dotnet sln Dfc.CourseDirectory.FindACourseApi/$(SolutionBaseName).sln remove Dfc.CourseDirectory.Database/Dfc.CourseDirectory.Database.sqlproj
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -128,7 +129,7 @@ steps:
   displayName: Publish Dfc.CourseDirectory.FindACourseApi
   inputs:
     command: publish
-    projects: 'src/Dfc.CourseDirectory.FindACourseApi/Dfc.CourseDirectory.FindACourseApi.csproj'
+    projects: 'Dfc.CourseDirectory.FindACourseApi/Dfc.CourseDirectory.FindACourseApi.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
     publishWebProjects: false
     zipAfterPublish: True
