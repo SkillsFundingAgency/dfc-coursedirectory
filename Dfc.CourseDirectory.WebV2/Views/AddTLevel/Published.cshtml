@@ -1,0 +1,48 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Published.ViewModel
+@{
+    ViewContext.SetLayoutData(title: "Your T Level has been published");
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <govuk-panel heading-level="1">
+            <govuk-panel-title>
+                Your T Level has been published
+            </govuk-panel-title>
+            <govuk-panel-body>
+                <span data-testid="TLevelName">@Model.TLevelName</span>
+                @if (!string.IsNullOrWhiteSpace(Model.YourReference))
+                {
+                    <br>
+                    <strong data-testid="YourReference">@Model.YourReference</strong>
+                }
+            </govuk-panel-body>
+        </govuk-panel>
+
+        <p class="govuk-body">
+            Your T Level is available to learners searching for learning and training opportunities on the
+            National Careers Service and Tlevels.gov.uk.
+        </p>
+        <p class="govuk-body">You can <a href="@ViewBag.LiveServiceURL@Model.TLevelId" target="_blank" class="govuk-link">view your published T Level (opens in a new window or tab)</a> to see how it's viewed by learners.</p>
+
+        <h2 class="govuk-heading-m">What next?</h2>
+        <ul class="govuk-list">
+            <li>
+                <a asp-action="SelectTLevel" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Add a new T Level
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ViewTLevels" asp-action="List" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    View and edit T Levels
+                </a>
+            </li>
+            <li>
+                <a asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">
+                    Back to the home screen
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

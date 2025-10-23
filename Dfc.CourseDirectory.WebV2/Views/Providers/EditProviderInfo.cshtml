@@ -1,0 +1,29 @@
+﻿@using Dfc.CourseDirectory.Core.Validation.ProviderValidation
+@model Dfc.CourseDirectory.WebV2.ViewModels.Providers.EditProviderInfo.Command
+@{
+    ViewContext.SetLayoutData(title: "Provider information");
+}
+
+@section BackLink {
+    <pttcd-back-link />
+}
+
+<govuk-error-summary>
+    <govuk-error-summary-item asp-for="MarketingInformation" />
+</govuk-error-summary>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Provider information</h1>
+
+        <form asp-action="EditProviderInfo" asp-all-route-data="@ProviderContext.RouteValues">
+            <pttcd-rich-text-editor>
+                <govuk-character-count asp-for="MarketingInformation" max-length="@Constants.MarketingInformationStrippedMaxLength">
+                    <govuk-character-count-label>Brief overview of your organisation for employers</govuk-character-count-label>
+                </govuk-character-count>
+            </pttcd-rich-text-editor>
+
+            <govuk-button type="Submit">Save and continue</govuk-button>
+        </form>
+    </div>
+</div>
