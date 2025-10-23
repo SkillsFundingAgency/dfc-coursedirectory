@@ -1,0 +1,58 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.Duration.DurationModel
+
+
+
+<div class="govuk-form-group">
+    <label id="govuk-label-duration" class="govuk-label--m" asp-for="DurationLength" >
+        @Model.LabelText
+    </label>
+    @if (!string.IsNullOrWhiteSpace(Model.HintText))
+    {
+        <span class="govuk-hint govuk-!-margin-top-3">
+            @Model.HintText
+        </span>
+    }
+   
+    <div id="duration" class="duration-container" style="margin-top:15px"
+         val-range-min="1" 
+         val-range-max="999" 
+         val-duration-message="Enter duration"
+         val-decimal-message="Invalid duration entered"> <div class="govuk-date-input__item"> 
+            <div class="govuk-form-group"> 
+                <input pattern="^[0-9]*$" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3" aria-labelledby="govuk-label-duration">
+
+            </div> 
+        </div> 
+        <div class="govuk-date-input__item"> 
+            <div class="govuk-form-group"> 
+               
+                <select asp-for="@Model.DurationUnit" asp-items="@Model.DurationUnits" class="govuk-select" id="durationDropDown" val-required-message="Duration unit is required" aria-labelledby="govuk-label-duration"></select>
+            </div> 
+        </div> 
+    </div> 
+
+</div>
+
+<script>
+    (function ($) {
+        $(function () {
+
+            var $durationLength = $("#@nameof(Model.DurationLength)");
+
+            $durationLength.on("keypress", function (event) {
+                var charCode = event.which ? event.which : event.keyCode;
+
+                if ($durationLength.val().length >= 3) {
+                    return false;
+                };
+
+                if ((charCode >= 48 && charCode <= 57) || charCode === 46) {
+                    return true;
+                }
+
+                return false;
+            });
+        });
+    })(jQuery);
+</script>

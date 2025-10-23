@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<UserSecretsId>7539d87c-339c-41ec-acfe-3362bf95c896</UserSecretsId>
+		<Version>2.0.0</Version>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+		<PackageReference Include="CsvHelper" Version="33.0.1" />
+		<PackageReference Include="Flurl" Version="3.0.7" />
+		<PackageReference Include="FormFlow" Version="0.4.4" />
+		<PackageReference Include="GovUk.Frontend.AspNetCore" Version="1.5.0" />
+		<PackageReference Include="JWT" Version="11.0.0" />
+		<PackageReference Include="MediatR" Version="12.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.11" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.22.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.3.4" />
+		<PackageReference Include="NWebsec.AspNetCore.Middleware" Version="3.0.0" />
+		<PackageReference Include="NWebsec.AspNetCore.Mvc" Version="3.0.0" />
+		<PackageReference Include="NWebsec.AspNetCore.Mvc.TagHelpers" Version="3.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="wwwroot\components\cancel-btn.css" />
+		<None Remove="wwwroot\components\cookie-banner.css" />
+		<None Remove="wwwroot\components\cookie-banner.js" />
+		<None Remove="wwwroot\components\dm-errors.css" />
+		<None Remove="wwwroot\components\dm-publish-summary.css" />
+		<None Remove="wwwroot\components\govuk-footer.css" />
+		<None Remove="wwwroot\components\inset-text.css" />
+		<None Remove="wwwroot\components\link-button.css" />
+		<None Remove="wwwroot\components\list.css" />
+		<None Remove="wwwroot\components\loading-spinner.css" />
+		<None Remove="wwwroot\components\pager.css" />
+		<None Remove="wwwroot\components\related-content.css" />
+		<None Remove="wwwroot\components\search-input.css" />
+		<None Remove="wwwroot\components\sub-region-selector.css" />
+		<None Remove="wwwroot\components\sub-region-selector.js" />
+		<None Remove="wwwroot\components\summary-list.css" />
+		<None Remove="wwwroot\components\tinymce.css" />
+		<None Remove="wwwroot\images\arrow-pagination-left.svg" />
+		<None Remove="wwwroot\images\arrow-pagination-right.svg" />
+		<None Remove="wwwroot\layout.css" />
+		<None Remove="wwwroot\nav.css" />
+		<None Remove="wwwroot\notification.css" />
+		<None Remove="wwwroot\pages\data-upload.css" />
+		<None Remove="wwwroot\pages\helpdesk-dashboard.css" />
+		<None Remove="wwwroot\pages\provider-dashboard.css" />
+		<None Remove="wwwroot\pages\providers\provider-details.css" />
+		<None Remove="wwwroot\pages\data-upload.css" />
+		<None Remove="wwwroot\pages\start.css" />
+		<None Remove="wwwroot\utilities\focus-formgroup.js" />
+		<None Remove="wwwroot\utilities\needs-js.css" />
+		<None Remove="wwwroot\utilities\needs-js.js" />
+		<None Remove="wwwroot\utilities\table.css" />
+		<None Remove="wwwroot\utilities\typography.css" />
+		<None Remove="wwwroot\utilities\width.css" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Dfc.CourseDirectory.Services\Dfc.CourseDirectory.Services.csproj" />
+		<ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Update="Views\VenuesDataManagement\Errors.cshtml">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+</Project>

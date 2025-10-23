@@ -1,0 +1,44 @@
+﻿@using System.Net
+@using Dfc.CourseDirectory.WebV2.Validation
+@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.AwardingBody.AwardingBodyModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    var regex = RegexPattern.DisallowHTMLTags;
+}
+
+    <div class="govuk-form-group">
+        <label id="govuk-label-AwardingBody" class="govuk-label--m"  asp-for="@Model.AwardingBody">
+            @Model.LabelText
+        </label>
+        @if (!string.IsNullOrWhiteSpace(Model.HintText))
+        {
+            <span class="govuk-hint govuk-!-margin-top-3">
+                @Model.HintText
+            </span>
+        }
+
+    <input class="govuk-input" asp-for="@Model.AwardingBody" type="text" aria-label="@Model.AwardingBody" value="@WebUtility.HtmlDecode(@Model.AwardingBody)"
+               val-required-message="Enter awarding body"
+               val-max-length="255"
+               val-max-length-message="The maximum length of Awarding body is 255 characters"
+               val-regex="@regex"
+               val-regex-message="Adding HTML tags is not possible in this section for security reasons." />
+
+    </div>
+
+
+
+<script>
+    (function ($) {
+        $(function () {
+            var $elementAwardingBody = $("#@nameof(Model.AwardingBody)");
+
+            $elementAwardingBody.on("blur", function () {
+                var trimmed = $elementAwardingBody.val().trim();
+                $elementAwardingBody.val(trimmed);
+            });
+        });
+    })(jQuery);
+</script>

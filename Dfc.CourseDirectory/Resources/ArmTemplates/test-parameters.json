@@ -14,29 +14,14 @@
     "postcodeApiUrl": {
       "value": "https://my.api.net/api/postcode?"
     },
-    "postcodeApiKey": {
-      "value": "not-a-real-key"
-    },
     "getAddressApiUrl":{
       "value": "https://my.api.net/api/postcode?"
-    },
-    "getAddressApiKey":{
-      "value": "not-a-real-key"
     },
     "larsApiUrl": {
       "value": "https://dfc-foo-prov-sch.search.windows.net/indexes/lars/docs/search"
     },
-    "larsApiKey": {
-      "value": "not-a-real-key"
-    },
     "courseApiUrl": {
       "value": "https://my.api.net/api/course/"
-    },
-    "courseApiKey": {
-      "value": "not-a-real-key"
-    },
-    "apprenticeshipApiKey": {
-      "value": "not-a-real-key"
     },
     "apprenticeshipApiUrl": {
       "value": "https://my.api.net/api/apprenticeship/"
@@ -44,20 +29,8 @@
     "searchDomain": {
       "value": "search.example.net"
     },
-    "searchAdminKey": {
-      "value": "not-a-real-key"
-    },
-    "larsDatasetUrl": {
-      "value": "https://not-a-real-url.com"
-    },
-    "searchQueryKey": {
-      "value": "not-a-real-key"
-    },
     "dfeClientID": {
       "value": "letmein"
-    },
-    "dfeClientSecret": {
-      "value": "not-a-real-secret"
     },
     "dfeEndpointUrl": {
       "value": "https://test.dfe.net/token"
@@ -71,29 +44,17 @@
     "dfeSignedOutPath": {
       "value": "/signout"
     },
-    "dfeApiSecret": {
-      "value": "randon-list-words"
-    },
     "dfeApiUri": {
       "value": "https://my.loginsite.net/endpoint"
     },
-    "sqlCourseDirectoryConnectionString": {
-      "value": "Server=tcp:dfc-foo-shared-sql-01.database.windows.net,1433;Initial Catalog=database;Persist Security Info=False;User ID=username;Password=password;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    "dfeIssuer": {
+      "value": "CourseDirectory"
     },
     "findCourseApiUrl": {
       "value": "https://api.net/coursedirectory/courses/"
     },
     "findCourseApiKey": {
       "value": "not-a-real-key"
-    },
-    "findCourseApiPassword": {
-      "value": "not-a-real-password"
-    },
-    "appHostName": {
-      "value": "some.host.name"
-    },
-    "appServicePlanName": {
-      "value": "dfc-foo-prov-shared-asp"
     },
     "blobStorageSettingsContainerName": {
       "value": "provider-files"
@@ -107,26 +68,8 @@
     "BulkUploadSecondsPerRecord": {
       "value": "1"
     },
-    "ProviderPortalSharedResourceGroupName": {
-      "value": "dfc-dev-prov-rg"
-    },
-    "RedisCacheName": {
-      "value": "AnAzureCacheInstance"
-    },
-    "providerPortalApplicationInsights": {
-      "value": "dfc-dev-prov-as-ai"
-    },
     "FindACourseUrl": {
       "value": "https://not-a-real-env.nationalcareersservice.org.uk/find-a-course"
-    },
-    "workspaceName": {
-        "value": "aTestLogAnalyticsAccount"
-    },
-    "workspaceResourceGroup": {
-        "value": "aResourceGroup"
-    },
-    "GoogleWebRiskApiKey": {
-      "value": "not-a-real-key"
     }
   }
 }
