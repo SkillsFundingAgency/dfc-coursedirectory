@@ -29,6 +29,7 @@ using Dfc.CourseDirectory.WebV2.ViewComponents.Courses.WhereNext;
 using Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels;
 using Dfc.CourseDirectory.WebV2.ViewModels;
 using Flurl;
+using FormFlow;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -234,16 +235,10 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             return View(viewModel);
         }
 
-        [Authorize]        
+        [Authorize]
+        [HttpPost]
         public IActionResult AddNewVenue(AddCourseRequestModel model)
         {
-            // var model = new AddCourseRequestModel();
-            // AddCourseRun - going to Summary
-            //Session.SetObject(SessionAddCourseSection2, model);
-            //Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourseRun);
-
-            // AddCourseRun - going to Summary
-            model.Url = HttpUtility.UrlDecode(model.Url);
             Session.SetObject(SessionAddCourseSection2, model);
             var addCourse = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
             var availableVenues = Session.GetObject<SelectVenueModel>(SessionVenues);
@@ -333,12 +328,16 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             summaryViewModel.FundingOptions = fundingOptions;
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
 
-
-            return Json(new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("SummaryToAddCourseRun", "AddCourse") }))
+            return RedirectToAction(
+               "Index",
+               "AddVenue",
+               new
+               {
+                   returnUrl = new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("SummaryToAddCourseRun", "AddCourse") }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
-                .ToString());
+               })
+               .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
 
-            //return RedirectToAction("AddVenue", "Venues");
 
         }
 

@@ -220,7 +220,7 @@
                     </fieldset>
                 </div>
                 <span class="">
-                    <a href="#" class="govuk-link--no-visited-state" id="addNewVenue">Add another venue</a>
+                    <button class="pttcd-c-link-button govuk-!-font-size-19" id="addNewVenue" type="submit" asp-action="AddNewVenue">Add another venue</button>
                 </span>
             </div>
 
@@ -298,7 +298,6 @@
 <script>
     (function ($) {
         $(function () {
-            var $addNewVenueButton = $("#addNewVenue");
             var validStates = [];
             var $button = $("#publish");
             var $errorSummary = $("#errorsummary").govUkErrorSummary();
@@ -829,45 +828,7 @@
                 window.location.href = data;
             };
 
-            $addNewVenueButton.on("click", function (e) {
-                e.preventDefault();
-
-                var $allCheckedVenues =
-                    $("input[name='SelectedVenues']:checkbox:checked");
-                var $allCheckedRegions =
-                    $("input[name='SelectedRegions']:checkbox:checked");
-
-
-                makeRequestWithPayload({
-                    CourseName: $courseName.val(),
-                    CourseProviderReference: $courseProviderReference.val(),
-                    CourseType: $radioCourseType.find("input[type='radio']:checked").val(),
-                    Sector: $radioSector.find("input[type='radio']:checked").val(),
-                    EducationLevel: $radioEducationLevel.find("input[type='radio']:checked").val(),
-                    AwardingBody: $awardingBody.val(),
-                    DeliveryMode: $radioDeliveryMode.find("input[type='radio']:checked").val(),
-                    StartDateType: $("input[name='StartDateType']:checked").val(),
-                    Day: $("#Day").val(),
-                    Month: $("#Month").val(),
-                    Year: $("#Year").val(),
-                    Url: encodeURIComponent($url.val()),
-                    Cost: $cost.val(),
-                    CostDescription: $costDescription.val(),
-                    DurationUnit: $duration.find("select").val(),
-                    DurationLength: $duration.find("input").val(),
-                    StudyMode: $studyMode.find("input[type='radio']:checked").val(),
-                    AttendanceMode: $attendance.find("input[type='radio']:checked").val(),
-                    SelectedVenues: $allCheckedVenues.map(function () {
-                        return $(this).val();
-                    }).get(),
-                    LevelFilter: $allCheckedRegions.map(function () {
-                        return $(this).val();
-                    }).get()
-
-                },
-                    onSucess);
-
-            });
+            
 
 
             $button.on("click", function (event) {
