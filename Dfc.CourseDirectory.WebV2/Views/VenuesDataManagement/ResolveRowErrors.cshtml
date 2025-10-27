@@ -8,18 +8,6 @@
         <h1 class="govuk-heading-xl">Resolve errors in venue details</h1>
 
         <form asp-action="ResolveRowErrors" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber">
-            <govuk-error-summary>
-                <govuk-error-summary-item asp-for="ProviderVenueRef" />
-                <govuk-error-summary-item asp-for="Name" />
-                <govuk-error-summary-item asp-for="AddressLine1" />
-                <govuk-error-summary-item asp-for="AddressLine2" />
-                <govuk-error-summary-item asp-for="Town" />
-                <govuk-error-summary-item asp-for="County" />
-                <govuk-error-summary-item asp-for="Postcode" />
-                <govuk-error-summary-item asp-for="Email" />
-                <govuk-error-summary-item asp-for="Telephone" />
-                <govuk-error-summary-item asp-for="Website" />
-            </govuk-error-summary>
 
             <govuk-input asp-for="ProviderVenueRef">
                 <govuk-input-label>Your venue reference</govuk-input-label>
