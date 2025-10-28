@@ -15,22 +15,6 @@ namespace Dfc.CourseDirectory.Core.Services
         private const string GCSE_9_1_In_English_Language_Text = "GCSE (9-1) in English Language";        
         private const string GCSE_9_1_In_English_Literature_Text = "GCSE (9-1) in English Literature";
         private const string TLevel_Text = "T Level";
-        private const string GCSE_A_Level= "GCE A Level";
-        private const string GCSE_A2_Level = "GCE A2 Level";
-        private const string GCSE_AS_Level = "GCE AS Level";
-        private const string REGULATED_QUALIFICATION_FRAMEWORK = "RQF";
-        private const string VOCATIONAL_REGULATED_QUALIFICATIONS = "VRQ";
-        private const string NATIONAL_VOCATIONAL_QUALIFICATIONS = "NVQ";
-        private const string DEGREE = "Degree";
-        private const string BAHONS = "BA (Hons)";
-        private const string BSCHONS = "BSc (Hons)";
-        private const string BENGHONS = "BEng (Hons)";
-        private const string BSCORDHONS = "BSc (Ord/Hons)";
-        private const string NONREGULATED = "Non regulated";
-        private const string NOREGCATEGORY_27 = "27";
-        private const string NOREGCATEGORY_23 = "23";
-        private const string NOREGCATEGORY_28 = "28";
-        private const string NOREGCATEGORY_75 = "75";
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
         public CourseTypeService(
