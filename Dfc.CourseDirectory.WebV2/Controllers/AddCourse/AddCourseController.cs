@@ -333,7 +333,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                "AddVenue",
                new
                {
-                   returnUrl = new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("SummaryToAddCourseRun", "AddCourse") }))
+                   returnUrl = new Url(Url.Action("SummaryToAddCourseRun", "AddCourse"))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
                })
                .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true));
