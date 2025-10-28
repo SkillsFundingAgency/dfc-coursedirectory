@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels
         public ChooseRegionModel ChooseRegion { get; set; }
         public CourseDeliveryMode DeliveryMode { get; set; }
         public string CourseProviderReference { get; set; }
-        public string Url { get; set; }
+        public string Website { get; set; }
         public bool AdultEducationBudget { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
         public CourseDurationUnit? DurationUnit { get; set; }

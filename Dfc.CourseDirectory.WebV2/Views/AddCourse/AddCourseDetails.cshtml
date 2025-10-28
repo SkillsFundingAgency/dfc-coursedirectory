@@ -239,7 +239,7 @@
             <div id="sectionUrl">
                 @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
                 {
-                Url = Model.Url,
+                Website = Model.Website,
                 LabelText = "Course webpage",
                 HintText = "The webpage for this course. For example, http://www.provider.com/coursename.",
                 AriaDescribedBy = "Enter the URL for this course"
@@ -312,7 +312,7 @@
             var $startDate = $("#start_date").govUkDateInput();
             var $venues = $("#SelectVenueCheckBoxes").govUkCheckboxes();
             var $regions = $("#SelectRegionCheckBoxes").govUkCheckboxes();
-            var $url = $("#@nameof(Model.Url)").govUkInput();
+            var $url = $("#@nameof(Model.Website)").govUkInput();
             var $cost = $("#@nameof(Model.Cost)").govUkInput();
             var $costDescription = $("#@nameof(Model.CostDescription)").govUkTextarea();
             var $duration = $("#duration").govUkDurationInput();

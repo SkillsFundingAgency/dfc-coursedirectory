@@ -5,7 +5,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
     <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.Url)" class="govuk-label--m" asp-for="@Model.Url">
+        <label id="govuk-label-@nameof(Model.Website)" class="govuk-label--m" asp-for="@Model.Website">
             @Model.LabelText
         </label>
 
@@ -17,7 +17,7 @@
                 @Model.HintText
             </span>
         }
-        <input class="govuk-input" asp-for="@Model.Url" type="text" aria-label="@Model.Url" value="@WebUtility.HtmlDecode(@Model.Url)"
+        <input class="govuk-input" asp-for="@Model.Website" type="text" aria-label="@Model.Website" value="@WebUtility.HtmlDecode(@Model.Website)"
                val-required-message="Enter Course Web Page Url"
                val-max-length="255"
                val-max-length-message="The maximum length of URL is 255 characters"
@@ -39,7 +39,7 @@
 <script>
     (function ($) {
         $(function () {
-            var $elementUrl = $("#@nameof(Model.Url)");
+            var $elementUrl = $("#@nameof(Model.Website)");
 
             $elementUrl.on("blur", function () {
                 var trimmed = $elementUrl.val().trim();

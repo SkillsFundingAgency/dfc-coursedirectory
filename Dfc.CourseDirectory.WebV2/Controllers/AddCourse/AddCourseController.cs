@@ -162,7 +162,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 viewModel.Day = addCourseSection2Session.Day;
                 viewModel.Month = addCourseSection2Session.Month;
                 viewModel.Year = addCourseSection2Session.Year;
-                viewModel.Url = addCourseSection2Session.Url;
+                viewModel.Website = addCourseSection2Session.Website;
                 viewModel.Cost = addCourseSection2Session.Cost == null
                     ? string.Empty
                     : addCourseSection2Session.Cost.ToString();
@@ -266,7 +266,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 CourseId = model.CourseProviderReference,
                 DeliveryMode = model.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = model.DeliveryMode,
-                Url = model.Url,
+                Url = model.Website,
                 Cost = model.Cost == null
                     ? string.Empty
                     : model.Cost.ToString(),
@@ -381,7 +381,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 CourseId = model.CourseProviderReference,
                 DeliveryMode = model.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = model.DeliveryMode,
-                Url = model.Url,
+                Url = model.Website,
                 Cost = model.Cost == null
                     ? string.Empty
                     : model.Cost.ToString(),
@@ -489,7 +489,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 CourseId = addCourseRun.CourseProviderReference,
                 DeliveryMode = addCourseRun.DeliveryMode.ToDescription(),
                 DeliveryModeEnum = addCourseRun.DeliveryMode,
-                Url = addCourseRun.Url,
+                Url = addCourseRun.Website,
                 Cost = addCourseRun.Cost == null ? string.Empty : addCourseRun.Cost.ToString(),
                 CostDescription = addCourseRun.CostDescription,
                 CourseLength = addCourseRun.DurationLength + " " + addCourseRun.DurationUnit,
@@ -680,7 +680,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         DeliveryMode = addCourseSection2.DeliveryMode,
                         FlexibleStartDate = flexibleStartDate,
                         StartDate = specifiedStartDate,
-                        CourseUrl = addCourseSection2.Url,
+                        CourseUrl = addCourseSection2.Website,
                         Cost = addCourseSection2.Cost,
                         CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                         DurationUnit = addCourseSection2.DurationUnit.Value,
@@ -703,7 +703,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                     DeliveryMode = CourseDeliveryMode.WorkBased,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseUrl = addCourseSection2.Url,
+                    CourseUrl = addCourseSection2.Website,
                     Cost = addCourseSection2.Cost,
                     CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
@@ -737,7 +737,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                     DeliveryMode = addCourseSection2.DeliveryMode,
                     FlexibleStartDate = flexibleStartDate,
                     StartDate = specifiedStartDate,
-                    CourseUrl = addCourseSection2.Url,
+                    CourseUrl = addCourseSection2.Website,
                     Cost = addCourseSection2.Cost,
                     CostDescription = ASCIICodeHelper.ReplaceHexCodes(addCourseSection2.CostDescription) ?? "",
                     DurationUnit = addCourseSection2.DurationUnit.Value,
@@ -1136,7 +1136,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 viewModel.Month = addCourseSection2Session.Month;
                 viewModel.Year = addCourseSection2Session.Year;
                 viewModel.ChooseRegion.National = addCourseSection2Session.National;
-                viewModel.Url = addCourseSection2Session.Url;
+                viewModel.Website = addCourseSection2Session.Website;
                 viewModel.Cost = addCourseSection2Session.Cost == null ? string.Empty : addCourseSection2Session.Cost.ToString();
                 viewModel.CostDescription = addCourseSection2Session.CostDescription;
                 viewModel.DurationLength = addCourseSection2Session.DurationLength.ToString();

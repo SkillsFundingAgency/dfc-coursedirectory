@@ -13,7 +13,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewComponents.RequestModels
         public string Day { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
-        public string Url { get; set; }
+        public string Website { get; set; }
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
         public bool AdvancedLearnerLoan { get; set; }
