@@ -115,7 +115,8 @@ namespace Dfc.CourseDirectory.FindACourseApi
             app.UseRouting();
 
             app.UseSwagger(c =>
-            {               
+            {
+                c.SerializeAsV2 = true;
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
                     swaggerDoc.Servers = new List<OpenApiServer>
