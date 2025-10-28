@@ -16,27 +16,6 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ResolveNonLarsRowDetails" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber" asp-route-deliveryMode="@Model.DeliveryMode">
-            <govuk-error-summary>
-                <govuk-error-summary-item asp-for="CourseName" />
-                <govuk-error-summary-item asp-for="ProviderCourseRef" />
-                <govuk-error-summary-item asp-for="CourseType" />
-                <govuk-error-summary-item asp-for="Sector" />
-                <govuk-error-summary-item asp-for="EducationLevel" />
-                <govuk-error-summary-item asp-for="AwardingBody" />
-                <govuk-error-summary-item asp-for="FlexibleStartDate" />
-                <govuk-error-summary-item asp-for="StartDate" />
-                <govuk-error-summary-item asp-for="VenueId" />
-                <govuk-error-summary-item asp-for="NationalDelivery" />
-                <govuk-error-summary-item asp-for="SubRegionIds" />
-                <govuk-error-summary-item asp-for="CourseWebPage" />
-                <govuk-error-summary-item asp-for="Cost" />
-                <govuk-error-summary-item asp-for="CostDescription" />
-                <govuk-error-summary-item asp-for="Duration" />
-                <govuk-error-summary-item asp-for="DurationUnit" />
-                <govuk-error-summary-item asp-for="AttendancePattern" />
-                <govuk-error-summary-item asp-for="StudyMode" />
-            </govuk-error-summary>
-
             <h1 class="govuk-heading-xl">@title</h1>
 
             <p class="govuk-body-m">
