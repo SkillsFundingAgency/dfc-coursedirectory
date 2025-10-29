@@ -155,6 +155,15 @@
                 assignEventsToLarsSearchPagination();
             };
 
+
+
+            $(document).on('keypress', '#LarsSearchTerm', function (e) {
+                   if (e.which === 13) {
+                       e.preventDefault();
+                       $buttonSearch.trigger("click");
+                   }
+            });
+
             $(document).on('click','#searchQualification',function(e){
                 e.preventDefault();
                 validStates = [];

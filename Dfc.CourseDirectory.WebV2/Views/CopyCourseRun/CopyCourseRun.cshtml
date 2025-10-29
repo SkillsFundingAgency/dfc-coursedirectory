@@ -563,7 +563,8 @@ else
                     }
                 };
 
-                var errorArray = $("[class*='govuk-error-message'");
+               // var errorArray = $("[class*='govuk-error-message'");
+                var errorArray = $('.govuk-error-message:not(.field-validation-valid)')
                 if (errorArray.length > 0) {
                     var notificationBody = "";
                     $.each(errorArray, function (index, value) {
