@@ -1,0 +1,21 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.CourseType.CourseTypeModel
+
+<div class="govuk-form-group" id="CourseType">
+
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
+                @Model.LabelText
+            </h2>
+        </legend>
+        <div class="govuk-hint">
+            @Model.HintText
+        </div>
+        <div class="govuk-radios govuk-radios" val-required-message="Select Course type" id="CourseTypeRadioButtons">
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.CourseType, CourseType.SkillsBootcamp, new { @class = "govuk-radios__input", id = CourseType.SkillsBootcamp })
+                <label class="govuk-label govuk-radios__label" for="@CourseType.SkillsBootcamp">@CourseType.SkillsBootcamp.ToDescription()</label>
+            </div>
+        </div>
+    </fieldset>
+</div>

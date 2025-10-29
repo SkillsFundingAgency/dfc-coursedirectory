@@ -1,0 +1,52 @@
+@using Microsoft.AspNetCore.Authorization;
+
+@addTagHelper *, GovUk.Frontend.AspNetCore
+
+@inject IAuthorizationService Authorization
+@inject Dfc.CourseDirectory.Core.Security.ICurrentUserProvider CurrentUserProvider
+@inject Dfc.CourseDirectory.Core.Middleware.IProviderContextProvider ProviderContextProvider
+
+@{
+    var providerContext = ProviderContextProvider.GetProviderContext(withLegacyFallback: true);
+    var currentUser = CurrentUserProvider.GetCurrentUser();
+}
+
+<header class="govuk-header " role="banner" data-module="header">
+
+    <div class="govuk-header__container cd-fullwidth-container cd-header">
+
+        <div class="govuk-header__content cd-header--content">
+            <a href="/" class="govuk-header__link govuk-header__link--service-name">
+                Publish to the course directory
+            </a>
+
+            @if (currentUser != null)
+            {
+                @if (currentUser.IsProvider)
+                {
+                    <vc:provider-top-nav provider-info="@providerContext.ProviderInfo" />
+                }
+                else
+                {
+                    <vc:admin-top-nav />
+                }
+            }
+
+        </div>
+
+    </div>
+
+</header>
+
+<govuk-phase-banner class="cd-fullwidth-container govuk-!-margin-bottom-6">
+    <govuk-phase-banner-tag>beta</govuk-phase-banner-tag>
+    This is a new service – your
+    <a href="https://www.smartsurvey.co.uk/s/SHIM0G/" target="_blank" rel="noreferrer" class="govuk-link">feedback</a> will help us to improve it.
+</govuk-phase-banner>
+
+@if (currentUser != null && !currentUser.IsProvider && providerContext != null)
+{
+    <div class="govuk-body govuk-!-margin-bottom-6 cd-fullwidth-container">
+        <vc:admin-provider-context-nav provider-info="@providerContext.ProviderInfo" />
+    </div>
+}

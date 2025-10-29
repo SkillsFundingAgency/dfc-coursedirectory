@@ -1,0 +1,14 @@
+﻿@using Dfc.CourseDirectory.Core
+@using Dfc.CourseDirectory.Core.Helpers
+@using Dfc.CourseDirectory.Core.ViewHelpers
+@using Dfc.CourseDirectory.WebV2.ViewModels
+@using Dfc.CourseDirectory.WebV2.ViewComponents.LarsSearch
+@using Dfc.CourseDirectory.WebV2.SharedViews
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Dfc.CourseDirectory.Web
+@addTagHelper *, Dfc.CourseDirectory.WebV2
+
+@inject ProviderContextHelper ProviderContext
+@inject IFeatureFlagProvider FeatureFlagProvider
+@inject RouteValuesHelper RouteValuesHelper

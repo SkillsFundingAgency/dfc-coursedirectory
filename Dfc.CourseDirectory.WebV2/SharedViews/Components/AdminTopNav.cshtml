@@ -1,0 +1,30 @@
+﻿@inject Settings Settings
+@{
+    var activeSection = ViewData["ActiveAdminTopNavSection"] as AdminTopNavSection?;
+}
+
+<nav aria-label="Top Level Navigation" class="govuk-header__navigation">
+    <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation" hidden>Menu</button>
+    <ul id="navigation" class="govuk-header__navigation-list">
+        <li class="govuk-header__navigation-item@(activeSection == AdminTopNavSection.HelpdeskDashboard ? " govuk-header__navigation-item--active" : null)">
+            <a asp-action="Dashboard" asp-controller="HelpdeskDashboard" class="govuk-header__link" data-testid="topnav-helpdeskdashboard">
+                Helpdesk dashboard
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item@(activeSection == AdminTopNavSection.SearchProviders ? " govuk-header__navigation-item--active" : null)">
+            <a asp-action="ProviderSearch" asp-controller="ProviderSearch" class="govuk-header__link" data-testid="topnav-searchproviders">
+                Search providers
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item">
+            <a href="@Settings.ManageUsersUrl" target="_blank" rel="noreferrer" class="govuk-header__link" data-testid="topnav-manageusers">
+                Manage users
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item pttcd-sign-out-navigation-item">
+            <a asp-action="Logout" asp-controller="Auth" class="govuk-header__link" data-testid="topnav-signout">
+                Sign out
+            </a>
+        </li>
+    </ul>
+</nav>

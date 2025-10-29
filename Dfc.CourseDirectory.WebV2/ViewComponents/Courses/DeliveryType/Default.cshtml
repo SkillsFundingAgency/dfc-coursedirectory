@@ -1,0 +1,34 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.DeliveryType.DeliveryTypeModel
+
+<div class="govuk-form-group" id="Delivery">
+
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading govuk-heading-m">
+                @Model.LabelText
+            </h2>
+        </legend>
+        <div class="govuk-hint">
+            @Model.HintText
+        </div>
+        <div class="govuk-radios govuk-radios" val-required-message="Select Delivery Mode" id="DeliveryModeRadioButtons">
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.BlendedLearning, new { @class = "govuk-radios__input", id = CourseDeliveryMode.BlendedLearning })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.BlendedLearning">@CourseDeliveryMode.BlendedLearning.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.ClassroomBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.ClassroomBased })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.ClassroomBased">@CourseDeliveryMode.ClassroomBased.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.Online, new { @class = "govuk-radios__input", id = CourseDeliveryMode.Online })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.Online">@CourseDeliveryMode.Online.ToDescription()</label>
+            </div>
+            <div class="govuk-radios__item">
+                @Html.RadioButtonFor(m => m.DeliveryMode, CourseDeliveryMode.WorkBased, new { @class = "govuk-radios__input", id = CourseDeliveryMode.WorkBased })
+                <label class="govuk-label govuk-radios__label" for="@CourseDeliveryMode.WorkBased">@CourseDeliveryMode.WorkBased.ToDescription()</label>
+            </div>
+
+        </div>
+    </fieldset>
+</div>
