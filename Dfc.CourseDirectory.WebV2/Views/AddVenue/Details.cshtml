@@ -2,6 +2,8 @@
 @{
     Layout = "_V2LayoutProviderContext";
     ViewContext.SetLayoutData(title: "Add venue");
+    var isSecurityError = ViewContext.ModelState.Keys.Any(x => x == "Website") &&
+       ViewContext.ModelState["Website"].Errors.Any(y => y.ErrorMessage == "Check website URL. We've identified a security issue");
 }
 
 <div class="govuk-grid-row">
@@ -42,10 +44,32 @@
             <govuk-input asp-for="Telephone" type="tel" input-class="govuk-!-width-one-third">
                 <govuk-input-label class="govuk-label--s">Telephone</govuk-input-label>
             </govuk-input>
-
-            <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
-                <govuk-input-label class="govuk-label--s">Website</govuk-input-label>
-            </govuk-input>
+            @if (!isSecurityError)
+            {
+                <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
+                    <govuk-input-label class="govuk-label--s">Venue website</govuk-input-label>
+                    <govuk-input-hint>
+                        The website for this venue. For example https://www.venue.com
+                    </govuk-input-hint>
+                </govuk-input>
+            }
+            else
+            {
+                <govuk-input asp-for="Website" input-class="govuk-!-width-two-thirds">
+                    <govuk-input-label class="govuk-label--s">Venue website</govuk-input-label>
+                    <govuk-input-hint>
+                        The website for this venue. For example https://www.venue.com
+                        <span class="govuk-hint govuk-!-margin-top-3 web-url-hint">
+                            This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
+                        </span>
+                        <span class="govuk-hint govuk-!-margin-top-3">
+                            Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
+                            You cannot upload this URL to the course directory until it can pass this security check.
+                        </span>
+                    </govuk-input-hint>
+                </govuk-input>
+            }
+          
 
             <div class="govuk-button-group">
                 <govuk-button type="submit" class="cd-cancel-btn">Continue</govuk-button>
