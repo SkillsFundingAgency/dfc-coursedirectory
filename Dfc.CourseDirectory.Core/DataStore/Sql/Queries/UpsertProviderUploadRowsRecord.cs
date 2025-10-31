@@ -17,4 +17,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public string ProviderName { get; set; }
         public string TradingName { get; set; }
     }
+    public class UpsertInactiveProviderUploadRowsRecord
+    {
+        public int RowNumber { get; set; }
+        public bool IsValid { get; set; }
+        public IEnumerable<string> Errors { get; set; }
+        public Guid ProviderId { get; set; }
+        public DateTime LastUpdated { get; set; }
+        public DateTime LastValidated { get; set; }
+        public int Ukprn { get; set; }
+        public string ProviderName { get; set; }
+        public string OrgStatus { get; set; }
+        public DateTime? OrgStatusDate { get; set; }
+    }
 }

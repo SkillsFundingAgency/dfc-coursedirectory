@@ -9,5 +9,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public Guid ProviderUploadId { get; set; }
         public DateTime CreatedOn { get; set; }
         public UserInfo CreatedBy { get; set; }
+        public bool InactiveProviders { get; set; }
     }
 }

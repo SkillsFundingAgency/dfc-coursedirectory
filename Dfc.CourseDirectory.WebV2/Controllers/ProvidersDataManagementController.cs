@@ -34,6 +34,10 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         public async Task<IActionResult> Index() =>
             await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
+        [HttpGet("inactive")]
+        public async Task<IActionResult> InactiveProviders() =>
+            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("UploadInactive", vm));
+
         [HttpPost("upload")]
         public async  Task<IActionResult>  Upload(Upload.Command command)
         {
@@ -57,6 +61,32 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         return this.ViewFromErrors(errors);
                     },
                     success =>  View()));
+        }
+
+        [HttpPost("uploadinactive")]
+        public async Task<IActionResult> UploadInactive(Upload.Command command)
+        {
+            var file = Request.Form.Files?.GetFile(nameof(command.File));
+
+            if (file != null && !file.FileName.Contains("Inactive_Providers", StringComparison.CurrentCultureIgnoreCase))
+            {
+                ModelState.AddModelError(nameof(command.File), "The file name doesn't contain Inactive_Providers");
+                return View();
+
+            }
+            return await _mediator.SendAndMapResponse(
+                new Upload.Command()
+                {
+                    File = file,
+                    InactiveProviders = true,
+                },
+                response => response.Match<IActionResult>(
+                    errors =>
+                    {
+                        ViewBag.MissingHeaders = errors.MissingHeaders;
+                        return this.ViewFromErrors(errors);
+                    },
+                    success => View()));
         }
     }
 }

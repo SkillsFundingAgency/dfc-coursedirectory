@@ -10,5 +10,7 @@
 	[ProviderStatus] TINYINT,
 	[ProviderType] TINYINT,
 	[ProviderName] NVARCHAR(MAX),
-	[TradingName] NVARCHAR(MAX)
+	[TradingName] NVARCHAR(MAX),
+	[PIMSOrgStatus] NVARCHAR(50),
+	[PIMSOrgStatusDate] DATETIME
 )

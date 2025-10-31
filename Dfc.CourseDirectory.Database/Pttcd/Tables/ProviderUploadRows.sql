@@ -10,8 +10,10 @@
 	[LastValidated] DATETIME NOT NULL,
 	[ProviderId] UNIQUEIDENTIFIER NOT NULL,
 	[Ukprn] INT NOT NULL,
-    [ProviderStatus] INT NOT NULL,
-    [ProviderType] INT NOT NULL,
-    [ProviderName] NVARCHAR(MAX) NOT NULL,
-    [TradingName] NVARCHAR(MAX) NOT NULL
+    [ProviderStatus] INT NULL,
+    [ProviderType] INT NULL,
+    [ProviderName] NVARCHAR(MAX) NULL,
+    [TradingName] NVARCHAR(MAX) NULL, 
+    [PIMSOrgStatus] NVARCHAR(50) NULL, 
+    [PIMSOrgStatusDate] DATETIME NULL
 )

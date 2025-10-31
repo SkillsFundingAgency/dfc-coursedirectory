@@ -49,9 +49,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         };
         public async Task ProcessProviderFile(Guid providerUploadId, Stream stream)
         {
+            bool inactiveProviders = false;
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
                 var uploadedCourse = await dispatcher.ExecuteQuery(new GetProviderUpload() { ProviderUploadId = providerUploadId });
+                inactiveProviders = uploadedCourse != null ? uploadedCourse.InactiveProviders: false;
 
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetProviderUploadProcessing()
                 {
@@ -68,6 +70,40 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
                 await dispatcher.Commit();
             }
+            if (inactiveProviders)
+            {
+                List<CsvInactiveProviderRow> rows;
+                using (var streamReader = new StreamReader(stream))
+                using (var csvReader = CreateCsvReader(streamReader))
+                {
+                    rows = await csvReader.GetRecordsAsync<CsvInactiveProviderRow>().ToListAsync();
+                }
+                var grouped = CsvInactiveProviderRow.GroupRows(rows);
+                var groupProvidersIds = grouped.Select(g => (ProviderId: Guid.NewGuid(), Rows: g)).ToArray();
+
+                var rowInfos = new List<InactiveProviderDataUploadRowInfo>(rows.Count);
+
+                foreach (var row in rows)
+                {
+                    var providerId = groupProvidersIds.Single(g => g.Rows.Contains(row)).ProviderId;
+
+
+                    rowInfos.Add(new InactiveProviderDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, providerId));
+                }
+
+                var rowsCollection = new InactiveProviderDataUploadRowInfoCollection(rowInfos);
+
+                using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+                {
+
+                    await ValidateInactiveProviderUploadRows(dispatcher, providerUploadId, rowsCollection);
+
+                    await dispatcher.Commit();
+                }
+                await InactiveProviderUpdate(providerUploadId);
+            }
+            else
+            {
                 List<CsvProviderRow> rows;
                 using (var streamReader = new StreamReader(stream))
                 using (var csvReader = CreateCsvReader(streamReader))
@@ -82,7 +118,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 foreach (var row in rows)
                 {
                     var providerId = groupProvidersIds.Single(g => g.Rows.Contains(row)).ProviderId;
-                    
+
 
                     rowInfos.Add(new ProviderDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, providerId));
                 }
@@ -98,12 +134,59 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 }
                 await OnboardProviderUpload(providerUploadId);
 
+            }
+
             await DeleteBlob();
 
             Task DeleteBlob()
             {
                 var blobName = $"{Constants.ProvidersFolder}/{providerUploadId}.csv";
                 return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
+            }
+        }
+
+        public async Task<OnboardResult> InactiveProviderUpdate(Guid providerUploadId)
+        {
+            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+            {
+
+                var providerUpload = await dispatcher.ExecuteQuery(new GetProviderUpload()
+                {
+                    ProviderUploadId = providerUploadId,
+                });
+
+                if (providerUpload == null)
+                {
+                    throw new InvalidStateException(InvalidStateReason.ProviderUploadNotFound);
+                }
+
+                if (providerUpload.UploadStatus.IsUnprocessed())
+                {
+                    throw new InvalidUploadStatusException(
+                        providerUpload.UploadStatus,
+                        UploadStatus.ProcessedWithErrors,
+                        UploadStatus.ProcessedSuccessfully);
+                }
+
+                if (providerUpload.UploadStatus == UploadStatus.ProcessedWithErrors)
+                {
+                    return OnboardResult.UploadHasErrors();
+                }
+
+
+                var onboardedOn = _clock.UtcNow;
+
+                var onboardProviderResult = await dispatcher.ExecuteQuery(new InactiveProviderUpload()
+                {
+                    ProviderUploadId = providerUpload.ProviderUploadId,
+                    UpdatedOn = onboardedOn
+                });
+
+                await dispatcher.Commit();
+
+                var onboardedProviderIds = onboardProviderResult.AsT1.OnboardedProviderIds;
+
+                return OnboardResult.Success(onboardedProviderIds.Count);
             }
         }
 
@@ -152,7 +235,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<SaveProviderFileResult> SaveProviderFile(Stream stream, UserInfo uploadedBy)
+        public async Task<SaveProviderFileResult> SaveProviderFile(Stream stream, bool inactiveProviders, UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
@@ -165,12 +248,24 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             {
                 return SaveProviderFileResult.InvalidFile();
             }
-            
-            var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvProviderRow>(stream);
-            if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+
+            if (inactiveProviders) 
             {
+                var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvInactiveProviderRow>(stream);
+                if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+                {
                     return SaveProviderFileResult.InvalidHeader(missingHeaders);
+                }
             }
+            else
+            {
+                var (fileMatchesSchemaResult, missingHeaders) = await FileMatchesSchema<CsvProviderRow>(stream);
+                if (fileMatchesSchemaResult == FileMatchesSchemaResult.InvalidHeader)
+                {
+                    return SaveProviderFileResult.InvalidHeader(missingHeaders);
+                }
+            }
+            
             
             var providerUploadId = Guid.NewGuid();
 
@@ -182,6 +277,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     ProviderUploadId = providerUploadId,
                     CreatedBy = uploadedBy,
                     CreatedOn = _clock.UtcNow,
+                    InactiveProviders = inactiveProviders,
                 });
 
                 await dispatcher.Transaction.CommitAsync();
@@ -237,6 +333,60 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
 
             return providerType;
+        }
+
+        internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<ProviderUploadRow> Rows)> ValidateInactiveProviderUploadRows(
+          ISqlQueryDispatcher sqlQueryDispatcher,
+          Guid providerUploadId,
+          InactiveProviderDataUploadRowInfoCollection rows)
+        {
+
+            var rowsAreValid = true;
+
+            var upsertRecords = new List<UpsertInactiveProviderUploadRowsRecord>();
+            var filterByPreviousMonth = DateTime.Now.Month - 1;
+
+            foreach (var row in rows)
+            {
+                var rowNumber = row.RowNumber;
+
+                var parsedRow = ParsedCsvInactiveProviderRow.FromCsvProviderRow(row.Data);
+                if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN))
+                {
+                    continue;
+                }
+               
+                var validator = new InactiveProviderUploadRowValidator(_clock);
+                var rowValidationResult = await validator.ValidateAsync(parsedRow);
+                var errors = rowValidationResult.Errors.Select(e => e.ErrorCode).ToArray();
+                var rowIsValid = rowValidationResult.IsValid;
+                rowsAreValid &= rowIsValid;
+
+                upsertRecords.Add(new UpsertInactiveProviderUploadRowsRecord()
+                {
+                    RowNumber = rowNumber,
+                    IsValid = rowIsValid,
+                    Errors = errors,
+                    ProviderId = row.ProviderId,
+                    Ukprn = parsedRow.OrgUKPRN,
+                    ProviderName = parsedRow.OrgLegalName,
+                    OrgStatus = parsedRow.OrgStatus,
+                    OrgStatusDate = parsedRow.ResolvedOrgStatusDate,
+                    LastUpdated = _clock.UtcNow,
+                    LastValidated = _clock.UtcNow,
+                });
+            }
+
+            var updatedRows = await sqlQueryDispatcher.ExecuteQuery(new UpsertInactiveProviderUploadRows()
+            {
+                ProviderUploadId = providerUploadId,
+                ValidatedOn = _clock.UtcNow,
+                Records = upsertRecords
+            });
+
+            var uploadStatus = await RefreshProviderUploadValidationStatus(providerUploadId, sqlQueryDispatcher);
+
+            return (uploadStatus, updatedRows);
         }
 
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<ProviderUploadRow> Rows)> ValidateProviderUploadRows(
@@ -324,6 +474,15 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 IClock clock)
             {
                 
+            }
+        }
+
+        internal class InactiveProviderUploadRowValidator : AbstractValidator<ParsedCsvInactiveProviderRow>
+        {
+            public InactiveProviderUploadRowValidator(
+                IClock clock)
+            {
+
             }
         }
     }

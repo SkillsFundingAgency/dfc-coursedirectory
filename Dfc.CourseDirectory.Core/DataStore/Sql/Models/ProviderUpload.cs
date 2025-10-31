@@ -12,5 +12,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public DateTime? ProcessingCompletedOn { get; set; }
         public DateTime? PublishedOn { get; set; }
         public DateTime? AbandonedOn { get; set; }
+        public bool InactiveProviders { get; set; }
     }
 }

@@ -34,6 +34,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
     public class Command : IRequest<OneOf<UploadFailedResult, UploadSucceededResult>>
     {
         public IFormFile File { get; set; }
+        public bool InactiveProviders { get; set; }
     }
 
     public enum UploadSucceededResult
@@ -111,6 +112,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
 
             var saveFileResult = await _fileUploadProcessor.SaveProviderFile(
                                 stream,
+                                request.InactiveProviders,
                 _currentUserProvider.GetCurrentUser());
 
             if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidFile)

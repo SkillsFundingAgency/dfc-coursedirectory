@@ -16,12 +16,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ProviderUploadId,
                     UploadStatus,
                     CreatedOn,
-                    CreatedByUserId
+                    CreatedByUserId,
+                    InactiveProviders,
                 ) VALUES (
                     @ProviderUploadId,
                     {(int)UploadStatus.Created},
                     @CreatedOn,
-                    @CreatedByUserId
+                    @CreatedByUserId,
+                    @InactiveProviders
                 )";
 
             var paramz = new
@@ -29,6 +31,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.ProviderUploadId,
                 query.CreatedOn,
                 CreatedByUserId = query.CreatedBy.UserId,
+                query.InactiveProviders
             };
 
             await transaction.Connection.ExecuteAsync(sql, paramz, transaction);
