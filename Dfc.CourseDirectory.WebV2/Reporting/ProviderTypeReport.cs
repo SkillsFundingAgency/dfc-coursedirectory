@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,11 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
         [Name("Live T Level Count")]
         public int LiveTLevelCount { get; set; }
 
+        [Name("PIMS Org Status")]
+        public string PIMSOrgStatus { get; set; }
+
+        [Name("PIMS Org Status Date")]
+        public DateTime PIMSOrgStatusDate { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -73,7 +79,9 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
                         ProviderStatusDescription = result.ProviderStatus.ToString(),
                         UkrlpProviderStatus = result.UkrlpProviderStatusDescription,
                         LiveCourseCount = result.LiveCourseCount,
-                        LiveTLevelCount = result.LiveTLevelCount
+                        LiveTLevelCount = result.LiveTLevelCount,
+                        PIMSOrgStatus = result.PIMSOrgStatus,
+                        PIMSOrgStatusDate = result.PIMSOrgStatusDate
                     };
                 }
             }
