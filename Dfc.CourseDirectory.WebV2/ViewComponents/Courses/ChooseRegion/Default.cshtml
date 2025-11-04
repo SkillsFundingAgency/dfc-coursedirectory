@@ -44,7 +44,7 @@
                 }
 
                 <div id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
-                    <div id="accordion-regions-@accordionId" class="govuk-accordion govuk-!-margin-bottom-0" data-module="accordion">
+                    <div id="accordion-regions-@accordionId" class="govuk-accordion govuk-!-margin-bottom-0" data-module="govuk-accordion">
                         
                         @foreach (var region in Model.Regions.RegionItems.Select((v, i) => new { Value = v, Index = i }))
                         {
