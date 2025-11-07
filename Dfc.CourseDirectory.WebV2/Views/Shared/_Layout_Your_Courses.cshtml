@@ -11,7 +11,6 @@
     <title>@ViewData["Title"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="blue" />
-    <meta http-equiv="X-UA-Compatible" content="IE=11" />
     <meta property="og:image" content="~/assets/images/govuk-opengraph-image-tudor-crown.png">
     <meta name="format-detection" content="telephone=no">
     <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="~/assets/images/govuk-favicon-tudor-crown.ico" type="image/x-icon" />
@@ -44,17 +43,14 @@
         </main>
     </div>
         @PageTemplateHelper.GenerateScriptImports()
-    <script>
-        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+    <script type="module">
+        document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
 
         // Warn about using the kit in production
         if (window.console && window.console.info) {
             window.console.info('GOV.UK Prototype Kit - do not use for production');
         }
 
-        $(document).ready(function () {
-            window.GOVUKFrontend.initAll();
-        });
         $(".govuk-header__navigation-list").hide();
         $(".govuk-header__menu-button").on("click",
             function () {

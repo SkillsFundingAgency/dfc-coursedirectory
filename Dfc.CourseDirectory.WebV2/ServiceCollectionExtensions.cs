@@ -123,10 +123,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             services.AddTransient<IProviderOwnershipCache, ProviderOwnershipCache>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
-            services.AddGovUkFrontend(options =>
-            {
-                options.AddImportsToHtml = false;                
-            });
+            services.AddGovUkFrontend();
             services.AddHttpClient();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
             services.AddTransient<IClock, SystemClock>();
