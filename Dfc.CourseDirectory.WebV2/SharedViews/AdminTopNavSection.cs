@@ -5,6 +5,7 @@
         HelpdeskDashboard,
         QualityAssurance,
         SearchProviders,
-        ManageUsers
+        ManageUsers,
+        ProviderUpload
     }
 }
