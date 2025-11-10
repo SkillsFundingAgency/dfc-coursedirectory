@@ -20,13 +20,12 @@
         <div class="govuk-radios__conditional">
             
             <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset" aria-describedby="passport-issued-hint" role="group" id="govuk-label-start_date">
+                <fieldset class="govuk-fieldset" id="govuk-label-start_date">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-
+                            <span class="govuk-hint">
+                                For example, 30 9 2019.
+                            </span>
                     </legend>
-                    <span class="govuk-hint">
-                        For example, 30 9 2019.
-                    </span>
                     <div class="govuk-date-input" id="start_date"
                          val-required-message="Enter start date"
                          val-past-date-ref=@Model.ValPastDateRef.ToString("yyyy-MM-dd")
@@ -39,7 +38,7 @@
                                 <label class="govuk-label govuk-date-input__label" asp-for="@Model.Day">
                                     @Model.DayLabelText
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day" type="number" pattern="[0-9]*" onpaste="return false">
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Day" asp-for="@Model.Day" type="text" pattern="[0-9]*" onpaste="return false">
                             </div>
                         </div>
                         <div class="govuk-date-input__item">
@@ -47,7 +46,7 @@
                                 <label class="govuk-label govuk-date-input__label" asp-for="@Model.Month">
                                     @Model.MonthLabelText
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="number" pattern="[0-9]*" onpaste="return false">
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" aria-label="@Model.Month" asp-for="@Model.Month" type="text" pattern="[0-9]*" onpaste="return false">
                             </div>
                         </div>
                         <div class="govuk-date-input__item">
@@ -55,7 +54,7 @@
                                 <label class="govuk-label govuk-date-input__label" asp-for="@Model.Year">
                                     @Model.YearLabelText
                                 </label>
-                                <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year" type="number" pattern="[0-9]*" onpaste="return false">
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4" aria-label="@Model.Year" asp-for="@Model.Year" type="text" pattern="[0-9]*" onpaste="return false">
                             </div>
                         </div>
                     </div>

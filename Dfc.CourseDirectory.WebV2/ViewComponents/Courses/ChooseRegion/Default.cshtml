@@ -31,7 +31,7 @@
             }
 
             <div id="regions-section" style="margin-top:30px">
-                <label class="govuk-label--m" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
+                <label class="govuk-label--m" id="govuk-label-SelectRegionCheckBoxes">
                     @Model.Regions.LabelText
                 </label>
                 <span id="select-region-hint" class="govuk-hint govuk-!-margin-top-3">
@@ -67,7 +67,7 @@
                                     </div>
                                 </div>
 
-                                <div id="accordion-regions-@accordionId-content-@region.Index" class="govuk-accordion__section-content govuk-checkboxes--small" aria-labelledby="accordion-regions-@accordionId-heading-@region.Index">
+                                <div id="accordion-regions-@accordionId-content-@region.Index" class="govuk-accordion__section-content govuk-checkboxes--small">
                                     <div class="flex-container govuk-grid-row region-checkboxes accordion-regions-selectall-container" tabindex="-1" aria-hidden="true" style="display:none;">
                                         <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
                                             <input id="accordion-regions-@accordionId-selectall-@region.Index" type="checkbox" class="govuk-checkboxes__input accordion-regions-checkbox-selectall" tabindex="-1">
