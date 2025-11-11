@@ -34,11 +34,11 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.SaveDetails
             // to ensure the un-validated data cannot be submitted
             _journeyInstance.UpdateState(state => state.SetDetails(
                 request.YourReference,
-                new DateTime(
+                request.StartDate != null ? new DateTime(
                     request.StartDate.Value.Year
                     , request.StartDate.Value.Month
                     , request.StartDate.Value.Day
-                ),
+                ): (DateTime?) null,
                 request.LocationVenueIds,
                 request.Website,
                 isComplete: false));
