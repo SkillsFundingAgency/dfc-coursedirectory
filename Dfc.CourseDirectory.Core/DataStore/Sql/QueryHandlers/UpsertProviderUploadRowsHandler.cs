@@ -101,6 +101,8 @@ ORDER BY RowNumber";
                 table.Columns.Add("ProviderType", typeof(int));
                 table.Columns.Add("ProviderName", typeof(string));
                 table.Columns.Add("TradingName", typeof(string));
+                table.Columns.Add("PIMSOrgStatus", typeof(string));
+                table.Columns.Add("PIMSOrgStatusDate", typeof(DateTime));
 
                 foreach (var record in query.Records)
                 {
@@ -115,7 +117,10 @@ ORDER BY RowNumber";
                         record.ProviderStatus,
                         record.ProviderType,
                         record.ProviderName,
-                        record.TradingName);
+                        record.TradingName,
+                        null,
+                        null
+                        );
                 }
 
                 return table.AsTableValuedParameter("Pttcd.ProviderUploadRowTable");
