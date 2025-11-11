@@ -20,14 +20,14 @@
          val-duration-message="Enter duration"
          val-decimal-message="Invalid duration entered"> <div class="govuk-date-input__item"> 
             <div class="govuk-form-group"> 
-                <input pattern="^[0-9]*$" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3" aria-labelledby="govuk-label-duration">
+                <input pattern="^[0-9]*$" class="govuk-input govuk-input--width-2" style="display: inline;" asp-for="@Model.DurationLength" type="number" maxlength="3">
 
             </div> 
         </div> 
         <div class="govuk-date-input__item"> 
             <div class="govuk-form-group"> 
                
-                <select asp-for="@Model.DurationUnit" asp-items="@Model.DurationUnits" class="govuk-select" id="durationDropDown" val-required-message="Duration unit is required" aria-labelledby="govuk-label-duration"></select>
+                <select asp-for="@Model.DurationUnit" asp-items="@Model.DurationUnits" class="govuk-select" id="durationDropDown" val-required-message="Duration unit is required"></select>
             </div> 
         </div> 
     </div> 

@@ -38,7 +38,7 @@ else
         }
         @if (!Model.NonLarsCourse)
         {
-            <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="govuk-form-group govuk-font-size">
                 <div class="accordion govuk-heading-s" role="button" tabindex="0">Level</div>
                 <div class="panel">
                     <fieldset class="govuk-fieldset">
@@ -56,7 +56,7 @@ else
                             {
                                 <div class="govuk-checkboxes__item">
                                     <input class="govuk-checkboxes__input" id="@level.Id" name="@level.Name" type="checkbox" value="@level.Value" @level.IsSelected.ThenCheck()>
-                                    <label id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@level.Id">
+                                    <label id="levellabel_@level.Id" class="govuk-label govuk-checkboxes__label govuk-font-size" for="@level.Id">
                                         @level.Text
                                     </label>
                                 </div>
@@ -73,7 +73,7 @@ else
         }
         @if (Model.DeliveryModes.Any())
         {
-            <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="govuk-form-group govuk-font-size">
                 <div class="accordion govuk-heading-s active" role="button" tabindex="0">Delivery mode</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset">
@@ -87,7 +87,7 @@ else
                             {
                                 <div class="govuk-checkboxes__item">
                                     <input class="govuk-checkboxes__input" id="@deliveryMode.Id" name="@deliveryMode.Name" type="checkbox" value="@deliveryMode.Value" @deliveryMode.IsSelected.ThenCheck()>
-                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@deliveryMode.Id">
+                                    <label class="govuk-label govuk-checkboxes__label govuk-font-size" for="@deliveryMode.Id">
                                         @deliveryMode.Text
                                     </label>
                                 </div>
@@ -102,7 +102,7 @@ else
 
         @if (Model.Venues.Any())
         {
-            <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="govuk-form-group govuk-font-size">
                 <div class="accordion govuk-heading-s active" role="button" tabindex="0">Venue</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset">
@@ -116,7 +116,7 @@ else
                             {
                                 <div class="govuk-checkboxes__item">
                                     <input class="govuk-checkboxes__input" id="@venue.Id" name="@venue.Name" type="checkbox" value="@venue.Value" @venue.IsSelected.ThenCheck()>
-                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@venue.Id">
+                                    <label class="govuk-label govuk-checkboxes__label govuk-font-size" for="@venue.Id">
                                         @venue.Text
                                     </label>
                                 </div>
@@ -131,7 +131,7 @@ else
 
         @if (Model.AttendancePattern.Any())
         {
-            <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="govuk-form-group govuk-font-size">
                 <div class="accordion govuk-heading-s active" role="button" tabindex="0">Attendance pattern</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset">
@@ -145,7 +145,7 @@ else
                             {
                                 <div class="govuk-checkboxes__item">
                                     <input class="govuk-checkboxes__input" id="@attendancePattern.Id" name="@attendancePattern.Name" type="checkbox" value="@attendancePattern.Value" @attendancePattern.IsSelected.ThenCheck()>
-                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@attendancePattern.Id">
+                                    <label class="govuk-label govuk-checkboxes__label govuk-font-size" for="@attendancePattern.Id">
                                         @attendancePattern.Text
                                     </label>
                                 </div>
@@ -159,7 +159,7 @@ else
         }
         @if (Model.Regions.Any())
         {
-            <div class="govuk-form-group govuk-!-font-size-14">
+            <div class="govuk-form-group govuk-font-size">
                 <div class="accordion govuk-heading-s active" role="button" tabindex="0">Region</div>
                 <div class="panel" style="display: none">
                     <fieldset class="govuk-fieldset">
@@ -171,7 +171,7 @@ else
                             {
                                 <div class="govuk-checkboxes__item">
                                     <input class="govuk-checkboxes__input" id="@region.Id" name="@region.Name" type="checkbox" value="@region.Value" @region.IsSelected.ThenCheck()>
-                                    <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" for="@region.Id">
+                                    <label class="govuk-label govuk-checkboxes__label govuk-font-size" for="@region.Id">
                                         @region.Text
                                     </label>
                                 </div>
@@ -184,7 +184,7 @@ else
 
         }
 
-        <div class="govuk-form-group govuk-!-font-size-14">
+        <div class="govuk-form-group govuk-font-size">
             <button id="ApplyFilter" class="govuk-button" aria-label="Apply filters" tabindex="0">Apply</button>
         </div>
 

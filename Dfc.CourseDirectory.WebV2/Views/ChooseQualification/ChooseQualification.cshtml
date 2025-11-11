@@ -54,10 +54,10 @@
                     Apply filters
                 </button>
 
-                <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="govuk-form-group govuk-font-size">
                     @foreach (var filter in Model.NotionalNVQLevelv2Filters)
                     {
-                        <div class="govuk-form-group govuk-!-font-size-14">
+                        <div class="govuk-form-group govuk-font-size">
                             <div class="accordion govuk-heading-s">@filter.Title</div>
                             <div class="panel">
                                 <fieldset class="govuk-fieldset">
@@ -82,7 +82,7 @@
 
                     @foreach (var filter in Model.AwardingOrganisationFilters)
                     {
-                        <div class="govuk-form-group govuk-!-font-size-14">
+                        <div class="govuk-form-group govuk-font-size">
                             <div class="accordion govuk-heading-s">@filter.Title</div>
                             <div class="panel">
                                 <fieldset class="govuk-fieldset">
@@ -112,7 +112,7 @@
                 </div>
             </div>
             <div class="govuk-grid-column-three-quarters">
-                <div class="govuk-table govuk-!-font-size-14">
+                <div class="govuk-table govuk-font-size">
 
                     @if (Model.SearchResults.Any())
                     {
