@@ -76,7 +76,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     NULL,
                     NULL,
                     TradingName,
-                    NULL,
+                    TradingName,
                     @OnboardedOn,
                     @UploadedBy,
                     0,

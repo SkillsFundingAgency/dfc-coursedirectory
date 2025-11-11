@@ -37,7 +37,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             "24+ Advanced Learning Loans Bursary",
             "24+ Advanced Learning Loans Bursary (College)",
             "24+ Advanced Learning Loans Facility",
-            "Academy Funding",
             "Adult Education Budget (Procured)",
             "Adult Skills (College)",
             "AEB Devolution",
