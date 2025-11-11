@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     UploadStatus,
                     CreatedOn,
                     CreatedByUserId,
-                    InactiveProviders,
+                    InactiveProviders
                 ) VALUES (
                     @ProviderUploadId,
                     {(int)UploadStatus.Created},
