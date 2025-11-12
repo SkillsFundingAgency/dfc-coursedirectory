@@ -584,7 +584,7 @@
 
 .govuk-form-group--error {
     padding-left: 15px;
-    border-left: 5px solid #b10e1e !important;
+    border-left: 5px solid #b10e1e;
 }
 
     .govuk-form-group--error .govuk-form-group {
@@ -1172,7 +1172,7 @@
     border: 2px solid transparent;
     border-radius: 0;
     color: #fff;
-    background-color: #00823b !important;
+    background-color: #00823b;
     box-shadow: 0 2px 0 #003418;
     text-align: center;
     vertical-align: top;
@@ -1250,7 +1250,7 @@
 }
 
     .govuk-button--disabled:hover, .govuk-button[disabled=disabled]:hover, .govuk-button[disabled]:hover {
-        background-color: #00823b !important;
+        background-color: #00823b;
         cursor: default
     }
 
@@ -1264,7 +1264,7 @@
     }
 
 .govuk-button--secondary {
-    background-color: #dee0e2 !important;
+    background-color: #dee0e2;
     box-shadow: 0 2px 0 #858688
 }
 
@@ -1277,16 +1277,16 @@
 }
 
 .govuk-button--secondary:focus, .govuk-button--secondary:hover {
-    background-color: #c8cacb !important;
+    background-color: #c8cacb;
 }
 
     .govuk-button--secondary:focus[disabled], .govuk-button--secondary:hover[disabled] {
-        background-color: #dee0e2 !important;
+        background-color: #dee0e2;
     }
 
 .govuk-button--warning {
-    background-color: #b10e1e !important;
-    box-shadow: 0 2px 0 #47060c !important;
+    background-color: #b10e1e;
+    box-shadow: 0 2px 0 #47060c;
 }
 
     .govuk-button--warning:focus, .govuk-button--warning:hover {
@@ -1294,7 +1294,7 @@
     }
 
         .govuk-button--warning:focus[disabled], .govuk-button--warning:hover[disabled] {
-            background-color: #b10e1e !important;
+            background-color: #b10e1e;
         }
 
 .govuk-button--start {
@@ -1351,7 +1351,7 @@
     display: block;
     margin-bottom: 15px;
     clear: both;
-    color: #b10e1e !important;
+    color: #b10e1e;
 }
 
 @media (min-width:40.0625em) {
@@ -2133,7 +2133,9 @@
 }
 
 .govuk-input--error {
-    border: 4px solid #b10e1e !important;
+    border-width: 4px !important;
+    border-style: solid;
+    border-color: #b10e1e;
 }
 
 .govuk-input--width-30 {
@@ -2284,7 +2286,7 @@
     color: #0b0c0c;
     padding: 15px;
     margin-bottom: 30px;
-    border: 4px solid #b10e1e !important;
+    border: 4px solid #b10e1e;
 }
 
     .govuk-error-summary:focus {
@@ -2296,7 +2298,7 @@
     .govuk-error-summary {
         padding: 20px;
         margin-bottom: 50px;
-        border: 5px solid #b10e1e !important;
+        border: 5px solid #b10e1e;
     }
 }
 
@@ -2382,7 +2384,7 @@
 }
 
 .govuk-error-summary__list a:active, .govuk-error-summary__list a:hover, .govuk-error-summary__list a:link, .govuk-error-summary__list a:visited {
-    color: #b10e1e !important;
+    color: #b10e1e;
 }
 
 .govuk-error-summary__list a:focus {
@@ -3110,7 +3112,7 @@
 
 .govuk-panel--confirmation {
     color: #fff;
-    background: #00703c !important;
+    background: #00703c;
 }
 
 .govuk-panel__title {
@@ -3773,7 +3775,9 @@
     }
 
 .govuk-select--error {
-    border: 4px solid #b10e1e !important;
+    border-width: 4px !important;
+    border-style: solid;
+    border-color: #b10e1e;
 }
 
 .govuk-skip-link {
@@ -3955,7 +3959,7 @@
 }
 
 .govuk-textarea--error {
-    border: 4px solid #b10e1e !important;
+    border: 4px solid #b10e1e;
 }
 
 .govuk-warning-text {
@@ -5518,8 +5522,8 @@ p {
     padding: 10px;
     margin: 0 auto;
     border-radius: 4px;
-    color: #b10e1e !important;
-    border: 3px solid #b10e1e !important;
+    color: #b10e1e;
+    border: 3px solid #b10e1e;
 }
 
     .cd-file-upload .error-box.no-error {
@@ -6447,7 +6451,7 @@ select:disabled {
     }
 
 .cd-error-summary {
-    border: 5px solid #b10e1e !important;
+    border: 5px solid #b10e1e;
 }
 
     .cd-error-summary .cd-error-summary__title {
@@ -6455,7 +6459,7 @@ select:disabled {
     }
 
     .cd-error-summary .cd-error-summary__body, .cd-error-summary .cd-error-summary__body .cd-error-summary__list a {
-        color: #b10e1e !important; 
+        color: #b10e1e; 
     }
 
 #popup-preview {
@@ -6955,19 +6959,19 @@ select:disabled {
 }
 
 .input-validation-error {
-    border: 4px solid #b10e1e !important;
+    border: 4px solid #b10e1e;
 }
 
 .field-validation-error {
     font-weight: 700;
     display: block;
     clear: both;
-    color: #b10e1e !important;
+    color: #b10e1e;
 }
 
 .error {
     padding-left: 15px;
-    border-left: 5px solid #b10e1e !important;
+    border-left: 5px solid #b10e1e;
 }
 
 .pagination {
