@@ -17,9 +17,8 @@
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@courseForTextFieldMaxChars>
-    <div class="govuk-form-group">
-        <label id="govuk-label-@nameof(Model.CourseFor)" class="govuk-label govuk-label--m " for="word-count" name="Course-For">
+<div class="govuk-form-group govuk-character-count" data-module="character-count" data-maxlength=@courseForTextFieldMaxChars>
+   <label id="govuk-label-@nameof(Model.CourseFor)" class="govuk-label govuk-label--m " for="word-count" name="Course-For">
             @Model.LabelText
         </label>
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
@@ -37,8 +36,6 @@
                   val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for? must be @courseForTextFieldMaxChars characters or less"
                   val-regex="@regex"
                   val-regex-message="Who is this course for? contains invalid characters"></textarea>
-
-    </div>
 </div>
 
 <script>

@@ -13,8 +13,8 @@
 }
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnTextFieldMaxChars>
-    <div class="govuk-form-group">
+<div class="govuk-form-group govuk-character-count" data-module="character-count" data-maxlength=@howYouWillLearnTextFieldMaxChars>
+
         <label id="govuk-label-@nameof(Model.HowYouWillLearn)" class="govuk-label govuk-label--m" for="word-count" name="HowYouWillLearn">
             @Model.LabelText
         </label>
@@ -29,8 +29,6 @@
                   val-max-length=@howYouWillLearnTextFieldMaxChars val-max-length-message="How you’ll learn must be @howYouWillLearnTextFieldMaxChars characters or less"
                   val-regex="@regex"
                   val-regex-message="How you’ll learn contains invalid characters"></textarea>
-
-    </div>
 </div>
 
 <script>

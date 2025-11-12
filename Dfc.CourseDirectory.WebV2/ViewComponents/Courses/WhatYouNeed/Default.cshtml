@@ -14,8 +14,7 @@
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@whatYouNeedTextFieldMaxChars>
-    <div class="govuk-form-group">
+<div class="govuk-form-group govuk-character-count" data-module="character-count" data-maxlength=@whatYouNeedTextFieldMaxChars>
         <label id="govuk-label-@nameof(Model.WhatYouNeed)" class="govuk-label govuk-label--m" for="word-count" name="WhatYouNeed">
             @Model.LabelText
         </label>
@@ -31,7 +30,6 @@
                   val-regex="@regex"
                   val-regex-message="What you’ll need to bring contains invalid characters"></textarea>
 
-    </div>
 </div>
 
 <script>
