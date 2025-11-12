@@ -21,7 +21,7 @@
     @if (Model.HasErrors && !Model.Items.Any())
     {
         <div class="govuk-grid-column-full">
-            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <div class="govuk-error-summary" role="alert" tabindex="-1" data-module="error-summary">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
                     Sorry, there was a problem.
                 </h2>
@@ -58,14 +58,10 @@
                         <a class="govuk-link" id="ClearAllFilters" href="">Clear filters</a>
                     </div>
                 }
-
-
-
-
                 var i = 0;
                 foreach (var filter in Model.Filters)
                 {
-                    <div class="govuk-form-group govuk-!-font-size-14">
+                    <div class="govuk-form-group govuk-font-size">
                         <div class="accordion govuk-heading-s" role="button" tabindex="0">@filter.Title</div>
                         <div class="panel">
                             <fieldset class="govuk-fieldset" id="FilterCheckBoxes_@i">
@@ -77,8 +73,8 @@
                                     @foreach (var item in filter.Items)
                                     {
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" aria-labelledby="Filter_@i" value="@item.Value" @item.IsSelected.ThenCheck()>
-                                            <label class="govuk-label govuk-checkboxes__label govuk-!-font-size-14" id="FilterLabel_@item.Id">
+                                            <input class="govuk-checkboxes__input" id="@item.Id" name="@item.Name" type="checkbox" value="@item.Value" @item.IsSelected.ThenCheck()>
+                                            <label class="govuk-label govuk-checkboxes__label govuk-font-size" id="FilterLabel_@item.Id">
                                                 @item.Text
                                             </label>
                                         </div>
@@ -92,7 +88,7 @@
                     i++;
 
                 }
-                <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="govuk-form-group govuk-font-size">
                    
                 </div>
 
@@ -102,7 +98,7 @@
         <div class="govuk-grid-column-three-quarters">
 
 
-            <div class="govuk-table govuk-!-font-size-14">
+            <div class="govuk-table govuk-font-size">
 
                 @foreach (var item in Model.Items)
                 {
@@ -133,7 +129,7 @@
     { 
 
         <div class="govuk-grid-column-full">
-            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <div class="govuk-error-summary" role="alert" tabindex="-1" data-module="error-summary">
                 <h2 class="govuk-error-summary__title" id="error-summary-title">
                     <span class="govuk-visually-hidden">Data Unavailable</span>
                     No records found
