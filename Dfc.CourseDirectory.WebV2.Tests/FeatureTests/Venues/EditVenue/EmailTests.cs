@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         [Theory]
         [InlineData("another_person@provider.com")]
-        [InlineData("")]
+        [InlineData(null)]
         public async Task Get_NewEmailAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange

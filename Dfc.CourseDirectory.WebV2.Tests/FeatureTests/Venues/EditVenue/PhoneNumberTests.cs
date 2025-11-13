@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         [Theory]
         [InlineData("05678 912345")]
-        [InlineData("")]
+        [InlineData(null)]
         public async Task Get_NewPhoneNumberAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange

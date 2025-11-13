@@ -60,7 +60,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.AddVenue
         }
 
         [Theory]
-        [InlineData("", "")]
+        [InlineData("", null)]
         [InlineData("ab12de", "AB1 2DE")]
         [InlineData("xxx", "xxx")]
         public async Task Get_ValidRequestWithNoExistingAddressInState_RendersExpectedOutput(
