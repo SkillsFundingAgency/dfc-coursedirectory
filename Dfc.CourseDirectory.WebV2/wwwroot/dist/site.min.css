@@ -1842,7 +1842,6 @@
     min-height: 0;
     margin-bottom: 0;
     padding-left: 34px;
-    float: left
 }
 
     .govuk-checkboxes--small .govuk-checkboxes__item:after {
@@ -1857,7 +1856,8 @@
 .govuk-checkboxes--small .govuk-checkboxes__label {
     margin-top: -2px;
     padding: 13px 15px 13px 1px;
-    float: left
+    float: left;
+    max-width: calc(100% - 34px) !important;
 }
 
 @media (min-width:40.0625em) {
