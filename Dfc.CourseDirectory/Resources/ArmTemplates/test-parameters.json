@@ -29,9 +29,6 @@
     "searchDomain": {
       "value": "search.example.net"
     },
-    "larsDatasetUrl": {
-      "value": "https://not-a-real-url.com"
-    },
     "dfeClientID": {
       "value": "letmein"
     },
