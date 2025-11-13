@@ -18,7 +18,7 @@
                 }
                 foreach (var filter in Model.Filters)
                 {
-                    <div class="govuk-form-group govuk-!-font-size-14">
+                    <div class="govuk-form-group govuk-font-size">
                         <div class="accordion govuk-heading-s">@filter.Title</div>
                         <div class="panel">
 
@@ -46,7 +46,7 @@
                     </div>
                 }
 
-                <div class="govuk-form-group govuk-!-font-size-14">
+                <div class="govuk-form-group govuk-font-size">
                     <a class="govuk-button" id="ApplyFilter">Apply</a>
                 </div>
             }
@@ -54,7 +54,7 @@
 
         <div class="govuk-grid-column-three-quarters">
 
-            <div class="govuk-table govuk-!-font-size-14">
+            <div class="govuk-table govuk-font-size">
 
                 @foreach (var item in Model.Items)
                 {

@@ -32,8 +32,7 @@
 
 </div>
 
-<div id="sectionCostDescription" class="govuk-character-count" data-module="character-count" data-maxlength="255">
-    <div class="govuk-form-group">
+<div id="sectionCostDescription" class="govuk-form-group govuk-character-count" data-module="character-count" data-maxlength="255">    
         <label class="govuk-label--m" for="word-count" name="CostDescription">
             @Model.CostDescriptionLabelText
         </label>
@@ -55,7 +54,6 @@
                   val-regex-message="Cost Description contains invalid characters">
             
     </textarea>
-    </div>
 </div>
 
 <script>

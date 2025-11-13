@@ -450,6 +450,10 @@
         line-height: 1.25;
         margin-bottom: 20px
     }
+    .govuk-font-size {
+        font-size: .875rem !important;
+        line-height: 1.4285714286 !important;
+    }
 }
 
 @media print {
@@ -3170,7 +3174,6 @@
         line-height: 1.05
     }
 }
-
 .govuk-tag {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -5350,6 +5353,9 @@ p {
 
 .phase-tag-published {
     background: #00823b !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    color: #fff !important;
 }
 
 .duration-container {

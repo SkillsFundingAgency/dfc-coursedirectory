@@ -17,8 +17,7 @@
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@whereNextTextFieldMaxChars>
-    <div class="govuk-form-group">
+<div class="govuk-form-group govuk-character-count" data-module="character-count" data-maxlength=@whereNextTextFieldMaxChars>
         <label id="govuk-label-@nameof(Model.WhereNext)" class="govuk-label govuk-label--m" for="word-count" name="WhereNext">
             @Model.LabelText
         </label>
@@ -34,7 +33,6 @@
                   val-regex="@regex"
                   val-regex-message="Where next contains invalid characters"></textarea>
 
-    </div>
 </div>
 
 <script>
