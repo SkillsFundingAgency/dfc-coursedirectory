@@ -72,6 +72,7 @@ LEFT JOIN [Pttcd].[Venues] v ON cr.VenueId = v.VenueId
 LEFT JOIN cte_course_run_regions r ON cr.CourseRunId = r.CourseRunId
 WHERE p.ProviderType != ({(int)ProviderType.None})
     AND cr.CourseRunId IN (SELECT CourseRunId FROM cte_CourseRunIds)
+    AND c.ProviderUkprn not like '8%'
 UNION 
 SELECT
     p.Ukprn AS ProviderUkprn,
@@ -121,6 +122,7 @@ WHERE t.TLevelStatus = 1
 AND tl.TLevelLocationStatus = 1 
 AND p.ProviderType IN ({(int)ProviderType.TLevels}, {(int)ProviderType.FE + (int)ProviderType.TLevels}, {(int)ProviderType.TLevels + (int)ProviderType.NonLARS}, {(int)ProviderType.FE + (int)ProviderType.NonLARS + (int)ProviderType.TLevels})
 AND t.StartDate >= '{query.FromDate:MM-dd-yyyy}'
+AND p.Ukprn not like '8%'
 ";
 
             using (var reader = await transaction.Connection.ExecuteReaderAsync(sql, transaction: transaction, commandTimeout: 200))
