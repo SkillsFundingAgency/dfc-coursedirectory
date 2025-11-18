@@ -39,7 +39,7 @@
                     @layoutModel.BackLinkText
                     </a>
         } 
-        <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
+        <main class="cd-dashboard provider govuk-body" id="main-content">
             @RenderBody()
         </main>
     </div>
@@ -47,14 +47,6 @@
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 
-        // Warn about using the kit in production
-        if (window.console && window.console.info) {
-            window.console.info('GOV.UK Prototype Kit - do not use for production');
-        }
-
-        $(document).ready(function () {
-            window.GOVUKFrontend.initAll();
-        });
         $(".govuk-header__navigation-list").hide();
         $(".govuk-header__menu-button").on("click",
             function () {
