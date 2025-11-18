@@ -42,7 +42,7 @@
             @RenderBody()
         </main>
     </div>
-        @PageTemplateHelper.GenerateScriptImports()
+        @PageTemplateHelper.GenerateScriptImports(null)
     <script type="module">
         document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
 
