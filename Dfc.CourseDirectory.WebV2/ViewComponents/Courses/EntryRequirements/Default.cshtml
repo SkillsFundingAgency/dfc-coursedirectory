@@ -14,8 +14,7 @@
 
 
 
-<div class="govuk-character-count" data-module="character-count" data-maxlength=@entryRequirementsTextFieldMaxChars>
-    <div class="govuk-form-group">
+<div class="govuk-form-group govuk-character-count" data-module="character-count" data-maxlength=@entryRequirementsTextFieldMaxChars>
         <label id="govuk-label-@nameof(Model.EntryRequirements)" class="govuk-label govuk-label--m" for="word-count" name="Entry-Requirements">
             @Model.LabelText
         </label>
@@ -31,7 +30,6 @@
                   val-regex="@regex"
                   val-regex-message="Entry requirements contains invalid character"></textarea>
 
-    </div>
 </div>
 
 <script>
