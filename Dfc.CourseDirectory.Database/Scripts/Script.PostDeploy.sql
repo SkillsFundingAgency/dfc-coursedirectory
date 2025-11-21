@@ -119,7 +119,6 @@ WHERE
 	AND Live = 1
 	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
 
----------------------------------------------------------------------------------------------------------------------------------
 
 
 --------- This script inserts/updates IFATE sectors in Pttcd.Sectors table-----------------
