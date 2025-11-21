@@ -46,11 +46,6 @@
     <script type="module">
         document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
 
-        // Warn about using the kit in production
-        if (window.console && window.console.info) {
-            window.console.info('GOV.UK Prototype Kit - do not use for production');
-        }
-
         $(".govuk-header__navigation-list").hide();
         $(".govuk-header__menu-button").on("click",
             function () {
