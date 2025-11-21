@@ -31,7 +31,7 @@
             }
 
             <div id="regions-section" style="margin-top:30px">
-                <label class="govuk-label--m" id="govuk-label-SelectRegionCheckBoxes" for="select-region">
+                <label class="govuk-label--m" id="govuk-label-SelectRegionCheckBoxes">
                     @Model.Regions.LabelText
                 </label>
                 <span id="select-region-hint" class="govuk-hint govuk-!-margin-top-3">
@@ -44,7 +44,7 @@
                 }
 
                 <div id="SelectRegionCheckBoxes" val-required-message="Select at least one region or sub-region">
-                    <div id="accordion-regions-@accordionId" class="govuk-accordion govuk-!-margin-bottom-0" data-module="accordion">
+                    <div id="accordion-regions-@accordionId" class="govuk-accordion govuk-!-margin-bottom-0" data-module="govuk-accordion">
                         
                         @foreach (var region in Model.Regions.RegionItems.Select((v, i) => new { Value = v, Index = i }))
                         {
@@ -63,8 +63,6 @@
                                             @region.Value.RegionName
                                         </span>
                                     </h2>
-                                    <div id="accordion-regions-@accordionId-summary-@region.Index" class="govuk-accordion__section-summary govuk-body accordion-regions-summary" style="display:none;">
-                                    </div>
                                 </div>
 
                                 <div id="accordion-regions-@accordionId-content-@region.Index" class="govuk-accordion__section-content govuk-checkboxes--small">
