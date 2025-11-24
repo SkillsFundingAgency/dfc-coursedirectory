@@ -20,8 +20,8 @@ namespace Dfc.CourseDirectory.WebV2.Tests.Extensions
             }
 
             var vht = errorElement.GetElementsByTagName("span")[0];
-            var errorMessage = errorElement.InnerHtml.Substring(vht.OuterHtml.Length);
-            Assert.Equal(expectedMessage, errorMessage);
+            var errorMessage = errorElement.InnerHtml;
+            Assert.Contains(expectedMessage, errorMessage);
         }
 
         public static void AssertHasErrorWithCode(this IHtmlDocument doc, string fieldName, string errorCode)

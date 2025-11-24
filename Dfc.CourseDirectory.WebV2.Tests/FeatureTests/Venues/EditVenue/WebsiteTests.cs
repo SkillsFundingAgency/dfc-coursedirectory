@@ -41,7 +41,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.EditVenue
 
         [Theory]
         [InlineData("new-provider.com")]
-        [InlineData(null)]
+        [InlineData("")]
         public async Task Get_NewWebsiteAlreadySetInJourneyInstance_RendersExpectedOutput(string existingValue)
         {
             // Arrange

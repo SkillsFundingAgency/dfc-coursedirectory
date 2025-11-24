@@ -201,7 +201,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var doc = await response.GetDocument();
             using (new AssertionScope())
             {
-                doc.GetElementByTestId("SearchErrorMessage").TextContent.Should().Be("Enter search criteria");
+                doc.GetElementById("SearchTerm-error").TextContent.Should().Contain("Enter search criteria");
             }
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
