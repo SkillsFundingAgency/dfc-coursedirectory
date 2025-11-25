@@ -13,6 +13,7 @@
     <meta name="theme-color" content="blue" />
     <meta http-equiv="X-UA-Compatible" content="IE=11" />
     <meta property="og:image" content="~/assets/images/govuk-opengraph-image-tudor-crown.png">
+    <meta name="format-detection" content="telephone=no">
     <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="~/assets/images/govuk-favicon-tudor-crown.ico" type="image/x-icon" />
     <link rel="mask-icon" href="~/assets/images/govuk-mask-icon-tudor-crown.svg" color="#0b0c0c">
     <link rel="apple-touch-icon" href="~/assets/images/govuk-icon-180.png">
@@ -38,7 +39,7 @@
                     @layoutModel.BackLinkText
                     </a>
         } 
-        <main class="cd-dashboard provider govuk-body" id="main-content" role="main">
+        <main class="cd-dashboard provider govuk-body" id="main-content">
             @RenderBody()
         </main>
     </div>
@@ -46,14 +47,6 @@
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 
-        // Warn about using the kit in production
-        if (window.console && window.console.info) {
-            window.console.info('GOV.UK Prototype Kit - do not use for production');
-        }
-
-        $(document).ready(function () {
-            window.GOVUKFrontend.initAll();
-        });
         $(".govuk-header__navigation-list").hide();
         $(".govuk-header__menu-button").on("click",
             function () {
