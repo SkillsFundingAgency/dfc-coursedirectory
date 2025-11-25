@@ -76,52 +76,52 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
                 CourseFor = new CourseForModel()
                 {
                     LabelText = "Who this course is for",
-                    HintText = "Information that will help the learner decide whether this course is suitable for them, the learning experience and opportunities they can expect from the course.",
+                    HintText = "An overview of who this course would be suitable for and what they'll get out of the course.",
                     AriaDescribedBy = "Please enter who this course is for.",
                     CourseFor = result.CourseDescription
                 },
 
                 EntryRequirements = new EntryRequirementsModel()
                 {
-                    LabelText = "Entry requirements",
-                    HintText = "Specific skills, licences, vocational or academic requirements. For example, DBS, driving licence, computer knowledge, literacy or numeracy requirements.",
+                    LabelText = "Entry requirements (optional)",
+                    HintText = "Anything needed before being accepted to this course including skills, licences, qualifications.",
                     AriaDescribedBy = "Please list entry requirements.",
                     EntryRequirements = result.EntryRequirements
                 },
                 WhatWillLearn = new WhatWillLearnModel()
                 {
-                    LabelText = "What you’ll learn",
-                    HintText = "The main topics, units or modules of the course a learner can expect, include key features. For example, communication, team leadership and time management.",
+                    LabelText = "What you’ll learn (optional)",
+                    HintText = "The main topics, units or modules covered during this course.",
                     AriaDescribedBy = "Please enter what will be learned.",
                     WhatWillLearn = result.WhatYoullLearn
 
                 },
                 HowYouWillLearn = new HowYouWillLearnModel()
                 {
-                    LabelText = "How you’ll learn",
-                    HintText = "The methods used to deliver the course. For example, classroom based exercises, a work environment or online study materials.",
+                    LabelText = "How you’ll learn (optional)",
+                    HintText = "Course delivery details such as classroom based, online or on site.",
                     AriaDescribedBy = "Please enter how you’ll learn.",
                     HowYouWillLearn = result.HowYoullLearn
                 },
                 WhatYouNeed = new WhatYouNeedModel()
                 {
-                    LabelText = "What you’ll need to bring",
-                    HintText = "What the learner will need to access or bring to the course. For example, personal protective clothing, tools, devices or internet access.",
+                    LabelText = "What you’ll need to bring (optional)",
+                    HintText = "Anything the applicant may need to access or bring to the course including uniform and devices.",
                     AriaDescribedBy = "Please enter what you need.",
                     WhatYouNeed = result.WhatYoullNeed
 
                 },
                 HowAssessed = new HowAssessedModel()
                 {
-                    LabelText = "How you’ll be assessed",
-                    HintText = "The ways a learner will be assessed. For example, workplace assessment, written assignments, exams, group or individual project work or portfolio of evidence.",
+                    LabelText = "How you’ll be assessed (optional)",
+                    HintText = "Any ways the course is assessed, such as workplace assessment or written assignments.",
                     AriaDescribedBy = "Please enter how you’ll be assessed.",
                     HowAssessed = result.HowYoullBeAssessed
                 },
                 WhereNext = new WhereNextModel()
                 {
-                    LabelText = "What you can do next",
-                    HintText = "The further opportunities a learner can expect after successfully completing the course. For example, a higher level course or entry to employment.",
+                    LabelText = "What you can do next (optional)",
+                    HintText = "Expected next steps following completion of this course such as qualifications or jobs.",
                     AriaDescribedBy = "Please enter what you can do next.",
                     WhereNext = result.WhereNext
                 },
