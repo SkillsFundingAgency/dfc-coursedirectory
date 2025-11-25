@@ -13,27 +13,30 @@
 
         @if (!string.IsNullOrWhiteSpace(Model.HintText))
         {
-            <span class="govuk-hint govuk-!-margin-top-3">
-                @Model.HintText
-            </span>
+             <div>
+                <span class="govuk-hint govuk-!-margin-top-3">
+                    @Model.HintText
+                </span>
+                <div secure-website-message-hint-text style="display:none">
+                    <span class="govuk-hint govuk-!-margin-top-3">
+                        This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
+                    </span>
+                    <span class="govuk-hint govuk-!-margin-top-3">
+                        Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
+                        You cannot upload this URL to the course directory until it can pass this security check.
+                    </span>
+                </div>
+                <span asp-validation-for="@Model.Url" class="govuk-error-message"></span>
+            </div>
         }
+
         <input class="govuk-input" asp-for="@Model.Url" type="text" aria-label="@Model.Url" value="@WebUtility.HtmlDecode(@Model.Url)"
                val-required-message="Enter Course Web Page Url"
                val-max-length="255"
                val-max-length-message="The maximum length of URL is 255 characters"
-               val-secure-website-message="Website has been reported as having a security issue"
+           val-secure-website-message="Check website URL. We've identified a security issue"
                val-regex="@regex"
                val-regex-message="The format of URL is incorrect" />
-
-        <div secure-website-message-hint-text style="display:none">
-            <span class="govuk-hint govuk-!-margin-top-3">
-                This URL has been reported by <a href="https://cloud.google.com/web-risk/docs/advisory" target="_blank">Google Cloud's Web Risk (opens in a new tab)</a> as having a security issue and might be malicious.
-            </span>
-            <span class="govuk-hint govuk-!-margin-top-3">
-                Check the URL you have entered is correct. If the URL is correct, you'll need to review the security of your website.
-                You cannot upload this URL to the course directory until it can pass this security check.
-            </span>
-        </div>
     </div>
 
 <script>
