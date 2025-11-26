@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[UpdateIncorrectlyArchivedCourses]
+﻿CREATE PROCEDURE [Pttcd].[UpdateIncorrectlyArchivedCourses]
 AS
 BEGIN
 
