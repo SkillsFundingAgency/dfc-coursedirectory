@@ -2441,7 +2441,7 @@
     line-height: 1.14286;
     padding-top: 25px;
     padding-bottom: 15px;
-    border-top: 10px solid #207e77 !important;
+    border-top: 1px solid #a1acb2 !important;
 }
 
 @media (min-width:40.0625em) {
