@@ -7,7 +7,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Name" asp-route-venueId="@Model.VenueId">
-            <govuk-character-count asp-for="Name" max-length="@Constants.NameMaxLength" rows="1">
+            <govuk-character-count for="Name" max-length="@Constants.NameMaxLength" rows="1">
                 <govuk-character-count-label class="govuk-label--l">Venue name</govuk-character-count-label>
             </govuk-character-count>
 

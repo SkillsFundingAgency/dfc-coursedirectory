@@ -12,7 +12,7 @@
                 Add information on how the <span test-id="tlevel-name">@Model.TLevelName</span> will be delivered.
             </p>
 
-            <govuk-input asp-for="YourReference">
+            <govuk-input for="YourReference">
                 <govuk-input-label class="govuk-label--m">
                     Your reference (optional)
                 </govuk-input-label>
@@ -22,7 +22,7 @@
                 </govuk-input-hint>
             </govuk-input>
 
-            <govuk-date-input asp-for="StartDate">
+            <govuk-date-input for="StartDate">
                 <govuk-date-input-fieldset>
                     <govuk-date-input-fieldset-legend class="govuk-label--m">
                         Start date
@@ -33,7 +33,7 @@
                 </govuk-date-input-fieldset>
             </govuk-date-input>
 
-            <govuk-checkboxes asp-for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
+            <govuk-checkboxes for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-label--m">
                         Venue
@@ -54,7 +54,7 @@
                 </govuk-button>
             </div>
 
-            <govuk-input asp-for="Website">
+            <govuk-input for="Website">
                 <govuk-input-label class="govuk-label--m">
                     T Level webpage
                 </govuk-input-label>

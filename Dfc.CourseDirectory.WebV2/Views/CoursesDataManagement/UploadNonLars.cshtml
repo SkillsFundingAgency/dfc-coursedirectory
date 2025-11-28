@@ -30,7 +30,7 @@
     }
     else
     {
-        <govuk-error-summary-item asp-for="File" />
+        <govuk-error-summary-item for="File" />
     }
 </govuk-error-summary>
 
@@ -48,7 +48,7 @@
                 <li>include existing and new courses in the data file</li>
                 <li>follow the <a asp-action="NonLarsFormatting" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">file format requirements</a></li>
             </ul>
-            <govuk-file-upload asp-for="File" input-accept=".csv">
+            <govuk-file-upload for="File" input-accept=".csv">
                 <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
             </govuk-file-upload>
 

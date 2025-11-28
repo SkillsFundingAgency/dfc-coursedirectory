@@ -14,7 +14,7 @@
             <h3 class="govuk-heading-m">T Level details</h3>
             <p class="govuk-body">Edit information for the learner about how the T Level will be delivered.</p>
 
-            <govuk-input asp-for="YourReference">
+            <govuk-input for="YourReference">
                 <govuk-input-label class="govuk-label--m">
                     Your reference (optional)
                 </govuk-input-label>
@@ -24,7 +24,7 @@
                 </govuk-input-hint>
             </govuk-input>
 
-            <govuk-date-input asp-for="StartDate">
+            <govuk-date-input for="StartDate">
                 <govuk-date-input-fieldset>
                     <govuk-date-input-fieldset-legend class="govuk-label--m">
                         Start date
@@ -35,7 +35,7 @@
                 </govuk-date-input-fieldset>
             </govuk-date-input>
 
-            <govuk-checkboxes asp-for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
+            <govuk-checkboxes for="LocationVenueIds" class="govuk-checkboxes--small pttcd-tlevel__venues-selector">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-label--m">
                         Venue
@@ -56,7 +56,7 @@
                 </govuk-button>
             </div>
 
-            <govuk-input asp-for="Website">
+            <govuk-input for="Website">
                 <govuk-input-label class="govuk-label--m">
                     T Level webpage
                 </govuk-input-label>
@@ -67,7 +67,7 @@
 
             <h3 class="govuk-heading-m govuk-!-margin-top-9">T Level description</h3>
 
-            <govuk-character-count asp-for="WhoFor" max-length="@Validation.Constants.WhoForMaxLength" rows="7">
+            <govuk-character-count for="WhoFor" max-length="@Validation.Constants.WhoForMaxLength" rows="7">
                 <govuk-character-count-label class="govuk-label--m">
                     Who this T Level is for
                 </govuk-character-count-label>
@@ -77,7 +77,7 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-character-count asp-for="EntryRequirements" max-length="@Validation.Constants.EntryRequirementsMaxLength" rows="7">
+            <govuk-character-count for="EntryRequirements" max-length="@Validation.Constants.EntryRequirementsMaxLength" rows="7">
                 <govuk-character-count-label class="govuk-label--m">
                     Entry requirements
                 </govuk-character-count-label>
@@ -86,7 +86,7 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-character-count asp-for="WhatYoullLearn" max-length="@Validation.Constants.WhatYoullLearnMaxLength" rows="7">
+            <govuk-character-count for="WhatYoullLearn" max-length="@Validation.Constants.WhatYoullLearnMaxLength" rows="7">
                 <govuk-character-count-label class="govuk-label--m">
                     What you'll learn
                 </govuk-character-count-label>
@@ -95,7 +95,7 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-character-count asp-for="HowYoullLearn" max-length="@Validation.Constants.HowYoullLearnMaxLength" rows="7">
+            <govuk-character-count for="HowYoullLearn" max-length="@Validation.Constants.HowYoullLearnMaxLength" rows="7">
                 <govuk-character-count-label class="govuk-label--m">
                     How you'll learn
                 </govuk-character-count-label>
@@ -104,7 +104,7 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-character-count asp-for="HowYoullBeAssessed" max-length="@Validation.Constants.HowYoullBeAssessedMaxLength" rows="7">
+            <govuk-character-count for="HowYoullBeAssessed" max-length="@Validation.Constants.HowYoullBeAssessedMaxLength" rows="7">
                 <govuk-character-count-label class="govuk-label--m">
                     How you'll be assessed
                 </govuk-character-count-label>
@@ -113,7 +113,7 @@
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-character-count asp-for="WhatYouCanDoNext" max-length="@Validation.Constants.WhatYouCanDoNextMaxLength" rows="7">
+            <govuk-character-count for="WhatYouCanDoNext" max-length="@Validation.Constants.WhatYouCanDoNextMaxLength" rows="7">
                 <govuk-character-count-label class="govuk-label--m">
                     What you can do next
                 </govuk-character-count-label>
