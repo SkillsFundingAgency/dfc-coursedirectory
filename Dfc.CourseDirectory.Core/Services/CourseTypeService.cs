@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.AspNetCore.Components;
 
 namespace Dfc.CourseDirectory.Core.Services
 {
@@ -53,7 +56,7 @@ namespace Dfc.CourseDirectory.Core.Services
             var courseType = distinctLarsCourseTypes.FirstOrDefault(l => l.HasValue);
 
             if (courseType.HasValue && courseType.Value == Models.CourseType.FreeCoursesForJobs)
-            {                
+            {
                 var eligibleProvidersList = await _sqlQueryDispatcher.ExecuteQuery(new GetFcfjEligibleProvidersList());
 
                 if (!eligibleProvidersList.Contains(providerId))
