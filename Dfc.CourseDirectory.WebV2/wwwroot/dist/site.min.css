@@ -2441,7 +2441,7 @@
     line-height: 1.14286;
     padding-top: 25px;
     padding-bottom: 15px;
-    border-top: 1px solid #a1acb2;
+    border-top: 1px solid #a1acb2 !important;
 }
 
 @media (min-width:40.0625em) {
@@ -2540,20 +2540,13 @@
 .govuk-footer__copyright-logo {
     display: inline-block;
     min-width: 125px;
-    padding-top: 112px;
-    background-image: url(/assets/images/govuk-crest-tudor-crown.png);
+    padding-top: 0px !important;
     background-repeat: no-repeat;
     background-position: 50% 0;
     background-size: 125px 102px;
     text-align: center;
     text-decoration: none !important;
     white-space: nowrap
-}
-
-@media only screen and (-webkit-min-device-pixel-ratio:2),only screen and (min-device-pixel-ratio:2),only screen and (min-resolution:192dpi),only screen and (min-resolution:2dppx) {
-    .govuk-footer__copyright-logo {
-        background-image: url(/assets/images/govuk-crest-tudor-crown-2x.png)
-    }
 }
 
 .govuk-footer__inline-list {
