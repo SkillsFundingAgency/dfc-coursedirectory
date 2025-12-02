@@ -20,11 +20,11 @@
     <partial name="~/SharedViews/Partials/_V2Styles.cshtml" />
     <script src="https://cloud.tinymce.com/4/tinymce.min.js?apiKey=z0ozy7rkwybyt6ygjzmzpdb48ubu095r3auqciv6ngdxzo0d"></script>
     <partial name="_ScriptsPartial" />
-        @PageTemplateHelper.GenerateStyleImports()
+    @Html.GovUkFrontendStyleImports()
 </head>
 
 <body class="govuk-template__body app-body-class">
-
+    @Html.GovUkFrontendJsEnabledScript()
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
     <vc:cookie-banner />
@@ -42,10 +42,8 @@
             @RenderBody()
         </main>
     </div>
-        @PageTemplateHelper.GenerateScriptImports(null)
+      @Html.GovUkFrontendScriptImports()
     <script type="module">
-        document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
-
         $(".govuk-header__navigation-list").hide();
         $(".govuk-header__menu-button").on("click",
             function () {
