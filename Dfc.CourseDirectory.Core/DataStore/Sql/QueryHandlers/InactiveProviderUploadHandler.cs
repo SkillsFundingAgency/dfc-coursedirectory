@@ -32,7 +32,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
                 FROM [Pttcd].[Providers] as prov
                 INNER JOIN [Pttcd].ProviderUploadRows as pu on prov.UKPRN = pu.UKPRN 
-                Where prov.ProviderUploadId = @ProviderUploadId
+                Where pu.ProviderUploadId = @ProviderUploadId
 
                 SELECT 1 AS Status
 
