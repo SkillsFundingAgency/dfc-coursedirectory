@@ -15,7 +15,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         {
             var sql = $@"
                 UPDATE Pttcd.ProviderUploads
-                SET UploadStatus = {(int)UploadStatus.Published}, PublishedOn = @OnboardedOn
+                SET UploadStatus = {(int)UploadStatus.Published}, PublishedOn = @UpdatedOn
                 WHERE ProviderUploadId = @ProviderUploadId
 
                 IF @@ROWCOUNT = 0
