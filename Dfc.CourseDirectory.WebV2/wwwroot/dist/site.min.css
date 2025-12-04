@@ -1051,7 +1051,6 @@
     height: 0 !important;
     border-style: solid !important;
     border-color: transparent !important;
-    -webkit-clip-path: polygon(0 50%,100% 100%,100% 0) !important;
     clip-path: polygon(0 50%,100% 100%,100% 0) !important;
     border-width: 5px 6px 5px 0px !important;
     border-right-color: inherit !important;
@@ -2239,9 +2238,9 @@
     background: #ffbf47
 }
 
-.govuk-details__summary::-webkit-details-marker {
+/*.govuk-details__summary::-webkit-details-marker {
     display: none
-}
+}*/
 
 .govuk-details__summary:before {
     position: absolute;
@@ -2254,7 +2253,6 @@
     height: 0;
     border-style: solid;
     border-color: transparent;
-    -webkit-clip-path: polygon(0 0,100% 50%,0 100%);
     clip-path: polygon(0 0,100% 50%,0 100%);
     border-width: 7px 0 7px 12.12px;
     border-left-color: inherit
@@ -2266,7 +2264,6 @@
     height: 0;
     border-style: solid;
     border-color: transparent;
-    -webkit-clip-path: polygon(0 0,50% 100%,100% 0);
     clip-path: polygon(0 0,50% 100%,100% 0);
     border-width: 12.12px 7px 0;
     border-top-color: inherit
@@ -2579,8 +2576,6 @@
 
 @media (max-width:40.0525em) {
     .govuk-footer__meta-item--grow {
-        -webkit-flex-basis: 320px;
-        -ms-flex-preferred-size: 320px;
         flex-basis: 320px
     }
 
@@ -2609,17 +2604,13 @@
     vertical-align: top;
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
-    -ms-flex-positive: 1;
     flex-grow: 1;
-    -webkit-flex-shrink: 1;
     -ms-flex-negative: 1;
     flex-shrink: 1
 }
 
 @media (max-width:48.0525em) {
     .govuk-footer__section {
-        -webkit-flex-basis: 200px;
-        -ms-flex-preferred-size: 200px;
         flex-basis: 200px
     }
 }
@@ -2815,7 +2806,6 @@
     .govuk-footer__section:first-child {
         -webkit-box-flex: 2;
         -webkit-flex-grow: 2;
-        -ms-flex-positive: 2;
         flex-grow: 2
     }
 
@@ -2890,7 +2880,6 @@
     height: 0;
     border-style: solid;
     border-color: transparent;
-    -webkit-clip-path: polygon(0 0,50% 100%,100% 0);
     clip-path: polygon(0 0,50% 100%,100% 0);
     border-width: 8.66px 5px 0;
     border-top-color: inherit;
@@ -2908,7 +2897,6 @@
     height: 0;
     border-style: solid;
     border-color: transparent;
-    -webkit-clip-path: polygon(50% 0,0 100%,100% 100%);
     clip-path: polygon(50% 0,0 100%,100% 100%);
     border-width: 0 5px 8.66px;
     border-bottom-color: inherit
@@ -3783,7 +3771,6 @@
     margin: 0 !important;
     overflow: hidden !important;
     clip: rect(0 0 0 0) !important;
-    -webkit-clip-path: inset(50%) !important;
     clip-path: inset(50%) !important;
     white-space: nowrap !important;
     -webkit-font-smoothing: antialiased;
@@ -3802,7 +3789,6 @@
         margin: inherit !important;
         overflow: visible !important;
         clip: auto !important;
-        -webkit-clip-path: none !important;
         clip-path: none !important;
         white-space: inherit !important
     }
@@ -4003,7 +3989,6 @@
     padding: 0 !important;
     overflow: hidden !important;
     clip: rect(0 0 0 0) !important;
-    -webkit-clip-path: inset(50%) !important;
     clip-path: inset(50%) !important;
     border: 0 !important;
     white-space: nowrap !important
@@ -4056,14 +4041,12 @@
 .govuk-visually-hidden {
     padding: 0 !important;
     clip: rect(0 0 0 0) !important;
-    -webkit-clip-path: inset(50%) !important;
     clip-path: inset(50%) !important;
     border: 0 !important
 }
 
 .govuk-visually-hidden-focusable {
     clip: rect(0 0 0 0) !important;
-    -webkit-clip-path: inset(50%) !important;
     clip-path: inset(50%) !important
 }
 
@@ -4074,7 +4057,6 @@
         margin: inherit !important;
         overflow: visible !important;
         clip: auto !important;
-        -webkit-clip-path: none !important;
         clip-path: none !important;
         white-space: inherit !important
     }
