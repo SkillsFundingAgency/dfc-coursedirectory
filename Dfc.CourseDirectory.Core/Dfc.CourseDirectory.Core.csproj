@@ -30,9 +30,9 @@
 		<PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
 		<PackageReference Include="System.Reactive" Version="6.0.1" />
 		<PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
-		<PackageReference Include="System.ServiceModel.Federation" Version="8.1.2" />
-		<PackageReference Include="System.ServiceModel.Http" Version="8.1.2" />
-		<PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
+		<PackageReference Include="System.ServiceModel.Federation" Version="8.0.0" />
+		<PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
+		<PackageReference Include="System.ServiceModel.NetTcp" Version="8.0.0" />
 		<PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
 	</ItemGroup>
