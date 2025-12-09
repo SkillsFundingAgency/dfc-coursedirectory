@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
 
             app.UseSwagger(c =>
             {
-                //c.SerializeAsV2 = true;
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
                     swaggerDoc.Servers = new List<OpenApiServer>
