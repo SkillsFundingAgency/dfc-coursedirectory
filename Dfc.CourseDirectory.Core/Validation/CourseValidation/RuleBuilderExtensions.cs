@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
@@ -168,6 +169,12 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .MaximumLength(Constants.EntryRequirementsMaxLength)
                     .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_MAXLENGTH");
         }
+
+        private static readonly Regex HtmlTagRegex = new Regex(
+            @"<\s*\/?\s*[a-zA-Z][^>]*>",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant
+        );
+
 
         public static void FlexibleStartDate<T>(this IRuleBuilderInitial<T, bool?> field)
         {
@@ -560,7 +567,11 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .NotEmpty()
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED")
                 .MaximumLength(Constants.WhoThisCourseIsForMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH")               
+                .Must(value => value == null || !HtmlTagRegex.IsMatch(value))
+                .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
+
+
         }
         public static void AwardingBody<T>(this IRuleBuilderInitial<T, string> field)
         {

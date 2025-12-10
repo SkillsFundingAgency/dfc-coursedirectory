@@ -426,4 +426,7 @@
   <data name="ERROR_COURSERUN_COURSE_WEB_PAGE_INSECURE" xml:space="preserve">
     <value>Check website URL. We've identified a security issue</value>
   </data>
+  <data name="ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML" xml:space="preserve">
+    <value>HTML tags are not allowed in 'Who This Course Is For' field.</value>
+  </data>
 </root>

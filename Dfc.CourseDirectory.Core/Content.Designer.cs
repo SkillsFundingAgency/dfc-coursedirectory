@@ -466,6 +466,15 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HTML tags are not allowed in &apos;Who This Course Is For&apos; field..
+        /// </summary>
+        public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML {
+            get {
+                return ResourceManager.GetString("ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter who this course is for.
         /// </summary>
         public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED {

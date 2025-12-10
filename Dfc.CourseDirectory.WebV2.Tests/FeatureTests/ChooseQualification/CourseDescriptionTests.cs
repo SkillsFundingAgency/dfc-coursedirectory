@@ -113,7 +113,37 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             var doc = await response.GetDocument();
             doc.AssertHasError("WhoThisCourseIsFor", "Who this course is for must be 2000 characters or fewer");
         }
+        [Fact]
+        private async Task CourseDescription_WhoThisCourseIsForHTML_ReturnsError()
+        {
+            // Arrange
+            var provider = await TestData.CreateProvider();
+            var mpx = MptxManager.CreateInstance(new FlowModel());
+            await User.AsTestUser(TestUserType.ProviderSuperUser, provider.ProviderId);
 
+            var get1 = await HttpClient.GetAsync(
+                $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
+            {
+                Content = new FormUrlEncodedContentBuilder()
+                    .Add("WhoThisCourseIsFor", "<H1>Test</H1>")
+                    .Add("EntryRequirements", "")
+                    .Add("WhatYouWillLearn", "")
+                    .Add("HowYouWillLearn", "")
+                    .Add("WhatYouWillNeedToBring", "")
+                    .Add("HowYouWillBeAssessed", "")
+                    .Add("WhereNext", "")
+                    .ToContent()
+            };
+
+            // Act
+            var response = await HttpClient.SendAsync(request);
+
+            // Assert
+            var doc = await response.GetDocument();
+            doc.AssertHasError("WhoThisCourseIsFor", "HTML tags are not allowed in 'Who This Course Is For' field.");
+        }
         [Fact]
         private async Task CourseDescription_NavigateToAddWithoutSelectingFromSearchResultsScreen_ReturnsError()
         {
