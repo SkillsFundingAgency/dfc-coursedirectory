@@ -29,16 +29,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .Must((t, v) => attendancePatternWasSpecified(t) && v.HasValue)
                     .When(t => IsDeliveryModeClassroomBasedOrBlendedLearning(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
                     .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
-                // Not allowed for delivery modes other than classroom based or blended learning
-                //.Must((t, v) => !attendancePatternWasSpecified(t))
-                //    .When(
-                //        t =>
-                //        {
-                //            var deliveryMode = getDeliveryMode(t);
-                //            return IsValidDeliveryMode(deliveryMode);
-                //        },
-                //        ApplyConditionTo.CurrentValidator)
-                //    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
         }
 
         public static void Cost<T>(
@@ -347,16 +337,6 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .Must((t, v) => studyModeWasSpecified(t) && v.HasValue)
                     .When(t => IsDeliveryModeClassroomBasedOrBlendedLearning(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
                     .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED");
-                // Not allowed for delivery modes other than classroom based or blended learning
-                //.Must((t, v) => !studyModeWasSpecified(t))
-                //    .When(
-                //        t =>
-                //        {
-                //            var deliveryMode = getDeliveryMode(t);
-                //            return IsValidDeliveryMode(deliveryMode);
-                //        },
-                //        ApplyConditionTo.CurrentValidator)
-                //    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_NOT_ALLOWED");
         }
 
         public static void SubRegions<T>(
