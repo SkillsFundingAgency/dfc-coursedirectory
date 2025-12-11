@@ -7,17 +7,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="ResolveNonLarsRowDescription" asp-all-route-data="@ProviderContext.RouteValues" asp-route-rowNumber="@Model.RowNumber">
-            <govuk-error-summary>
-                <govuk-error-summary-item asp-for="WhoThisCourseIsFor" />
-                <govuk-error-summary-item asp-for="EntryRequirements" />
-                <govuk-error-summary-item asp-for="WhatYouWillLearn" />
-                <govuk-error-summary-item asp-for="HowYouWillLearn" />
-                <govuk-error-summary-item asp-for="WhatYouWillNeedToBring" />
-                <govuk-error-summary-item asp-for="HowYouWillBeAssessed" />
-                <govuk-error-summary-item asp-for="WhereNext" />
-            </govuk-error-summary>
-
-            <h1 class="govuk-heading-xl">Course description</h1>
+              <h1 class="govuk-heading-xl">Course description</h1>
 
             <p class="govuk-body">
                 The course information you provide will be available on the National Careers Service,
