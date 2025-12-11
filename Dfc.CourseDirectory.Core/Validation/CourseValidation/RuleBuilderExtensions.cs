@@ -12,6 +12,11 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 {
     public static class RuleBuilderExtensions
     {
+        private static readonly Regex HtmlTagRegex = new Regex(
+        @"<\s*\/?\s*[a-zA-Z][^>]*>",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant
+        );
+
         private static bool IsCRorBL(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning;
@@ -167,14 +172,10 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .MaximumLength(Constants.EntryRequirementsMaxLength)
-                    .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_MAXLENGTH");
+                     .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_MAXLENGTH")
+                 .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                      .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
-
-        private static readonly Regex HtmlTagRegex = new Regex(
-            @"<\s*\/?\s*[a-zA-Z][^>]*>",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant
-        );
-
 
         public static void FlexibleStartDate<T>(this IRuleBuilderInitial<T, bool?> field)
         {
@@ -187,14 +188,18 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .MaximumLength(Constants.HowYouWillBeAssessedMaxLength)
-                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH")
+                .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                      .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
 
         public static void HowYouWillLearn<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.HowYoullLearnMaxLength)
-                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH")
+                .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                      .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
 
         public static void LearnAimRef<T>(
@@ -537,28 +542,36 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .MaximumLength(Constants.WhatYouWillLearnMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH")
+                .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
 
         public static void WhatYouCanDoNextLearn<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.WhatYouCanDoNextMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH")
+               .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                      .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
 
         public static void WhatYouWillNeedToBring<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.WhatYouWillNeedToBringMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH")
+                 .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                      .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
 
         public static void WhereNext<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.WhereNextMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHERE_NEXT_MAXLENGTH");
+                    .WithMessageFromErrorCode("COURSE_WHERE_NEXT_MAXLENGTH")
+                 .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                      .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
         }
 
         public static void WhoThisCourseIsFor<T>(this IRuleBuilderInitial<T, string> field)
