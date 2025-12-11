@@ -1,3 +1,8 @@
 ﻿.pttcd-providers__provider-details__marketing-information .govuk-summary-list__value p:first-child {
     margin-top: 0;
 }
+
+.pttcd-provider-home-hint {
+    color: #505a5f;
+    font-weight: 400;
+}
