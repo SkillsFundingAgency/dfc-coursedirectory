@@ -36,13 +36,13 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View(new Home.ViewModel());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(Home.ViewModel vm)
+        public IActionResult Index(Home.ViewModel vm)
         {
             switch(vm.ProviderUploadType) {
                 case Home.ProviderUploadType.Inactive:
