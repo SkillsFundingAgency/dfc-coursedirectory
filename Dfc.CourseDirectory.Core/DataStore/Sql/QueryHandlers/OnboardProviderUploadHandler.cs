@@ -28,6 +28,23 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 SELECT @UploadedBy = CreatedByUserId from pttcd.providerUploads 
                 WHERE ProviderUploadId = @ProviderUploadId
 
+                --Update existing provider
+                  Update
+                   p
+                  Set 
+                 P.UploadResult = (CASE
+                    WHEN p.providerstatus <> pur.providerstatus ANd p.providertype <> pur.providertype THEN {(int)ProviderUploadResult.ProviderStatusAndTypeUpdated}
+                    WHEN p.providerstatus = pur.providerstatus ANd p.providertype <> pur.providertype THEN {(int)ProviderUploadResult.ProviderTypeUpdated}
+                    WHEN p.providerstatus <> pur.providerstatus ANd p.providertype = pur.providertype THEN {(int)ProviderUploadResult.ProviderStatusUpdated}
+                END) ,
+                  p.ProviderStatus = pur.ProviderStatus,
+                  p.ProviderType = pur.ProviderType
+
+                  from Pttcd.Providers p
+                  Inner Join [Pttcd].[ProviderUploadRows] pur on p.Ukprn = pur.Ukprn
+
+                  Where pur.provideruploadId = @ProviderUploadId
+
                 -- Create new providers from the Provider Upload's rows
 
                 ;WITH ProvidersCte AS (
@@ -64,6 +81,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ,[BulkUploadPublishInProgress]
                     ,[BulkUploadStartedDateTime]
                     ,[BulkUploadTotalRowCount]
+                    ,[UploadResult]
                          )
                 SELECT
                     ProviderId,
@@ -84,7 +102,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     NULL,
                     NULL,
                     NULL,
-                    NULL                    
+                    NULL,
+                   {(int)ProviderUploadResult.NewProvider},
                 FROM ProvidersCte
                 WHERE GroupRowNumber = 1
 
