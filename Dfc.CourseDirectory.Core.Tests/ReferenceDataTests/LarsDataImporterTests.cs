@@ -41,16 +41,7 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
 
             var larsDataSetOption = Options.Create(new LarsDataset
             {
-                AwardOrgCodeCsv = "AwardOrgCode.csv",
-                CategoryCsv = "Category.csv",
-                LearnAimRefTypeCsv = "LearnAimRefType.csv",
-                LearningDeliveryCsv = "LearningDelivery.csv",
-                LearningDeliveryCategoryCsv = "LearningDeliveryCategory.csv",
-                SectorSubjectAreaTier1Csv = "SectorSubjectAreaTier1.csv",
-                SectorSubjectAreaTier2Csv = "SectorSubjectAreaTier2.csv",
-                Url = "https://submit-learner-data.service.gov.uk",
-                UrlSuffix = "/find-a-learning-aim/DownloadData",
-                ValidityCsv = "Validity.csv"
+                Url = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F010%2FLearningDelivery_V010_CSV.Zip"
             });
 
             var importer = new LarsDataImporter(
