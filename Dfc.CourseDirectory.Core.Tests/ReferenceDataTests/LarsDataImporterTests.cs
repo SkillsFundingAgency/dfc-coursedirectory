@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Dapper;
 using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.ReferenceData.Lars;
 using Dfc.CourseDirectory.Testing;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using JustEat.HttpClientInterception;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -33,11 +34,23 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Arrange
             Clock.UtcNow = new DateTime(2020, 8, 28, 0, 0, 0, DateTimeKind.Utc);
 
-            var client = CreateClient();
+            var client = new HttpClient()
+            {
+                BaseAddress = new Uri("https://findalearningaimbeta.fasst.org.uk/DownloadData/GetDownloadFileAsync/fileName=published%2F007%2FLearningDelivery_V007_CSV.Zip")
+            };
 
             var larsDataSetOption = Options.Create(new LarsDataset
             {
-                Url = "https://submit-learner-data.service.gov.uk/find-a-learning-aim/DownloadData/GetDownloadFileAsync?fileName=published%2F010%2FLearningDelivery_V010_CSV.Zip"
+                AwardOrgCodeCsv = "AwardOrgCode.csv",
+                CategoryCsv = "Category.csv",
+                LearnAimRefTypeCsv = "LearnAimRefType.csv",
+                LearningDeliveryCsv = "LearningDelivery.csv",
+                LearningDeliveryCategoryCsv = "LearningDeliveryCategory.csv",
+                SectorSubjectAreaTier1Csv = "SectorSubjectAreaTier1.csv",
+                SectorSubjectAreaTier2Csv = "SectorSubjectAreaTier2.csv",
+                Url = "https://submit-learner-data.service.gov.uk",
+                UrlSuffix = "/find-a-learning-aim/DownloadData",
+                ValidityCsv = "Validity.csv"
             });
 
             var importer = new LarsDataImporter(
@@ -60,28 +73,6 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
                 (await CountSqlRows("LARS.SectorSubjectAreaTier1")).Should().BeGreaterThanOrEqualTo(17);
                 (await CountSqlRows("LARS.SectorSubjectAreaTier2")).Should().BeGreaterThanOrEqualTo(67);
             }
-        }
-
-        private static HttpClient CreateClient()
-        {
-            var options = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("findalearningaimbeta.fasst.org.uk")
-                .ForPath("DownloadData/GetDownloadFileAsync")
-                .ForQuery("fileName=published%2F007%2FLearningDelivery_V007_CSV.Zip")
-                .Responds()
-                .WithContentHeader("Content-Type", "application/zip")
-                .WithContentStream(() =>
-                {
-                    var resourceName = $"{typeof(LarsDataImporterTests).Namespace}.LARS.zip";
-                    return typeof(LarsDataImporterTests).Assembly.GetManifestResourceStream(resourceName);
-                })
-                .RegisterWith(options);
-
-            return options.CreateHttpClient();
         }
 
         private static ILogger<LarsDataImporter> GetLogger()
