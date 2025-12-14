@@ -11,5 +11,7 @@
         public const string ProvidersFolder = "providers";
         public const int CourseFileMaxSizeBytes = 5242880;
         public const string CourseFileMaxSizeLabel = "5MB";
+        public const int ProviderFileMaxSizeBytes = 8388608;
+        public const string ProviderFileMaxSizeLabel = "8MB";
     }
 }

@@ -234,7 +234,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<SaveProviderFileResult> SaveProviderFile(Stream stream, bool inactiveProviders, UserInfo uploadedBy)
+        public async Task<SaveProviderFileResult> SaveProviderFile(Stream stream, bool inactiveProviders, int duration,UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
@@ -277,6 +277,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     CreatedBy = uploadedBy,
                     CreatedOn = _clock.UtcNow,
                     InactiveProviders = inactiveProviders,
+                    Duration = duration
                 });
 
                 await dispatcher.Transaction.CommitAsync();

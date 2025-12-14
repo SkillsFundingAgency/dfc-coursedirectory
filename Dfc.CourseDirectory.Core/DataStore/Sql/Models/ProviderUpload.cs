@@ -13,5 +13,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public DateTime? PublishedOn { get; set; }
         public DateTime? AbandonedOn { get; set; }
         public bool InactiveProviders { get; set; }
+        public int Duration { get; set; }
     }
 }
