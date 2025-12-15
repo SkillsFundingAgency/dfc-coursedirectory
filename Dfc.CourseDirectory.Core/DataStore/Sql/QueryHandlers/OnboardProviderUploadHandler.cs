@@ -38,8 +38,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     WHEN p.providerstatus <> pur.providerstatus ANd p.providertype = pur.providertype THEN {(int)ProviderUploadResult.ProviderStatusUpdated}
                 END) ,
                   p.ProviderStatus = pur.ProviderStatus,
-                  p.ProviderType = pur.ProviderType
-
+                  p.ProviderType = pur.ProviderType,
+                  p.UpdatedOn = @OnboardedOn
                   from Pttcd.Providers p
                   Inner Join [Pttcd].[ProviderUploadRows] pur on p.Ukprn = pur.Ukprn
 
