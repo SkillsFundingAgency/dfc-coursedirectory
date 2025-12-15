@@ -103,7 +103,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     NULL,
                     NULL,
                     NULL,
-                   {(int)ProviderUploadResult.NewProvider},
+                   {(int)ProviderUploadResult.NewProvider}
                 FROM ProvidersCte
                 WHERE GroupRowNumber = 1
 

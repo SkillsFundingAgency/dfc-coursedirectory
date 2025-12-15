@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 new Upload.Command()
                 {
                     File = file,
+                    Duration = command.Duration
                 },
                 response => response.Match<IActionResult>(
                     errors =>
