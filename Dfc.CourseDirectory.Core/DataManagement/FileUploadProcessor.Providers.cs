@@ -412,7 +412,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 r.ResolvedFundStartDate <= lastDayOfMonth);
             foreach (var parsedRow in filteredRows)
             {
-                var row = rows.SingleOrDefault(x => x.Data.OrgUKPRN == parsedRow.OrgUKPRN);
+                var row = rows.FirstOrDefault(x => x.Data.OrgUKPRN == parsedRow.OrgUKPRN);
                 var rowNumber = row.RowNumber;
                 var providerId = row.ProviderId;
 
