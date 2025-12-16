@@ -2237,11 +2237,6 @@
     color: #0b0c0c;
     background: #ffbf47
 }
-
-/*.govuk-details__summary::-webkit-details-marker {
-    display: none
-}*/
-
 .govuk-details__summary:before {
     position: absolute;
     top: 0;
