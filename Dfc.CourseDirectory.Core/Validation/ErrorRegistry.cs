@@ -20,6 +20,7 @@ namespace Dfc.CourseDirectory.Core.Validation
             new Error("COURSE_WHERE_NEXT_MAXLENGTH", CourseConstants.WhereNextMaxLength),
             new Error("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH", CourseConstants.WhoThisCourseIsForMaxLength),
             new Error("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED"),
+            new Error("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML"),
             new Error("COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED"),
             new Error("COURSERUN_ATTENDANCE_PATTERN_REQUIRED"),
             new Error("COURSERUN_COST_DESCRIPTION_MAXLENGTH", CourseConstants.CostDescriptionMaxLength),

@@ -62,6 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH":
                 case "COURSE_WHERE_NEXT_MAXLENGTH":
                 case "COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH":
+                case "COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML":
                 case "COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED":
                     return "Course description";
                 case "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED":
