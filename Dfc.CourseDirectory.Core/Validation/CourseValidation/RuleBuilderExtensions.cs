@@ -11,11 +11,11 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 {
     public static class RuleBuilderExtensions
     {
-        private static bool IsCRorBL(CourseDeliveryMode? deliveryMode)
+        private static bool IsDeliveryModeClassroomBasedOrBlendedLearning(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning;
         }
-        private static bool IsValidDM(CourseDeliveryMode? deliveryMode)
+        private static bool IsValidDeliveryMode(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased && deliveryMode != CourseDeliveryMode.BlendedLearning;
         }
@@ -27,18 +27,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 // Required for classroom based delivery modes
                 .Must((t, v) => attendancePatternWasSpecified(t) && v.HasValue)
-                    .When(t => IsCRorBL(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED")
-                // Not allowed for delivery modes other than classroom based or blended learning
-                .Must((t, v) => !attendancePatternWasSpecified(t))
-                    .When(
-                        t =>
-                        {
-                            var deliveryMode = getDeliveryMode(t);
-                            return IsValidDM(deliveryMode);
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
+                    .When(t => IsDeliveryModeClassroomBasedOrBlendedLearning(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
         }
 
         public static void Cost<T>(
@@ -245,13 +235,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var isSpecified = !string.IsNullOrEmpty(v);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
-                    if (isSpecified && IsValidDM(deliveryMode))
+                    if (isSpecified && IsValidDeliveryMode(deliveryMode))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (IsValidDM(deliveryMode))
+                    if (IsValidDeliveryMode(deliveryMode))
                     {
                         return;
                     }
@@ -345,18 +335,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 // Required for classroom based delivery modes
                 .Must((t, v) => studyModeWasSpecified(t) && v.HasValue)
-                    .When(t => IsCRorBL(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED")
-                // Not allowed for delivery modes other than classroom based or blended learning
-                .Must((t, v) => !studyModeWasSpecified(t))
-                    .When(
-                        t =>
-                        {
-                            var deliveryMode = getDeliveryMode(t);
-                            return IsValidDM(deliveryMode);
-                        },
-                        ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_NOT_ALLOWED");
+                    .When(t => IsDeliveryModeClassroomBasedOrBlendedLearning(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED");
         }
 
         public static void SubRegions<T>(
@@ -463,13 +443,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var isSpecified = v.HasValue && v != default(Guid);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
-                    if (isSpecified && IsValidDM(deliveryMode))
+                    if (isSpecified && IsValidDeliveryMode(deliveryMode))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (IsCRorBL(deliveryMode) && !isSpecified)
+                    if (IsDeliveryModeClassroomBasedOrBlendedLearning(deliveryMode) && !isSpecified)
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_REQUIRED"));
                         return;
@@ -495,13 +475,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var isSpecified = !string.IsNullOrEmpty(v);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
-                    if (isSpecified && IsValidDM(deliveryMode))
+                    if (isSpecified && IsValidDeliveryMode(deliveryMode))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (IsValidDM(deliveryMode))
+                    if (IsValidDeliveryMode(deliveryMode))
                     {
                         return;
                     }

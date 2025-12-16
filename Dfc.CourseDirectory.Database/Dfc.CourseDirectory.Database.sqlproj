@@ -311,6 +311,7 @@
     <Build Include="Pttcd\StoredProcedures\ArchiveProviderCourses.sql" />
     <Build Include="Pttcd\Functions\RemoveHTMLTags.sql" />
     <Build Include="Pttcd\StoredProcedures\RemoveHTMLFromCourseFields.sql" />
+    <Build Include="Pttcd\StoredProcedures\UpdateIncorrectlyArchivedCourses.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />

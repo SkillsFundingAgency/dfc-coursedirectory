@@ -10,6 +10,7 @@ using Azure.Storage.Blobs.Models;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -29,16 +30,19 @@ namespace Dfc.CourseDirectory.Core.Tests.ReferenceDataTests
             // Arrange
             // Create a CSV with 4 records
             // 2 valid inside England, 1 valid outside of England and one with invalid lat/lng
-            var csv = $@"pcds,lat,long,ctry
-AB1 2CD,1,-1,{OnspdDataImporter.EnglandCountryId}
-BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId}
-CD3 4EF,3,3,notenglandcountry
-DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
+            //Added ignore due to "/r/n" being added to end of line causing issue with csv reader.
+            var csv = $@"
+pcds,lat,long,ctry25cd,ignore
+AB1 2CD,1,-3,{OnspdDataImporter.EnglandCountryId},ignore
+BC2 3DE,-2,2,{OnspdDataImporter.EnglandCountryId},ignore
+CD3 4EF,3,3,notenglandcountry,ignore
+DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId},ignore";
 
             var blobClient = new Mock<BlobClient>();
             var blobContainerClient = new Mock<BlobContainerClient>();
             var blobServiceClient = new Mock<BlobServiceClient>();
             var downloadResponse = new Mock<Response<BlobDownloadStreamingResult>>();
+            var mockConfig = new Mock<IConfiguration>();
 
             var csvStream = new MemoryStream(Encoding.UTF8.GetBytes(csv));
             csvStream.Seek(0L, SeekOrigin.Begin);
@@ -63,7 +67,8 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
             var importer = new OnspdDataImporter(
                 blobServiceClient.Object,
                 SqlQueryDispatcherFactory,
-                new NullLogger<OnspdDataImporter>());
+                new NullLogger<OnspdDataImporter>(),
+                mockConfig.Object);
 
             // Act
             await importer.ManualDataImport(string.Empty);
@@ -84,7 +89,7 @@ DE4 5FG,-99,1,{OnspdDataImporter.EnglandCountryId}";
                 {
                     Assert.Equal("AB1 2CD", record.Postcode);
                     Assert.Equal(1, record.Latitude);
-                    Assert.Equal(-1, record.Longitude);
+                    Assert.Equal(-3, record.Longitude);
                     Assert.True(record.InEngland);
                 },
                 record =>
