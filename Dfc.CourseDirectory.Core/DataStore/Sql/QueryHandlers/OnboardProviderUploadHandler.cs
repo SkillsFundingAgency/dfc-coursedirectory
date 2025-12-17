@@ -36,6 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     WHEN p.providerstatus <> pur.providerstatus ANd p.providertype <> pur.providertype THEN {(int)ProviderUploadResult.ProviderStatusAndTypeUpdated}
                     WHEN p.providerstatus = pur.providerstatus ANd p.providertype <> pur.providertype THEN {(int)ProviderUploadResult.ProviderTypeUpdated}
                     WHEN p.providerstatus <> pur.providerstatus ANd p.providertype = pur.providertype THEN {(int)ProviderUploadResult.ProviderStatusUpdated}
+                    ELSE P.UploadResult
                 END) ,
                   p.ProviderStatus = pur.ProviderStatus,
                   p.ProviderType = pur.ProviderType,
