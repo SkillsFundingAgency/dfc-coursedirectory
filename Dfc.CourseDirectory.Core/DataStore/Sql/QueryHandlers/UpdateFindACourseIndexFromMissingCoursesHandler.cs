@@ -16,7 +16,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 DECLARE @CourseRunIds Pttcd.GuidIdTable
 
                 INSERT INTO @CourseRunIds
-                SELECT TOP @MaxCourseRunCount cr.CourseRunId FROM Pttcd.CourseRuns cr
+                SELECT TOP {query.MaxCourseRunCount} cr.CourseRunId FROM Pttcd.CourseRuns cr
                 LEFT JOIN Pttcd.FindACourseIndex i ON cr.CourseRunId = i.CourseRunId
                 WHERE cr.CourseRunStatus = @LiveStatus
                 AND i.CourseRunId IS NOT NULL
@@ -27,7 +27,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 IF @INSER_COUNT = 0
                 BEGIN
 	                INSERT INTO @CourseRunIds
-	                SELECT TOP @MaxCourseRunCount cr.CourseRunId FROM Pttcd.CourseRuns cr
+	                SELECT TOP {query.MaxCourseRunCount} cr.CourseRunId FROM Pttcd.CourseRuns cr
 	                LEFT JOIN Pttcd.FindACourseIndex i ON cr.CourseRunId = i.CourseRunId
 	                WHERE cr.CourseRunStatus = @LiveStatus
 	                AND i.CourseRunId IS NOT NULL
@@ -45,7 +45,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 new
                 {
                     LiveStatus,
-                    query.MaxCourseRunCount,
                     query.Now,
                     query.CreatedAfter,
                     query.CreatedBefore
