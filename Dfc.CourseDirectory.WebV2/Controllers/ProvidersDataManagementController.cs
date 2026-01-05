@@ -67,7 +67,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
             if (file != null && !file.FileName.Contains("Active_Providers", StringComparison.CurrentCultureIgnoreCase))
             {
-                ModelState.AddModelError(nameof(command.File), "The file name doesn't contain Active_Providers");
+                ModelState.AddModelError(nameof(command.File), "The selected file name must include 'active_providers'");
                 return View();
 
             }
@@ -75,6 +75,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 new Upload.Command()
                 {
                     File = file,
+                    Duration = command.Duration
                 },
                 response => response.Match<IActionResult>(
                     errors =>

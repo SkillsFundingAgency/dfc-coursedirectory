@@ -21,6 +21,7 @@ using Dfc.CourseDirectory.Core.Search.Models;
 using Dfc.CourseDirectory.Core.Services;
 using Dfc.CourseDirectory.Core.Validation.CourseValidation;
 using FluentValidation;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using OneOf.Types;
 
@@ -49,10 +50,11 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         public async Task ProcessProviderFile(Guid providerUploadId, Stream stream)
         {
             bool inactiveProviders = false;
+            ProviderUpload providerUpload;
             using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
             {
-                var uploadedCourse = await dispatcher.ExecuteQuery(new GetProviderUpload() { ProviderUploadId = providerUploadId });
-                inactiveProviders = uploadedCourse != null ? uploadedCourse.InactiveProviders: false;
+                providerUpload = await dispatcher.ExecuteQuery(new GetProviderUpload() { ProviderUploadId = providerUploadId });
+                inactiveProviders = providerUpload != null ? providerUpload.InactiveProviders: false;
 
                 var setProcessingResult = await dispatcher.ExecuteQuery(new SetProviderUploadProcessing()
                 {
@@ -127,7 +129,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
 
-                    await ValidateProviderUploadRows(dispatcher, providerUploadId, rowsCollection);
+                    await ValidateProviderUploadRows(dispatcher, providerUpload, rowsCollection);
 
                     await dispatcher.Commit();
                 }
@@ -234,7 +236,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             }
         }
 
-        public async Task<SaveProviderFileResult> SaveProviderFile(Stream stream, bool inactiveProviders, UserInfo uploadedBy)
+        public async Task<SaveProviderFileResult> SaveProviderFile(Stream stream, bool inactiveProviders, int duration,UserInfo uploadedBy)
         {
             CheckStreamIsProcessable(stream);
 
@@ -277,6 +279,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     CreatedBy = uploadedBy,
                     CreatedOn = _clock.UtcNow,
                     InactiveProviders = inactiveProviders,
+                    Duration = duration
                 });
 
                 await dispatcher.Transaction.CommitAsync();
@@ -390,31 +393,41 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
         internal async Task<(UploadStatus uploadStatus, IReadOnlyCollection<ProviderUploadRow> Rows)> ValidateProviderUploadRows(
           ISqlQueryDispatcher sqlQueryDispatcher,
-          Guid providerUploadId,
+          ProviderUpload providerUpload,
           ProviderDataUploadRowInfoCollection rows)
         {
 
             var rowsAreValid = true;
-
+            
             var upsertRecords = new List<UpsertProviderUploadRowsRecord>();
-            var filterByPreviousMonth = DateTime.Now.Month -1;
 
-            foreach (var row in rows)
+            var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - providerUpload.Duration, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(providerUpload.Duration).AddDays(-1);
+
+            var parsedRows = rows.Select(r =>
             {
+                return ParsedCsvProviderRow.FromCsvProviderRow(r.Data);
+            });
+            var filteredRows = parsedRows.Where(r => r.ResolvedFundStartDate.HasValue && r.ResolvedFundStartDate.Value >= firstDayOfMonth &&
+                r.ResolvedFundStartDate <= lastDayOfMonth);
+            foreach (var parsedRow in filteredRows)
+            {
+                var row = rows.FirstOrDefault(x => x.Data.OrgUKPRN == parsedRow.OrgUKPRN);
                 var rowNumber = row.RowNumber;
+                var providerId = row.ProviderId;
 
-                var parsedRow = ParsedCsvProviderRow.FromCsvProviderRow(row.Data);
+               // var parsedRow = ParsedCsvProviderRow.FromCsvProviderRow(row.Data);
                 if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN)) {
                     continue;
                 }
-                var fundNames = rows.Where(x => x.Data.OrgUKPRN ==  parsedRow.OrgUKPRN).Select(x => x.Data.FundName).ToArray();
-                var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);
-                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-                var isPreviousMOnthData = parsedRow.ResolvedFundStartDate.HasValue &&
-                parsedRow.ResolvedFundStartDate.Value >= firstDayOfMonth &&
-                parsedRow.ResolvedFundStartDate <= lastDayOfMonth;
+                var fundNames = filteredRows.Where(x => x.OrgUKPRN ==  parsedRow.OrgUKPRN).Select(x => x.FundName).ToArray();
+               //// var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);
+               // //var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+               // var isPreviousMOnthData = parsedRow.ResolvedFundStartDate.HasValue &&
+               // parsedRow.ResolvedFundStartDate.Value >= firstDayOfMonth &&
+               // parsedRow.ResolvedFundStartDate <= lastDayOfMonth;
                 var allowedFundNames = FundNames.Any(x => string.Equals(parsedRow.FundName, x, StringComparison.InvariantCultureIgnoreCase));
-                if (!isPreviousMOnthData || !allowedFundNames)
+                if (!allowedFundNames)
                 {
                     continue;
                 } 
@@ -430,7 +443,7 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                     RowNumber = rowNumber,
                     IsValid = rowIsValid,
                     Errors = errors,
-                    ProviderId = row.ProviderId,
+                    ProviderId = providerId,
                     Ukprn = parsedRow.OrgUKPRN,
                     ProviderName = parsedRow.OrgLegalName,
                     TradingName = parsedRow.OrgTradingName,
@@ -443,12 +456,12 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 
             var updatedRows = await sqlQueryDispatcher.ExecuteQuery(new UpsertProviderUploadRows()
             {
-                ProviderUploadId = providerUploadId,
+                ProviderUploadId = providerUpload.ProviderUploadId,
                 ValidatedOn = _clock.UtcNow,
                 Records = upsertRecords
             });
 
-            var uploadStatus = await RefreshProviderUploadValidationStatus(providerUploadId, sqlQueryDispatcher);
+            var uploadStatus = await RefreshProviderUploadValidationStatus(providerUpload.ProviderUploadId, sqlQueryDispatcher);
 
             return (uploadStatus, updatedRows);
         }

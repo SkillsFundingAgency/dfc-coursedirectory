@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Text;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Middleware;
-using Dfc.CourseDirectory.Core.Validation;
 using Dfc.CourseDirectory.Core.Security;
+using Dfc.CourseDirectory.Core.Validation;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Microsoft.SqlServer.Dac.Model;
 using OneOf;
 using OneOf.Types;
 
@@ -29,12 +32,15 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
     public class ViewModel : Command
     {
         public int ProviderCount { get; set; }
+
     }
 
     public class Command : IRequest<OneOf<UploadFailedResult, UploadSucceededResult>>
     {
         public IFormFile File { get; set; }
         public bool InactiveProviders { get; set; }
+        public int Duration { get; set; }
+
     }
 
     public enum UploadSucceededResult
@@ -98,7 +104,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
             CancellationToken cancellationToken)
         {
             var validator = new CommandValidator();
-            var result = new ValidationResult { Errors = new List<ValidationFailure>()};//await validator.ValidateAsync(request);
+            var result = await validator.ValidateAsync(request);
 
             if (!result.IsValid)
             {
@@ -113,6 +119,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
             var saveFileResult = await _fileUploadProcessor.SaveProviderFile(
                                 stream,
                                 request.InactiveProviders,
+                                request.Duration,
                 _currentUserProvider.GetCurrentUser());
 
             if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidFile)
@@ -131,8 +138,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
             {
                 return new UploadFailedResult(
                     await CreateViewModel(),
-                    "Enter headings in the correct format",
-                    saveFileResult.MissingHeaders);
+                   "The selected file must contain 7 columns");
             }
             else if (saveFileResult.Status == SaveProviderFileResultStatus.EmptyFile)
             {
@@ -165,8 +171,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
             RuleFor(x => x.File)
                 .NotNull()
                     .WithMessage("Select a CSV")
-                .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
-                    .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
+                .Must(file => file == null || file.Length <= Constants.ProviderFileMaxSizeBytes)
+                    .WithMessage($"The selected file must be smaller than {Constants.ProviderFileMaxSizeLabel}");
         }
     }
 }

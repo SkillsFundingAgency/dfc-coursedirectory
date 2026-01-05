@@ -1,30 +1,69 @@
 ﻿@model Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload.ViewModel;
 @{
-    ViewBag.Title = "Data Upload - Upload provider data";
+    ViewBag.Title = "Upload active providers";
     ViewContext.SetLayoutData(activeAdminTopNavSection: AdminTopNavSection.ProviderUpload);
 
 }
-
+@section BackLink {
+<govuk-back-link  asp-action="Index">Back</govuk-back-link>
+}
 
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl">Upload your provider data</h1>
+        <span class="pttcd-provider-home-hint">Upload provider data</span>
+    </div>
+    <div class="govuk-grid-column-full govuk-!-margin-top-5">
+        <h1 class="govuk-heading-xl">Upload active providers</h1>
     </div>
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" enctype="multipart/form-data">
+            <govuk-select asp-for="Duration">
+                <govuk-select-label class="govuk-label--m">How many months of data would you like to upload?</govuk-select-label>
+                <govuk-select-hint>
+                    It's recommended that this provider type report is uploaded monthly. If needed, select to add up to 3 months
+                </govuk-select-hint>
+                <govuk-select-item value="1">1 month</govuk-select-item>
+                <govuk-select-item value="2">2 months</govuk-select-item>
+                <govuk-select-item value="3">3 months</govuk-select-item>
+            </govuk-select>
 
-            <p class="govuk-body">You can upload a CSV file to update your data in Publish to the course directory.</p>
-            <p class="govuk-body">To ensure an upload is successful you must:</p>
-            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
-                <li>include providers in the data file</li>
-                <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">file format requirements</a></li>
-            </ul>
+            <label class="govuk-label govuk-label--m govuk-!-margin-top-9" for="File">
+                Upload a file
+            </label>
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Help with CSV file requirements
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    Before uploading your active providers report, you must ensure your file:
+                    <ul>
+                        <li>
+                            is a CSV file
+                        </li>
+                        <li>
+                            contains 7 columns
+                        </li>
+                        <li>
+                            is smaller than 8 MB
+                        </li>
+                        <li>
+                            name includes active_providers
+                        </li>
+                    </ul>
+                </div>
+            </details>
+
+            <span class="govuk-hint">Your file must be no more than 8MB</span>
             <govuk-file-upload asp-for="File" input-accept=".csv">
-                <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
+                <govuk-file-upload-label></govuk-file-upload-label>
             </govuk-file-upload>
-
-            <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
+                <a asp-action="index" class="govuk-link cd-cancel-link">Cancel</a>
+            </div>
         </form>
 
     </div>

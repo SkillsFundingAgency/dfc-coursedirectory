@@ -8,5 +8,6 @@
 	[ProcessingCompletedOn] DATETIME,
 	[PublishedOn] DATETIME,
 	[AbandonedOn] DATETIME, 
-    [InactiveProviders] BIT NOT NULL,
+    [InactiveProviders] BIT NOT NULL, 
+    [Duration] INT NULL,
 )
