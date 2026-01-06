@@ -33,7 +33,6 @@ trigger:
     - Dfc.CourseDirectory.Database/*
     - Dfc.CourseDirectory.Api/*
     - Dfc.CourseDirectory.Core.Tests/*
-    - Dfc.CourseDirectory.Api.Tests/*
     - Dfc.CourseDirectory.Testing/*
 
 pr:
@@ -49,7 +48,6 @@ pr:
     - Dfc.CourseDirectory.Database/*
     - Dfc.CourseDirectory.Api/*
     - Dfc.CourseDirectory.Core.Tests/*
-    - Dfc.CourseDirectory.Api.Tests/*
     - Dfc.CourseDirectory.Testing/*
 
 workspace:
