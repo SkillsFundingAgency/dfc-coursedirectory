@@ -170,7 +170,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
         {
             RuleFor(x => x.File)
                 .NotNull()
-                    .WithMessage("Select a CSV")
+                    .WithMessage("Select a CSV file")
                 .Must(file => file == null || file.Length <= Constants.ProviderFileMaxSizeBytes)
                     .WithMessage($"The selected file must be smaller than {Constants.ProviderFileMaxSizeLabel}");
         }
