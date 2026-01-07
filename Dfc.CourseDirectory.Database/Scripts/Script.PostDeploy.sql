@@ -121,3 +121,8 @@ BEGIN
 		DROP TABLE Pttcd.temp_courses;
 	END	
 END
+
+---------------------------------------------------------------------------------------------------------------------------------
+--AD-254683: Fix incorrectly archived courses
+EXEC [Pttcd].[UpdateIncorrectlyArchivedCourses]
+
