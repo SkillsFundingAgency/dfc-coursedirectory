@@ -49,3 +49,75 @@ WHERE
 	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
 
 ---------------------------------------------------------------------------------------------------------------------------------
+
+-- THIS IS ONE OFF SCRIPT TO REMOVE HTML TAGS FROM COURSE DESCRIPTION AND OTHER FIELDS IN PTTCD.COURSES TABLE ----
+
+IF EXISTS(SELECT CourseId FROM Pttcd.Courses  WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
+        and CourseDescription Like '%<%'
+        or EntryRequirements Like '%<%'
+        or WhatYoullLearn Like '%<%'
+        or HowYoullLearn Like '%<%'
+        or WhatYoullNeed Like '%<%'
+        or HowYoullBeAssessed Like '%<%'
+        or WhereNext Like '%<%'
+        and CourseStatus = 1
+        and UpdatedOn >= DATEADD(m, -15, GETDATE())) 
+BEGIN
+	IF NOT EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'temp_courses')
+	BEGIN
+		CREATE TABLE Pttcd.temp_courses (
+			[CourseId] [uniqueidentifier] NOT NULL,
+			[ProviderId] [uniqueidentifier] NULL,
+			[CreatedOn] [datetime] NULL,
+			[UpdatedOn] [datetime] NULL,
+			[LearnAimRef] [varchar](50) NULL,
+			[ProviderUkprn] [int] NULL,
+			[CourseDescription] [nvarchar](max) NULL,
+			[EntryRequirements] [nvarchar](max) NULL,
+			[WhatYoullLearn] [nvarchar](max) NULL,
+			[HowYoullLearn] [nvarchar](max) NULL,
+			[WhatYoullNeed] [nvarchar](max) NULL,
+			[HowYoullBeAssessed] [nvarchar](max) NULL,
+			[WhereNext] [nvarchar](max) NULL,
+			 CONSTRAINT [PK_temp_Courses] PRIMARY KEY CLUSTERED 
+			(
+				[CourseId] ASC
+			)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+			) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+	END
+
+	TRUNCATE TABLE Pttcd.temp_courses;
+
+	INSERT INTO  Pttcd.temp_courses 
+	SELECT [CourseId]
+      ,[ProviderId]
+      ,[CreatedOn]
+      ,[UpdatedOn]
+      ,[LearnAimRef]
+      ,[ProviderUkprn]
+      ,[CourseDescription]
+      ,[EntryRequirements]
+      ,[WhatYoullLearn]
+      ,[HowYoullLearn]
+      ,[WhatYoullNeed]
+      ,[HowYoullBeAssessed]
+      ,[WhereNext]
+   FROM [Pttcd].[Courses] WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
+        and CourseDescription Like '%<%'
+        or EntryRequirements Like '%<%'
+        or WhatYoullLearn Like '%<%'
+        or HowYoullLearn Like '%<%'
+        or WhatYoullNeed Like '%<%'
+        or HowYoullBeAssessed Like '%<%'
+        or WhereNext Like '%<%'
+        and CourseStatus = 1
+        and UpdatedOn >= DATEADD(m, -15, GETDATE())
+	EXEC [Pttcd].[usp_RemoveHTMLFromCourseFields]
+END
+ELSE
+BEGIN
+	IF EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'temp_courses')
+	BEGIN
+		DROP TABLE Pttcd.temp_courses;
+	END	
+END
