@@ -83,7 +83,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    success =>  View()));
+                    success =>  View("InProgress")));
         }
 
         [HttpPost("uploadinactive")]
