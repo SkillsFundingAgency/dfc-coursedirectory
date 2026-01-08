@@ -14,8 +14,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
     {
 
         private static readonly Regex HtmlTagRegex = new Regex(
-        //@"<\s*\/?\s*[a-zA-Z][^>]*>",
-        @"<\s*\/?\s*[a-zA-Z][^<>%`]*>",
+        @"<\s*\/?\s*[a-zA-Z][^>]*>",
+        //@"<\s*\/?\s*[a-zA-Z][^<>%`]*>",
         RegexOptions.Compiled | RegexOptions.CultureInvariant
         );
 
