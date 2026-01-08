@@ -142,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("WhoThisCourseIsFor", "HTML tags are not allowed in Course Description fields.");
+            doc.AssertHasError("WhoThisCourseIsFor", "HTML tags are not allowed in Who this course is for");
         }
         
              
@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("EntryRequirements", "HTML tags are not allowed in Course Description fields.");
+            doc.AssertHasError("EntryRequirements", "HTML tags are not allowed in Entry requirements");
         }
         
         [Fact]
