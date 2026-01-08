@@ -11,6 +11,6 @@
 
         public const string Base64Encoded = @"^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$";
 
-        public const string BlackListHTMLTags = @"^(?!.*<(\/?\s*(script|style|iframe|embed|object|applet|link|meta|base|form|input|label|select|option|textarea|img|a)\b[^>]*>)).*$";
+        //public const string BlackListHTMLTags = @"^(?!.*<(\/?\s*(script|style|iframe|embed|object|applet|link|meta|base|form|input|label|select|option|textarea|img|a)\b[^>]*>)).*$";
     }
 }
