@@ -9,6 +9,7 @@
 @{
     var regex = RegexPattern.DisallowHTMLTags;
     var whatYouNeedTextFieldMaxChars = whatYouNeedComponentSettings.Value.TextFieldMaxChars;
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_NO_HTML;
 }
 
 
@@ -28,7 +29,7 @@
                   aria-describedby="@Model.AriaDescribedBy" aria-label="WhatYouNeed"
                   val-max-length=@whatYouNeedTextFieldMaxChars val-max-length-message="What you’ll need to bring must be @whatYouNeedTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="What you’ll need to bring contains invalid characters"></textarea>
+                  val-regex-message="@errorMessage"></textarea>
 
     </div>
 </div>

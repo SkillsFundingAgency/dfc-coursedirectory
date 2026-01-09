@@ -9,6 +9,7 @@
 @{
     var regex = RegexPattern.DisallowHTMLTags;
     var howYouWillLearnTextFieldMaxChars = howYouWillLearnComponentSettings.Value.TextFieldMaxChars;
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_HOW_YOU_WILL_LEARN_NO_HTML;
 }
 
 
@@ -27,7 +28,7 @@
                   aria-describedby="@Model.AriaDescribedBy" aria-label="HowYouWillLearn"
                   val-max-length=@howYouWillLearnTextFieldMaxChars val-max-length-message="How you’ll learn must be @howYouWillLearnTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="How you’ll learn contains invalid characters"></textarea>
+                  val-regex-message="@errorMessage"></textarea>
 
     </div>
 </div>

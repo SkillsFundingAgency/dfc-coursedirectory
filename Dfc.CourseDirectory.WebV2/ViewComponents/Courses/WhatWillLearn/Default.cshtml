@@ -7,10 +7,10 @@
 @inject IOptions<WhatWillLearnComponentSettings> whatWilllLearnComponentSettings
 
 
-
 @{
     var regex = RegexPattern.DisallowHTMLTags;
     var whatWillLearnTextFieldMaxChars = whatWilllLearnComponentSettings.Value.TextFieldMaxChars;
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_WHAT_YOU_WILL_LEARN_NO_HTML;
 }
 
 
@@ -30,7 +30,7 @@
                   aria-describedby="@Model.AriaDescribedBy" aria-label="WhatYouWillLearn"
                   val-max-length=@whatWillLearnTextFieldMaxChars val-max-length-message="What you will learn must be @whatWillLearnTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="What you’ll learn contains invalid characters"></textarea>
+                  val-regex-message="@errorMessage"></textarea>
 
     </div>
 </div>

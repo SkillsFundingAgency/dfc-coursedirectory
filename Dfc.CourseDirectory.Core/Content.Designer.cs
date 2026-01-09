@@ -376,7 +376,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in Entry requirements.
+        ///   Looks up a localized string similar to Entry requirements must not include% ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_ENTRY_REQUIREMENTS_NO_HTML {
             get {
@@ -394,7 +394,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in How you&apos;ll be assessed.
+        ///   Looks up a localized string similar to How you&apos;ll be assessed must not include % ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_NO_HTML {
             get {
@@ -412,7 +412,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in How you&apos;ll learn.
+        ///   Looks up a localized string similar to How you&apos;ll learn must not include % ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_HOW_YOU_WILL_LEARN_NO_HTML {
             get {
@@ -457,7 +457,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in What you can do next.
+        ///   Looks up a localized string similar to What you can do next must not include % ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML {
             get {
@@ -475,7 +475,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in What you&apos;ll learn.
+        ///   Looks up a localized string similar to What you&apos;ll learn must not include % ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_WHAT_YOU_WILL_LEARN_NO_HTML {
             get {
@@ -493,7 +493,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in What you&apos;ll need to bring.
+        ///   Looks up a localized string similar to What you&apos;ll need to bring must not include % ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_WHAT_YOU_WILL_NEED_TO_BRING_NO_HTML {
             get {
@@ -520,7 +520,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HTML tags are not allowed in Who this course is for.
+        ///   Looks up a localized string similar to Who this course is for must not include % ` &lt; or &gt;.
         /// </summary>
         public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML {
             get {
