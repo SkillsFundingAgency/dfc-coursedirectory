@@ -14,8 +14,8 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
     {
 
         private static readonly Regex HtmlTagRegex = new Regex(
-       @"^[^<>%`]+$",
-        //@"<\s*\/?\s*[a-zA-Z][^<>%`]*>",
+            @"^[^<>%`]+$",
+       // @"<\s*\/?\s*[a-zA-Z][^<>%`]*>",
         RegexOptions.Compiled | RegexOptions.CultureInvariant
         );
 
@@ -166,7 +166,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.EntryRequirementsMaxLength)
                      .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_MAXLENGTH")
-                 .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                 .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                       .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_NO_HTML");
         }
 
