@@ -182,7 +182,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.HowYouWillBeAssessedMaxLength)
                     .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH")
-                .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                       .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_NO_HTML");
         }
 
@@ -191,7 +191,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.HowYoullLearnMaxLength)
                     .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH")
-                .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                       .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_NO_HTML");
         }
 
@@ -526,7 +526,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.WhatYouWillLearnMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH")
-                .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                      .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_NO_HTML");
         }
 
@@ -535,7 +535,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.WhatYouCanDoNextMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH")
-               .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+               .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                       .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML");
         }
 
@@ -544,7 +544,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.WhatYouWillNeedToBringMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH")
-                 .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                 .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                       .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_NO_HTML");
         }
 
@@ -553,7 +553,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 .MaximumLength(Constants.WhereNextMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHERE_NEXT_MAXLENGTH")
-                 .Must(value => string.IsNullOrWhiteSpace(value) || !HtmlTagRegex.IsMatch(value))
+                 .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
                       .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML");
         }
 
@@ -564,7 +564,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED")
                 .MaximumLength(Constants.WhoThisCourseIsForMaxLength)
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH")               
-                .Must(value => value == null || !HtmlTagRegex.IsMatch(value))
+                .Must(value => value == null || HtmlTagRegex.IsMatch(value))
                 .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
 
 
