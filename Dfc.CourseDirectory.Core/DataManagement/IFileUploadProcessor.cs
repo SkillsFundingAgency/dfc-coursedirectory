@@ -40,5 +40,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         //Providers
         Task ProcessProviderFile(Guid providerUploadId, Stream stream);
         Task<SaveProviderFileResult> SaveProviderFile(Stream stream, bool inactiveProviders, int duration, UserInfo uploadedBy);
+        IObservable<UploadStatus> GeLatesttProviderUploadStatus(Guid providerUploadId);
     }
 }

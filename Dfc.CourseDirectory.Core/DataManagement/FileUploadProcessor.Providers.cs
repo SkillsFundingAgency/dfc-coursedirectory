@@ -401,7 +401,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             
             var upsertRecords = new List<UpsertProviderUploadRowsRecord>();
 
-            var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - providerUpload.Duration, 1);
+            var refDate = DateTime.Now.AddMonths(providerUpload.Duration * -1);
+            var firstDayOfMonth = new DateTime(refDate.Year, refDate.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(providerUpload.Duration).AddDays(-1);
 
             var parsedRows = rows.Select(r =>
@@ -464,6 +465,16 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var uploadStatus = await RefreshProviderUploadValidationStatus(providerUpload.ProviderUploadId, sqlQueryDispatcher);
 
             return (uploadStatus, updatedRows);
+        }
+
+
+        
+        public IObservable<UploadStatus> GeLatesttProviderUploadStatus(Guid providerUploadId)
+        {
+            return GetProviderUploadStatusUpdates(providerUploadId)
+                .DistinctUntilChanged()
+                .TakeUntil(status => status.IsTerminal());
+
         }
 
         private async Task<UploadStatus> RefreshProviderUploadValidationStatus(Guid providerUploadId, ISqlQueryDispatcher sqlQueryDispatcher)

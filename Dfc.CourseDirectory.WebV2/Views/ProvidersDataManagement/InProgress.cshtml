@@ -1,4 +1,4 @@
-﻿@model Dfc.CourseDirectory.Core.Models.UploadStatus
+﻿@model Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.InProgress.ViewModel
 @{
     ViewBag.Title = "Uploading active providers";
 }
@@ -24,3 +24,30 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script type="text/javascript">
+
+        const onRealtimeUpdateFailed = function() {
+        }
+
+        var queryParams = new URLSearchParams(window.location.search);
+        const url = '/data-upload/providers/hub?providerUploadId=@Model.ProviderUploadId' 
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(url)
+            .withAutomaticReconnect()
+            .build();
+
+        connection.start().then(function() {
+            connection.stream('StatusUpdates').subscribe({
+                next: function(status) {
+                    $('#StatusMessage').text('Processing file');
+                },
+                complete: function() {
+                    window.location = window.location.href;
+                },
+                error: onRealtimeUpdateFailed
+            });
+        }, onRealtimeUpdateFailed);
+    </script>
+}

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Attributes;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataManagement.Schemas;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Filters;
 using Dfc.CourseDirectory.Core.Middleware;
@@ -16,6 +18,7 @@ using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Errors.WhatNext;
 using Home = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home;
 using Upload = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload;
@@ -52,6 +55,25 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             }
         }
 
+
+        [HttpGet("inprogress/{providerUploadId}")]
+        public async Task<IActionResult> InProgress([FromRoute] Guid providerUploadId) => await _mediator.SendAndMapResponse(
+            new ViewModels.DataManagement.Providers.InProgress.Query() { ProviderUploadId = providerUploadId },
+            result => result.Match(
+                notFound => NotFound(),
+                status => status switch
+                {
+                    UploadStatus.Published => (IActionResult)RedirectToAction(actionName: nameof(Result), routeValues: new { providerUploadId })
+                      ,
+                    _ => View(new ViewModels.DataManagement.Providers.InProgress.ViewModel { UploadStatus = status, ProviderUploadId= providerUploadId})
+                }));
+
+        [HttpGet("result/{providerUploadId}")]
+        public async Task<IActionResult> Result([FromRoute] Guid providerUploadId) 
+        {
+            return View(new Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Result.ViewModel { ProviderUploadId = providerUploadId});
+        }
+
         [HttpGet("active")]
         public async Task<IActionResult> ActiveProviders() =>
            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
@@ -83,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    success =>  View("InProgress")));
+                    success => RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
         }
 
         [HttpPost("uploadinactive")]
