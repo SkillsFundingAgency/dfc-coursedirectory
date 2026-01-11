@@ -69,10 +69,12 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 }));
 
         [HttpGet("result/{providerUploadId}")]
-        public IActionResult Result([FromRoute] Guid providerUploadId) 
-        {
-            return View(new Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Result.ViewModel { ProviderUploadId = providerUploadId});
-        }
+        public  async Task<IActionResult> Result([FromRoute] Guid providerUploadId) =>    await _mediator.SendAndMapResponse(
+            new ViewModels.DataManagement.Providers.Result.Query() { ProviderUploadId = providerUploadId },
+            result => result.Match(
+                notFound => NotFound(),
+                resultSummary => (IActionResult) View(new ViewModels.DataManagement.Providers.Result.ViewModel { ProviderUploadId = providerUploadId, UploadResultSummary = resultSummary })
+                ));
 
         [HttpGet("active")]
         public async Task<IActionResult> ActiveProviders() =>

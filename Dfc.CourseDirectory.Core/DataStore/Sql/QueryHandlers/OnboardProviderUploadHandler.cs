@@ -38,6 +38,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     WHEN p.providerstatus <> pur.providerstatus ANd p.providertype = pur.providertype THEN {(int)ProviderUploadResult.ProviderStatusUpdated}
                     ELSE P.UploadResult
                 END) ,
+                P.ProviderUploadId = (CASE
+                    WHEN p.providerstatus <> pur.providerstatus ANd p.providertype <> pur.providertype THEN @ProviderUploadId
+                    WHEN p.providerstatus = pur.providerstatus ANd p.providertype <> pur.providertype THEN @ProviderUploadId
+                    WHEN p.providerstatus <> pur.providerstatus ANd p.providertype = pur.providertype THEN @ProviderUploadId
+                    ELSE P.ProviderUploadId
+                END) ,
                   p.ProviderStatus = pur.ProviderStatus,
                   p.ProviderType = pur.ProviderType,
                   p.UpdatedOn = @OnboardedOn
@@ -83,6 +89,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ,[BulkUploadStartedDateTime]
                     ,[BulkUploadTotalRowCount]
                     ,[UploadResult]
+                    ,[ProviderUploadId]
                          )
                 SELECT
                     ProviderId,
@@ -104,7 +111,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     NULL,
                     NULL,
                     NULL,
-                   {(int)ProviderUploadResult.NewProvider}
+                   {(int)ProviderUploadResult.NewProvider},
+                   @ProviderUploadId
                 FROM ProvidersCte
                 WHERE GroupRowNumber = 1
 

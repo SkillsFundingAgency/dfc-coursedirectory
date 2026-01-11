@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Middleware;
@@ -12,7 +13,7 @@ using OneOf.Types;
 
 namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Result
 {
-    public class Query : IRequest<OneOf<NotFound, UploadStatus>>
+    public class Query : IRequest<OneOf<NotFound, ProviderUploadResultSummary>>
     {
         public Guid ProviderUploadId { get; set; }
     }
@@ -22,8 +23,10 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Result
 
         public UploadStatus UploadStatus { get; set; }
 
+        public ProviderUploadResultSummary UploadResultSummary { get; set; }
+
     }
-    public class Handler : IRequestHandler<Query, OneOf<NotFound, UploadStatus>>
+    public class Handler : IRequestHandler<Query, OneOf<NotFound, ProviderUploadResultSummary>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
@@ -33,20 +36,20 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Result
             _sqlQueryDispatcher = sqlQueryDispatcher;
         }
 
-        public async Task<OneOf<NotFound, UploadStatus>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<OneOf<NotFound, ProviderUploadResultSummary>> Handle(Query request, CancellationToken cancellationToken)
         {
 
-            var providerUpload = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderUpload()
+            var providerUploadResult = await _sqlQueryDispatcher.ExecuteQuery(new GetProviderUploadResult()
             {
                 ProviderUploadId = request.ProviderUploadId,
             });
 
-            if (providerUpload == null)
+            if (providerUploadResult == null)
             {
                 return new NotFound();
             }
 
-            return providerUpload.UploadStatus;
+            return providerUploadResult;
         }
     }
 }
