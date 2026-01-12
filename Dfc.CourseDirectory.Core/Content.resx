@@ -427,7 +427,7 @@
     <value>Check website URL. We've identified a security issue</value>
   </data>
   <data name="ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML" xml:space="preserve">
-    <value>Who this course is for must not include &lt; &gt; % or ` </value>
+    <value>Who this course is for must not include &lt; &gt; % or `</value>
   </data>
   <data name="ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML" xml:space="preserve">
     <value>What you can do next must not include &lt; &gt; % or `</value>

@@ -520,7 +520,7 @@ namespace Dfc.CourseDirectory.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Who this course is for must not include &lt; &gt; % or ` .
+        ///   Looks up a localized string similar to Who this course is for must not include &lt; &gt; % or `.
         /// </summary>
         public static string ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML {
             get {

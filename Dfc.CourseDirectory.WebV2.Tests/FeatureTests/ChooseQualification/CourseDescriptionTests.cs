@@ -142,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("WhoThisCourseIsFor", "Who this course is for must not include % ` &lt; or &gt;");
+            doc.AssertHasError("WhoThisCourseIsFor", "Who this course is for must not include &lt; &gt; % or `");
         }
 
 
@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("EntryRequirements", "Entry requirements must not include% ` &lt; or &gt;");
+            doc.AssertHasError("EntryRequirements", "Entry requirements must not include &lt; &gt; % or `");
         }
 
         [Fact]
