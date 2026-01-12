@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Common;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 
@@ -50,6 +52,12 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
 
         [Name("PIMS Org Status Date")]
         public DateTime PIMSOrgStatusDate { get; set; }
+
+        [Name("Update Result")]
+        public string UpdateResult { get; set; }
+
+        [Name("Load Date")]
+        public DateTime LoadDate { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -81,7 +89,10 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
                         LiveCourseCount = result.LiveCourseCount,
                         LiveTLevelCount = result.LiveTLevelCount,
                         PIMSOrgStatus = result.PIMSOrgStatus,
-                        PIMSOrgStatusDate = result.PIMSOrgStatusDate
+                        PIMSOrgStatusDate = result.PIMSOrgStatusDate,
+                        UpdateResult = result.UploadResult?.GetDescription(),
+                        LoadDate = result.LoadDate,
+
                     };
                 }
             }
