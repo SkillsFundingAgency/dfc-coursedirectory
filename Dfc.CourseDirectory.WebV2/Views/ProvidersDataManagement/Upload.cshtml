@@ -21,11 +21,13 @@
             <govuk-select asp-for="Duration">
                 <govuk-select-label class="govuk-label--m">How many months of data would you like to upload?</govuk-select-label>
                 <govuk-select-hint>
-                    It's recommended that this provider type report is uploaded monthly. If needed, select to add up to 3 months
+                    It's recommended that this provider type report is uploaded monthly. If needed, select to add up to 12 months
                 </govuk-select-hint>
                 <govuk-select-item value="1">1 month</govuk-select-item>
                 <govuk-select-item value="2">2 months</govuk-select-item>
                 <govuk-select-item value="3">3 months</govuk-select-item>
+                <govuk-select-item value="6">6 months</govuk-select-item>
+                <govuk-select-item value="12">12 months</govuk-select-item>
             </govuk-select>
 
             <govuk-file-upload asp-for="File" input-accept=".csv">
