@@ -15,8 +15,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 
         private static readonly Regex HtmlTagRegex = new Regex(
             @"^[^<>%`]+$",
-       // @"<\s*\/?\s*[a-zA-Z][^<>%`]*>",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant
+           RegexOptions.Compiled | RegexOptions.CultureInvariant
         );
 
         private static bool IsDeliveryModeClassroomBasedOrBlendedLearning(CourseDeliveryMode? deliveryMode)
