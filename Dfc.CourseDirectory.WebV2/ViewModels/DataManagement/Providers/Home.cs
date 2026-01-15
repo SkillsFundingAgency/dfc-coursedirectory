@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OneOf;
 using OneOf.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home
 {
@@ -28,7 +29,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home
 
      public class ViewModel
     {
-        public ProviderUploadType ProviderUploadType { get; set; }
+        [Required(ErrorMessage = "Select the provider report type")]
+        public ProviderUploadType? ProviderUploadType { get; set; }
     }
 
     public enum ProviderUploadType

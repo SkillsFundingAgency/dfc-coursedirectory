@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreGeneratedDocument;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.Attributes;
 using Dfc.CourseDirectory.Core.DataManagement;
@@ -14,6 +15,7 @@ using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
+using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -39,14 +41,18 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         }
 
         [HttpGet("")]
-        public IActionResult Index()
+        public IActionResult Index(ProviderUploadType? providerUploadType )
         {
-            return View(new Home.ViewModel());
+            return View(new Home.ViewModel { ProviderUploadType= providerUploadType});
         }
 
         [HttpPost]
         public IActionResult Index(Home.ViewModel vm)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
             switch(vm.ProviderUploadType) {
                 case Home.ProviderUploadType.Inactive:
                     return RedirectToAction("InactiveProviders");
