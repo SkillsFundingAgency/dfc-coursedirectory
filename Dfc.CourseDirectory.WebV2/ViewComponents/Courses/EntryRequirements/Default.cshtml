@@ -9,6 +9,7 @@
 @{
     var regex = RegexPattern.DisallowHTMLTags;
     var entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_ENTRY_REQUIREMENTS_NO_HTML;
 }
 
 
@@ -28,7 +29,7 @@
                   aria-describedby="@Model.AriaDescribedBy"
                   val-max-length=@entryRequirementsTextFieldMaxChars val-max-length-message="Entry requirements must be @entryRequirementsTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="Entry requirements contains invalid character"></textarea>
+                  val-regex-message="@errorMessage"></textarea>
 
     </div>
 </div>
