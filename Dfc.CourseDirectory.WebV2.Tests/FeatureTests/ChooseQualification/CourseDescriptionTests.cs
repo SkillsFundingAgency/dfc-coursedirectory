@@ -29,7 +29,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             var get1 = await HttpClient.GetAsync(
                 $"/courses/course-selected?ffiid={mpx.InstanceId}&LearnAimRef=00238422");
-            
+
             var request = new HttpRequestMessage(HttpMethod.Post, $"/courses/add?ffiid={mpx.InstanceId}&providerId={provider.ProviderId}")
             {
                 Content = new FormUrlEncodedContentBuilder()
@@ -142,10 +142,10 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("WhoThisCourseIsFor", "HTML tags are not allowed in Course Description fields.");
+            doc.AssertHasError("WhoThisCourseIsFor", "Who this course is for must not include &lt; &gt; % or `");
         }
-        
-             
+
+
         [Fact]
         private async Task CourseDescription_EntryRequirementForHTML_ReturnsError()
         {
@@ -161,7 +161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
             {
                 Content = new FormUrlEncodedContentBuilder()
                     .Add("WhoThisCourseIsFor", "test")
-                    .Add("EntryRequirements", "<H1>Test</H1>")
+                    .Add("EntryRequirements", "<test>")
                     .Add("WhatYouWillLearn", "")
                     .Add("HowYouWillLearn", "")
                     .Add("WhatYouWillNeedToBring", "")
@@ -175,9 +175,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("EntryRequirements", "HTML tags are not allowed in Course Description fields.");
+            doc.AssertHasError("EntryRequirements", "Entry requirements must not include &lt; &gt; % or `");
         }
-        
+
         [Fact]
         private async Task CourseDescription_NavigateToAddWithoutSelectingFromSearchResultsScreen_ReturnsError()
         {
