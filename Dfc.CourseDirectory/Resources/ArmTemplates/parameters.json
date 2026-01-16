@@ -29,10 +29,7 @@
     "searchDomain": {
       "value": "__searchFqdn__"
     },
-    "larsDatasetUrl": {
-      "value": "__larsDatasetUrl__"
-    },
-    "dfeClientID": {
+     "dfeClientID": {
       "value": "__dfeClientID__"
     },
     "dfeEndpointUrl": {
