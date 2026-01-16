@@ -22,5 +22,6 @@
 	[BulkUploadTotalRowCount] INT NULL, 
     [PIMSOrgStatus] NVARCHAR(50) NULL, 
     [PIMSOrgStatusDate] DATETIME NULL, 
-    [UploadResult] INT NULL
+    [UploadResult] INT NULL,
+	[ProviderUploadId] UNIQUEIDENTIFIER NULL
 )

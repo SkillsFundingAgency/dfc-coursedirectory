@@ -35,7 +35,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
 
     }
 
-    public class Command : IRequest<OneOf<UploadFailedResult, UploadSucceededResult>>
+    public class Command : IRequest<OneOf<UploadFailedResult, ProviderUploadResult>>
     {
         public IFormFile File { get; set; }
         public bool InactiveProviders { get; set; }
@@ -48,6 +48,12 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
         ProcessingInProgress,
         ProcessingCompletedWithErrors,
         ProcessingCompletedSuccessfully
+    }
+
+    public class ProviderUploadResult
+    {
+        public UploadSucceededResult UploadSucceededResult { get; set; }
+        public Guid ProviderUploadId { get; set; }
     }
 
     public class UploadFailedResult : ModelWithErrors<ViewModel>
@@ -75,7 +81,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
 
     public class Handler :
         IRequestHandler<Query, ViewModel>,
-        IRequestHandler<Command, OneOf<UploadFailedResult, UploadSucceededResult>>
+        IRequestHandler<Command, OneOf<UploadFailedResult, ProviderUploadResult>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
         private readonly IFileUploadProcessor _fileUploadProcessor;
@@ -99,7 +105,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
 
         public Task<ViewModel> Handle(Query request, CancellationToken cancellationToken) => CreateViewModel();
 
-        public async Task<OneOf<UploadFailedResult, UploadSucceededResult>> Handle(
+        public async Task<OneOf<UploadFailedResult, ProviderUploadResult>> Handle(
             Command request,
             CancellationToken cancellationToken)
         {
@@ -147,7 +153,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
                     "The selected file is empty");
             }
 
-            return UploadSucceededResult.ProcessingCompletedSuccessfully;
+            return  new ProviderUploadResult
+            { UploadSucceededResult = UploadSucceededResult.ProcessingCompletedSuccessfully , ProviderUploadId = saveFileResult.ProviderUploadId};
         }
 
         private async Task<ViewModel> CreateViewModel()
@@ -170,7 +177,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
         {
             RuleFor(x => x.File)
                 .NotNull()
-                    .WithMessage("Select a CSV")
+                    .WithMessage("Select a CSV file")
                 .Must(file => file == null || file.Length <= Constants.ProviderFileMaxSizeBytes)
                     .WithMessage($"The selected file must be smaller than {Constants.ProviderFileMaxSizeLabel}");
         }

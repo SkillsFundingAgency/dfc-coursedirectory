@@ -22,5 +22,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public int OtherTLevelCount { get; set; }
         public string PIMSOrgStatus { get; set; }
         public DateTime PIMSOrgStatusDate { get; set; }
+        public ProviderUploadResult? UploadResult { get; set; }
+        public DateTime LoadDate { get; set; }
+
     }
 }
