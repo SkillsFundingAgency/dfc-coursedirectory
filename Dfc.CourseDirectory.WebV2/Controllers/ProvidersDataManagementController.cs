@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         [HttpGet("")]
         public IActionResult Index(ProviderUploadType? providerUploadType )
         {
-            return View(new Home.ViewModel { ProviderUploadType= providerUploadType});
+            return RedirectToAction("ActiveProviders");
         }
 
         [HttpPost]
@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         }
 
 
-        [HttpGet("inprogress/{providerUploadId}")]
+        [HttpGet("active-providers-in-progress/{providerUploadId}")]
         public async Task<IActionResult> InProgress([FromRoute] Guid providerUploadId) => await _mediator.SendAndMapResponse(
             new ViewModels.DataManagement.Providers.InProgress.Query() { ProviderUploadId = providerUploadId },
             result => result.Match(
@@ -74,7 +74,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                     _ => View(new ViewModels.DataManagement.Providers.InProgress.ViewModel { UploadStatus = status, ProviderUploadId= providerUploadId})
                 }));
 
-        [HttpGet("result/{providerUploadId}")]
+        [HttpGet("upload-active-providers-summary/{providerUploadId}")]
         public  async Task<IActionResult> Result([FromRoute] Guid providerUploadId) =>    await _mediator.SendAndMapResponse(
             new ViewModels.DataManagement.Providers.Result.Query() { ProviderUploadId = providerUploadId },
             result => result.Match(
@@ -82,7 +82,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 resultSummary => (IActionResult) View(new ViewModels.DataManagement.Providers.Result.ViewModel { ProviderUploadId = providerUploadId, UploadResultSummary = resultSummary })
                 ));
 
-        [HttpGet("active")]
+        [HttpGet("active-report-upload")]
         public async Task<IActionResult> ActiveProviders() =>
            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
@@ -90,7 +90,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         public async Task<IActionResult> InactiveProviders() =>
             await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("UploadInactive", vm));
 
-        [HttpPost("upload")]
+        [HttpPost("active-report-upload")]
         public async  Task<IActionResult>  Upload(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
