@@ -69,8 +69,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.Published => (IActionResult)RedirectToAction(actionName: nameof(Result), routeValues: new { providerUploadId })
-                      ,
+                    UploadStatus.Published => (IActionResult)RedirectToAction(actionName: nameof(Result), routeValues: new { providerUploadId }),
+                    UploadStatus.ProcessedWithErrors => View("Error"),
                     _ => View(new ViewModels.DataManagement.Providers.InProgress.ViewModel { UploadStatus = status, ProviderUploadId= providerUploadId})
                 }));
 
