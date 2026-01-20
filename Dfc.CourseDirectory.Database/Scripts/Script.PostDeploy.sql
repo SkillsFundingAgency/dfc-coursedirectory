@@ -8644,21 +8644,3 @@ WHEN NOT MATCHED
 	)
 WHEN NOT MATCHED BY SOURCE
 	THEN DELETE;
-
---- COPY DATA FROM THE TEMP TABLE TO COURSES TABLE WHICH IS CREATED AS PART OF THE BUG FIX FOR USER STORY 253961 ---
-
-IF EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'temp_courses')
-BEGIN
-	UPDATE C
-		SET C.[CourseDescription] = TC.CourseDescription
-			,C.[EntryRequirements] = TC.EntryRequirements
-			,C.[WhatYoullLearn] = TC.WhatYoullLearn
-			,C.[HowYoullLearn] = TC.HowYoullLearn
-			,C.[WhatYoullNeed] = TC.WhatYoullNeed
-			,C.[HowYoullBeAssessed] = TC.HowYoullBeAssessed
-			,C.[WhereNext] = TC.WhereNext
-	FROM [Pttcd].[Courses] AS C
-	JOIN [Pttcd].temp_courses AS TC ON C.CourseId = TC.CourseId AND C.ProviderId =  TC.ProviderId
-
-	DROP TABLE Pttcd.temp_courses;
-END
