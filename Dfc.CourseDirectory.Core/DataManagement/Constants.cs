@@ -10,5 +10,6 @@
         public const string CoursesFolder = "courses";
         public const int CourseFileMaxSizeBytes = 5242880;
         public const string CourseFileMaxSizeLabel = "5MB";
+        public const string LarsContainerName = "lars-data";
     }
 }

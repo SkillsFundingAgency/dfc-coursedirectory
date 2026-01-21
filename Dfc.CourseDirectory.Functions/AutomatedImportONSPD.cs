@@ -1,5 +1,4 @@
 using Dfc.CourseDirectory.Core.ReferenceData.Onspd;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 
@@ -15,7 +14,7 @@ namespace Dfc.CourseDirectory.Functions
         }
 
         [Function("AutomatedImportONSPD")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+        public async Task<IActionResult> Run([TimerTrigger("%ImportOnsDataTriggerTimer%", RunOnStartup = true)] TimerInfo timer)
         {
             await _onspdDataImporter.AutomatedDataImport();
             return new OkObjectResult("Automated ONSPD data import triggered");

@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CsvHelper;
-using CsvHelper.Configuration.Attributes;
+using Dfc.CourseDirectory.Core.Configuration;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
@@ -21,18 +24,24 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
         // internal for testing
         internal const string ContainerName = "onspd";
         internal const string EnglandCountryId = "E92000001";
+        private const string LastDownloadDate = "LastDownloadDate";
 
         private const int ChunkSize = 10000;
+        private const long DefaultEpochMs = -2208988800000; // "01/01/1900"
 
         private readonly BlobContainerClient _blobContainerClient; 
         private readonly ISqlQueryDispatcherFactory _sqlQueryDispatcherFactory;
         private readonly ILogger<OnspdDataImporter> _logger;
         private HttpClient _httpClient;
+        private readonly BlobClient _lastDownloadDateBlobClient;
+        private readonly IConfiguration _configuration;
+
 
         public OnspdDataImporter(
             BlobServiceClient blobServiceClient,
             ISqlQueryDispatcherFactory sqlQueryDispatcherFactory,
-            ILogger<OnspdDataImporter> logger)
+            ILogger<OnspdDataImporter> logger,
+            IConfiguration configuration)
         {
             _blobContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
             _sqlQueryDispatcherFactory = sqlQueryDispatcherFactory;
@@ -41,6 +50,8 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 Timeout = TimeSpan.FromSeconds(300)
             };
+            _configuration = configuration;
+            _lastDownloadDateBlobClient = _blobContainerClient.GetBlobClient(_configuration[OnsConfigurationKeys.OnsDownloadInfoBlobFile]);
         }
 
         public async Task ManualDataImport(string filename)
@@ -63,37 +74,28 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         public async Task AutomatedDataImport()
         {
-            string arcgisUrl = "https://www.arcgis.com/sharing/rest/search?f=json&filter=tags:\"PRD_ONSPD\"&sortField=created&sortOrder=desc&num=1";
-
-            _logger.LogInformation("Automated process generate request url at: {arcgisUrl}", arcgisUrl);
-
-            var response = await _httpClient.GetAsync(arcgisUrl);
-            _logger.LogInformation("Response Code on GET from '{arcgisUrl}' is [{responseCode}]", arcgisUrl, response.StatusCode);
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                string responseFromServer = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JsonDocument.Parse(responseFromServer);
-                if (jsonResponse.RootElement.TryGetProperty("results", out JsonElement dataElement))
+                var queryLink = _configuration[OnsConfigurationKeys.OnsQueryLink];
+                _logger.LogTrace("Automated process generate request url at: {queryLink}", queryLink);
+                var downloadLink = _configuration[OnsConfigurationKeys.OnsDownloadLink];
+
+                var downloadDate = await GetDownloadDate();
+
+                var onsMetadata = await _httpClient.GetFromJsonAsync<Feature>(queryLink);
+                var latestModifiedOns = onsMetadata.Features.MaxBy(x => x.Properties.Created);
+
+                if (latestModifiedOns.Properties.Modified.CompareTo(downloadDate) > 0)
                 {
-                    var importObjects = JsonSerializer.Deserialize<ImportObject[]>(dataElement);
-                    if (importObjects != null)
-                    {
-                        var dataObject = importObjects[0];
-                        var downloadLink = $"https://www.arcgis.com/sharing/content/items/{dataObject.id}/data";
-                        _logger.LogInformation("Dataset found. Name: {name}. Title: {title}. Owner {Owner}", dataObject.name, dataObject.title, dataObject.owner);
-                        //Download to temp folder and then insert data to Sql table
-                        await DownloadZipFileToTempAsync(downloadLink);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Failed to import / deserialize objects from {arcgisUrl}", arcgisUrl);
-                    }
+                    var datasetLink = string.Format(downloadLink, latestModifiedOns.Id);
+                    _logger.LogTrace("New Version of ONS data found, beginning import with dataset: {datasetLink}", datasetLink);
+
+                    await DownloadZipFileToTempAsync(datasetLink);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Invalid Response code. Can not progress further. Import failed.");
+                _logger.LogError(ex, "Error occurred importing ONS Data.");
             }
         }
 
@@ -112,33 +114,40 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             {
                 var resultStream = await downloadResponse.Content.ReadAsStreamAsync();
                 using var zip = new ZipArchive(resultStream);
-                foreach (var entry in zip.Entries)
+                var entry = zip.Entries.FirstOrDefault(x => x.FullName.StartsWith("data/onspd_", StringComparison.OrdinalIgnoreCase) && x.FullName.EndsWith("_UK.csv", StringComparison.OrdinalIgnoreCase));
+
+                if (entry != null)
                 {
-                    if (entry.Name.EndsWith("_UK.csv") && entry.Name.StartsWith("ONSPD"))
+                    _logger.LogInformation("Find csv file - {CsvName}.", entry.Name);
+                    var destination = Path.Combine(extractDirectory, entry.Name);
+                    _logger.LogInformation("Extract and saved in local drive.");
+                    try
                     {
-                        _logger.LogInformation("Find csv file - {CsvName}.", entry.Name);
-                        var destination = Path.Combine(extractDirectory, entry.Name);
-                        _logger.LogInformation("Extract and saved in local drive.");
-                        try
-                        {
-                            entry.ExtractToFile(destination, overwrite: true);
-                            _logger.LogInformation("Extract csv file - {CsvName} complete.", entry.Name);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Extract csv file error message - {Message}.", ex.Message);
-                        }
-
-                        using StreamReader streamReader = new StreamReader(destination);
-                        await ProcessCsvToDbAsync(streamReader);
-
-                        //Remove the CSV when process done
-                        using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
-                        // temp file exists
-
-                        _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
-                        break;
+                        entry.ExtractToFile(destination, overwrite: true);
+                        _logger.LogInformation("Extract csv file - {CsvName} complete.", entry.Name);
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Extract csv file error message - {Message}.", ex.Message);
+                    }
+
+                    using StreamReader streamReader = new StreamReader(destination);
+                    await ProcessCsvToDbAsync(streamReader);
+
+                    //Remove the CSV when process done
+                    using FileStream fs = new FileStream(destination, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.RandomAccess | FileOptions.DeleteOnClose);
+                    // temp file exists
+
+                    //Update the blob storage with new download date
+                    var updatedDownloadInfo = new Dictionary<string, string>
+                    {
+                        [LastDownloadDate] = DateTime.UtcNow.ToString("dd/MM/yyyy")
+                    };
+
+                    var updatedJson = JsonSerializer.Serialize(updatedDownloadInfo, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    await _lastDownloadDateBlobClient.UploadAsync(new BinaryData(updatedJson), overwrite: true);
+
+                    _logger.LogInformation("Temp csv file - {CsvName} has been removed.", entry.Name);
                 }
             }
             else
@@ -150,13 +159,12 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
 
         private async Task ProcessCsvToDbAsync(StreamReader streamReader)
         {
-            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
             using var sqlDispatcher = _sqlQueryDispatcherFactory.CreateDispatcher();
-
+            
             var rowCount = 0;
             var importedCount = 0;
 
-            await foreach (var records in csvReader.GetRecordsAsync<Record>().Buffer(ChunkSize))
+            foreach (var records in GetCsv(streamReader).Chunk(ChunkSize))
             {
                 // Some data has invalid lat/lngs that will fail if we try to import.
                 var validRecords = records
@@ -174,7 +182,7 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                         })
                 });
 
-                rowCount += records.Count;
+                rowCount += records.Length;
                 importedCount += validRecords.Length;
 
                 if (rowCount % 100000 == 0)
@@ -190,23 +198,77 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
                 rowCount, importedCount);
         }
 
+        private async Task<long> GetDownloadDate()
+        {
+            try
+            {
+                var blobData = await _lastDownloadDateBlobClient.DownloadContentAsync();
+                var LastOnsDownloadDate = JsonSerializer.Deserialize<Dictionary<string, string>>(blobData.Value.Content.ToString(), 
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true});
+
+                return DateTime.TryParseExact(LastOnsDownloadDate[LastDownloadDate],"dd/MM/yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None, out var downloadDate)
+                    ? ((DateTimeOffset)downloadDate).ToUnixTimeMilliseconds()
+                    : DefaultEpochMs;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Error occurred retrieving Ons Blob storage data.");
+                return DefaultEpochMs;
+            }
+        }
+
         private static bool IsValidRecord(Record record)
         {
             return record.Latitude >= -90 && record.Latitude <= 90 && record.Longitude >= -90 && record.Longitude <= 90;
         }
 
+        // Recent ONS header field changes prevented the previous logic from retrieving the CSV data.
+        // To prevent future issues with new changes, created new CSV reader logic to handle recent and any future changes to the ONS headers, allowing the CSV data to be read.
+        private IEnumerable<Record> GetCsv(StreamReader streamReader)
+        {
+            using var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+            csvReader.Read(); // Need to read before able to get fields
+
+            var dic = new Dictionary<string, int> { { "ctry", -1 }, { "pcds", -1 }, { "lat", -1 }, { "long", -1 } };
+            for (int i = 0; i < csvReader.ColumnCount; i++)
+            {
+                foreach (var k in dic.Keys)
+                {
+                    if (csvReader.GetField(i).StartsWith(k))
+                    {
+                        dic[k] = i;
+                    }
+                }
+            }
+
+            if (dic.Values.Any(x => x == -1))
+            {
+                throw new Exception("Error retrieving ONS Header Field.");
+            }
+
+            while (csvReader.Parser.Read())
+            {
+                var line = csvReader.Parser.RawRecord.Split(",");
+                yield return new Record
+                {
+                    Country = line[dic["ctry"]].Trim('"'),
+                    Postcode = line[dic["pcds"]].Trim('"'),
+                    Latitude = Double.TryParse(line[dic["lat"]], out var latRes) ? latRes : Double.MaxValue,
+                    Longitude = Double.TryParse(line[dic["long"]], out var longRes) ? longRes : Double.MaxValue
+                };
+            }
+        }
+
+
         private class Record
         {
-            [Name("pcds")]
             public string Postcode { get; set; }
 
-            [Name("lat")]
             public double Latitude { get; set; }
 
-            [Name("long")]
             public double Longitude { get; set; }
 
-            [Name("ctry")]
             public string Country { get; set; }
         }
         private class ImportObject
@@ -215,6 +277,23 @@ namespace Dfc.CourseDirectory.Core.ReferenceData.Onspd
             public string owner { get; set; }
             public string name { get; set; }
             public string title { get; set; }
+        }
+
+        private class Ons
+        {
+            public string Id { get; set; }
+            public Properties Properties { get; set; }
+        }
+
+        private class Feature
+        {
+            public List<Ons> Features { get; set; }
+        }
+
+        private class Properties
+        {
+            public long Created { get; set; }
+            public long Modified { get; set; }
         }
     }
 }
