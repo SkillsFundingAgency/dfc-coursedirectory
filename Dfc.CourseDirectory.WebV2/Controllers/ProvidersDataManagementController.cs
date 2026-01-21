@@ -16,10 +16,12 @@ using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home;
+using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 using OneOf.Types;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Errors.WhatNext;
 using Home = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home;
@@ -113,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    success => RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
+                    success =>success.UploadSucceededResult == UploadSucceededResult.ProcessingCompletedWithErrors ? View ("Error"): (IActionResult) RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
         }
 
         [HttpPost("uploadinactive")]
