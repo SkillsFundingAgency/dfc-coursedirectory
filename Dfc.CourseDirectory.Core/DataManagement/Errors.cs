@@ -51,19 +51,31 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             switch (errorCode)
             {
                 case "COURSE_ENTRY_REQUIREMENTS_MAXLENGTH":
+                case "COURSE_ENTRY_REQUIREMENTS_NO_HTML":
+                    return "Entry requirements";
                 case "COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH":
+                case "COURSE_HOW_YOU_WILL_BE_ASSESSED_NO_HTML":
+                    return "How you'll be assessed";
                 case "COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH":
-                    return "Course description";
+                case "COURSE_HOW_YOU_WILL_LEARN_NO_HTML":
+                    return "How you'll learn";
+                case "COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH":
+                case "COURSE_WHAT_YOU_WILL_LEARN_NO_HTML":
+                    return "What you'll learn";
+                case "COURSE_WHERE_NEXT_MAXLENGTH":
+                case "COURSE_WHAT_CAN_DO_NEXT_MAXLENGTH":
+                case "COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML":
+                    return "Where next";
+                case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH":
+                case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_NO_HTML": 
+                    return "What you'll need to bring";
+                case "COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH":
+                case "COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML":
+                case "COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED":
+                    return "Who this course is for";
                 case "COURSE_LARS_QAN_INVALID":
                 case "COURSE_LARS_QAN_REQUIRED":
                     return "LARS";
-                case "COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH":
-                case "COURSE_WHAT_CAN_DO_NEXT_MAXLENGTH":
-                case "COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH":
-                case "COURSE_WHERE_NEXT_MAXLENGTH":
-                case "COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH":
-                case "COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED":
-                    return "Course description";
                 case "COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED":
                 case "COURSERUN_ATTENDANCE_PATTERN_REQUIRED":
                     return "Attendance pattern";

@@ -49,3 +49,6 @@ WHERE
 	AND ProviderId NOT IN (SELECT DISTINCT ProviderId FROM Pttcd.FindACourseIndexCampaignCodes WHERE CampaignCodesJson LIKE '%LEVEL3_FREE%')
 
 ---------------------------------------------------------------------------------------------------------------------------------
+--AD-254683: Fix incorrectly archived courses
+EXEC [Pttcd].[UpdateIncorrectlyArchivedCourses]
+
