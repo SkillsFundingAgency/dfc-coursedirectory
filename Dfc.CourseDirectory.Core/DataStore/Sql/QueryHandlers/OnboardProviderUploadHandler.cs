@@ -46,7 +46,12 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 END) ,
                   p.ProviderStatus = pur.ProviderStatus,
                   p.ProviderType = pur.ProviderType,
-                  p.UpdatedOn = @OnboardedOn
+                  p.UpdatedOn = (CASE
+                    WHEN p.providerstatus <> pur.providerstatus ANd p.providertype <> pur.providertype THEN @OnboardedOn
+                    WHEN p.providerstatus = pur.providerstatus ANd p.providertype <> pur.providertype THEN @OnboardedOn
+                    WHEN p.providerstatus <> pur.providerstatus ANd p.providertype = pur.providertype THEN @OnboardedOn
+                    ELSE P.UpdatedOn
+                END) 
                   from Pttcd.Providers p
                   Inner Join [Pttcd].[ProviderUploadRows] pur on p.Ukprn = pur.Ukprn
 
