@@ -7,9 +7,9 @@
 @inject IOptions<EntryRequirementsComponentSettings> entryRequirementsComponentSettings
 
 @{
-    @*var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
-    var regex = RegexPattern.AllowEverything;
+    var regex = RegexPattern.DisallowHTMLTags;
     var entryRequirementsTextFieldMaxChars = entryRequirementsComponentSettings.Value.TextFieldMaxChars;
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_ENTRY_REQUIREMENTS_NO_HTML;
 }
 
 
@@ -29,7 +29,7 @@
                   aria-describedby="@Model.AriaDescribedBy"
                   val-max-length=@entryRequirementsTextFieldMaxChars val-max-length-message="Entry requirements must be @entryRequirementsTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="Entry requirements contains invalid character"></textarea>
+                  val-regex-message="@errorMessage"></textarea>
 
     </div>
 </div>

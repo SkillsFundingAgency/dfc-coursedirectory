@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.Api
                 services.AddAzureSearchClient<FindACourseOffering>(
                     new Uri(Configuration["AzureSearchUrl"]),
                     Configuration["AzureSearchQueryKey"],
-                    indexName: "findacourse",
+                    indexName: Configuration["AzureSearchIndexName"],
                     options =>
                     {
                         // The default options yield DateTime's with type Local;
@@ -119,6 +119,7 @@ namespace Dfc.CourseDirectory.Api
 
             app.UseSwagger(c =>
             {
+                c.SerializeAsV2 = true;
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
                     swaggerDoc.Servers = new List<OpenApiServer>
