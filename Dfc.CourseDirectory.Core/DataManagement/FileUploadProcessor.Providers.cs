@@ -29,7 +29,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
 {
     public partial class FileUploadProcessor
     {
-        //TODO Could be moved to cofig or DB
         private string[] FundNames = new string[]
         {
             "14-16 in FE",
@@ -49,101 +48,119 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         };
         public async Task ProcessProviderFile(Guid providerUploadId, Stream stream)
         {
-            bool inactiveProviders = false;
-            ProviderUpload providerUpload;
-            using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+            try
             {
-                providerUpload = await dispatcher.ExecuteQuery(new GetProviderUpload() { ProviderUploadId = providerUploadId });
-                inactiveProviders = providerUpload != null ? providerUpload.InactiveProviders: false;
-
-                var setProcessingResult = await dispatcher.ExecuteQuery(new SetProviderUploadProcessing()
-                {
-                    ProviderUploadId = providerUploadId,
-                    ProcessingStartedOn = _clock.UtcNow
-                });
-
-                if (setProcessingResult != SetProviderUploadProcessingResult.Success)
-                {
-                    await DeleteBlob();
-
-                    return;
-                }
-
-                await dispatcher.Commit();
-            }
-            if (inactiveProviders)
-            {
-                List<CsvInactiveProviderRow> rows;
-                using (var streamReader = new StreamReader(stream))
-                using (var csvReader = CreateCsvReader(streamReader))
-                {
-                    rows = await csvReader.GetRecordsAsync<CsvInactiveProviderRow>().ToListAsync();
-                }
-                var grouped = CsvInactiveProviderRow.GroupRows(rows);
-                var groupProvidersIds = grouped.Select(g => (ProviderId: Guid.NewGuid(), Rows: g)).ToArray();
-
-                var rowInfos = new List<InactiveProviderDataUploadRowInfo>(rows.Count);
-
-                foreach (var row in rows)
-                {
-                    var providerId = groupProvidersIds.Single(g => g.Rows.Contains(row)).ProviderId;
-
-
-                    rowInfos.Add(new InactiveProviderDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, providerId));
-                }
-
-                var rowsCollection = new InactiveProviderDataUploadRowInfoCollection(rowInfos);
-
+                bool inactiveProviders = false;
+                ProviderUpload providerUpload;
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
+                    providerUpload = await dispatcher.ExecuteQuery(new GetProviderUpload() { ProviderUploadId = providerUploadId });
+                    inactiveProviders = providerUpload != null ? providerUpload.InactiveProviders : false;
 
-                    await ValidateInactiveProviderUploadRows(dispatcher, providerUploadId, rowsCollection);
+                    var setProcessingResult = await dispatcher.ExecuteQuery(new SetProviderUploadProcessing()
+                    {
+                        ProviderUploadId = providerUploadId,
+                        ProcessingStartedOn = _clock.UtcNow
+                    });
+
+                    if (setProcessingResult != SetProviderUploadProcessingResult.Success)
+                    {
+                        await DeleteBlob();
+
+                        return;
+                    }
 
                     await dispatcher.Commit();
                 }
-                await InactiveProviderUpdate(providerUploadId);
+                if (inactiveProviders)
+                {
+                    List<CsvInactiveProviderRow> rows;
+                    using (var streamReader = new StreamReader(stream))
+                    using (var csvReader = CreateCsvReader(streamReader))
+                    {
+                        rows = await csvReader.GetRecordsAsync<CsvInactiveProviderRow>().ToListAsync();
+                    }
+                    var grouped = CsvInactiveProviderRow.GroupRows(rows);
+                    var groupProvidersIds = grouped.Select(g => (ProviderId: Guid.NewGuid(), Rows: g)).ToArray();
+
+                    var rowInfos = new List<InactiveProviderDataUploadRowInfo>(rows.Count);
+
+                    foreach (var row in rows)
+                    {
+                        var providerId = groupProvidersIds.Single(g => g.Rows.Contains(row)).ProviderId;
+
+
+                        rowInfos.Add(new InactiveProviderDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, providerId));
+                    }
+
+                    var rowsCollection = new InactiveProviderDataUploadRowInfoCollection(rowInfos);
+
+                    using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+                    {
+
+                        await ValidateInactiveProviderUploadRows(dispatcher, providerUploadId, rowsCollection);
+
+                        await dispatcher.Commit();
+                    }
+                    await InactiveProviderUpdate(providerUploadId);
+                }
+                else
+                {
+                    List<CsvProviderRow> rows;
+                    using (var streamReader = new StreamReader(stream))
+                    using (var csvReader = CreateCsvReader(streamReader))
+                    {
+                        rows = await csvReader.GetRecordsAsync<CsvProviderRow>().ToListAsync();
+                    }
+                    var grouped = CsvProviderRow.GroupRows(rows);
+                    var groupProvidersIds = grouped.Select(g => (ProviderId: Guid.NewGuid(), Rows: g)).ToArray();
+
+                    var rowInfos = new List<ProviderDataUploadRowInfo>(rows.Count);
+
+                    foreach (var row in rows)
+                    {
+                        var providerId = groupProvidersIds.Single(g => g.Rows.Contains(row)).ProviderId;
+
+
+                        rowInfos.Add(new ProviderDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, providerId));
+                    }
+
+                    var rowsCollection = new ProviderDataUploadRowInfoCollection(rowInfos);
+
+                    using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
+                    {
+
+                        await ValidateProviderUploadRows(dispatcher, providerUpload, rowsCollection);
+
+                        await dispatcher.Commit();
+                    }
+                    await OnboardProviderUpload(providerUploadId);
+
+                }
+
+                await DeleteBlob();
+
+                Task DeleteBlob()
+                {
+                    var blobName = $"{Constants.ProvidersFolder}/{providerUploadId}.csv";
+                    return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
+                }
             }
-            else
+            catch(Exception)
             {
-                List<CsvProviderRow> rows;
-                using (var streamReader = new StreamReader(stream))
-                using (var csvReader = CreateCsvReader(streamReader))
-                {
-                    rows = await csvReader.GetRecordsAsync<CsvProviderRow>().ToListAsync();
-                }
-                var grouped = CsvProviderRow.GroupRows(rows);
-                var groupProvidersIds = grouped.Select(g => (ProviderId: Guid.NewGuid(), Rows: g)).ToArray();
-
-                var rowInfos = new List<ProviderDataUploadRowInfo>(rows.Count);
-
-                foreach (var row in rows)
-                {
-                    var providerId = groupProvidersIds.Single(g => g.Rows.Contains(row)).ProviderId;
-
-
-                    rowInfos.Add(new ProviderDataUploadRowInfo(row, rowNumber: rowInfos.Count + 2, providerId));
-                }
-
-                var rowsCollection = new ProviderDataUploadRowInfoCollection(rowInfos);
-
                 using (var dispatcher = _sqlQueryDispatcherFactory.CreateDispatcher(System.Data.IsolationLevel.ReadCommitted))
                 {
 
-                    await ValidateProviderUploadRows(dispatcher, providerUpload, rowsCollection);
-
-                    await dispatcher.Commit();
+                    await dispatcher.ExecuteQuery(new SetProviderUploadProcessed()
+                    {
+                        ProviderUploadId = providerUploadId,
+                        ProcessingCompletedOn = _clock.UtcNow,
+                        IsValid = false
+                    });
                 }
-                await OnboardProviderUpload(providerUploadId);
-
+                throw;
             }
-
-            await DeleteBlob();
-
-            Task DeleteBlob()
-            {
-                var blobName = $"{Constants.ProvidersFolder}/{providerUploadId}.csv";
-                return _blobContainerClient.DeleteBlobIfExistsAsync(blobName);
-            }
+           
         }
 
         public async Task<OnboardResult> InactiveProviderUpdate(Guid providerUploadId)
@@ -315,7 +332,6 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             return providerUpload.UploadStatus;
         }
 
-        // virtual for testing
         protected virtual IObservable<UploadStatus> GetProviderUploadStatusUpdates(Guid providerUploadId) =>
             Observable.Interval(_statusUpdatesPollInterval)
                 .SelectMany(_ => Observable.FromAsync(() => GetProviderUploadStatus(providerUploadId)));
@@ -417,16 +433,10 @@ namespace Dfc.CourseDirectory.Core.DataManagement
                 var rowNumber = row.RowNumber;
                 var providerId = row.ProviderId;
 
-               // var parsedRow = ParsedCsvProviderRow.FromCsvProviderRow(row.Data);
                 if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN)) {
                     continue;
                 }
                 var fundNames = filteredRows.Where(x => x.OrgUKPRN ==  parsedRow.OrgUKPRN).Select(x => x.FundName).ToArray();
-               //// var firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);
-               // //var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-               // var isPreviousMOnthData = parsedRow.ResolvedFundStartDate.HasValue &&
-               // parsedRow.ResolvedFundStartDate.Value >= firstDayOfMonth &&
-               // parsedRow.ResolvedFundStartDate <= lastDayOfMonth;
                 var allowedFundNames = FundNames.Any(x => string.Equals(parsedRow.FundName, x, StringComparison.InvariantCultureIgnoreCase));
                 if (!allowedFundNames)
                 {

@@ -51,13 +51,13 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
         public string PIMSOrgStatus { get; set; }
 
         [Name("PIMS Org Status Date")]
-        public DateTime PIMSOrgStatusDate { get; set; }
+        public DateTime? PIMSOrgStatusDate { get; set; }
 
         [Name("Update Result")]
         public string UpdateResult { get; set; }
 
         [Name("Load Date")]
-        public DateTime LoadDate { get; set; }
+        public DateTime? LoadDate { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -89,9 +89,9 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
                         LiveCourseCount = result.LiveCourseCount,
                         LiveTLevelCount = result.LiveTLevelCount,
                         PIMSOrgStatus = result.PIMSOrgStatus,
-                        PIMSOrgStatusDate = result.PIMSOrgStatusDate,
+                        PIMSOrgStatusDate = result.PIMSOrgStatusDate == DateTime.MinValue ? null : (DateTime?) result.PIMSOrgStatusDate,
                         UpdateResult = result.UploadResult?.GetDescription(),
-                        LoadDate = result.LoadDate,
+                        LoadDate = result.LoadDate == DateTime.MinValue ? null : (DateTime?) result.LoadDate,
 
                     };
                 }

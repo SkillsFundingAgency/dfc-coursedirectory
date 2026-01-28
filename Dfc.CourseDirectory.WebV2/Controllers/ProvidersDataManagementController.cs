@@ -16,10 +16,12 @@ using Dfc.CourseDirectory.Core.Security;
 using Dfc.CourseDirectory.WebV2.ModelBinding;
 using Dfc.CourseDirectory.WebV2.Mvc;
 using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home;
+using Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload;
 using FormFlow;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 using OneOf.Types;
 using ErrorsWhatNext = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Errors.WhatNext;
 using Home = Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home;
@@ -43,7 +45,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         [HttpGet("")]
         public IActionResult Index(ProviderUploadType? providerUploadType )
         {
-            return View(new Home.ViewModel { ProviderUploadType= providerUploadType});
+            return RedirectToAction("ActiveProviders");
         }
 
         [HttpPost]
@@ -62,19 +64,19 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         }
 
 
-        [HttpGet("inprogress/{providerUploadId}")]
+        [HttpGet("active-providers-in-progress/{providerUploadId}")]
         public async Task<IActionResult> InProgress([FromRoute] Guid providerUploadId) => await _mediator.SendAndMapResponse(
             new ViewModels.DataManagement.Providers.InProgress.Query() { ProviderUploadId = providerUploadId },
             result => result.Match(
                 notFound => NotFound(),
                 status => status switch
                 {
-                    UploadStatus.Published => (IActionResult)RedirectToAction(actionName: nameof(Result), routeValues: new { providerUploadId })
-                      ,
+                    UploadStatus.Published => (IActionResult)RedirectToAction(actionName: nameof(Result), routeValues: new { providerUploadId }),
+                    UploadStatus.ProcessedWithErrors => View("Error"),
                     _ => View(new ViewModels.DataManagement.Providers.InProgress.ViewModel { UploadStatus = status, ProviderUploadId= providerUploadId})
                 }));
 
-        [HttpGet("result/{providerUploadId}")]
+        [HttpGet("upload-active-providers-summary/{providerUploadId}")]
         public  async Task<IActionResult> Result([FromRoute] Guid providerUploadId) =>    await _mediator.SendAndMapResponse(
             new ViewModels.DataManagement.Providers.Result.Query() { ProviderUploadId = providerUploadId },
             result => result.Match(
@@ -82,7 +84,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 resultSummary => (IActionResult) View(new ViewModels.DataManagement.Providers.Result.ViewModel { ProviderUploadId = providerUploadId, UploadResultSummary = resultSummary })
                 ));
 
-        [HttpGet("active")]
+        [HttpGet("active-report-upload")]
         public async Task<IActionResult> ActiveProviders() =>
            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
@@ -90,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         public async Task<IActionResult> InactiveProviders() =>
             await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("UploadInactive", vm));
 
-        [HttpPost("upload")]
+        [HttpPost("active-report-upload")]
         public async  Task<IActionResult>  Upload(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
@@ -113,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    success => RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
+                    success =>success.UploadSucceededResult == UploadSucceededResult.ProcessingCompletedWithErrors ? View ("Error"): (IActionResult) RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
         }
 
         [HttpPost("uploadinactive")]
