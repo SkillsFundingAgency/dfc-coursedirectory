@@ -13,7 +13,7 @@
         <h1 class="govuk-heading-xl">Upload active providers</h1>
     </div>
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="Upload" asp-all-route-data="@ProviderContext.RouteValues" enctype="multipart/form-data">
+        <form asp-action="Upload" enctype="multipart/form-data">
             <govuk-select asp-for="Duration">
                 <govuk-select-label class="govuk-label--m">How many months of data would you like to upload?</govuk-select-label>
                 <govuk-select-hint>
