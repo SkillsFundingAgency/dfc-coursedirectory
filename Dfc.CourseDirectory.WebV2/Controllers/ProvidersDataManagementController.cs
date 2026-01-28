@@ -34,12 +34,10 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
     public class ProvidersDataManagementController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IProviderContextProvider _providerContextProvider;
 
-        public ProvidersDataManagementController(IMediator mediator, IProviderContextProvider providerContextProvider)
+        public ProvidersDataManagementController(IMediator mediator)
         {
             _mediator = mediator;
-            _providerContextProvider = providerContextProvider;
         }
 
         [HttpGet("")]
