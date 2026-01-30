@@ -142,7 +142,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("WhoThisCourseIsFor", Dfc.CourseDirectory.Core.Content.ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML);
+            doc.AssertHasError("WhoThisCourseIsFor", "Who this course is for must not include &lt; &gt; or `");
         }
 
 
@@ -175,7 +175,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.ChooseQualification
 
             // Assert
             var doc = await response.GetDocument();
-            doc.AssertHasError("EntryRequirements", Dfc.CourseDirectory.Core.Content.ERROR_COURSE_ENTRY_REQUIREMENTS_NO_HTML);
+            doc.AssertHasError("EntryRequirements", "Entry requirements must not include &lt; &gt; or `");
         }
 
         [Fact]
