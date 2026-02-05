@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         [HttpGet("")]
         public IActionResult Index(ProviderUploadType? providerUploadType )
         {
-            return RedirectToAction("ActiveProviders");
+            return View(new Home.ViewModel());
         }
 
         [HttpPost]
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         public async Task<IActionResult> ActiveProviders() =>
            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
-        [HttpGet("inactive")]
+        [HttpGet("inactive-report-upload")]
         public async Task<IActionResult> InactiveProviders() =>
             await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("UploadInactive", vm));
 
@@ -116,7 +116,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                     success =>success.UploadSucceededResult == UploadSucceededResult.ProcessingCompletedWithErrors ? View ("Error"): (IActionResult) RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
         }
 
-        [HttpPost("uploadinactive")]
+        [HttpPost("inactive-report-upload")]
         public async Task<IActionResult> UploadInactive(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
