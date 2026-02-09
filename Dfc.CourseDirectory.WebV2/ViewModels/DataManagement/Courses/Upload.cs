@@ -122,6 +122,12 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
+                    await CreateViewModel(!request.IsNonLars),
+                    "The selected file must be a CSV");
+            }
+            if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
+            {
+                return new UploadFailedResult(
                     await CreateViewModel(request.IsNonLars),
                     "The selected file must be a CSV");
             }
