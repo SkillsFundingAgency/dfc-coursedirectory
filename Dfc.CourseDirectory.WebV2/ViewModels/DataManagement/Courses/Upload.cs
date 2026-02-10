@@ -110,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             {
                 return new UploadFailedResult(await CreateViewModel(), result);
             }
-
+        
             using var stream = request.File.OpenReadStream();
 
             var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
@@ -122,9 +122,10 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(!request.IsNonLars),
+                    await CreateViewModel(),
                     "The selected file must be a CSV");
             }
+
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
@@ -144,10 +145,16 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
             }
+            else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(!request.IsNonLars),
+                    "The selected file must be a a CSV");
+            }
             else if (!request.IsNonLars && saveFileResult.Status == SaveCourseFileResultStatus.InvalidLars)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(request.IsNonLars),
+                    await CreateViewModel(!request.IsNonLars),
                     "The file contains errors",
                     null,
                     saveFileResult.MissingLearnAimRefRows,
