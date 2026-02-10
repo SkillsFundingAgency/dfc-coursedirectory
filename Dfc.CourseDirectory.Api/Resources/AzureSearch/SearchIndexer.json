@@ -1,6 +1,6 @@
 [
   {
-    "name": "findacourseupdate",
+    "name": "__azureSearchIndexerName__",
     "description": "Update findacourse index",
     "dataSourceName": "sql-coursedirectory-findacourse",
     "targetIndexName": "__azureSearchIndexName__",
