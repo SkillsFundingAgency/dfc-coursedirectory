@@ -185,9 +185,10 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     .NotNull()
                         .WithMessage("Select a CSV")
                     .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
-                        .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}")
-                    .Must(file => file == null || System.IO.Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-                        .WithMessage("The selected file must be a CSV");
+                        .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
+                RuleFor(x => x.File)
+                   .Must(file => file == null || System.IO.Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
+                   .WithMessage("The selected file must be a CSV 123");
 
 
             }
