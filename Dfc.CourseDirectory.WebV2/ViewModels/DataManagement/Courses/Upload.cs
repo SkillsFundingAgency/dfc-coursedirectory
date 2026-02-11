@@ -122,13 +122,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
                 return new UploadFailedResult(
-                    await CreateViewModel(),
-                    "The selected file must be a CSV");
-            }
-
-            if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
-            {
-                return new UploadFailedResult(
                     await CreateViewModel(request.IsNonLars),
                     "The selected file must be a CSV");
             }
@@ -144,12 +137,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     await CreateViewModel(request.IsNonLars),
                     "Enter headings in the correct format",
                     saveFileResult.MissingHeaders);
-            }
-            else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
-            {
-                return new UploadFailedResult(
-                    await CreateViewModel(!request.IsNonLars),
-                    "The selected file must be a a CSV");
             }
             else if (!request.IsNonLars && saveFileResult.Status == SaveCourseFileResultStatus.InvalidLars)
             {
@@ -197,7 +184,11 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     .NotNull()
                         .WithMessage("Select a CSV")
                     .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
-                        .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
+                        .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}")
+                    .Must(file => file == null || System.IO.Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
+                        .WithMessage("The selected file must be a CSV");
+
+
             }
         }
     }
