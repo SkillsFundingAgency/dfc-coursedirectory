@@ -118,6 +118,13 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                 request.IsNonLars,
                 stream,
                 _currentUserProvider.GetCurrentUser());
+            if (!System.IO.Path.GetExtension(request.File.FileName).Equals("csv", StringComparison.OrdinalIgnoreCase))
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(request.IsNonLars),
+                    "The selected file must be a CSV 234",
+                    saveFileResult.MissingHeaders);
+            }
 
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
@@ -186,11 +193,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                         .WithMessage("Select a CSV")
                     .Must(file => file == null || file.Length <= Constants.CourseFileMaxSizeBytes)
                         .WithMessage($"The selected file must be smaller than {Constants.CourseFileMaxSizeLabel}");
-                RuleFor(x => x.File)
-                   .Must(file => file == null || System.IO.Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-                   .WithMessage("The selected file must be a CSV 123");
-
-
             }
         }
     }
