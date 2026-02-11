@@ -118,13 +118,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                 request.IsNonLars,
                 stream,
                 _currentUserProvider.GetCurrentUser());
-            if (!System.IO.Path.GetExtension(request.File.FileName).Equals("csv", StringComparison.OrdinalIgnoreCase))
-            {
-                return new UploadFailedResult(
-                    await CreateViewModel(request.IsNonLars),
-                    "The selected file must be a CSV",
-                    saveFileResult.MissingHeaders);
-            }
+
 
             if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidFile)
             {
@@ -162,7 +156,13 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     await CreateViewModel(request.IsNonLars),
                     "The selected file is empty");
             }
-
+            else if (!System.IO.Path.GetExtension(request.File.FileName).Equals("csv", StringComparison.OrdinalIgnoreCase) && !request.IsNonLars)
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(!request.IsNonLars),
+                    "The selected file must be a CSV",
+                    saveFileResult.MissingHeaders);
+            }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.ExistingFileInFlight)
             {
                 // UI Should stop us getting here so a generic error is sufficient
