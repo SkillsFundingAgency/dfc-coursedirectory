@@ -156,7 +156,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     await CreateViewModel(request.IsNonLars),
                     "The selected file is empty");
             }
-            else if (!System.IO.Path.GetExtension(request.File.FileName).Equals("csv", StringComparison.OrdinalIgnoreCase) && !request.IsNonLars)
+            else if (!System.IO.Path.GetExtension(request.File.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase) && !request.IsNonLars)
             {
                 return new UploadFailedResult(
                     await CreateViewModel(!request.IsNonLars),
