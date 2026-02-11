@@ -122,7 +122,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             {
                 return new UploadFailedResult(
                     await CreateViewModel(request.IsNonLars),
-                    "The selected file must be a CSV 234",
+                    "The selected file must be a CSV",
                     saveFileResult.MissingHeaders);
             }
 
