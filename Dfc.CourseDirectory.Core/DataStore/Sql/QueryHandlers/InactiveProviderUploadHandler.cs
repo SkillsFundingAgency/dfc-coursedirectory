@@ -28,7 +28,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 SELECT @UploadedBy = CreatedByUserId from pttcd.providerUploads 
                 WHERE ProviderUploadId = @ProviderUploadId
 
-                UPDATE prov set prov.PIMSORGStatus =  pu.PIMSORGStatus , prov.PIMSORGStatusDate = pu.PIMSORGStatusDate
+                UPDATE prov set prov.PIMSORGStatus =  pu.PIMSORGStatus , prov.PIMSORGStatusDate = pu.PIMSORGStatusDate,
+                Prov.UploadResult = {(int)ProviderUploadResult.ProviderInactiveonPIMS},
+                prov.UpdatedOn = @UpdatedOn,
+                prov.ProviderUploadId = @ProviderUploadId
 
                 FROM [Pttcd].[Providers] as prov
                 INNER JOIN [Pttcd].ProviderUploadRows as pu on prov.UKPRN = pu.UKPRN 
