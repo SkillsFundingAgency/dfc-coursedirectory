@@ -110,7 +110,14 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             {
                 return new UploadFailedResult(await CreateViewModel(), result);
             }
-        
+
+            if (!System.IO.Path.GetExtension(request.File.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                return new UploadFailedResult(
+                    await CreateViewModel(request.IsNonLars),
+                    "The selected file must be a CSV"
+                    );
+            }
             using var stream = request.File.OpenReadStream();
 
             var saveFileResult = await _fileUploadProcessor.SaveCourseFile(
@@ -124,8 +131,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
             {
                 return new UploadFailedResult(
                     await CreateViewModel(request.IsNonLars),
-                    "The selected file must be a CSV",
-                    saveFileResult.MissingHeaders);
+                    "The selected file must be a CSV"
+                   );
             }
             else if (saveFileResult.Status == SaveCourseFileResultStatus.InvalidRows)
             {
@@ -156,13 +163,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Courses.Upload
                     await CreateViewModel(request.IsNonLars),
                     "The selected file is empty");
             }
-            else if (!System.IO.Path.GetExtension(request.File.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase) && !request.IsNonLars)
-            {
-                return new UploadFailedResult(
-                    await CreateViewModel(!request.IsNonLars),
-                    "The selected file must be a CSV",
-                    saveFileResult.MissingHeaders);
-            }
+        
             else if (saveFileResult.Status == SaveCourseFileResultStatus.ExistingFileInFlight)
             {
                 // UI Should stop us getting here so a generic error is sufficient
