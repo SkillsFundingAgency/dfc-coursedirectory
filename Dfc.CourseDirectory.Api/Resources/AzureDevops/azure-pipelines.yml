@@ -13,7 +13,7 @@ resources:
     type: github
     name: SkillsFundingAgency/dfc-devops
     endpoint: 'GitHub (ESFA)'
-    ref: refs/tags/v1.14.0
+    ref: refs/heads/create_azure_search
 
 pool:
   name: NCS - CI and CD
