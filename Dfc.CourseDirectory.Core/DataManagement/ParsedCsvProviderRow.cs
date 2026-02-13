@@ -29,6 +29,8 @@ namespace Dfc.CourseDirectory.Core.DataManagement
         }
         public static DateTime? ResolveStartDate(string value) =>
             DateTime.TryParseExact(value, DateFormat, null, DateTimeStyles.None, out var dt) ? dt : (DateTime?)null;
+        public static string MapDate(DateTime? value) => value.HasValue && value.Value != DateTime.MinValue ? value.Value.ToString("dd/MM/yyyy") : "";
+
 
     }
 
