@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         [HttpGet("")]
         public IActionResult Index(ProviderUploadType? providerUploadType )
         {
-            return View(new Home.ViewModel());
+            return View(new Home.ViewModel { ProviderUploadType = providerUploadType });
         }
 
         [HttpPost]
