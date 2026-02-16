@@ -1,6 +1,6 @@
 [
   {
-    "name": "sql-coursedirectory-findacourse-db",
+    "name": "sql-coursedirectory-findacourse",
     "description": "Gets Find A Course API data from the xxxx view",
     "type": "azuresql",
     "credentials": {

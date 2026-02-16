@@ -2,7 +2,7 @@
   {
     "name": "__azureSearchIndexerName__",
     "description": "Update findacourse index",
-    "dataSourceName": "sql-coursedirectory-findacourse-db",
+    "dataSourceName": "sql-coursedirectory-findacourse",
     "targetIndexName": "__azureSearchIndexName__",
     "schedule": {
       "interval": "PT5M",
