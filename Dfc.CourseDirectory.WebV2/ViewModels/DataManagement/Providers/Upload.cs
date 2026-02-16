@@ -145,7 +145,13 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
                         await CreateViewModel(),
                         "The selected file must use the template");
                 }
-                else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader)
+                else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader && request.InactiveProviders)
+                {
+                    return new UploadFailedResult(
+                        await CreateViewModel(),
+                       "The selected file must contain 6 columns");
+                }
+                else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader && !request.InactiveProviders)
                 {
                     return new UploadFailedResult(
                         await CreateViewModel(),
