@@ -36,7 +36,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 FROM [Pttcd].[Providers] as prov
                 INNER JOIN [Pttcd].ProviderUploadRows as pu on prov.UKPRN = pu.UKPRN 
                 Where pu.ProviderUploadId = @ProviderUploadId
-                 And prov.PIMSORGStatus <>  pu.PIMSORGStatus
+                 AND prov.PIMSOrgStatus is null
 
                 SELECT 1 AS Status
 
