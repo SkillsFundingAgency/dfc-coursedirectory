@@ -123,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
             if (file != null && !file.FileName.Contains("Inactive_Providers", StringComparison.CurrentCultureIgnoreCase))
             {
-                ModelState.AddModelError(nameof(command.File), "The file name doesn't contain Inactive_Providers");
+                ModelState.AddModelError(nameof(command.File), "The selected file name must include 'inactive_providers'");
                 return View();
 
             }
