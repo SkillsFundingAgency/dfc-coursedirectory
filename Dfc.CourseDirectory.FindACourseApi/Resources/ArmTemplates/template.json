@@ -43,7 +43,13 @@
       "metadata": {
         "description": "Name of the key vault containing secrets"
       }
-    }
+    },
+    "azureSearchIndexName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Azure Search index to be used in the AzureSearchIndexName config setting"
+      }
+    }    
   },
   "variables": {
     "webAppName": "[concat(parameters('webAppPrefix'),'-as',parameters('webAppSuffix'))]",
@@ -58,7 +64,7 @@
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId(parameters('appServicePlanResourceGroup'), 'microsoft.insights/components', parameters('providerPortalApplicationInsights')), '2015-05-01').InstrumentationKey]",
         "WEBSITE_RUN_FROM_PACKAGE": "1",
         "AzureSearchUrl": "[concat('https://', parameters('searchName'), '.search.windows.net')]",
-        "AzureSearchIndexName": "findacourse",
+        "AzureSearchIndexName": "[parameters('azureSearchIndexName')]",
         "AzureSearchQueryKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchQueryPrimaryKey)', parameters('keyVaultName'))]",
         "EnvironmentSettings__EnvironmentName": "[parameters('environmentName')]",
         "Logging__ApplicationInsights__LogLevel__Default": "Information"
