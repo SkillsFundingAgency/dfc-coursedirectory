@@ -9,12 +9,6 @@
     var affectedItemCountErrors = ViewData.ModelState[nameof(ConfirmViewModel.AffectedItemCounts)]?.Errors
         ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
 }
-
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="AffectedItemCounts" data-testid="affected-item-counts-error" />
-    <govuk-error-summary-item asp-for="Confirm" data-testid="confirm-error" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
@@ -67,7 +61,7 @@
                 </div>
             </div>
 
-            <govuk-radios asp-for="Confirm">
+            <govuk-radios for="Confirm">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         <h2 class="govuk-fieldset__heading">Are you sure?</h2>

@@ -275,7 +275,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     }
 
                     ValidationFailure CreateFailure(string errorCode) =>
-                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyPath, errorCode);
                 });
         }
 
@@ -369,15 +369,15 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 
                     if (AreSubRegionsNotAllowed(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
+                        context.AddFailure(CreateFailure(context.PropertyPath, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
                     }
                     else if (AreSubRegionsRequired(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_REQUIRED"));
+                        context.AddFailure(CreateFailure(context.PropertyPath, "COURSERUN_SUBREGIONS_REQUIRED"));
                     }
                     else if (isSpecified && (selectedRegions == null || selectedRegions.Count == 0))
                     {
-                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_INVALID"));
+                        context.AddFailure(CreateFailure(context.PropertyPath, "COURSERUN_SUBREGIONS_INVALID"));
                     }
                 });
         }
@@ -403,15 +403,15 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 
                     if (AreSubRegionsNotAllowed(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
+                        context.AddFailure(CreateFailure(context.PropertyPath, "COURSERUN_SUBREGIONS_NOT_ALLOWED"));
                     }                    
                     else if (AreSubRegionsRequired(isSpecified, deliveryMode, nationalDelivery))
                     {
-                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_REQUIRED"));
+                        context.AddFailure(CreateFailure(context.PropertyPath, "COURSERUN_SUBREGIONS_REQUIRED"));
                     }
                     else if (HasInvalidSubRegions(selectedRegionIds, validSubRegions))
                     {
-                        context.AddFailure(CreateFailure(context.PropertyName, "COURSERUN_SUBREGIONS_INVALID"));
+                        context.AddFailure(CreateFailure(context.PropertyPath, "COURSERUN_SUBREGIONS_INVALID"));
                     }
                 });
         }
@@ -470,7 +470,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     }
 
                     ValidationFailure CreateFailure(string errorCode) =>
-                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyPath, errorCode);
                 });
         }
 
@@ -516,7 +516,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     }
 
                     ValidationFailure CreateFailure(string errorCode) =>
-                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyName, errorCode);
+                        ValidationFailureEx.CreateFromErrorCode(ctx.PropertyPath, errorCode);
                 });
         }
 
