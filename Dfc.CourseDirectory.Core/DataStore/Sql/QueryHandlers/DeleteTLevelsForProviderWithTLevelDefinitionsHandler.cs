@@ -27,13 +27,6 @@ JOIN @TLevelDefinitionIds x ON t.TLevelDefinitionId = x.Id
 WHERE t.ProviderId = @ProviderId
 AND t.TLevelStatus = @LiveTLevelStatus
 
-UPDATE Pttcd.TLevelLocations SET
-    TLevelLocationStatus = @DeletedTLevelStatus
-FROM Pttcd.TLevelLocations tll
-JOIN @TLevelIds x ON tll.TLevelId = x.Id
-WHERE TLevelLocationStatus = @LiveTLevelStatus
-
-
 EXEC Pttcd.RefreshFindACourseIndexForTLevels @TLevelIds, @DeletedOn";
 
             await transaction.Connection.ExecuteAsync(
