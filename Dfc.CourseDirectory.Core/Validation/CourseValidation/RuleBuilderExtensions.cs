@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
     {
 
         private static readonly Regex HtmlTagRegex = new Regex(
-            @"^[^<>%`]+$",
+            @"^[^<>`]+$",
            RegexOptions.Compiled | RegexOptions.CultureInvariant
         );
 
