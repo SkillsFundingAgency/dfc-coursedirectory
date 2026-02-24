@@ -19,7 +19,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="UploadInactive" enctype="multipart/form-data">
             
-            <govuk-file-upload asp-for="File" input-accept=".csv">
+            <govuk-file-upload javascript-enhancements="true" asp-for="File" input-accept=".csv">
                 <govuk-file-upload-label class="govuk-label--m">
                     Upload a CSV file
                 </govuk-file-upload-label>
