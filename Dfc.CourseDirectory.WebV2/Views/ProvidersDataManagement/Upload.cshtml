@@ -18,7 +18,7 @@
     </div>
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Upload" enctype="multipart/form-data">
-            <govuk-select asp-for="Duration">
+            <govuk-select for="Duration">
                 <govuk-select-label class="govuk-label--m">How many months of data would you like to upload?</govuk-select-label>
                 <govuk-select-hint>
                     It's recommended that this provider type report is uploaded monthly. If needed, select to add up to 12 months
@@ -30,7 +30,7 @@
                 <govuk-select-item value="12">12 months</govuk-select-item>
             </govuk-select>
 
-            <govuk-file-upload javascript-enhancements="true" asp-for="File" input-accept=".csv">
+            <govuk-file-upload javascript-enhancements="true" for="File" input-accept=".csv">
                 <govuk-file-upload-label class="govuk-label--m  govuk-!-margin-top-9">
                          Upload a CSV file
                 </govuk-file-upload-label>
