@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
+using Microsoft.Data.SqlClient;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {

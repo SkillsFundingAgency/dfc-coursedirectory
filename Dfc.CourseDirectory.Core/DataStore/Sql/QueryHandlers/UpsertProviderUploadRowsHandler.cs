@@ -8,6 +8,7 @@ using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Microsoft.Data.SqlClient;
 using static Dapper.SqlMapper;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
@@ -127,7 +128,6 @@ ORDER BY RowNumber";
             }
 
         }
-
         private class Result : ProviderUploadRow
         {
             public string ErrorList { get; set; }
