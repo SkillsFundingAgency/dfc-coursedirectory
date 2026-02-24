@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Dfc.CourseDirectory.Core.Extensions;
 using Dfc.CourseDirectory.Core.Validation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dfc.CourseDirectory.WebV2
@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2
             ModelWithErrors<T> failed,
             HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         {
-            failed.ValidationResult.AddToModelState(controller.ModelState, null);
+            failed.ValidationResult.AddToModelState(controller.ModelState);
 
             var result = controller.View(failed.Model);
             result.StatusCode = (int)statusCode;
@@ -25,7 +25,7 @@ namespace Dfc.CourseDirectory.WebV2
             ModelWithErrors<T> failed,
             HttpStatusCode statusCode = HttpStatusCode.BadRequest)
         {
-            failed.ValidationResult.AddToModelState(controller.ModelState, null);
+            failed.ValidationResult.AddToModelState(controller.ModelState);
 
             var result = controller.View(viewName, failed.Model);
             result.StatusCode = (int)statusCode;
