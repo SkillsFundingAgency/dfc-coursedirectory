@@ -218,7 +218,8 @@
         "FindACourse__Url": "[parameters('FindACourseUrl')]",
         "Logging__ApplicationInsights__LogLevel__Default": "Information",
         "WEBSITE_RUN_FROM_PACKAGE": "1",
-        "GoogleWebRiskSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]"
+        "GoogleWebRiskSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
+        "GoogleWebRiskSettings:PerformanceTesting": false
       }
     },
     {
