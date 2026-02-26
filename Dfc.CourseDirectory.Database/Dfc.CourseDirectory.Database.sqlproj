@@ -322,4 +322,7 @@
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeploy.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
+  </ItemGroup>
 </Project>
