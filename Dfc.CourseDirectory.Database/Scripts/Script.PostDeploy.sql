@@ -76,16 +76,7 @@ END CATCH
 -- WHAT YOU'LL LEARN, HOW YOU'LL LEARN, WHAT YOU'LL NEED, HOW YOU'LL BE ASSESSED AND WHERE NEXT FIELDS IN PTTCD.COURSES TABLE
 
 BEGIN TRY
-	IF EXISTS(SELECT CourseId FROM Pttcd.Courses  WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
-			and CourseDescription Like '%<%>%'
-			or EntryRequirements Like '%<%>%'
-			or WhatYoullLearn Like '%<%>%'
-			or HowYoullLearn Like '%<%>%'
-			or WhatYoullNeed Like '%<%>%'
-			or HowYoullBeAssessed Like '%<%>%'
-			or WhereNext Like '%<%>%'
-			and CourseStatus = 1
-			and UpdatedOn >= DATEADD(m, -15, GETDATE())) 
+	IF EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'temp_courses')
 	BEGIN
 		BEGIN TRANSACTION
 
