@@ -88,6 +88,8 @@ BEGIN TRY
 			  ,C.[WhatYoullNeed] = TC.WhatYoullNeed
 			  ,C.[HowYoullBeAssessed] = TC.HowYoullBeAssessed
 			  ,C.[WhereNext] = TC.WhereNext
+			  ,C.UpdatedOn = GETUTCDATE()
+			  ,C.UpdatedBy = 'PostDeploymentScript - Rollback Release'
 		FROM [Pttcd].[Courses] AS C
 		JOIN [Pttcd].temp_courses AS TC ON C.CourseId = TC.CourseId AND C.ProviderId =  TC.ProviderId
 
