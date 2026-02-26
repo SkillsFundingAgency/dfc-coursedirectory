@@ -72,3 +72,39 @@ BEGIN CATCH
 	ROLLBACK;
 END CATCH
 
+-- AD-255086: ROLLBACK HTML TAGS REMOVED FROM COURSE DATA FIELDS SUCH AS COURSE DESCRIPTION, ENTRY REQUIREMENTS, 
+-- WHAT YOU'LL LEARN, HOW YOU'LL LEARN, WHAT YOU'LL NEED, HOW YOU'LL BE ASSESSED AND WHERE NEXT FIELDS IN PTTCD.COURSES TABLE
+
+BEGIN TRY
+	IF EXISTS(SELECT CourseId FROM Pttcd.Courses  WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
+			and CourseDescription Like '%<%>%'
+			or EntryRequirements Like '%<%>%'
+			or WhatYoullLearn Like '%<%>%'
+			or HowYoullLearn Like '%<%>%'
+			or WhatYoullNeed Like '%<%>%'
+			or HowYoullBeAssessed Like '%<%>%'
+			or WhereNext Like '%<%>%'
+			and CourseStatus = 1
+			and UpdatedOn >= DATEADD(m, -15, GETDATE())) 
+	BEGIN
+		BEGIN TRANSACTION
+
+		UPDATE C
+		   SET C.[CourseDescription] = TC.CourseDescription
+			  ,C.[EntryRequirements] = TC.EntryRequirements
+			  ,C.[WhatYoullLearn] = TC.WhatYoullLearn
+			  ,C.[HowYoullLearn] = TC.HowYoullLearn
+			  ,C.[WhatYoullNeed] = TC.WhatYoullNeed
+			  ,C.[HowYoullBeAssessed] = TC.HowYoullBeAssessed
+			  ,C.[WhereNext] = TC.WhereNext
+		FROM [Pttcd].[Courses] AS C
+		JOIN [Pttcd].temp_courses AS TC ON C.CourseId = TC.CourseId AND C.ProviderId =  TC.ProviderId
+
+		DROP TABLE Pttcd.temp_courses;
+
+		COMMIT TRANSACTION;
+	END
+END TRY
+BEGIN CATCH
+	ROLLBACK TRANSACTION;
+END CATCH
