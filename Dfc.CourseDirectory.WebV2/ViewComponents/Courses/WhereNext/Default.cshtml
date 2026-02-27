@@ -10,9 +10,9 @@
 
 
 @{
-    @*    var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
-    var regex = RegexPattern.AllowEverything;
+    var regex = RegexPattern.DisallowHTMLTags;
     var whereNextTextFieldMaxChars = whereNextComponentSettings.Value.TextFieldMaxChars;
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML;
 }
 
 
@@ -31,7 +31,7 @@
                   aria-describedby="@Model.AriaDescribedBy" aria-label="WhereNext"
                   val-max-length=@whereNextTextFieldMaxChars val-max-length-message="'Where next' must be @whereNextTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="Where next contains invalid characters"></textarea>
+                  val-regex-message="@errorMessage"></textarea>
 
 </div>
 

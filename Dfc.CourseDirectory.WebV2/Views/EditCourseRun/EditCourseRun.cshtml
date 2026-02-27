@@ -29,7 +29,7 @@
 
     if (newVenueDescription != null)
     {
-    @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
             NotificationTitle = "New location added:",
             NotificationMessage = newVenueDescription,
@@ -72,21 +72,21 @@
             <div class="section" id="sectionCourseName">
                 @await Component.InvokeAsync(nameof(CourseName), new CourseNameModel
                 {
-                CourseName = Model.CourseName,
-                LabelText = "Course name",
-                HintText = new HtmlString(@"The course name displayed on the National Career Service, <a href='" +@ViewBag.LiveServiceURl + "' class='govuk-link'  target='_blank'>Find a course</a>."),
-                AriaDescribedBy = "Please enter the course name."
-                })
+                    CourseName = Model.CourseName,
+                                LabelText = "Course name",
+                                HintText = new HtmlString(@"The course name displayed on the National Career Service, <a href='" + @ViewBag.LiveServiceURl + "' class='govuk-link'  target='_blank'>Find a course</a>."),
+                                AriaDescribedBy = "Please enter the course name."
+                                })
             </div>
 
             <div class="section" id="sectionCourseProviderReference">
                 @await Component.InvokeAsync(nameof(CourseProviderReference), new CourseProviderReferenceModel
-                {
-                CourseProviderReference = Model.CourseProviderReference,
-                LabelText = "Your reference",
-                HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
-                AriaDescribedBy = "Please enter your reference for this course"
-                })
+                                {
+                    CourseProviderReference = Model.CourseProviderReference,
+                                LabelText = "Your reference",
+                                HintText = "A reference that will help you identify this course in your internal systems. This will not be visible to learners.",
+                                AriaDescribedBy = "Please enter your reference for this course"
+                                })
             </div>
 
             @if (Model.NonLarsCourse)
@@ -95,101 +95,101 @@
                     @await Component.InvokeAsync(nameof(CourseType), new CourseTypeModel
                     {
                         CourseType = Model.CourseType,
-                        LabelText = "Course type",
-                        HintText = "Select one option.",
-                        SecondHintText = "Select what is the type of this course",
-                        AriaDescribedBy = "Select what is the type of this course"
-                    })
-                </div>
+                                LabelText = "Course type",
+                                HintText = "Select one option.",
+                                SecondHintText = "Select what is the type of this course",
+                                AriaDescribedBy = "Select what is the type of this course"
+                                })
+            </div>
 
-                <div class="govuk-form-group" id="Sector">
+            <div class="govuk-form-group" id="Sector">
 
-                    <fieldset class="govuk-fieldset">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                            <h2 class="govuk-fieldset__heading govuk-heading-m">
-                                Sector
-                            </h2>
-                        </legend>
-                        <div class="govuk-hint">
-                            Select one option
-                        </div>
-                        <div class="govuk-radios govuk-radios" val-required-message="Select Sector" id="SectorRadioButtons">
-                            @foreach (var item in Model.Sectors)
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading govuk-heading-m">
+                            Sector
+                        </h2>
+                    </legend>
+                    <div class="govuk-hint">
+                        Select one option
+                    </div>
+                    <div class="govuk-radios govuk-radios" val-required-message="Select Sector" id="SectorRadioButtons">
+                        @foreach (var item in Model.Sectors)
                             {
                                 <div class="govuk-radios__item">
                                     @Html.RadioButtonFor(m => m.SectorId, item.Id, new { @class = "govuk-radios__input", id = item.Id })
                                     <label class="govuk-label govuk-radios__label" for="@item.Id">@item.Description</label>
                                 </div>
-                            }                            
+                            }
                         </div>
                     </fieldset>
-                </div>                
+                </div>
 
                 <div id="sectionEducationLevel">
                     @await Component.InvokeAsync(nameof(EducationLevel), new EducationLevelModel
                     {
                         EducationLevel = Model.EducationLevel,
-                        LabelText = "Education level",
-                        HintText = "Select one option.",
-                        SecondHintText = "Select what is the education level",
-                        AriaDescribedBy = "Select what is the education level"
-                    })
-                </div>
+                                LabelText = "Education level",
+                                HintText = "Select one option.",
+                                SecondHintText = "Select what is the education level",
+                                AriaDescribedBy = "Select what is the education level"
+                                })
+            </div>
 
-                <div id="sectionAwardingBody">
-                    @await Component.InvokeAsync(nameof(AwardingBody), new AwardingBodyModel
-                {
-                AwardingBody = Model.AwardingBody,
-                LabelText = "Awarding body",
-                HintText = "",
-                AriaDescribedBy = "Please enter the awarding body"
-                })
-                </div>
-            }
+            <div id="sectionAwardingBody">
+                @await Component.InvokeAsync(nameof(AwardingBody), new AwardingBodyModel
+                                {
+                        AwardingBody = Model.AwardingBody,
+                                LabelText = "Awarding body",
+                                HintText = "",
+                                AriaDescribedBy = "Please enter the awarding body"
+                                })
+            </div>
+                        }
 
             <div class="section" id="sectionDeliveryType">
                 @await Component.InvokeAsync(nameof(DeliveryType), new DeliveryTypeModel
                 {
-                DeliveryMode = Model.DeliveryMode,
-                LabelText = "Delivery mode",
-                HintText = "Select one option.",
-                SecondHintText = "Select how you will deliver this course",
-                AriaDescribedBy = "Select how you will deliver this course"
-                })
+                    DeliveryMode = Model.DeliveryMode,
+                                LabelText = "Delivery mode",
+                                HintText = "Select one option.",
+                                SecondHintText = "Select how you will deliver this course",
+                                AriaDescribedBy = "Select how you will deliver this course"
+                                })
             </div>
 
             <div class="section" id="sectionStartDate">
                 @await Component.InvokeAsync(nameof(AddStartDate), new AddStartDateModel()
-                {
-                StartDateType = Model.StartDateType,
-                Day = Model.Day,
-                Month = Model.Month,
-                Year = Model.Year,
-                DayAriaDescribedBy = "",
-                DayLabelText = "Day",
-                MonthAriaDescribedBy = "",
-                MonthLabelText = "Month",
-                YearAriaDescribedBy = "",
-                YearLabelText = "Year",
-                AriaDescribedBy = "",
-                SpecifiedDateHintText = "e.g. For example, 31 1 2030",
-                FlexibleDateHintText = "Or select a flexible start date:",
-                LabelText = "Start date",
-                CurrentStartDate = Model.CurrentCourseRunDate,
-                ValPastDateRef = Model.ValPastDateRef,
-                ValPastDateMessage = Model.ValPastDateMessage
-                })
+                                {
+                    StartDateType = Model.StartDateType,
+                                Day = Model.Day,
+                                Month = Model.Month,
+                                Year = Model.Year,
+                                DayAriaDescribedBy = "",
+                                DayLabelText = "Day",
+                                MonthAriaDescribedBy = "",
+                                MonthLabelText = "Month",
+                                YearAriaDescribedBy = "",
+                                YearLabelText = "Year",
+                                AriaDescribedBy = "",
+                                SpecifiedDateHintText = "e.g. For example, 31 1 2030",
+                                FlexibleDateHintText = "Or select a flexible start date:",
+                                LabelText = "Start date",
+                                CurrentStartDate = Model.CurrentCourseRunDate,
+                                ValPastDateRef = Model.ValPastDateRef,
+                                ValPastDateMessage = Model.ValPastDateMessage
+                                })
             </div>
 
             <div class="section" id="sectionVenue" style="@Model.DeliveryMode.IfNotClassroomBasedDisplayNone()">
                 @await Component.InvokeAsync(nameof(ChooseVenue), new ChooseVenueModel()
-                {
-                LabelText = "Venue",
-                AriaDescribedBy = "Venue",
-                HintText = null,
-                VenueId = Model.VenueId ?? (Guid?)null,
-                DisplayLink = true
-                })
+                                {
+                    LabelText = "Venue",
+                                AriaDescribedBy = "Venue",
+                                HintText = null,
+                                VenueId = Model.VenueId ?? (Guid?)null,
+                                DisplayLink = true
+                                })
             </div>
 
             <div class="section" id="RegionItemsCheckboxList" style="@Model.DeliveryMode.IfNotWorkBasedDisplayNone()">
@@ -200,54 +200,54 @@
 
             <div class="section" id="sectionUrl">
                 @await Component.InvokeAsync(nameof(UrlInput), new UrlInputModel
-                {
-                Url = Model.Url,
-                LabelText = "Course webpage",
-                HintText = "The webpage for this course. For example, https://www.provider.com/coursename.",
-                AriaDescribedBy = "Enter the course webpage for this course"
-                })
+                                {
+                    Url = Model.Url,
+                                LabelText = "Course webpage",
+                                HintText = "The webpage for this course. For example, https://www.provider.com/coursename.",
+                                AriaDescribedBy = "Enter the course webpage for this course"
+                                })
             </div>
 
             <div class="section" id="sectionCost">
                 @await Component.InvokeAsync(nameof(Cost), new CostModel
-                {
-                Cost = Model.Cost,
-                CostDescription = Model.CostDescription,
-                CostLabelText = "Cost",
-                CostHintText = "Cost of the course to the learner.",
-                CostAriaDescribedBy = "Enter the cost in pounds and pence",
-                CostDescriptionLabelText = "Cost description",
-                CostDescriptionHintText = "A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.",
-                CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
-                })
+                                {
+                    Cost = Model.Cost,
+                                CostDescription = Model.CostDescription,
+                                CostLabelText = "Cost",
+                                CostHintText = "Cost of the course to the learner.",
+                                CostAriaDescribedBy = "Enter the cost in pounds and pence",
+                                CostDescriptionLabelText = "Cost description",
+                                CostDescriptionHintText = "A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.",
+                                CostDescriptionAriaDescribedBy = "Enter details of related to the cost of this course"
+                                })
             </div>
 
             <div class="section" id="sectionDuration">
                 @await Component.InvokeAsync(nameof(Duration), new DurationModel
-                {
-                DurationLength = Model.DurationLength,
-                DurationUnit = Model.DurationUnit,
-                LabelText = "Duration",
-                AriaDescribedBy = "Select course duration"
-                })
+                                {
+                    DurationLength = Model.DurationLength,
+                                DurationUnit = Model.DurationUnit,
+                                LabelText = "Duration",
+                                AriaDescribedBy = "Select course duration"
+                                })
             </div>
 
             <div class="section" id="FullPartTimeRadioButtons" style="display: none;">
                 @await Component.InvokeAsync(nameof(StudyMode), new StudyModeModel
-                {
+                                {
                     StudyMode = Model.StudyMode,
-                    LabelText = "Course hours",
-                    HintText = "Select one option."
-                })
+                                LabelText = "Course hours",
+                                HintText = "Select one option."
+                                })
             </div>
 
             <div class="section" id="AttendancePatternRadioButtons" style="display: none;">
                 @await Component.InvokeAsync(nameof(Attendance), new AttendanceModel
-                {
-                AttendanceMode = Model.AttendanceMode,
-                LabelText = "Attendance pattern",
-                HintText = "Select one  option."
-                })
+                                {
+                    AttendanceMode = Model.AttendanceMode,
+                                LabelText = "Attendance pattern",
+                                HintText = "Select one  option."
+                                })
             </div>
 
             <h3 class="govuk-heading-m">Publish your course changes</h3>
@@ -265,17 +265,17 @@
                     break;
                 default:
                     @Html.ActionLink("Cancel", "Courses", "Provider", new
-            {
-            level = @Model.NotionalNVQLevelv2,
-            courseId = @Model.CourseId,
-            courseRunId = @Model.CourseRunId,
-            learnAimRef = @Model.LearnAimRef,
-            notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
-            awardOrgCode = @Model.AwardOrgCode,
-            learnAimRefTitle = @Model.LearnAimRefTitle,
-            learnAimRefTypeDesc = @Model.QualificationType
-            }, new { @class = "govuk-button--warning govuk-!-margin-right-3" })
-                    break;
+                    {
+                        level = @Model.NotionalNVQLevelv2,
+                        courseId = @Model.CourseId,
+                        courseRunId = @Model.CourseRunId,
+                        learnAimRef = @Model.LearnAimRef,
+                        notionalNVQLevelv2 = @Model.NotionalNVQLevelv2,
+                        awardOrgCode = @Model.AwardOrgCode,
+                        learnAimRefTitle = @Model.LearnAimRefTitle,
+                        learnAimRefTypeDesc = @Model.QualificationType
+                        }, new { @class = "govuk-button--warning govuk-!-margin-right-3" })
+                        break;
             }
 
         </form>
@@ -443,7 +443,7 @@
                 $cost.govUkInput("validState");
                 $costDescription.govUkTextarea("validState");
                 $studyMode.govUkRadios("validState");
-                $attendance.govUkRadios("validState");                
+                $attendance.govUkRadios("validState");
 
                 // course name
                 if (!$.requiredValidate($courseName.val())) {
@@ -683,7 +683,7 @@
                     $errorSummary.govUkErrorSummary("add", urlErrorHashLinks);
                     $errorSummary.govUkErrorSummary("show");
                     validStates.push(false);
-                } 
+                }
                 else if (!$.regexValidate({ regex: $url.attr("val-regex") }, urlToValidate)) {
                     $url.govUkInput("invalidState", $url.attr("val-regex-message"));
                     var urlErrorHashLinks = $url.govUkInput("getErrorHashLinks");

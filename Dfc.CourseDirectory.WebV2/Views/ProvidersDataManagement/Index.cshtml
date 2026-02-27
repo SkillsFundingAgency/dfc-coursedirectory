@@ -1,0 +1,42 @@
+﻿@model Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Home.ViewModel;
+@{
+    ViewBag.Title = "Upload providers";
+    ViewContext.SetLayoutData(activeAdminTopNavSection: AdminTopNavSection.ProviderUpload);
+}
+
+@section BackLink {
+<govuk-back-link asp-controller="HelpdeskDashboard" asp-action="Dashboard">Back</govuk-back-link>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+       
+    </div>
+    <div class="govuk-grid-column-full ">
+       
+    </div>
+    <div class="govuk-grid-column-two-thirds ">
+       
+        <form asp-action="Index" enctype="multipart/form-data">
+            <span class="pttcd-provider-home-hint ">Upload provider data</span>
+            <h1 class="govuk-heading-xl govuk-!-margin-top-5">Provider report</h1>
+
+            <govuk-radios class="pttcd-provider-upload-option-hint" for="ProviderUploadType">
+                <govuk-radios-hint>Select one option</govuk-radios-hint>
+                <govuk-radios-item value="Active">
+                   Active
+                </govuk-radios-item>
+                <govuk-radios-item value="Inactive" >
+                    Inactive
+                </govuk-radios-item>
+            </govuk-radios>
+            <div class="govuk-button-group">
+                <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
+                <a asp-controller="HelpdeskDashboard" asp-action="Dashboard" class="govuk-link cd-cancel-link">Cancel</a>
+            </div>
+               
+
+        </form>
+
+    </div>
+</div>

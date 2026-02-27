@@ -1,17 +1,18 @@
 ﻿@using Dfc.CourseDirectory.Services.CourseService
 @using Dfc.CourseDirectory.WebV2.Validation
 @using Microsoft.Extensions.Options
+@using System.Globalization
 @model Dfc.CourseDirectory.WebV2.ViewComponents.Courses.CourseFor.CourseForModel
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IOptions<CourseForComponentSettings> courseForComponentSettings
 
 @{
-    //Allowing everything got test to open up the input fields.
-    @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
-    var regex = RegexPattern.AllowEverything;
+    var regex = RegexPattern.DisallowHTMLTags;
 
     var courseForTextFieldMaxChars = courseForComponentSettings.Value.TextFieldMaxChars;
+
+    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML;
 }
 
 
@@ -35,8 +36,9 @@
                   val-required-message="Enter who is this course for"
                   val-max-length="@courseForTextFieldMaxChars" val-max-length-message="Who is this course for? must be @courseForTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="Who is this course for? contains invalid characters"></textarea>
-</div>
+                  val-regex-message="@errorMessage"></textarea>
+
+</div>  
 
 <script>
     (function ($) {
