@@ -72,7 +72,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(4);
+            topLevelLinks.Count.Should().Be(5);
 
             using (new AssertionScope())
             {
@@ -107,7 +107,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(4);
+            topLevelLinks.Count.Should().Be(5);
 
             using (new AssertionScope())
             {
@@ -151,7 +151,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(4);
+            topLevelLinks.Count.Should().Be(5);
 
             using (new AssertionScope())
             {
@@ -193,7 +193,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
             var topLevelLinks = GetTopLevelNavLinks(doc);
             var subNavLinks = GetSubNavLinks(doc);
 
-            topLevelLinks.Count.Should().Be(4);
+            topLevelLinks.Count.Should().Be(5);
 
             using (new AssertionScope())
             {
