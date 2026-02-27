@@ -32,6 +32,26 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Assert
             Assert.False(result);
         }
+        [Fact]
+        public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomaceTest()
+        {
+            // Arrange
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true });
+
+            var expectedData = "threat";
+            var httpClientFactoryMock = new Mock<IHttpClientFactory>();
+            var namedClient = new HttpClient(new FakeHttpMessageHandler(expectedData)); // Create a named client
+            httpClientFactoryMock.Setup(factory => factory.CreateClient("namedClient")).Returns(namedClient); // Use the named client
+
+            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object);
+            var website = "https://testsafebrowsing.appspot.com/s/malware.html";
+
+            // Act
+            var result = await webRiskService.CheckForSecureUri(website);
+
+            // Assert
+            Assert.True(result);
+        }
 
         [Fact]
         public async Task CheckForSecureUri_WithoutKnownThreat_PassesValidation()
