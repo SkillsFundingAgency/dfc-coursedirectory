@@ -149,13 +149,13 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
                 {
                     return new UploadFailedResult(
                         await CreateViewModel(),
-                       "The selected file must contain 6 columns");
+                       "The selected file does not match the format for an inactive report");
                 }
                 else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader && !request.InactiveProviders)
                 {
                     return new UploadFailedResult(
                         await CreateViewModel(),
-                       "The selected file must contain 7 columns");
+                       "The selected file does not match the format for an active report");
                 }
                 else if (saveFileResult.Status == SaveProviderFileResultStatus.EmptyFile)
                 {
