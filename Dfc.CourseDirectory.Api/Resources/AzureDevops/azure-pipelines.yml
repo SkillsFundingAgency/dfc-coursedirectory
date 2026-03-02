@@ -93,6 +93,14 @@ steps:
     arguments: '--configuration ${{ variables.BuildConfiguration }}'
   displayName: Build
 
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: "**/*.trx"
+    searchFolder: "$(Agent.TempDirectory)"
+  condition: succeededOrFailed()
+
 - task: DotNetCoreCLI@2
   displayName: Publish Dfc.CourseDirectory.Api
   inputs:
