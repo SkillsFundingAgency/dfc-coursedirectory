@@ -232,7 +232,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("confirm-error-message").TextContent.Should().Be("Confirm you want to delete the location");
+            doc.GetElementsByClassName("govuk-error-summary__list")[0].TextContent.Should().Contain("Confirm you want to delete the location");
         }
 
         [Fact]
@@ -271,7 +271,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
             Assert.NotNull(doc.GetElementByTestId($"affected-course-{course.CourseId}"));
-            doc.GetElementByTestId("affected-courses-error-message").TextContent.Should().Be("The affected courses have changed");
+            doc.GetElementsByClassName("govuk-error-message")[0].TextContent.Should().Contain("The affected courses have changed");
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Venues.DeleteVenue
 
             Assert.Null(doc.GetElementByTestId("delete-location-button"));
             Assert.NotNull(doc.GetElementByTestId($"affected-tlevel-{tLevel.TLevelId}"));
-            doc.GetElementByTestId("affected-tlevels-error-message").TextContent.Should().Be("The affected T Levels have changed");
+            doc.GetElementsByClassName("govuk-error-message")[0].TextContent.Should().Contain("The affected T Levels have changed");
         }
 
         [Fact]

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Models;
@@ -28,8 +28,8 @@ SELECT
     ELSE 'true'
     END AS IsExpired
 FROM Pttcd.Courses c
-LEFT JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
-LEFT JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
+JOIN LARS.LearningDelivery ld ON c.LearnAimRef = ld.LearnAimRef
+JOIN LARS.LearnAimRefType lart ON ld.LearnAimRefType = lart.LearnAimRefType
 WHERE c.ProviderId = @ProviderId
 AND c.CourseStatus <> {(int)CourseStatus.Archived}
 

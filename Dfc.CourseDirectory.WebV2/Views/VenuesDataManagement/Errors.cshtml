@@ -3,11 +3,6 @@
 @{
     ViewContext.SetLayoutData(title: "Venue data errors");
 }
-
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="WhatNext" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">Venue data errors</h1>
@@ -71,7 +66,7 @@
                 to edit and upload.
             </p>
 
-            <govuk-radios asp-for="WhatNext">
+            <govuk-radios for="WhatNext">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                         What do you want to do?

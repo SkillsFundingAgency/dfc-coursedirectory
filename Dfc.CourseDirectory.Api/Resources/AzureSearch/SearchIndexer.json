@@ -1,15 +1,15 @@
 [
-  {
-    "name": "__azureSearchIndexerName__",
-    "description": "Update findacourse index",
-    "dataSourceName": "sql-coursedirectory-findacourse",
-    "targetIndexName": "__azureSearchIndexName__",
-    "schedule": {
-      "interval": "PT5M",
-      "startTime": "2019-08-08T08:00:00Z"
-    },
-    "parameters": {
-      "configuration": { "convertHighWaterMarkToRowVersion": true }
+    {
+        "name": "findacourseupdate",
+        "description": "Update findacourse index",
+        "dataSourceName": "sql-coursedirectory-findacourse",
+        "targetIndexName": "findacourse",
+        "schedule": {
+            "interval": "PT5M",
+            "startTime": "2019-08-08T08:00:00Z"
+        },
+        "parameters": {
+            "configuration" : { "convertHighWaterMarkToRowVersion" : true }
+        }
     }
-  }
 ]
