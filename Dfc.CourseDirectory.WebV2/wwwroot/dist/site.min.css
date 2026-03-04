@@ -2620,7 +2620,9 @@
 .error, .govuk-header__logotype {
     margin-right: 5px
 }
-
+.govuk-header__logo .govuk-header__link .govuk-header__logotype {
+    height: 30px;
+}
 .govuk-footer__list-item {
     margin-bottom: 15px
 }
@@ -2792,7 +2794,8 @@
 
 .govuk-header__logo {
     margin-bottom: 10px;
-    padding-right: 50px
+    padding-right: 50px;
+    min-width: 300px;
 }
 
 @media (min-width:48.0625em) {
