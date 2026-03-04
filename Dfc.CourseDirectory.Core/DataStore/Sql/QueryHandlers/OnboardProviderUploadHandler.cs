@@ -70,7 +70,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         ROW_NUMBER() OVER (PARTITION BY ProviderId ORDER BY RowNumber) AS GroupRowNumber
                     FROM Pttcd.ProviderUploadRows
                     WHERE ProviderUploadId = @ProviderUploadId
-                    AND Ukprn not in (Select Ukprn from Pttcd.Providers )
+                    AND Ukprn not in (Select Ukprn from Pttcd.Providers  WHERE Ukprn is not NULL)
                     AND ProviderUploadRowStatus = {(int)UploadRowStatus.Default}
                 )
                 INSERT INTO Pttcd.Providers (

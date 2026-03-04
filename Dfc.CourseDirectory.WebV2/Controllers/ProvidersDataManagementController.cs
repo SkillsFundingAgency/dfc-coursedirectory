@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         [HttpGet("")]
         public IActionResult Index(ProviderUploadType? providerUploadType )
         {
-            return RedirectToAction("ActiveProviders");
+            return View(new Home.ViewModel { ProviderUploadType = providerUploadType });
         }
 
         [HttpPost]
@@ -86,7 +86,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         public async Task<IActionResult> ActiveProviders() =>
            await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("Upload", vm));
 
-        [HttpGet("inactive")]
+        [HttpGet("inactive-report-upload")]
         public async Task<IActionResult> InactiveProviders() =>
             await _mediator.SendAndMapResponse(new Upload.Query(), vm => View("UploadInactive", vm));
 
@@ -116,14 +116,14 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                     success =>success.UploadSucceededResult == UploadSucceededResult.ProcessingCompletedWithErrors ? View ("Error"): (IActionResult) RedirectToAction(actionName: nameof(InProgress), routeValues: new { success.ProviderUploadId})));
         }
 
-        [HttpPost("uploadinactive")]
+        [HttpPost("inactive-report-upload")]
         public async Task<IActionResult> UploadInactive(Upload.Command command)
         {
             var file = Request.Form.Files?.GetFile(nameof(command.File));
 
             if (file != null && !file.FileName.Contains("Inactive_Providers", StringComparison.CurrentCultureIgnoreCase))
             {
-                ModelState.AddModelError(nameof(command.File), "The file name doesn't contain Inactive_Providers");
+                ModelState.AddModelError(nameof(command.File), "The selected file name must include 'inactive_providers'");
                 return View();
 
             }
@@ -139,7 +139,28 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                         ViewBag.MissingHeaders = errors.MissingHeaders;
                         return this.ViewFromErrors(errors);
                     },
-                    success => View()));
+                success => success.UploadSucceededResult == UploadSucceededResult.ProcessingCompletedWithErrors ? View("Error") : (IActionResult)RedirectToAction(actionName: nameof(InactiveInProgress), routeValues: new { success.ProviderUploadId })));
+
         }
+
+        [HttpGet("inactive-providers-in-progress/{providerUploadId}")]
+        public async Task<IActionResult> InactiveInProgress([FromRoute] Guid providerUploadId) => await _mediator.SendAndMapResponse(
+           new ViewModels.DataManagement.Providers.InProgress.Query() { ProviderUploadId = providerUploadId },
+           result => result.Match(
+               notFound => NotFound(),
+               status => status switch
+               {
+                   UploadStatus.Published => (IActionResult)RedirectToAction(actionName: nameof(InactiveResult), routeValues: new { providerUploadId }),
+                   UploadStatus.ProcessedWithErrors => View("Error"),
+                   _ => View(new ViewModels.DataManagement.Providers.InProgress.ViewModel { UploadStatus = status, ProviderUploadId = providerUploadId })
+               }));
+
+        [HttpGet("upload-inactive-providers-summary/{providerUploadId}")]
+        public async Task<IActionResult> InactiveResult([FromRoute] Guid providerUploadId) => await _mediator.SendAndMapResponse(
+            new ViewModels.DataManagement.Providers.Result.Query() { ProviderUploadId = providerUploadId },
+            result => result.Match(
+                notFound => NotFound(),
+                resultSummary => (IActionResult)View(new ViewModels.DataManagement.Providers.Result.ViewModel { ProviderUploadId = providerUploadId, UploadResultSummary = resultSummary })
+                ));
     }
 }

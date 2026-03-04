@@ -16,5 +16,8 @@ namespace Dfc.CourseDirectory.Core.Models
         [Description("Change to CD Provider Status and Type")]
         ProviderStatusAndTypeUpdated = 4,
 
+        [Description("Provider Inactive on PIMS")]
+        ProviderInactiveonPIMS = 5,
+
     }
 }

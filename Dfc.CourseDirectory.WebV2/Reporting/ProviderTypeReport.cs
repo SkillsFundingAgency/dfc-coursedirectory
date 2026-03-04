@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AngleSharp.Common;
 using CsvHelper.Configuration.Attributes;
 using Dfc.CourseDirectory.Core;
+using Dfc.CourseDirectory.Core.DataManagement;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Extensions;
@@ -51,13 +52,13 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
         public string PIMSOrgStatus { get; set; }
 
         [Name("PIMS Org Status Date")]
-        public DateTime? PIMSOrgStatusDate { get; set; }
+        public string PIMSOrgStatusDate { get; set; }
 
         [Name("Update Result")]
         public string UpdateResult { get; set; }
 
         [Name("Load Date")]
-        public DateTime? LoadDate { get; set; }
+        public string LoadDate { get; set; }
     }
 
     public class Handler : IRequestHandler<Query, IAsyncEnumerable<Csv>>
@@ -89,9 +90,9 @@ namespace Dfc.CourseDirectory.WebV2.Reporting.ProviderTypeReport
                         LiveCourseCount = result.LiveCourseCount,
                         LiveTLevelCount = result.LiveTLevelCount,
                         PIMSOrgStatus = result.PIMSOrgStatus,
-                        PIMSOrgStatusDate = result.PIMSOrgStatusDate == DateTime.MinValue ? null : (DateTime?) result.PIMSOrgStatusDate,
+                        PIMSOrgStatusDate = ParsedCsvProviderRow.MapDate(result.PIMSOrgStatusDate), 
                         UpdateResult = result.UploadResult?.GetDescription(),
-                        LoadDate = result.LoadDate == DateTime.MinValue ? null : (DateTime?) result.LoadDate,
+                        LoadDate = ParsedCsvProviderRow.MapDate(result.LoadDate),
 
                     };
                 }

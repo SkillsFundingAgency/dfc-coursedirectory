@@ -17,18 +17,18 @@
         <h1 class="govuk-heading-xl">Upload inactive providers</h1>
     </div>
     <div class="govuk-grid-column-two-thirds">
-        <form asp-action="Upload" enctype="multipart/form-data">
+        <form asp-action="UploadInactive" enctype="multipart/form-data">
             
-            <govuk-file-upload asp-for="File" input-accept=".csv">
+            <govuk-file-upload javascript-enhancements="true" asp-for="File" input-accept=".csv">
                 <govuk-file-upload-label class="govuk-label--m">
                     Upload a CSV file
                 </govuk-file-upload-label>
-                <govuk-file-upload-hint> Your CSV file must be smaller than 8MB, contain 6 columns and have 'inactive_providers' within the name </govuk-file-upload-hint>
+                <govuk-file-upload-hint> Your CSV file must be smaller than 8MB, match the format of an inactive report and have 'inactive_providers' within the name. </govuk-file-upload-hint>
 
             </govuk-file-upload>
             <div class="govuk-button-group">
                 <govuk-button type="submit" prevent-double-click="true">Continue</govuk-button>
-                <a asp-action="index" class="govuk-link cd-cancel-link">Cancel</a>
+                <a asp-controller="HelpdeskDashboard" asp-action="Dashboard" class="govuk-link cd-cancel-link">Cancel</a>
             </div>
         </form>
 
