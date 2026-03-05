@@ -42,17 +42,17 @@
                 <a href="https://www.gov.uk/government/organisations/department-for-education" class="govuk-header__link govuk-header__link--homepage">
                     <img src="~/images/dfe_white.png" alt="Department for Education" class="govuk-header__logotype">
                 </a>
-            </div>
-            <div class="govuk-header__content">
-
-                <a href="/" class="govuk-header__link govuk-header__service-name">
-                    Publish to the course directory
-                </a>
-                @RenderSection("TopNav", required: false)
-            </div>
+            </div>            
         </div>
     </header>
-
+    <div class="govuk-service-navigation">
+        <div class="govuk-width-container">
+            <a href="/" class="govuk-header__service-name">
+                Publish to the course directory
+            </a>
+            @RenderSection("TopNav", required: false)
+        </div>   
+    </div>
     <div class="govuk-width-container">
         <govuk-phase-banner>
             <govuk-phase-banner-tag>Beta</govuk-phase-banner-tag>

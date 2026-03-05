@@ -12,36 +12,32 @@
 }
 
 <header class="govuk-header " data-module="header">
-
     <div class="govuk-header__container cd-fullwidth-container cd-header">
         <div class="govuk-header__logo">
             <a href="https://www.gov.uk/government/organisations/department-for-education" class="govuk-header__link govuk-header__link--homepage">
                 <img src="~/images/dfe_white.png" alt="Department for Education" class="govuk-header__logotype">
             </a>
         </div>
-        <div class="govuk-header__content cd-header--content">
-            <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                Publish to the course directory
-            </a>
-
-            @if (currentUser != null)
-            {
-                @if (currentUser.IsProvider)
-                {
-                    <vc:provider-top-nav provider-info="@providerContext.ProviderInfo" />
-                }
-                else
-                {
-                    <vc:admin-top-nav />
-                }
-            }
-
-        </div>
-
     </div>
-
 </header>
-
+<div class="govuk-service-navigation">
+    <div class="govuk-width-container">
+        <a href="/" class="govuk-header__service-name">
+            Publish to the course directory
+        </a>
+        @if (currentUser != null)
+        {
+            @if (currentUser.IsProvider)
+            {
+                <vc:provider-top-nav provider-info="@providerContext.ProviderInfo" />
+            }
+            else
+            {
+                <vc:admin-top-nav />
+            }
+        }
+    </div>
+</div>
 <govuk-phase-banner class="cd-fullwidth-container govuk-!-margin-bottom-6">
     <govuk-phase-banner-tag>Beta</govuk-phase-banner-tag>
     This is a new service. Help us improve it and <a href="https://www.smartsurvey.co.uk/s/SHIM0G/" target="_blank" rel="noreferrer" class="govuk-link">give your feedback (opens in new tab)</a>.
