@@ -6973,3 +6973,7 @@ select:disabled {
             .pagination .pagination__item.pagination__item--current:hover {
                 text-decoration: underline
             }
+.govuk-header__service-name {
+    text-decoration: none;
+    color: black;
+}
