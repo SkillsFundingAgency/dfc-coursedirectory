@@ -1,4 +1,5 @@
 mode: ContinuousDelivery
+semantic-version-format: Loose
 branches:
   master:
     regex: ^master$|^main$
