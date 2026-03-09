@@ -3,7 +3,7 @@ branches:
   master:
     regex: ^master$|^main$
     mode: ContinuousDelivery
-    tag: ''
+    label: ''
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
@@ -12,7 +12,7 @@ branches:
   release:
     regex: ^releases?[/-]
     mode: ContinuousDelivery
-    tag: rc
+    label: rc
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
@@ -22,7 +22,7 @@ branches:
   feature:
     regex: ^features?[/-]
     mode: ContinuousDelivery
-    tag: useBranchName
+    label: useBranchName
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
@@ -31,7 +31,7 @@ branches:
   pull-request:
     regex: ^(pull|pull\-requests|pr)[/-]
     mode: ContinuousDelivery
-    tag: PullRequest
+    label: PullRequest
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag-number-pattern: '[/-](?<number>\d+)[-/]'
@@ -41,7 +41,7 @@ branches:
   hotfix:
     regex: ^hotfix(es)?[/-]
     mode: ContinuousDelivery
-    tag: beta
+    label: beta
     increment: Patch
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
@@ -50,7 +50,7 @@ branches:
   support:
     regex: ^support[/-]
     mode: ContinuousDelivery
-    tag: ''
+    label: ''
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
@@ -59,7 +59,7 @@ branches:
   develop:
     regex: ^dev(elop)?(ment)?$
     mode: ContinuousDeployment
-    tag: unstable
+    label: unstable
     increment: Minor
     prevent-increment-of-merged-branch-version: false
     track-merge-target: true
