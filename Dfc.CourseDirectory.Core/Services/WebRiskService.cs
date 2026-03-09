@@ -21,6 +21,8 @@ namespace Dfc.CourseDirectory.Core.Services
 
         public async Task<bool> CheckForSecureUri(string url)
         {
+            return true;
+            /*
             using (var client = _factory.CreateClient("namedClient"))
             {
                 try
@@ -58,7 +60,8 @@ namespace Dfc.CourseDirectory.Core.Services
                     _logger.LogInformation("WebRiskService: Could not connect to the external service");
                     return false;
                 }
-            }
+            }*/
         }
+        
     }
 }

@@ -71,6 +71,41 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
         [Authorize]
         [HttpGet]
+        public async Task<IActionResult> AddCourseDetails(AddCourseRequestModel model)
+        {
+            var learnAimRef = "";
+            var learnAimRefTitle = "";
+            var awardOrgCode = "";
+            var notionalNVQLevelv2 = "";
+
+            bool nonLarsCourse = IsCourseNonLars();
+            if (nonLarsCourse)
+            {
+                learnAimRef = Session.GetString(SessionLearnAimRef);
+                learnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);
+                awardOrgCode = Session.GetString(SessionAwardOrgCode);
+                notionalNVQLevelv2 = Session.GetString(SessionNotionalNvqLevelV2);
+            }
+
+            AddCourseViewModel vm = await GetCourseViewModel(learnAimRef, notionalNVQLevelv2, awardOrgCode, learnAimRefTitle, model.CourseId, nonLarsCourse);
+
+            return View(vm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult AddCourse(AddCourseRequestModel model)
+        {
+            // to AddCourseRun or Summary
+
+            Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
+            Session.SetObject(SessionAddCourseSection2, model);
+
+            return RedirectToAction("AddCourseDetails");
+        }
+
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> AddCourse(string learnAimRef, string notionalNVQLevelv2, string awardOrgCode, string learnAimRefTitle, string learnAimRefTypeDesc, Guid? courseId)
         {
             RemoveSessionVariables();
@@ -91,28 +126,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 Session.SetString(SessionLearnAimRefTypeDesc, learnAimRefTypeDesc ?? string.Empty);
                 Session.SetString(SessionNonLarsCourse, "false");
             }
-
-            AddCourseViewModel vm = await GetCourseViewModel(learnAimRef, notionalNVQLevelv2, awardOrgCode, learnAimRefTitle, courseId, nonLarsCourse);
-
-            return View(vm);
-        }
-
-        [Authorize]
-        [HttpPost]
-        public IActionResult AddCourse(AddCourseSection1RequestModel model)
-        {
-            // to AddCourseRun or Summary
-
-            Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
-            Session.SetObject(SessionAddCourseSection1, model);
-
-            return RedirectToAction("AddCourseDetails");
-        }
-
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> AddCourseDetails(AddCourseSection1RequestModel model)
-        {
             var addCourseSection2Session = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
 
             if (Session.GetInt32("UKPRN") == null)
@@ -121,7 +134,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
             }
 
             int UKPRN = Session.GetInt32("UKPRN").Value;
-            bool nonLarsCourse = IsCourseNonLars();
 
             var viewModel = new AddCourseDetailsViewModel
             {
@@ -350,11 +362,11 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> AddCourseRun(AddCourseRequestModel model)
+        public async Task<IActionResult> AddCourseRun(AddCourseSection1RequestModel addCourse)
         {
             // AddCourseRun - going to Summary
-            Session.SetObject(SessionAddCourseSection2, model);
-            var addCourse = Session.GetObject<AddCourseSection1RequestModel>(SessionAddCourseSection1);
+            Session.SetObject(SessionAddCourseSection1, addCourse);
+            var model = Session.GetObject<AddCourseRequestModel>(SessionAddCourseSection2);
             var availableVenues = Session.GetObject<SelectVenueModel>(SessionVenues);
             var availableRegions = Session.GetObject<SelectRegionModel>(SessionRegions);
 
