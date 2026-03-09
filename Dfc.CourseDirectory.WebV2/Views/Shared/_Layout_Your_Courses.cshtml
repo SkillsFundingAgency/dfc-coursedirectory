@@ -43,21 +43,7 @@
         </main>
     </div>
       @Html.GovUkFrontendScriptImports()
-    <script type="module">
-        $(".govuk-header__navigation-list").hide();
-        $(".govuk-header__menu-button").on("click",
-            function () {
-                if ($(".govuk-header__navigation-list").is(":visible")) {
-                    $("#menu").removeClass("govuk-header__menu-button--open");
-                    $(".govuk-header__navigation-list").hide();
-                } else {
-                    $("#menu").addClass("govuk-header__menu-button--open");
-                    $(".govuk-header__navigation-list").show();
-                }
-
-
-            });
-    </script>
+   
     <partial name="_GovukFooterPartial" />
 
     @RenderSection("Scripts", required: false)
