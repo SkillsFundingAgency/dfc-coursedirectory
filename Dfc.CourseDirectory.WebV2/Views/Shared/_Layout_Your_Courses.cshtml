@@ -23,7 +23,7 @@
     @Html.GovUkFrontendStyleImports()
 </head>
 
-<body class="govuk-template__body app-body-class">
+<body class="govuk-template__body govuk-body">
     @Html.GovUkFrontendJsEnabledScript()
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
@@ -31,7 +31,7 @@
 
     <partial name="_GovukHeaderPartial_Your_Courses" />
 
-    <div class=" cd-fullwidth-container">
+    <div class="govuk-width-container">
         @if (layoutModel.BackLink)
         {
             <a href="@layoutModel.BackLinkHref" class="govuk-back-link">

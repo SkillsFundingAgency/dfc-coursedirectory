@@ -11,8 +11,8 @@
     var currentUser = CurrentUserProvider.GetCurrentUser();
 }
 
-<header class="govuk-header " data-module="header">
-    <div class="govuk-header__container cd-fullwidth-container cd-header">
+<header class="govuk-header" data-module="header">
+    <div class="govuk-header__container govuk-width-container">
         <div class="govuk-header__logo">
             <a href="https://www.gov.uk/government/organisations/department-for-education" class="govuk-header__link govuk-header__link--homepage">
                 <img src="~/images/dfe_white.png" alt="Department for Education" class="govuk-header__logotype">
@@ -38,14 +38,15 @@
         }
     </div>
 </div>
-<govuk-phase-banner class="cd-fullwidth-container govuk-!-margin-bottom-6">
+
+<govuk-phase-banner class="govuk-width-container govuk-!-margin-bottom-6">
     <govuk-phase-banner-tag>Beta</govuk-phase-banner-tag>
     This is a new service. Help us improve it and <a href="https://www.smartsurvey.co.uk/s/SHIM0G/" target="_blank" rel="noreferrer" class="govuk-link">give your feedback (opens in new tab)</a>.
 </govuk-phase-banner>
 
 @if (currentUser != null && !currentUser.IsProvider && providerContext != null)
 {
-    <div class="govuk-body govuk-!-margin-bottom-6 cd-fullwidth-container">
+    <div class="govuk-body govuk-!-margin-bottom-6 govuk-width-container">
         <vc:admin-provider-context-nav provider-info="@providerContext.ProviderInfo" />
     </div>
 }
