@@ -65,7 +65,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(nameof(Description))
+                    success => RedirectToAction(nameof(Details))
                         .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }
@@ -92,7 +92,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(fromPublishPage == true ? nameof(CheckAndPublish) : nameof(Details))
+                    success => RedirectToAction(nameof(CheckAndPublish))
                         .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }
@@ -126,7 +126,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
                 command,
                 response => response.Match<IActionResult>(
                     errors => this.ViewFromErrors(errors),
-                    success => RedirectToAction(nameof(CheckAndPublish))
+                    success => RedirectToAction(nameof(Description))
                         .WithProviderContext(_providerContext)
                         .WithJourneyInstanceUniqueKey(_journeyInstance)));
         }

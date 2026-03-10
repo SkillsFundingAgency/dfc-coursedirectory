@@ -93,7 +93,8 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.TLevels.AddTLevel.Description
         {
             _journeyInstance.ThrowIfCompleted();
 
-            if (!_journeyInstance.State.CompletedStages.HasFlag(AddTLevelJourneyCompletedStages.SelectTLevel))
+            if (!_journeyInstance.State.CompletedStages.HasFlags(AddTLevelJourneyCompletedStages.SelectTLevel,
+                AddTLevelJourneyCompletedStages.Details))
             {
                 throw new InvalidStateException();
             }
