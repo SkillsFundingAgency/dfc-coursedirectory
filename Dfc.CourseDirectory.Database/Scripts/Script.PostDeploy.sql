@@ -51,3 +51,34 @@ WHERE
 ---------------------------------------------------------------------------------------------------------------------------------
 --AD-254683: Fix incorrectly archived courses
 EXEC [Pttcd].[UpdateIncorrectlyArchivedCourses]
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+-- BUG 262683 : Fix broken course uploads which are stuck in 'NotStarted' status for more than 24 hours by setting their status to 'Failed'.
+-- this will fix the uploads which are stuck on Created state (0) for more than 24 hours by setting their status to Abandoned (5)
+BEGIN TRANSACTION
+BEGIN TRY 
+	CREATE TABLE #BROKEN_UPLOADS ([CourseUploadId] UNIQUEIDENTIFIER,
+							  [ProviderId] UNIQUEIDENTIFIER,
+							  [UploadStatus] TINYINT,
+							  [CreatedOn] DATETIME);
+
+	INSERT INTO #BROKEN_UPLOADS 
+	SELECT [CourseUploadId]
+		  ,[ProviderId]
+		  ,[UploadStatus]
+		  ,[CreatedOn]
+		  ,[IsNonLars]
+	  FROM [Pttcd].[CourseUploads]
+	  WHERE UploadStatus = 0 AND CreatedOn < DATEADD(day,-1,GETDATE())
+
+	UPDATE CU
+	  SET CU.UploadStatus = 5 
+	  FROM [Pttcd].[CourseUploads] CU 
+	  JOIN #BROKEN_UPLOADS BU ON CU.CourseUploadId = BU.CourseUploadId AND CU.ProviderId = BU.ProviderId
+
+	COMMIT;
+END TRY
+	
+BEGIN CATCH
+	ROLLBACK;
+END CATCH
