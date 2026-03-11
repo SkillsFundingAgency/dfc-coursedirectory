@@ -92,7 +92,8 @@ BEGIN TRY
 	  WHERE UploadStatus = 0 AND CreatedOn < DATEADD(day,-1,GETDATE())
 
 	UPDATE CU
-	  SET CU.UploadStatus = 5 
+	  SET CU.UploadStatus = 5 ,
+		CU.AbandonedOn = GETDATE()
 	  FROM [Pttcd].[CourseUploads] CU 
 	  JOIN #BROKEN_UPLOADS BU ON CU.CourseUploadId = BU.CourseUploadId AND CU.ProviderId = BU.ProviderId
 
