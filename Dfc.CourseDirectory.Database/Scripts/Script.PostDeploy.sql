@@ -57,6 +57,7 @@ EXEC [Pttcd].[UpdateIncorrectlyArchivedCourses]
 -- this will fix the uploads which are stuck on Created state (0) for more than 24 hours by setting their status to Abandoned (5)
 BEGIN TRANSACTION
 BEGIN TRY 
+	
 	CREATE TABLE #BROKEN_UPLOADS ([CourseUploadId] UNIQUEIDENTIFIER,
 							  [ProviderId] UNIQUEIDENTIFIER,
 							  [UploadStatus] TINYINT,
@@ -67,7 +68,6 @@ BEGIN TRY
 		  ,[ProviderId]
 		  ,[UploadStatus]
 		  ,[CreatedOn]
-		  ,[IsNonLars]
 	  FROM [Pttcd].[CourseUploads]
 	  WHERE UploadStatus = 0 AND CreatedOn < DATEADD(day,-1,GETDATE())
 
@@ -76,6 +76,7 @@ BEGIN TRY
 	  FROM [Pttcd].[CourseUploads] CU 
 	  JOIN #BROKEN_UPLOADS BU ON CU.CourseUploadId = BU.CourseUploadId AND CU.ProviderId = BU.ProviderId
 
+	DROP TABLE #BROKEN_UPLOADS;
 	COMMIT;
 END TRY
 	
