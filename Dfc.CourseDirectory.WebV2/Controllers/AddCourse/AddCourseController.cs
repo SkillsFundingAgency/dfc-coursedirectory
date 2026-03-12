@@ -93,6 +93,29 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         }
 
         [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> AddCourseDetailsBlended(AddCourseRequestModel model)
+        {
+            var learnAimRef = "";
+            var learnAimRefTitle = "";
+            var awardOrgCode = "";
+            var notionalNVQLevelv2 = "";
+
+            bool nonLarsCourse = IsCourseNonLars();
+            if (nonLarsCourse)
+            {
+                learnAimRef = Session.GetString(SessionLearnAimRef);
+                learnAimRefTitle = Session.GetString(SessionLearnAimRefTitle);
+                awardOrgCode = Session.GetString(SessionAwardOrgCode);
+                notionalNVQLevelv2 = Session.GetString(SessionNotionalNvqLevelV2);
+            }
+
+            AddCourseViewModel vm = await GetCourseViewModel(learnAimRef, notionalNVQLevelv2, awardOrgCode, learnAimRefTitle, model.CourseId, nonLarsCourse);
+
+            return View(vm);
+        }
+
+        [Authorize]
         [HttpPost]
         public IActionResult AddCourse(AddCourseRequestModel model)
         {
@@ -100,6 +123,11 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
 
             Session.SetObject(SessionLastAddCoursePage, AddCoursePage.AddCourse);
             Session.SetObject(SessionAddCourseSection2, model);
+
+            if (model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
+            {
+                return RedirectToAction("AddCourseDetailsBlended");
+            }
 
             return RedirectToAction("AddCourseDetails");
         }
