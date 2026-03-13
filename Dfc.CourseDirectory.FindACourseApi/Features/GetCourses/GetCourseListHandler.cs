@@ -44,6 +44,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
                 pageSize = request.PageSize,
                 Courses = listOfCourses.Courses.Select(c => new CourseListViewModel()
                 {
+                    CourseId = c.CourseId,
+                    Id = c.Id,
                     CourseName = c.CourseName,
                     CourseType = c.CourseType,
                     SectorDescription = c.SectorDescription,

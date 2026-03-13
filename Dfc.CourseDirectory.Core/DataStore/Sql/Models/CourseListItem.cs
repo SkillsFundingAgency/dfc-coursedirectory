@@ -5,8 +5,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
 {
     public class CourseListItem
     {
+        public Guid Id { get; set; }
         public Guid CourseId { get; set; }
-        public Guid CourseRunId { get; set; }
         public string CourseName { get; set; }
         public string CourseType { get; set; }
         public string SectorDescription { get; set; }

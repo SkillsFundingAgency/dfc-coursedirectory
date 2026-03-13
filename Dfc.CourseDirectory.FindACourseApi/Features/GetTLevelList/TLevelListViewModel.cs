@@ -3,6 +3,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList
 {
     public class TLevelListViewModel
     {
+        public Guid TLevelId { get; set; }
         public string CourseName { get; set; }
         public DateTime? StartDate { get; set; }
         public string CourseWebsite { get; set; }

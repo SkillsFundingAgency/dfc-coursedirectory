@@ -3,6 +3,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
 {
     public class CourseListViewModel
     {
+        public Guid Id { get; set; }
+        public Guid CourseId { get; set; }
         public string CourseName { get; set; }
         public string CourseType { get; set; }
         public string SectorDescription { get; set; }
