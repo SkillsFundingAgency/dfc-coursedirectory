@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public string SectorDescription { get; set; }
         public string SectorCode { get; set; }
         public string SectorSubjectArea { get; set; }
-        public string? EducationLevel { get; set; }
+        public int? EducationLevel { get; set; }
         public string AwardingBody { get; set; }
         public int? DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
@@ -48,7 +48,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
         public decimal? Longitude { get; set; }
         public string LearnAimRef { get; set; }
         public string LearnAimRefTitle { get; set; }
-        public int? QualificationLevel { get; set; }
+        public string QualificationLevel { get; set; }
         public string AwardingOrganisation { get; set; }
     }
     public class ListOfCourses

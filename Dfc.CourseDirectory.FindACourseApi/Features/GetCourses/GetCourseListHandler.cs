@@ -77,11 +77,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
             };
             return response;
         }
-        private static EnumObj CovertToEnumObj<T>(object value)
+        private static EnumObj CovertToEnumObj<T>(int? value)
         {
             Type enumType = typeof(T);
             var description = string.Empty;
-            if (Enum.IsDefined(enumType, value))
+            if (value.HasValue && Enum.IsDefined(enumType, value))
                 description = Enum.GetName(enumType, value);
             return new EnumObj() { Value = value, Description = description };
         }

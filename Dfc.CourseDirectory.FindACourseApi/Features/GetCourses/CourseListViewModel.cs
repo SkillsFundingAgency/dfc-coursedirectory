@@ -47,7 +47,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
     }
     public class EnumObj
     {
-        public object Value { get; set; }
+        public int? Value { get; set; }
         public string Description { get; set; }
     }
 }
