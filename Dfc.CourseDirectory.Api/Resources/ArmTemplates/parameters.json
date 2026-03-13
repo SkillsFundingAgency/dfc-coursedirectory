@@ -22,9 +22,6 @@
     },
     "keyVaultName": {
       "value": "__sharedKeyVaultName__"
-    },
-    "azureSearchIndexName": {
-      "value": "__azureSearchIndexName__"
     }
   }
 }

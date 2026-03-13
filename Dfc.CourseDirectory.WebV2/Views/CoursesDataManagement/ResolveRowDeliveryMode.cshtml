@@ -4,11 +4,8 @@
 }
 
 <form asp-action="ResolveRowDeliveryMode" asp-all-route-data="@RouteValuesHelper.FromQueryString()">
-    <govuk-error-summary>
-        <govuk-error-summary-item asp-for="DeliveryMode" />
-    </govuk-error-summary>
 
-    <govuk-radios asp-for="DeliveryMode">
+    <govuk-radios for="DeliveryMode">
         <govuk-radios-fieldset>
             <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
                 How will the course be delivered?

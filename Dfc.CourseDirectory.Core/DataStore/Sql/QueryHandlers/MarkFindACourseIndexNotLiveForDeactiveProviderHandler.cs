@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using OneOf.Types;
 using System.Threading.Tasks;

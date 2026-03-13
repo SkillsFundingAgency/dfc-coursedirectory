@@ -5,10 +5,6 @@
     var deliveryModesDescription = Model.DeliveryModes.Select(dm => dm.ToDescription().ToLower()).ToCommaSeparatedString();
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="Confirm" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">Delete unpublished course</h1>
@@ -57,7 +53,7 @@
 <form asp-action="DeleteRowGroup" asp-route-rowNumber="@Model.RowNumber" asp-all-route-data="@ProviderContext.RouteValues">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+            <govuk-checkboxes class="govuk-checkboxes--small" for="Confirm">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m" id="areyousure">
                         <h2 class="govuk-fieldset__heading">

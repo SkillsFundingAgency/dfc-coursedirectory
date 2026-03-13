@@ -10,7 +10,7 @@
 
             <p class="govuk-body">Select a T Level qualification to add to Publish to the course directory.</p>
 
-            <govuk-radios asp-for="SelectedTLevelDefinitionId">
+            <govuk-radios for="SelectedTLevelDefinitionId">
                 @foreach (var tLevel in Model.TLevels)
                 {
                     <govuk-radios-item value="@tLevel.TLevelDefinitionId" input-data-testid="tlevel-@(tLevel.TLevelDefinitionId)">
