@@ -11,7 +11,17 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<ListOfCourses> Execute(SqlTransaction transaction, GetCourseList query)
         {
-            var sql = $@"SELECT
+            var sql = $@"SELECT 
+                            count(cr.CourseRunId) AS CourseCount
+                        FROM Pttcd.CourseRuns cr
+                        LEFT JOIN Pttcd.Courses c on cr.CourseId = c.CourseId
+                        LEFT JOIN Pttcd.Providers p on c.ProviderId = p.ProviderId
+                        LEFT JOIN Pttcd.ProviderContacts pc on p.ProviderId = pc.ProviderId
+                        LEFT JOIN PTTCD.CourseRunSubRegions crsr on cr.CourseRunId = crsr.CourseRunId
+                        LEFT JOIN pttcd.Regions sr on crsr.RegionId = sr.RegionId
+                        WHERE cr.CourseRunStatus = 1 and pc.ContactType = 'P';
+
+                        SELECT
                             cr.CourseRunId AS Id,
                             cr.CourseId,
                             cr.CourseName,
@@ -79,21 +89,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.PageNumber,
                 query.PageSize
             };
+ 
+            var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
-            var courses = (await transaction.Connection.QueryAsync<CourseListItem>(sql, paramz, transaction)).ToList();
-
-
-            var countSql = @"SELECT 
-                            count(cr.CourseRunId) AS CourseCount
-                        FROM Pttcd.CourseRuns cr
-                        LEFT JOIN Pttcd.Courses c on cr.CourseId = c.CourseId
-                        LEFT JOIN Pttcd.Providers p on c.ProviderId = p.ProviderId
-                        LEFT JOIN Pttcd.ProviderContacts pc on p.ProviderId = pc.ProviderId
-                        LEFT JOIN PTTCD.CourseRunSubRegions crsr on cr.CourseRunId = crsr.CourseRunId
-                        LEFT JOIN pttcd.Regions sr on crsr.RegionId = sr.RegionId
-                        WHERE cr.CourseRunStatus = 1 and pc.ContactType = 'P';";
-
-            var courseCount = (await transaction.Connection.QueryFirstOrDefaultAsync<int>(countSql, transaction));
+            var courseCount = (await queryReader.ReadFirstOrDefaultAsync<int>());
+            var courses = (await queryReader.ReadAsync<CourseListItem>()).ToList();
 
             var listOfCourses = new ListOfCourses()
             {

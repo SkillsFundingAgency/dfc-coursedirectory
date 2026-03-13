@@ -11,7 +11,14 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
     {
         public async Task<ListOfTLevels> Execute(SqlTransaction transaction, GetTLevelsList query)
         {
-            var sql = $@"SELECT
+            var sql = $@"SELECT count(*) as TLevelsCount
+                            FROM Pttcd.TLevels t
+                            JOIN Pttcd.Providers p ON t.ProviderId = p.ProviderId
+                            Join Pttcd.ProviderContacts pc on p.[ProviderId] = pc.[ProviderId]
+                            Join Pttcd.TLevelLocations tl on t.TLevelId = tl.TLevelId
+                            where t.TLevelStatus = 1 and pc.ContactType = 'P';
+
+                        SELECT
                             t.TLevelId,
                             d.Name as CourseName,
                             t.StartDate, 
@@ -52,18 +59,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.PageSize
             };
 
-            var tLevels = (await transaction.Connection.QueryAsync<TLevelListItem>(sql, paramz, transaction)).ToList();
+            var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
-
-            var countSql = @"SELECT count(*) as TLevelsCount
-                            FROM Pttcd.TLevels t
-                            JOIN Pttcd.Providers p ON t.ProviderId = p.ProviderId
-                            Join Pttcd.ProviderContacts pc on p.[ProviderId] = pc.[ProviderId]
-                            Join Pttcd.TLevelLocations tl on t.TLevelId = tl.TLevelId
-                            where t.TLevelStatus = 1 and pc.ContactType = 'P';";
-
-            var tLevelCount = (await transaction.Connection.QueryFirstOrDefaultAsync<int>(countSql, transaction));
-
+            var tLevelCount = (await queryReader.ReadFirstOrDefaultAsync<int>());
+            var tLevels = (await queryReader.ReadAsync<TLevelListItem>()).ToList();
+            
             var listOfCourses = new ListOfTLevels()
             {
                 TLevelsCount = tLevelCount,
