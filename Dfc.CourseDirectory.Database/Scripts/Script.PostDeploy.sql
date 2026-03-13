@@ -51,3 +51,24 @@ WHERE
 ---------------------------------------------------------------------------------------------------------------------------------
 --AD-254683: Fix incorrectly archived courses
 EXEC [Pttcd].[UpdateIncorrectlyArchivedCourses]
+
+--- BUG 254770 : APPLY A FIX TO SET TLevelLocationStatus to Deleted for all TLevelLocations where the parent TLevel is marked as Deleted. 
+--- This is required to fix an issue where some TLevelLocations were not marked as Deleted when their parent TLevel was marked as Deleted.
+
+BEGIN TRANSACTION
+BEGIN TRY
+	UPDATE tll SET
+    tll.TLevelLocationStatus = 2
+	FROM        Pttcd.TLevelLocations tll
+	INNER JOIN  Pttcd.TLevels t ON tll.TLevelId = t.TLevelId
+	INNER JOIN  Pttcd.Venues v ON tll.VenueId = v.VenueId
+	WHERE       t.TLevelStatus = 2
+	AND         TLevelLocationStatus = 1
+
+	COMMIT;
+END TRY
+
+BEGIN CATCH
+	ROLLBACK;
+END CATCH
+
