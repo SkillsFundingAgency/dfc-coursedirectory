@@ -18,6 +18,7 @@ using Dfc.CourseDirectory.Services.CourseService;
 using Dfc.CourseDirectory.WebV2.Configuration;
 using Dfc.CourseDirectory.WebV2.Helpers;
 using Dfc.CourseDirectory.WebV2.Middleware;
+using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -231,6 +232,7 @@ namespace Dfc.CourseDirectory.WebV2
 
             app.UseCommitSqlTransaction();
             app.UseHttpsRedirection();
+            app.UseGovUkFrontend();
             app.UseStaticFiles();
             app.UseSession();
 

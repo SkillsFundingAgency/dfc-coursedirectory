@@ -365,3 +365,5 @@ Dfc.CourseDirectory.WebV2/wwwroot/lib/microsoft-signalr/signalr.min.js
 /Dfc.CourseDirectory.WebV2/wwwroot/dist/pttcd.min.js
 /Dfc.CourseDirectory.WebV2/wwwroot/lib/jquery-validation/additional-methods.min.js
 /Dfc.CourseDirectory.WebV2/wwwroot/lib/jquery-validation/jquery.validate.min.js
+/.github/copilot-instructions.md
+/Dfc.CourseDirectory.Testing/appsettings.Testing.json

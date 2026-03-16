@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
-using JustEat.HttpClientInterception;
 using Xunit;
 
 namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
@@ -12,27 +13,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task SearchByPostcode_ValidRequest_ReturnsParsedResults()
         {
             // Arrange
-            var options = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("services.postcodeanywhere.co.uk")
-                .ForPath("PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws")
-                .IgnoringQuery()
-                .Responds()
-                .WithJsonContent(new
-                {
-                    Items = new[]
+            var payload = new
+            {
+                Items = new[]
                     {
                         new { Id = "5702836.00", StreetAddress = "2 Seagrave Road", Place = "Coventry" },
                         new { Id = "5702847.00", StreetAddress = "4 Seagrave Road", Place = "Coventry" },
                         new { Id = "5702859.00", StreetAddress = "6 Seagrave Road", Place = "Coventry" },
                     }
-                })
-                .RegisterWith(options);
+            };
 
-            var httpClient = options.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://services.postcodeanywhere.co.uk"),
+                
+            };
 
             var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
@@ -59,18 +55,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task SearchByPostcode_ErrorResponse_ThrowsLoqateErrorException()
         {
             // Arrange
-            var options = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("services.postcodeanywhere.co.uk")
-                .ForPath("PostcodeAnywhere/Interactive/FindByPostcode/v1.00/json3.ws")
-                .IgnoringQuery()
-                .Responds()
-                .WithJsonContent(new
-                {
-                    Items = new[]
+            var payload = new
+            {
+                Items = new[]
                     {
                         new
                         {
@@ -80,10 +67,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                             Resolution = "Error resolution"
                         }
                     }
-                })
-                .RegisterWith(options);
+            };
 
-            var httpClient = options.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://services.postcodeanywhere.co.uk")
+            };
 
             var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
@@ -99,18 +89,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task GetById_ValidRequest_ReturnsParsedResult()
         {
             // Arrange
-            var options = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("services.postcodeanywhere.co.uk")
-                .ForPath("PostcodeAnywhere/Interactive/RetrieveById/v1.30/json3.ws")
-                .IgnoringQuery()
-                .Responds()
-                .WithJsonContent(new
-                {
-                    Items = new[]
+            var payload = new
+            {
+                Items = new[]
                     {
                         new
                         {
@@ -146,10 +127,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                             CountryISO3 = "GBR"
                         }
                     }
-                })
-                .RegisterWith(options);
+            };
 
-            var httpClient = options.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://services.postcodeanywhere.co.uk")
+            };
 
             var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
@@ -172,18 +156,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task GetById_ItemDoesNotExist_ReturnsNull()
         {
             // Arrange
-            var options = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("services.postcodeanywhere.co.uk")
-                .ForPath("PostcodeAnywhere/Interactive/RetrieveById/v1.30/json3.ws")
-                .IgnoringQuery()
-                .Responds()
-                .WithJsonContent(new
-                {
-                    Items = new[]
+            var payload = new
+            {
+                Items = new[]
                     {
                         new
                         {
@@ -193,11 +168,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                             Resolution = "The Id parameter should be an Id from a Find method. It may contain unusual formatting characters, all of which must be presented."
                         }
                     }
-                })
-                .RegisterWith(options);
+            };
 
-            var httpClient = options.CreateHttpClient();
-
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://services.postcodeanywhere.co.uk")
+            };
+          
             var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 
             // Act
@@ -211,18 +189,9 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task GetById_ErrorResponse_ThrowsLoqateErrorException()
         {
             // Arrange
-            var options = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("services.postcodeanywhere.co.uk")
-                .ForPath("PostcodeAnywhere/Interactive/RetrieveById/v1.30/json3.ws")
-                .IgnoringQuery()
-                .Responds()
-                .WithJsonContent(new
-                {
-                    Items = new[]
+            var payload = new
+            {
+                Items = new[]
                     {
                         new
                         {
@@ -232,10 +201,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                             Resolution = "Error resolution"
                         }
                     }
-                })
-                .RegisterWith(options);
+            };
 
-            var httpClient = options.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://services.postcodeanywhere.co.uk")
+            };
 
             var service = new LoqateAddressSearchService(httpClient, new Options() { Key = "key" });
 

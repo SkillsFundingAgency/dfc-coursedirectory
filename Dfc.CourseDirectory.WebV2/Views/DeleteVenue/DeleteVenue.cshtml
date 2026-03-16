@@ -18,12 +18,6 @@
     }
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="AffectedCourses" data-testId="affected-courses-error-message" />
-    <govuk-error-summary-item asp-for="AffectedTLevels" data-testId="affected-tlevels-error-message" />
-    <govuk-error-summary-item asp-for="Confirm" data-testId="confirm-error-message" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="DeleteVenue" asp-all-route-data="@ProviderContext.RouteValues">
@@ -119,7 +113,7 @@
             }
             else
             {
-                <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+                <govuk-checkboxes class="govuk-checkboxes--small" for="Confirm">
                     <govuk-checkboxes-fieldset>
                         <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
                             <h2 class="govuk-fieldset__heading">Are you sure?</h2>

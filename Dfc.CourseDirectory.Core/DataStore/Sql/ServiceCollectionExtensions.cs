@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Dfc.CourseDirectory.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 

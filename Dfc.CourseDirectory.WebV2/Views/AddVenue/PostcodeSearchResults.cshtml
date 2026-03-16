@@ -19,7 +19,7 @@
                 </a>
             </p>
 
-            <govuk-select asp-for="AddressId">
+            <govuk-select for="AddressId">
                 <govuk-select-label class="govuk-label--m">Select an address</govuk-select-label>
                 <govuk-select-item value="">@Model.Results.Count address@(Model.Results.Count != 1 ? "es" : "") found</govuk-select-item>
                 @foreach (var result in Model.Results)

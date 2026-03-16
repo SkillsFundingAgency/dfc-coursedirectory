@@ -43,7 +43,7 @@
       "metadata": {
         "description": "Name of the key vault containing secrets"
       }
-    }
+    }    
   },
   "variables": {
     "webAppName": "[concat(parameters('webAppPrefix'),'-as',parameters('webAppSuffix'))]",

@@ -51,4 +51,3 @@ WHERE
 ---------------------------------------------------------------------------------------------------------------------------------
 --AD-254683: Fix incorrectly archived courses
 EXEC [Pttcd].[UpdateIncorrectlyArchivedCourses]
-
