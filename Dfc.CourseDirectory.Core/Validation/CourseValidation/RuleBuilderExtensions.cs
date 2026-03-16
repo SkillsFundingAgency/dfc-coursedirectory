@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Dfc.CourseDirectory.Core.Models;
 using Dfc.CourseDirectory.Core.Services;
 using FluentValidation;
@@ -12,18 +11,11 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
 {
     public static class RuleBuilderExtensions
     {
-
-        private static readonly Regex HtmlTagRegex = new Regex(
-            @"^[^<>`]+$",
-           RegexOptions.Compiled | RegexOptions.CultureInvariant
-        );
-
-        private static bool IsDeliveryModeClassroomBasedOrBlendedLearning(CourseDeliveryMode? deliveryMode)
-
+        private static bool IsCRorBL(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode == CourseDeliveryMode.ClassroomBased || deliveryMode == CourseDeliveryMode.BlendedLearning;
         }
-        private static bool IsValidDeliveryMode(CourseDeliveryMode? deliveryMode)
+        private static bool IsValidDM(CourseDeliveryMode? deliveryMode)
         {
             return deliveryMode.HasValue && deliveryMode != CourseDeliveryMode.ClassroomBased && deliveryMode != CourseDeliveryMode.BlendedLearning;
         }
@@ -35,8 +27,18 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 // Required for classroom based delivery modes
                 .Must((t, v) => attendancePatternWasSpecified(t) && v.HasValue)
-                    .When(t => IsDeliveryModeClassroomBasedOrBlendedLearning(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED");
+                    .When(t => IsCRorBL(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_REQUIRED")
+                // Not allowed for delivery modes other than classroom based or blended learning
+                .Must((t, v) => !attendancePatternWasSpecified(t))
+                    .When(
+                        t =>
+                        {
+                            var deliveryMode = getDeliveryMode(t);
+                            return IsValidDM(deliveryMode);
+                        },
+                        ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_ATTENDANCE_PATTERN_NOT_ALLOWED");
         }
 
         public static void Cost<T>(
@@ -164,9 +166,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .MaximumLength(Constants.EntryRequirementsMaxLength)
-                     .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_MAXLENGTH")
-                 .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                      .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_ENTRY_REQUIREMENTS_MAXLENGTH");
         }
 
         public static void FlexibleStartDate<T>(this IRuleBuilderInitial<T, bool?> field)
@@ -180,18 +180,14 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .MaximumLength(Constants.HowYouWillBeAssessedMaxLength)
-                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH")
-                .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                      .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_BE_ASSESSED_MAXLENGTH");
         }
 
         public static void HowYouWillLearn<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.HowYoullLearnMaxLength)
-                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH")
-                .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                      .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_HOW_YOU_WILL_LEARN_MAXLENGTH");
         }
 
         public static void LearnAimRef<T>(
@@ -249,13 +245,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var isSpecified = !string.IsNullOrEmpty(v);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
-                    if (isSpecified && IsValidDeliveryMode(deliveryMode))
+                    if (isSpecified && IsValidDM(deliveryMode))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_PROVIDER_VENUE_REF_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (IsValidDeliveryMode(deliveryMode))
+                    if (IsValidDM(deliveryMode))
                     {
                         return;
                     }
@@ -349,8 +345,18 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
             field
                 // Required for classroom based delivery modes
                 .Must((t, v) => studyModeWasSpecified(t) && v.HasValue)
-                    .When(t => IsDeliveryModeClassroomBasedOrBlendedLearning(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
-                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED");
+                    .When(t => IsCRorBL(getDeliveryMode(t)), ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_REQUIRED")
+                // Not allowed for delivery modes other than classroom based or blended learning
+                .Must((t, v) => !studyModeWasSpecified(t))
+                    .When(
+                        t =>
+                        {
+                            var deliveryMode = getDeliveryMode(t);
+                            return IsValidDM(deliveryMode);
+                        },
+                        ApplyConditionTo.CurrentValidator)
+                    .WithMessageFromErrorCode("COURSERUN_STUDY_MODE_NOT_ALLOWED");
         }
 
         public static void SubRegions<T>(
@@ -457,13 +463,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var isSpecified = v.HasValue && v != default(Guid);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
-                    if (isSpecified && IsValidDeliveryMode(deliveryMode))
+                    if (isSpecified && IsValidDM(deliveryMode))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (IsDeliveryModeClassroomBasedOrBlendedLearning(deliveryMode) && !isSpecified)
+                    if (IsCRorBL(deliveryMode) && !isSpecified)
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_REQUIRED"));
                         return;
@@ -489,13 +495,13 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                     var isSpecified = !string.IsNullOrEmpty(v);
 
                     // Not allowed for delivery modes other than classroom based or blended learning
-                    if (isSpecified && IsValidDeliveryMode(deliveryMode))
+                    if (isSpecified && IsValidDM(deliveryMode))
                     {
                         ctx.AddFailure(CreateFailure("COURSERUN_VENUE_NAME_NOT_ALLOWED"));
                         return;
                     }
 
-                    if (IsValidDeliveryMode(deliveryMode))
+                    if (IsValidDM(deliveryMode))
                     {
                         return;
                     }
@@ -524,36 +530,28 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
         {
             field
                 .MaximumLength(Constants.WhatYouWillLearnMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH")
-                .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                     .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_LEARN_MAXLENGTH");
         }
 
         public static void WhatYouCanDoNextLearn<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.WhatYouCanDoNextMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH")
-               .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                      .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_MAXLENGTH");
         }
 
         public static void WhatYouWillNeedToBring<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.WhatYouWillNeedToBringMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH")
-                 .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                      .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_WHAT_YOU_WILL_NEED_TO_BRING_MAXLENGTH");
         }
 
         public static void WhereNext<T>(this IRuleBuilderInitial<T, string> field)
         {
             field
                 .MaximumLength(Constants.WhereNextMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHERE_NEXT_MAXLENGTH")
-                 .Must(value => string.IsNullOrWhiteSpace(value) || HtmlTagRegex.IsMatch(value))
-                      .WithMessageFromErrorCode("COURSE_WHAT_YOU_CAN_DO_NEXT_NO_HTML");
+                    .WithMessageFromErrorCode("COURSE_WHERE_NEXT_MAXLENGTH");
         }
 
         public static void WhoThisCourseIsFor<T>(this IRuleBuilderInitial<T, string> field)
@@ -562,11 +560,7 @@ namespace Dfc.CourseDirectory.Core.Validation.CourseValidation
                 .NotEmpty()
                     .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_REQUIRED")
                 .MaximumLength(Constants.WhoThisCourseIsForMaxLength)
-                    .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH")               
-                .Must(value => value == null || HtmlTagRegex.IsMatch(value))
-                .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_NO_HTML");
-
-
+                    .WithMessageFromErrorCode("COURSE_WHO_THIS_COURSE_IS_FOR_MAXLENGTH");
         }
         public static void AwardingBody<T>(this IRuleBuilderInitial<T, string> field)
         {

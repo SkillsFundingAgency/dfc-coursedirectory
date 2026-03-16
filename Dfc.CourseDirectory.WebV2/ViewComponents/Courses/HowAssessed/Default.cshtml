@@ -9,9 +9,9 @@
 
 
 @{
-    var regex = RegexPattern.DisallowHTMLTags;
+    @* var regex = @"^[a-zA-Z0-9 /\n/\r/\\u/\¬\!\£\$\%\^\&\*\\é\\è\\ﬁ\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\•\·\●\\’\‘\“\”\—\-\–\‐\‐\…\:/\°\®\\â\\ç\\ñ\\ü\\ø\♦\™\\t/\s\¼\¾\½\" + "\"" + "\\\\]+$";*@
+    var regex = RegexPattern.AllowEverything;
     var howAssessedTextFieldMaxChars = howAssessedComponentSettings.Value.TextFieldMaxChars;
-    var errorMessage = Dfc.CourseDirectory.Core.Content.ERROR_COURSE_HOW_YOU_WILL_BE_ASSESSED_NO_HTML;
 }
 
 
@@ -30,7 +30,7 @@
                   aria-describedby="@Model.AriaDescribedBy" aria-label="HowAssessed"
                   val-max-length=@howAssessedTextFieldMaxChars val-max-length-message="How you’ll be assessed must be @howAssessedTextFieldMaxChars characters or less"
                   val-regex="@regex"
-                  val-regex-message="@errorMessage"></textarea>
+                  val-regex-message="How you’ll be assessed contains invalid characters"></textarea>
 
 </div>
 

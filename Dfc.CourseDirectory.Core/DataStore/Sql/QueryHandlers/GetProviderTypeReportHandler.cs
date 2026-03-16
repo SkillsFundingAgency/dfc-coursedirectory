@@ -41,11 +41,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             FROM        Pttcd.TLevels t with (nolock)
                             WHERE       t.ProviderId = p.ProviderId
                             AND         t.TLevelStatus <> ${(int)TLevelStatus.Live}
-                        ) AS OtherTLevelCount,
-                        p.PIMSOrgStatus,
-                        p.PIMSOrgStatusDate,
-                        p.UpdatedOn as LoadDate,
-                        p.UploadResult
+                        ) AS OtherTLevelCount
             FROM        Pttcd.Providers p with (nolock)
             WHERE p.ProviderType <> 0
             AND Ukprn not like '8%'

@@ -42,7 +42,7 @@ BEGIN
 		INNER JOIN Pttcd.CourseRuns cr ON cr.CourseId = c.CourseId
 		INNER JOIN Pttcd.FindACourseIndex fac ON fac.CourseRunId = cr.CourseRunId
 	WHERE 
-		cr.CourseRunId IN (SELECT DISTINCT CourseRunId FROM Pttcd.FindACourseIndex fac WHERE fac.Live = @LiveCourseStatus)	
+		cr.CourseRunId IN (SELECT DISTINCT CourseRunId FROM #TempTable)	
 	GROUP BY c.CourseId
 		
 
@@ -56,7 +56,7 @@ BEGIN
 	FROM 
 		[Pttcd].[Courses] c
 		INNER JOIN #TempCourseStatus tcs ON tcs.CourseId = c.CourseId
-	WHERE tcs.CourseStatus = @ArchivedCourseRunStatus
+
 
 	DECLARE @CourseRunIds Pttcd.GuidIdTable
 

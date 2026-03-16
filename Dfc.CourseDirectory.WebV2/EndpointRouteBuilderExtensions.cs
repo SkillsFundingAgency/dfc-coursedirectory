@@ -9,7 +9,6 @@ namespace Dfc.CourseDirectory.WebV2
         {
             endpoints.MapHub<CoursesDataManagementHub>("/data-upload/courses/hub");
             endpoints.MapHub<VenuesDataManagementHub>("/data-upload/venues/hub");
-            endpoints.MapHub<ProvidersDataManagementHub>("/data-upload/providers/hub");
 
             return endpoints;
         }

@@ -19,9 +19,5 @@
 	[BulkUploadInProgress] BIT NULL,
 	[BulkUploadPublishInProgress] BIT NULL,
 	[BulkUploadStartedDateTime] DATETIME2 (7) NULL,
-	[BulkUploadTotalRowCount] INT NULL, 
-    [PIMSOrgStatus] NVARCHAR(50) NULL, 
-    [PIMSOrgStatusDate] DATETIME NULL, 
-    [UploadResult] INT NULL,
-	[ProviderUploadId] UNIQUEIDENTIFIER NULL
+	[BulkUploadTotalRowCount] INT NULL
 )

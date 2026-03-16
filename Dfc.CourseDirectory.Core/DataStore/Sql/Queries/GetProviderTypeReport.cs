@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using CsvHelper.Configuration.Attributes;
+﻿using System.Collections.Generic;
 using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
@@ -20,10 +18,5 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Queries
         public int OtherCourseCount { get; set; }
         public int LiveTLevelCount { get; set; }
         public int OtherTLevelCount { get; set; }
-        public string PIMSOrgStatus { get; set; }
-        public DateTime PIMSOrgStatusDate { get; set; }
-        public ProviderUploadResult? UploadResult { get; set; }
-        public DateTime LoadDate { get; set; }
-
     }
 }
