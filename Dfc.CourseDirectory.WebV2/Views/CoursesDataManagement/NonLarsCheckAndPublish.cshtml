@@ -3,10 +3,6 @@
     ViewContext.SetLayoutData(title: "Check and publish your Non LARS course data");
 }
 
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="Confirm" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-xl">Publish your Non LARS course data</h1>
@@ -67,7 +63,7 @@
                 Publishing will replace all of your Non LARS courses on Publish to the course directory
             </govuk-warning-text>
 
-            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+            <govuk-checkboxes class="govuk-checkboxes--small" for="Confirm">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
                         <h2 class="govuk-fieldset__heading">

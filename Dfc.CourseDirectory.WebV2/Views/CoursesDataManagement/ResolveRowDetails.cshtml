@@ -27,7 +27,7 @@
                 course will be delivered.
             </p>
 
-            <govuk-input asp-for="CourseName">
+            <govuk-input for="CourseName">
                 <govuk-input-label class="govuk-label--m">Course name</govuk-input-label>
                 <govuk-input-hint>
                     The course name displayed on the National Careers Service,
@@ -35,14 +35,14 @@
                 </govuk-input-hint>
             </govuk-input>
 
-            <govuk-input asp-for="ProviderCourseRef">
+            <govuk-input for="ProviderCourseRef">
                 <govuk-input-label class="govuk-label--m">Your reference</govuk-input-label>
                 <govuk-input-hint>
                     A reference that will help you identify this course in your internal systems. This will not be visible to learners.
                 </govuk-input-hint>
             </govuk-input>
             
-            <govuk-radios asp-for="FlexibleStartDate">
+            <govuk-radios for="FlexibleStartDate">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--m">Start date</govuk-radios-fieldset-legend>
                 
@@ -50,7 +50,7 @@
                         Defined start date
                         <govuk-radios-item-hint>For example, 31 1 2030</govuk-radios-item-hint>
                         <govuk-radios-item-conditional>
-                            <govuk-date-input asp-for="StartDate"></govuk-date-input>
+                            <govuk-date-input for="StartDate"></govuk-date-input>
                         </govuk-radios-item-conditional>
                     </govuk-radios-item>
                     <govuk-radios-item value="@true">
@@ -61,7 +61,7 @@
 
             @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
-                <govuk-select asp-for="VenueId">
+                <govuk-select for="VenueId">
                     <govuk-select-label class="govuk-label--m">Venue</govuk-select-label>
                     <govuk-select-item value="">Select</govuk-select-item>
                     @foreach (var venue in Model.ProviderVenues)
@@ -72,7 +72,7 @@
             }
             else if (Model.DeliveryMode == CourseDeliveryMode.WorkBased)
             {
-                <govuk-radios asp-for="NationalDelivery">
+                <govuk-radios for="NationalDelivery">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                             Can you deliver this course anywhere in England?
@@ -93,7 +93,7 @@
 
                                     <govuk-hint>Select all regions and areas that apply.</govuk-hint>
 
-                                    <govuk-error-message asp-for="SubRegionIds" />
+                                    <govuk-error-message for="SubRegionIds" />
 
                                     <vc:sub-region-selector id="@Html.IdFor(m => m.SubRegionIds)-accordion" name="@Html.NameFor(m => m.SubRegionIds)" selected-sub-region-ids="@Model.SubRegionIds" />
                                 </govuk-fieldset>
@@ -105,7 +105,7 @@
 
             @if(isSecurityError)
             {
-                <govuk-input asp-for="CourseWebPage">
+                <govuk-input for="CourseWebPage">
                     <govuk-input-label class="govuk-label--m">Course webpage</govuk-input-label>
                     <govuk-input-hint>
                         The webpage for this course. For example, https://www.provider.com/coursename.
@@ -121,7 +121,7 @@
             } 
             else
             {
-                <govuk-input asp-for="CourseWebPage">
+                <govuk-input for="CourseWebPage">
                     <govuk-input-label class="govuk-label--m">Course webpage</govuk-input-label>
                     <govuk-input-hint>
                         The webpage for this course. For example, https://www.provider.com/coursename.
@@ -130,7 +130,7 @@
             }
           
 
-            <govuk-input asp-for="Cost" input-class="govuk-input--width-10">
+            <govuk-input for="Cost" input-class="govuk-input--width-10">
                 <govuk-input-label class="govuk-label--m">Cost</govuk-input-label>
                 <govuk-input-hint>
                     Cost of the course to the learner.
@@ -138,19 +138,19 @@
                 <govuk-input-prefix>&pound;</govuk-input-prefix>
             </govuk-input>
 
-            <govuk-character-count asp-for="CostDescription" max-length="@Constants.CostDescriptionMaxLength">
+            <govuk-character-count for="CostDescription" max-length="@Constants.CostDescriptionMaxLength">
                 <govuk-character-count-label class="govuk-label--m">Cost description</govuk-character-count-label>
                 <govuk-character-count-hint>
                     A description of what the cost includes and additional costs to the learner. For example, assessment, exam fees or study materials.
                 </govuk-character-count-hint>
             </govuk-character-count>
 
-            <govuk-input asp-for="Duration" input-class="govuk-input--width-2">
+            <govuk-input for="Duration" input-class="govuk-input--width-2">
                 <govuk-input-label class="govuk-label--m">Duration</govuk-input-label>
                 <govuk-input-hint>The number of hours, days, weeks, months or years the course runs for.</govuk-input-hint>
             </govuk-input>
 
-            <govuk-select asp-for="DurationUnit">
+            <govuk-select for="DurationUnit">
                 <govuk-select-label class="govuk-label--m">Duration unit</govuk-select-label>
                 <govuk-select-item value="">Select</govuk-select-item>
                 <govuk-select-item value="@CourseDurationUnit.Minutes">Minutes</govuk-select-item>
@@ -163,7 +163,7 @@
 
             @if (Model.DeliveryMode == CourseDeliveryMode.ClassroomBased || Model.DeliveryMode == CourseDeliveryMode.BlendedLearning)
             {
-                <govuk-radios asp-for="StudyMode">
+                <govuk-radios for="StudyMode">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                             Course hours
@@ -178,7 +178,7 @@
                     </govuk-radios-fieldset>
                 </govuk-radios>
 
-                <govuk-radios asp-for="AttendancePattern">
+                <govuk-radios for="AttendancePattern">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-fieldset__legend--m">
                             Attendance pattern

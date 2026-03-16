@@ -6,18 +6,18 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.17.1" />
-    <PackageReference Include="Bogus" Version="35.6.0" />
-    <PackageReference Include="FluentAssertions" Version="7.0.0" />
-    <PackageReference Include="JustEat.HttpClientInterception" Version="5.0.0" />
+    <PackageReference Include="Bogus" Version="35.6.5" />
+    <PackageReference Include="FluentAssertions" Version="8.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.11" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Dfc.CourseDirectory.Core.Tests\Dfc.CourseDirectory.Core.Tests.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Core\Dfc.CourseDirectory.Core.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.Testing\Dfc.CourseDirectory.Testing.csproj" />
     <ProjectReference Include="..\Dfc.CourseDirectory.WebV2\Dfc.CourseDirectory.WebV2.csproj" />

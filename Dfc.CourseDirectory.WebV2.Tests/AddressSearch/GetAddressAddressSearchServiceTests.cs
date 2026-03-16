@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.WebV2.AddressSearch;
-using JustEat.HttpClientInterception;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -16,31 +16,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task SearchByPostcode_WithValidRequest_ReturnsParsedResults()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("key=key")
-                .Responds()
-                .WithJsonContent(new
+            var payload = new
+            {
+                header = new
                 {
-                    header = new
-                    {
-                        uri = "https://example.com/getaddress/{0}",
-                        query = "",
-                        offset = 1,
-                        totalresults = 1,
-                        format = "",
-                        dataset = "",
-                        lr = "",
-                        maxresults = 1,
-                        lastupdate = "2024-04-19",
-                        output_srs = "",
-                    },
-                    results = new[]
+                    uri = "https://example.com/getaddress/{0}",
+                    query = "",
+                    offset = 1,
+                    totalresults = 1,
+                    format = "",
+                    dataset = "",
+                    lr = "",
+                    maxresults = 1,
+                    lastupdate = "2024-04-19",
+                    output_srs = "",
+                },
+                results = new[]
                     {
                         new
                         {
@@ -57,10 +48,13 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                             }
                         }
                     }
-                })
-                .RegisterWith(httpRequestInterceptor);
+            };
 
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com"),
+            };
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
@@ -83,19 +77,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task SearchByPostcode_WithNotFoundResponse_ReturnsEmptyResult()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("key=key")
-                .Responds()
-                .WithStatus(HttpStatusCode.NotFound)
-                .RegisterWith(httpRequestInterceptor);
-
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch("", HttpStatusCode.NotFound);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com")
+            };
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
@@ -113,19 +99,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task SearchByPostcode_WithBadRequest_ReturnsEmptyResult()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("key=key")
-                .Responds()
-                .WithStatus(HttpStatusCode.BadRequest)
-                .RegisterWith(httpRequestInterceptor);
-
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch("", HttpStatusCode.BadRequest);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com")
+            };
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
@@ -143,19 +121,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task SearchByPostcode_WithInternalServerError_ThrowsException()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("key=key")
-                .Responds()
-                .WithStatus(HttpStatusCode.InternalServerError)
-                .RegisterWith(httpRequestInterceptor);
-
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch("", HttpStatusCode.InternalServerError);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com")
+            };
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
@@ -170,31 +140,22 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task GetById_WithValidRequest_ReturnsParsedResult()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-               .Requests()
-               .ForHttps()
-               .ForHost("example.com")
-               .ForPath("getaddress/XX2 00X")
-               .ForQuery("key=key")
-               .Responds()
-               .WithJsonContent(new
-               {
-                   header = new
-                   {
-                       uri = "https://example.com/getaddress/{0}",
-                       query = "",
-                       offset = 1,
-                       totalresults = 1,
-                       format = "",
-                       dataset = "",
-                       lr = "",
-                       maxresults = 1,
-                       lastupdate = "2024-04-19",
-                       output_srs = "",
-                   },
-                   results = new[]
+            var payload = new
+            {
+                header = new
+                {
+                    uri = "https://example.com/getaddress/{0}",
+                    query = "",
+                    offset = 1,
+                    totalresults = 1,
+                    format = "",
+                    dataset = "",
+                    lr = "",
+                    maxresults = 1,
+                    lastupdate = "2024-04-19",
+                    output_srs = "",
+                },
+                results = new[]
                    {
                         new
                         {
@@ -215,10 +176,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
                             }
                         }
                    }
-               })
-               .RegisterWith(httpRequestInterceptor);
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            };
 
+            var handler = new FakeHttpMessageHandlerAddressSearch(payload);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com"),
+            };
+           
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
 
@@ -238,19 +203,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task GetById_ItemDoesNotExist_ReturnsNull()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("key=key")
-                .Responds()
-                .WithStatus(HttpStatusCode.NotFound)
-                .RegisterWith(httpRequestInterceptor);
-
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch("", HttpStatusCode.NotFound);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com")
+            };
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });
@@ -268,20 +225,11 @@ namespace Dfc.CourseDirectory.WebV2.Tests.AddressSearch
         public async Task GetById_ErrorResponse_ThrowsException()
         {
             // Arrange
-            var httpRequestInterceptor = new HttpClientInterceptorOptions();
-
-            new HttpRequestInterceptionBuilder()
-                .Requests()
-                .ForHttps()
-                .ForHost("example.com")
-                .ForPath("getaddress/XX2 00X")
-                .ForQuery("key=key")
-                .IgnoringQuery()
-                .Responds()
-                .WithStatus(HttpStatusCode.InternalServerError)
-                .RegisterWith(httpRequestInterceptor);
-
-            var httpClient = httpRequestInterceptor.CreateHttpClient();
+            var handler = new FakeHttpMessageHandlerAddressSearch("", HttpStatusCode.InternalServerError);
+            var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("https://example.com")
+            };
 
             var options = new Mock<IOptions<GetAddressAddressSearchServiceOptions>>();
             options.Setup(s => s.Value).Returns(new GetAddressAddressSearchServiceOptions { ApiUrl = "https://example.com/getaddress/{0}", ApiKey = "key" });

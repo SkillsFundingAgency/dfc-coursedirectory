@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries.OpenData;
 using Dfc.CourseDirectory.Core.Models;

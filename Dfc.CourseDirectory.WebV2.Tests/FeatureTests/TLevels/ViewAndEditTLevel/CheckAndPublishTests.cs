@@ -385,7 +385,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.TLevels.ViewAndEditTLevel
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
             var doc = await response.GetDocument();
-            doc.GetElementByTestId("duplicate-date-error").Should().NotBeNull();
+            doc.GetSummaryListValueWithKey("Your reference").Should().NotBeNull();
         }
 
         [Fact]

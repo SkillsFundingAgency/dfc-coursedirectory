@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
@@ -26,13 +26,6 @@ FROM Pttcd.TLevels t
 JOIN @TLevelDefinitionIds x ON t.TLevelDefinitionId = x.Id
 WHERE t.ProviderId = @ProviderId
 AND t.TLevelStatus = @LiveTLevelStatus
-
-UPDATE Pttcd.TLevelLocations SET
-    TLevelLocationStatus = @DeletedTLevelStatus
-FROM Pttcd.TLevelLocations tll
-JOIN @TLevelIds x ON tll.TLevelId = x.Id
-WHERE TLevelLocationStatus = @LiveTLevelStatus
-
 
 EXEC Pttcd.RefreshFindACourseIndexForTLevels @TLevelIds, @DeletedOn";
 
