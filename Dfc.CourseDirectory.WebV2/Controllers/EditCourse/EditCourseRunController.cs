@@ -109,7 +109,18 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.EditCourse
 
             Session.SetObject("EditCourseRunObject", vm);
 
-            var returnurl = new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Reload", "EditCourseRun") }))
+            var returnurl = new Url(Url.Action("Index", "AddVenue", new { returnUrl = Url.Action("Index", "EditCourseRun", new
+            {
+                learnAimRef = vm.LearnAimRef,
+                notionalNVQLevelv2 = vm.NotionalNVQLevelv2,
+                awardOrgCode = vm.AwardOrgCode,
+                learnAimRefTitle = vm.LearnAimRefTitle,
+                learnAimRefTypeDesc = vm.QualificationType,
+                courseId = vm.CourseId,
+                courseRunId = vm.CourseRunId,
+                mode = vm.Mode,
+                type = ""
+            }) }))
                 .WithProviderContext(_providerContextProvider.GetProviderContext(withLegacyFallback: true))
                 .ToString();
 
