@@ -22,6 +22,9 @@
     },
     "keyVaultName": {
       "value": "dfc-dev-shared-kv"
+    },
+    "azureSearchIndexName": {
+      "value": "findacourse-dev"
     }
   }
 }
