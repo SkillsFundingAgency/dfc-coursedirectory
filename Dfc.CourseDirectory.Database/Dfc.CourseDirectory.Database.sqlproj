@@ -310,7 +310,6 @@
     <Build Include="Pttcd\StoredProcedures\ArchiveOldCourses.sql" />
     <Build Include="Pttcd\StoredProcedures\ArchiveProviderCourses.sql" />
     <Build Include="Pttcd\Functions\RemoveHTMLTags.sql" />
-    <Build Include="Pttcd\StoredProcedures\RemoveHTMLFromCourseFields.sql" />
     <Build Include="Pttcd\StoredProcedures\UpdateIncorrectlyArchivedCourses.sql" />
     <Build Include="Pttcd\Tables\ProviderUploads.sql" />
     <Build Include="Pttcd\Tables\ProviderUploadRows.sql" />
