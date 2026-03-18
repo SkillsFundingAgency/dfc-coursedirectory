@@ -74,7 +74,19 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
                     ProviderName = c.ProviderName,
                     ProviderWebsite = c.ProviderWebsite,
                     ProviderEmail = c.ProviderEmail,
-                    ProviderPhoneNumber= c.ProviderPhoneNumber, 
+                    ProviderPhoneNumber= c.ProviderPhoneNumber,       
+                    VenueName = c.VenueName,
+                    Postcode = c.Postcode,
+                    AddressLine1 = c.AddressLine1,
+                    AddressLine2 = c.AddressLine2,
+                    Town = c.Town,
+                    County = c.County,
+                    Latitude = c.Latitude,
+                    Longitude = c.Longitude,
+                    LearnAimRef = c.LearnAimRef,
+                    LearnAimRefTitle = c.LearnAimRefTitle,
+                    QualificationLevel = c.QualificationLevel,
+                    AwardingOrganisation = c.AwardingOrganisation
                 }).ToList()
             };
             return response;
