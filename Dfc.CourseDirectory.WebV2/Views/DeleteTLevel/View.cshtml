@@ -3,11 +3,6 @@
     Layout = "_V2LayoutProviderContext";
     ViewBag.Title = "Delete T Level";
 }
-
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="Confirm" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form asp-action="Post" asp-route-tLevelId="@Model.TLevelId">
@@ -48,7 +43,7 @@
                 </govuk-summary-list-row>
             </govuk-summary-list>
 
-            <govuk-checkboxes class="govuk-checkboxes--small" asp-for="Confirm">
+            <govuk-checkboxes class="govuk-checkboxes--small" for="Confirm">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
                         <h2 class="govuk-fieldset__heading">

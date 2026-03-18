@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 using Respawn;
+using Respawn.Graph;
 
 namespace Dfc.CourseDirectory.Testing
 {
@@ -17,7 +18,6 @@ namespace Dfc.CourseDirectory.Testing
         private const string LockName = "Tests";
         private const int LockTimeoutSeconds = 15 * 60;
 
-        private readonly Checkpoint _sqlCheckpoint;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _services;
         private readonly IMessageSink _messageSink;
@@ -46,8 +46,6 @@ namespace Dfc.CourseDirectory.Testing
 
                 throw;
             }
-
-            _sqlCheckpoint = CreateCheckpoint();
         }
 
         public MutableClock Clock => _services.GetRequiredService<IClock>() as MutableClock;
@@ -87,7 +85,13 @@ namespace Dfc.CourseDirectory.Testing
         public async Task OnTestStartingAsync()
         {
             // Clear out all data from SQL database
-            await _sqlCheckpoint.Reset(ConnectionString);
+
+            var sqlRespawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions
+            {
+                SchemasToInclude = new[] { "Pttcd", "LARS" },
+                TablesToIgnore = new Table[] { "Regions" }
+            });
+            await sqlRespawner.ResetAsync(ConnectionString);
         }
 
         public Task WithSqlQueryDispatcher(Func<ISqlQueryDispatcher, Task> action) =>
@@ -129,12 +133,6 @@ namespace Dfc.CourseDirectory.Testing
                 throw new Exception("Failed acquiring lock on test database.");
             }
         }
-
-        private Checkpoint CreateCheckpoint() => new Checkpoint()
-        { 
-            SchemasToInclude = new[] { "Pttcd", "LARS" },
-            TablesToIgnore = new[] { "Regions" }
-        };
 
         private void DeploySqlDb()
         {
