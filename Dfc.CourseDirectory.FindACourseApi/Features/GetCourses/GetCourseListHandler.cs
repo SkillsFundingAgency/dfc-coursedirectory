@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
         public int totalCourseCount { get; set; }
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
-        public IList<CourseListViewModel> Courses { get; set; }
+        public IList<CourseListViewModel> courses { get; set; }
     }
     public class CourseRequest : IRequest<OneOf<NotFound, CourseResponse>>
     {
@@ -42,25 +42,25 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
                 totalCourseCount = listOfCourses.CourseCount,
                 pageNumber = request.PageNumber,
                 pageSize = request.PageSize,
-                Courses = listOfCourses.Courses.Select(c => new CourseListViewModel()
+                courses = listOfCourses.Courses.Select(c => new CourseListViewModel()
                 {
                     CourseId = c.CourseId,
                     Id = c.Id,
                     CourseName = c.CourseName,
                     CourseType = c.CourseType,
                     SectorDescription = c.SectorDescription,
-                    EducationLevel = CovertToEnumObj<EducationLevel>(c.EducationLevel),
+                    EducationLevel = ConvertToEnumObj<EducationLevel>(c.EducationLevel),
                     AwardingBody = c.AwardingBody,
-                    DeliveryMode = CovertToEnumObj<CourseDeliveryMode>(c.DeliveryMode) ,
+                    DeliveryMode = ConvertToEnumObj<CourseDeliveryMode>(c.DeliveryMode) ,
                     FlexibleStartDate = c.FlexibleStartDate,
                     StartDate = c.StartDate,
                     CourseWebsite = c.CourseWebsite,
                     Cost = c.Cost,
                     CostDescription = c.CostDescription,
-                    DurationUnit = CovertToEnumObj<CourseDurationUnit>(c.DurationUnit),
+                    DurationUnit = ConvertToEnumObj<CourseDurationUnit>(c.DurationUnit),
                     DurationValue = c.DurationValue,
-                    StudyMode = CovertToEnumObj<CourseStudyMode>(c.StudyMode),
-                    AttendancePattern = CovertToEnumObj<CourseAttendancePattern>(c.AttendancePattern), 
+                    StudyMode = ConvertToEnumObj<CourseStudyMode>(c.StudyMode),
+                    AttendancePattern = ConvertToEnumObj<CourseAttendancePattern>(c.AttendancePattern), 
                     National = c.National,
                     Region = c.Region,
                     ParentRegion = c.ParentRegion,
@@ -91,13 +91,15 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
             };
             return response;
         }
-        private static EnumObj CovertToEnumObj<T>(int? value)
+        private static EnumObj ConvertToEnumObj<T>(int? value)
         {
             Type enumType = typeof(T);
-            var description = string.Empty;
             if (value.HasValue && Enum.IsDefined(enumType, value))
-                description = Enum.GetName(enumType, value);
-            return new EnumObj() { Value = value, Description = description };
+            {
+                var description = Enum.GetName(enumType, value);
+                return new EnumObj() { Value = value, Description = description };
+            }
+            return null;
         }
     }
 }
