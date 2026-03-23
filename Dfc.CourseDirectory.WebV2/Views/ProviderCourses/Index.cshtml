@@ -75,11 +75,40 @@
                                 {
                                     <h1 class="govuk-heading-l">Non-LARS courses</h1>
                                     <p class="govuk-body-l">Add or edit non-LARS courses which are shown to learners on find a course.</p>
+                                    <a 
+                                        asp-controller="AddCourse" 
+                                        asp-action="AddCourse"
+                                        class="govuk-button"
+                                        role="button" draggable="false">
+                                            Add course
+                                    </a>
                                 }
                                 else
                                 {
                                     <h1 class="govuk-heading-l">LARS courses</h1>
                                     <p class="govuk-body-l">Add or edit LARS courses which are shown to learners on find a course.</p>
+                                    @if (FeatureFlagProvider.HaveFeature(FeatureFlags.CoursesChooseQualification))
+                                    {
+                                        <a 
+                                            asp-controller="ChooseQualification" 
+                                            asp-action="ChooseQualification" 
+                                            asp-all-route-data="@ProviderContext.RouteValues"
+                                            class="govuk-button"
+                                            role="button" draggable="false">
+                                                Add course
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a 
+                                            asp-controller="RegulatedQualification" 
+                                            asp-action="Index" 
+                                            asp-all-route-data="@ProviderContext.RouteValues"
+                                            class="govuk-button"
+                                            role="button" draggable="false">
+                                                Add course
+                                        </a>
+                                    }
                                 }
 
                             </div>
