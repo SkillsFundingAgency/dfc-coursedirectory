@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
-using Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList;
 
 namespace Dfc.CourseDirectory.Api.Controllers
 {
