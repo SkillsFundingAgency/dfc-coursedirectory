@@ -44,6 +44,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList
                 tLevels = listOfTLevels.TLevels.Select(c => new TLevelListViewModel()
                 {
                     TLevelId = c.TLevelId,
+                    StartDate = c.StartDate,
                     CourseName = c.CourseName,
                     TlevelQualificationLevel =  c.TlevelQualificationLevel ,
                     WhoTheCourseIsFor = c.WhoTheCourseIsFor,
