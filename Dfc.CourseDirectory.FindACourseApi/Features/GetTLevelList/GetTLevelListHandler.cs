@@ -43,6 +43,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList
                 pageSize = request.PageSize,
                 tLevels = listOfTLevels.TLevels.Select(c => new TLevelListViewModel()
                 {
+                    TLevelId = c.TLevelId,
                     CourseName = c.CourseName,
                     TlevelQualificationLevel =  c.TlevelQualificationLevel ,
                     WhoTheCourseIsFor = c.WhoTheCourseIsFor,
