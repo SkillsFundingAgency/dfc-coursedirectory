@@ -89,9 +89,8 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.PageNumber,
                 query.PageSize
             };
- 
-            var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
+            using var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
             var courseCount = (await queryReader.ReadFirstOrDefaultAsync<int>());
             var courses = (await queryReader.ReadAsync<CourseListItem>()).ToList();
 
@@ -100,7 +99,6 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 CourseCount = courseCount,
                 Courses = courses
             };
-
             return listOfCourses;
         }
     }

@@ -59,7 +59,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                 query.PageSize
             };
 
-            var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
+            using var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
 
             var tLevelCount = (await queryReader.ReadFirstOrDefaultAsync<int>());
             var tLevels = (await queryReader.ReadAsync<TLevelListItem>()).ToList();
