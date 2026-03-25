@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CoursesList(int pageSize, int pageNumber)
         {
-            _log.LogInformation("Started Executing 'CourseList' Method initiated by the http request - '/public/courses/list'");
+            _log.LogInformation("Started Executing '{MethodName}' Method", nameof(CoursesList));
 
             if (pageSize <= 0 || pageNumber <= 0)
             {
@@ -52,13 +52,13 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 _ =>
                 {
                     _log.LogWarning("Failed to retrieve List of Courses with given search criteria.Response Code [NOT FOUND]");
-                    _log.LogInformation("Completed Executing 'CourseList' Method initiated by the http request - '/public/courses/list'");
+                    _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(CoursesList));
                     return NotFound();
                 },
                 r =>
                 {
                     _log.LogInformation("List of Courses found. Returning data in Json format. Response Code [OK]");
-                    _log.LogInformation("Completed Executing 'CourseList' Method initiated by the http request - '/public/courses/list'");
+                    _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(CoursesList));
                     return Ok(r);
                 });
         }

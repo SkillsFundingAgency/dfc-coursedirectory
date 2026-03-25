@@ -26,7 +26,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> TLevelsList(int pageSize, int pageNumber)
         {
-            _log.LogInformation("Started Executing 'TLevelsList' Method initiated by the http request - '/public/tlevels/list'");
+            _log.LogInformation("Started Executing '{MethodName}' Method", nameof(TLevelsList));
 
             if (pageSize <= 0 || pageNumber <= 0)
             {
@@ -54,14 +54,14 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 _ =>
                 {
                     _log.LogWarning("Failed to retrieve List of TLevels with given search criteria.Response Code [NOT FOUND]");
-                    _log.LogInformation("Completed Executing 'TLevelsList' Method initiated by the http request - '/public/tlevels/list'");
+                    _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(TLevelsList));
 
                     return NotFound();
                 },
                 r =>
                 {
                     _log.LogInformation("List of TLevels found. Returning data in Json format. Response Code [OK]");
-                    _log.LogInformation("Completed Executing 'TLevelsList' Method initiated by the http request - '/public/tlevels/list'");
+                    _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(TLevelsList));
 
                     return Ok(r);
                 });
