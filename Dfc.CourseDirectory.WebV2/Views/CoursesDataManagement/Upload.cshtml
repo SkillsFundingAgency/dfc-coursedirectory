@@ -11,12 +11,13 @@
     <govuk-back-link asp-controller="ProviderDashboard" asp-action="Index" asp-all-route-data="@ProviderContext.RouteValues">Back</govuk-back-link>
 }
 
-<govuk-error-summary>
-    @* The message when headers are missing is unusual; this summary needs to list the missing headers
+
+    @if (ViewBag.MissingHeaders is IReadOnlyCollection<string> missingHeaders && missingHeaders.Count > 0)
+{
+    <govuk-error-summary>
+        @* The message when headers are missing is unusual; this summary needs to list the missing headers
         whereas the inline message below does not.
         The list of missing headers is in ViewData; if they're not empty we use them to construct the message. *@
-    @if (ViewBag.MissingHeaders is IReadOnlyCollection<string> missingHeaders && missingHeaders.Count != 0)
-    {
         <govuk-error-summary-item>
             <a href="#@(Html.IdFor(m => m.File))">@Html.ValidationMessageFor(m => m.File)</a>
             <govuk-details class="govuk-!-margin-top-4 govuk-!-margin-bottom-0">
@@ -31,9 +32,12 @@
                 </govuk-details-text>
             </govuk-details>
         </govuk-error-summary-item>
+        </govuk-error-summary>
     }
     else if (missingLars.Count != 0 || invalidLars.Count != 0 || expiredLars.Count != 0)
-    {
+{
+
+    <govuk-error-summary>
         <govuk-error-summary-item>
             <a href="#@(Html.IdFor(m => m.File))">The file contains errors</a>
 
@@ -85,12 +89,8 @@
                 </govuk-details>
             }
         </govuk-error-summary-item>
+    </govuk-error-summary>
     }
-    else
-    {
-        <govuk-error-summary-item for="File" />
-    }
-</govuk-error-summary>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
