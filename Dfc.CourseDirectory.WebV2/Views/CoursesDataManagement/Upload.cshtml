@@ -69,7 +69,6 @@
     </govuk-error-summary>
     }
 
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-xl">Upload your course data</h1>
@@ -84,7 +83,7 @@
                 <li>include existing and new courses in the data file</li>
                 <li>follow the <a asp-action="Formatting" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-link">file format requirements</a></li>
             </ul>
-            <govuk-file-upload asp-for="File" input-accept=".csv">
+            <govuk-file-upload for="File" input-accept=".csv">
                 <govuk-file-upload-label>Upload a file</govuk-file-upload-label>
             </govuk-file-upload>
 
@@ -97,7 +96,7 @@
             <h2 class="govuk-heading-m" id="subsection-title">
                 Data file downloads
             </h2>
-            <nav role="navigation" aria-labelledby="subsection-title">
+            <nav >
                 <ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
                     @if (Model.CourseCount > 0)
                     {

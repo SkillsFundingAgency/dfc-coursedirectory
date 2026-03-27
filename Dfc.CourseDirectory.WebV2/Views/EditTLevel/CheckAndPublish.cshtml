@@ -2,11 +2,6 @@
 @{
     ViewContext.SetLayoutData(title: "Check and publish your T Level");
 }
-
-<govuk-error-summary>
-    <govuk-error-summary-item asp-for="StartDate" data-testid="duplicate-date-error" />
-</govuk-error-summary>
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters">
         <form asp-action="Publish" asp-all-route-data="@(RouteValuesHelper.FromQueryString())" asp-route-tLevelId="@Model.TLevelId">

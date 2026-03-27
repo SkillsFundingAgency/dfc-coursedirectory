@@ -721,7 +721,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
+            doc.GetElementsByClassName("govuk-error-summary__list")[0].TextContent.Should().Contain("Select yes to permanently delete");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
@@ -845,7 +845,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
+            doc.GetElementsByClassName("govuk-error-message")[0].TextContent.Should().Contain("The affected T Levels have changed");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)newProviderType).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(tLevels.OrderBy(t => t.TLevelId).SelectMany(t => t.TLevelId.ToByteArray()).ToArray()));
@@ -1120,7 +1120,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("confirm-error").TextContent.Should().Be("Select yes to permanently delete");
+            doc.GetElementsByClassName("govuk-error-summary__list")[0].TextContent.Should().Contain("Select yes to permanently delete");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));
@@ -1248,7 +1248,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.FeatureTests.Providers
 
             var doc = await response.GetDocument();
 
-            doc.GetElementByTestId("affected-item-counts-error").TextContent.Should().Be("The affected T Levels have changed");
+            doc.GetElementsByClassName("govuk-error-message")[0].TextContent.Should().Contain("The affected T Levels have changed");
             doc.GetElementByTestId("provider-id").GetAttribute("value").Should().Be(provider.ProviderId.ToString());
             doc.GetElementByTestId("provider-type").GetAttribute("value").Should().Be(((int)ProviderType.TLevels).ToString());
             doc.GetElementByTestId("affected-tLevel-ids-checksum").GetAttribute("value").Should().Be(Convert.ToBase64String(new[] { tLevel2.TLevelId }.SelectMany(t => t.ToByteArray()).ToArray()));

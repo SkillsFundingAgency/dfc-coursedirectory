@@ -2,7 +2,7 @@
 using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using OneOf;
 using OneOf.Types;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Dapper;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
