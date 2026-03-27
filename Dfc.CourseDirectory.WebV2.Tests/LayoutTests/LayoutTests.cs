@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
             }
 
             subNavLinks.Count.Should().Be(0);
@@ -114,7 +114,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
             }
 
             Assert.Equal(4, subNavLinks.Count);
@@ -158,7 +158,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
             }
 
             Assert.Equal(4, subNavLinks.Count);
@@ -200,7 +200,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-signout");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
             }
 
             Assert.Equal(5, subNavLinks.Count);
@@ -407,7 +407,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
         {
             var results = new List<(string Href, string TestId)>();
 
-            foreach (var item in doc.GetElementsByClassName("govuk-header__navigation-item"))
+            foreach (var item in doc.GetElementsByClassName("govuk-service-navigation__item"))
             {
                 var anchor = item.GetElementsByTagName("a")[0];
                 var href = anchor.GetAttribute("href");
