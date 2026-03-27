@@ -3,18 +3,20 @@ branches:
   master:
     regex: ^master$|^main$
     mode: ContinuousDelivery
-    tag: ''
+    label: ''
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
   release:
     regex: ^releases?[/-]
     mode: ContinuousDelivery
-    tag: rc
+    label: rc
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: true
@@ -22,46 +24,50 @@ branches:
   feature:
     regex: ^features?[/-]
     mode: ContinuousDelivery
-    tag: useBranchName
+    label: useBranchName
     increment: Inherit
-    prevent-increment-of-merged-branch-version: false
+    prevent-increment:
+      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
   pull-request:
     regex: ^(pull|pull\-requests|pr)[/-]
     mode: ContinuousDelivery
-    tag: PullRequest
+    label: PullRequest
     increment: Inherit
-    prevent-increment-of-merged-branch-version: false
-    tag-number-pattern: '[/-](?<number>\d+)[-/]'
+    prevent-increment:
+      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
   hotfix:
     regex: ^hotfix(es)?[/-]
     mode: ContinuousDelivery
-    tag: beta
+    label: beta
     increment: Patch
-    prevent-increment-of-merged-branch-version: false
+    prevent-increment:
+      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
   support:
     regex: ^support[/-]
     mode: ContinuousDelivery
-    tag: ''
+    label: ''
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
   develop:
     regex: ^dev(elop)?(ment)?$
     mode: ContinuousDeployment
-    tag: unstable
+    label: unstable
     increment: Minor
-    prevent-increment-of-merged-branch-version: false
+    prevent-increment:
+      of-merged-branch: false
     track-merge-target: true
     tracks-release-branches: true
     is-release-branch: false
