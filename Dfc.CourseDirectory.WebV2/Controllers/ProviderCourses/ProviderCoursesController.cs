@@ -167,7 +167,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                         AttendancePattern = cr.AttendancePattern.ToDescription(),
                         Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
                         CourseName = cr.CourseName,
-                        DeliveryMode = cr.DeliveryMode.ToDescription(),
+                        DeliveryMode = cr.DeliveryMode,
                         Duration = cr.DurationValue.HasValue
                                                         ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
                                                         : $"0 {cr.DurationUnit.ToDescription()}",
@@ -261,7 +261,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             }
 
             s = 0;
-            deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode.ToDescription()).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
             {
                 Id = "deliverymode-" + s++.ToString(),
                 Value = r.Key,
@@ -416,7 +416,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                                 || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(requestModel.Keyword.ToLower()))
                                 || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(requestModel.Keyword.ToLower()))
                                  || x.AttendancePattern.ToLower().Contains(requestModel.Keyword.ToLower())
-                                  || x.DeliveryMode.ToLower().Contains(requestModel.Keyword.ToLower())
+                                  || x.DeliveryMode.ToDescription().ToLower().Contains(requestModel.Keyword.ToLower())
                                    || x.Venue.ToLower().Contains(requestModel.Keyword.ToLower())
                                     || x.Region.ToLower().Contains(requestModel.Keyword.ToLower())
                                 || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(requestModel.Keyword.ToLower()))
@@ -430,7 +430,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 
             if (requestModel.DeliveryModeFilter.Length > 0)
             {
-                model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.DeliveryModeFilter.Contains(x.DeliveryMode)).ToList();
+                model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => requestModel.DeliveryModeFilter.Contains(x.DeliveryMode.ToDescription())).ToList();
             }
 
 
@@ -483,7 +483,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 }).ToList();
             }
             s = 0;
-            deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
+            deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode.ToDescription()).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
             {
                 Id = "deliverymode-" + s++.ToString(),
                 Value = r.Key,

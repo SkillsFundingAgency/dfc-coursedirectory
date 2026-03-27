@@ -251,7 +251,7 @@ else
                             </div>
                         }
 
-                        @if (courseRun.DeliveryMode == "Classroom based" && !string.IsNullOrEmpty(courseRun.Venue))
+                        @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.Venue))
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Venue</dt>
@@ -259,7 +259,7 @@ else
                             </div>
                         }
 
-                        @if (courseRun.DeliveryMode == "Work based")
+                        @if (courseRun.DeliveryMode == CourseDeliveryMode.WorkBased)
                         {
                             if (courseRun.National)
                             {
@@ -289,7 +289,7 @@ else
                         }
 
                         
-                        @if (courseRun.DeliveryMode == "Classroom based" && !string.IsNullOrEmpty(courseRun.StudyMode))
+                        @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.StudyMode))
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Course hours</dt>
@@ -318,15 +318,12 @@ else
                             }
                         }
 
-                        @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Delivery mode</dt>
-                                <dd class="govuk-summary-list__value">@courseRun.DeliveryMode</dd>
-                            </div>
-                        }
-
-                        @if (courseRun.DeliveryMode == "Classroom based" && !string.IsNullOrEmpty(courseRun.AttendancePattern))
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Delivery mode</dt>
+                            <dd class="govuk-summary-list__value">@courseRun.DeliveryMode.ToDescription()</dd>
+                        </div>
+                        
+                        @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.AttendancePattern))
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Attendance pattern</dt>
