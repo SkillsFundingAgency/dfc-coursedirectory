@@ -1,9 +1,16 @@
 ﻿using System;
 namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
 {
-    public class CourseListViewModel
+    public class CourseUpdatesViewModel
     {
         public Guid Id { get; set; }
+        public string UpdateType { get; set; }
+        public EnumObj CourseRunStatus { get; set; }
+        public string ContactType { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
+        public DateTime? CourseUpdatedOn { get; set; }
+        public DateTime? VenueUpdatedOn { get; set; }
         public Guid CourseId { get; set; }
         public string CourseName { get; set; }
         public string CourseType { get; set; }
@@ -48,10 +55,5 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
         public string LearnAimRefTitle  { get; set; }
         public string QualificationLevel { get; set; }
         public string AwardingOrganisation  { get; set; }
-    }
-    public class EnumObj
-    {
-        public int? Value { get; set; }
-        public string Description { get; set; }
     }
 }

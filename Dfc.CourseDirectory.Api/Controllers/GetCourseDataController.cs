@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
+using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
+using System;
 
 namespace Dfc.CourseDirectory.Api.Controllers
 {
@@ -59,6 +61,56 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 {
                     _log.LogInformation("List of Courses found. Returning data in Json format. Response Code [OK]");
                     _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(CoursesList));
+                    return Ok(r);
+                });
+        }
+
+        [HttpGet("~/public/courses/updates")]
+        [ProducesResponseType(typeof(CourseUpdateResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CourseUpdates(DateTime cutOffDate, int pageSize, int pageNumber)
+        {
+            _log.LogInformation("Started Executing '{MethodName}' Method", nameof(CourseUpdates));
+
+            if (pageSize <= 0 || pageNumber <= 0)
+            {
+                _log.LogWarning("Invalid pagination parameters provided. Page Size [{PageSize}] and Page Number [{PageNumber}]. Response Code [BAD REQUEST]", pageSize, pageNumber);
+                return BadRequest("PageSize and PageNumber must be greater than zero.");
+            }
+            else if (pageSize > 100)
+            {
+                _log.LogWarning("Page Size [{PageSize}] exceeds the maximum allowed limit. Response Code [BAD REQUEST]", pageSize);
+                return BadRequest("PageSize must not exceed 100.");
+            }
+            if (cutOffDate < DateTime.MinValue || cutOffDate > DateTime.MaxValue)
+            {
+                _log.LogWarning("Invalid CutOffDate parameter provided. Response Code [BAD REQUEST]");
+                return BadRequest("CutOffDate must be a valid date.");
+            }
+
+            var request = new CourseUpdateRequest()
+            {
+                CutOffDate = cutOffDate,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+
+            _log.LogInformation("Start Getting for List of Course Updates by the CutOffDate [{CutOffDate}], Page Size [{PageSize}] and Page Number [{PageNumber}]", request.CutOffDate, request.PageSize, request.PageNumber);
+            var result = await _mediator.Send(request);
+
+            return result.Match<IActionResult>(
+                _ =>
+                {
+                    _log.LogWarning("Failed to retrieve List of Courses with given search criteria.Response Code [NOT FOUND]");
+                    _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(CourseUpdates));
+                    return NotFound();
+                },
+                r =>
+                {
+                    _log.LogInformation("List of Courses found. Returning data in Json format. Response Code [OK]");
+                    _log.LogInformation("Completed Executing '{MethodName}' Method", nameof(CourseUpdates));
                     return Ok(r);
                 });
         }

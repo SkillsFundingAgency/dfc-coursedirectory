@@ -4,28 +4,30 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
-using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using Dfc.CourseDirectory.Core.Models;
+using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using MediatR;
 using OneOf;
 using OneOf.Types;
 
-namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
+namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
 {
-    public class CourseResponse 
+    public class CourseUpdateResponse 
     {
-        public int totalCourseCount { get; set; }
+        public int totalCount { get; set; }
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
-        public IList<CourseListViewModel> courses { get; set; }
+        public DateTime cutOffDate { get; set; }
+        public IList<CourseUpdatesViewModel> courses { get; set; }
     }
-    public class CourseRequest : IRequest<OneOf<NotFound, CourseResponse>>
+    public class CourseUpdateRequest : IRequest<OneOf<NotFound, CourseUpdateResponse>>
     {
+        public DateTime CutOffDate { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
     }
 
-    public class Handler : IRequestHandler<CourseRequest, OneOf<NotFound, CourseResponse>>
+    public class Handler : IRequestHandler<CourseUpdateRequest, OneOf<NotFound, CourseUpdateResponse>>
     {
         private readonly ISqlQueryDispatcher _sqlQueryDispatcher;
 
@@ -34,23 +36,31 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
             _sqlQueryDispatcher = sqlQueryDispatcher ?? throw new ArgumentNullException(nameof(sqlQueryDispatcher));
         }
 
-        public async Task<OneOf<NotFound, CourseResponse>> Handle(CourseRequest request, CancellationToken cancellationToken)
+        public async Task<OneOf<NotFound, CourseUpdateResponse>> Handle(CourseUpdateRequest request, CancellationToken cancellationToken)
         {
-            var listOfCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseList() { PageNumber = request.PageNumber, PageSize = request.PageSize });
-            var response = new CourseResponse()
+            var listOfCourses = await _sqlQueryDispatcher.ExecuteQuery(new Core.DataStore.Sql.Queries.GetCourseUpdates() { CutOffDate = request.CutOffDate, PageNumber = request.PageNumber, PageSize = request.PageSize });
+            var response = new CourseUpdateResponse()
             {
-                totalCourseCount = listOfCourses.CourseCount,
+                totalCount = listOfCourses.CourseCount,
                 pageNumber = request.PageNumber,
                 pageSize = request.PageSize,
-                courses = listOfCourses.Courses.Select(c => new CourseListViewModel()
+                cutOffDate = request.CutOffDate,
+                courses = listOfCourses.Courses.Select(c => new CourseUpdatesViewModel()
                 {
-                    CourseId = c.CourseId,
+                    UpdateType = c.UpdateType,                    
                     Id = c.Id,
+                    CourseRunStatus = ConvertToEnumObj<CourseStatus>(c.CourseRunStatus),
+                    ContactType = c.ContactType,
+                    CreatedOn = c.CreatedOn,
+                    UpdatedOn = c.UpdatedOn,
+                    CourseUpdatedOn = c.CourseUpdatedOn,
+                    VenueUpdatedOn = c.VenueUpdatedOn,
+                    CourseId = c.CourseId,
                     CourseName = c.CourseName,
                     CourseType = c.CourseType,
+                    SectorDescription = c.SectorDescription,
                     SectorCode = c.SectorCode,
                     SectorSubjectArea = c.SectorSubjectArea,
-                    SectorDescription = c.SectorDescription,
                     EducationLevel = ConvertToEnumObj<EducationLevel>(c.EducationLevel),
                     AwardingBody = c.AwardingBody,
                     DeliveryMode = ConvertToEnumObj<CourseDeliveryMode>(c.DeliveryMode) ,
