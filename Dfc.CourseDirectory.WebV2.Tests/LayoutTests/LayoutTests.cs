@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-providerupload");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -115,7 +115,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-providerupload");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -160,7 +160,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-providerupload");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
@@ -203,7 +203,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.LayoutTests
                 topLevelLinks[0].TestId.Should().Be("topnav-helpdeskdashboard");
                 topLevelLinks[1].TestId.Should().Be("topnav-searchproviders");
                 topLevelLinks[2].TestId.Should().Be("topnav-manageusers");
-                topLevelLinks[3].TestId.Should().Be("topnav-providerupload");
+                topLevelLinks[3].TestId.Should().Be("topnav-provider-upload");
                 topLevelLinks[4].TestId.Should().Be("topnav-signout");
             }
 
