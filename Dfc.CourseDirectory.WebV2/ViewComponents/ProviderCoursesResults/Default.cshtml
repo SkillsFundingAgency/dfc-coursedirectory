@@ -15,7 +15,7 @@
 
 @if (!Model.ProviderCourseRuns.Any())
 {
-    <div class="cd-grid-coloumn-20 govuk-body" style="width: 100%; padding-left: 0.75em;">
+    <div class="govuk-grid-column-full govuk-body">
         <span class="govuk-visually-hidden">Data Unavailable</span>
         @await Component.InvokeAsync(nameof(Notification), new NotificationModel
         {
@@ -24,11 +24,10 @@
             ClassType = "error-summary"
         })
     </div>
-
 }
 else
 {
-    <div class="cd-grid-coloumn-20 govuk-body">
+    <div class="govuk-grid-column-one-quarter govuk-body">
 
         @if (Model.HasFilters)
         {
@@ -46,12 +45,8 @@ else
                             <h2 class="govuk-fieldset__heading">
                                 Select Level
                             </h2>
-
                         </legend>
-
                         <div class="govuk-checkboxes govuk-checkboxes--small" id="LevelFilters">
-
-
                             @foreach (var level in Model.Levels)
                             {
                                 <div class="govuk-checkboxes__item">
@@ -60,11 +55,7 @@ else
                                         @level.Text
                                     </label>
                                 </div>
-
-
                             }
-
-
                         </div>
                     </fieldset>
                 </div>
@@ -180,8 +171,6 @@ else
                     </fieldset>
                 </div>
             </div>
-
-
         }
 
         <div class="govuk-form-group govuk-font-size">
@@ -189,7 +178,7 @@ else
         </div>
 
     </div>
-    <div class="cd-grid-coloumn-80 ">
+    <div class="govuk-grid-column-three-quarters">
 
         @foreach (var courseRun in Model.ProviderCourseRuns.OrderBy(x => x.CourseName))
         {
