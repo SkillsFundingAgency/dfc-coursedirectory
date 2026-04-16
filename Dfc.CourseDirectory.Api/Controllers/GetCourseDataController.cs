@@ -89,6 +89,11 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 _log.LogWarning("Invalid CutOffDate parameter provided. Response Code [BAD REQUEST]");
                 return BadRequest("CutOffDate must be a valid date.");
             }
+            else if(cutOffDate > DateTime.UtcNow)
+            {
+                _log.LogWarning("CutOffDate parameter provided is a future date. Response Code [BAD REQUEST]");
+                return BadRequest("CutOffDate cannot be a future date.");
+            }
 
             var request = new CourseUpdateRequest()
             {
