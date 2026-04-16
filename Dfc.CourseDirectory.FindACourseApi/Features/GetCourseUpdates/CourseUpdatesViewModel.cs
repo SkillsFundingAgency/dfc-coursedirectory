@@ -1,5 +1,7 @@
 ﻿using System;
-namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
+using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
+
+namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
 {
     public class CourseUpdatesViewModel
     {

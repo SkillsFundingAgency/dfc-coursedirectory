@@ -24,9 +24,9 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         SELECT
                             cr.CourseRunId AS Id,
                             CASE
-                            WHEN (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @DateLimit) THEN 1
-                            WHEN (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @DateLimit and cr.UpdatedOn > @DateLimit) or (cr.CreatedOn < @DateLimit and c.UpdatedOn > @DateLimit) or (cr.CreatedOn < @DateLimit and v.UpdatedOn > @DateLimit))) THEN 2
-                            WHEN (cr.CourseRunStatus = 4 and cr.UpdatedOn > @DateLimit) THEN 3
+                            WHEN (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @CutOffDate) THEN 1
+                            WHEN (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @CutOffDate and cr.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and c.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate))) THEN 2
+                            WHEN (cr.CourseRunStatus = 4 and cr.UpdatedOn > @CutOffDate) THEN 3
                             END AS UpdateType,
                             cr.CourseRunStatus,
                             pc.ContactType,
