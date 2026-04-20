@@ -14,7 +14,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
 {
     public class CourseResponse 
     {
-        public int totalCourseCount { get; set; }
+        public int totalCount { get; set; }
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
         public IList<CourseListViewModel> courses { get; set; }
@@ -39,7 +39,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
             var listOfCourses = await _sqlQueryDispatcher.ExecuteQuery(new GetCourseList() { PageNumber = request.PageNumber, PageSize = request.PageSize });
             var response = new CourseResponse()
             {
-                totalCourseCount = listOfCourses.CourseCount,
+                totalCount = listOfCourses.CourseCount,
                 pageNumber = request.PageNumber,
                 pageSize = request.PageSize,
                 courses = listOfCourses.Courses.Select(c => new CourseListViewModel()
