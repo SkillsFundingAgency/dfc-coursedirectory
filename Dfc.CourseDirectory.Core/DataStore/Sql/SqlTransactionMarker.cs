@@ -7,7 +7,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
         public bool GotTransaction => Transaction != null;
         public SqlTransaction Transaction { get; private set; }
 
-        public void OnTransactionCompleted() => Transaction = null;
+        public void OnTransactionCompleted() => Transaction.Dispose();
         public void OnTransactionCreated(SqlTransaction transaction) => Transaction = transaction;
     }
 }

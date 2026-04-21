@@ -20,7 +20,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
         public ISqlQueryDispatcher CreateDispatcher(IsolationLevel isolationLevel = IsolationLevel.Snapshot)
         {
             var connection = _serviceProvider.GetRequiredService<SqlConnection>();
-            
+
             if (connection.State != ConnectionState.Open)
             {
                 connection.Open();
@@ -28,7 +28,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
 
             var transaction = connection.BeginTransaction(isolationLevel);
 
-            return new SqlQueryDispatcher(_serviceProvider, transaction);
+            return new SqlQueryDispatcher(_serviceProvider, connection, transaction);
         }
 
         private class SqlQueryDispatcher : ISqlQueryDispatcher, IDisposable
@@ -38,11 +38,11 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
             private readonly SqlConnection _connection;
             private List<Action> _postCommitActions;
 
-            internal SqlQueryDispatcher(IServiceProvider serviceProvider, SqlTransaction transaction)
+            internal SqlQueryDispatcher(IServiceProvider serviceProvider, SqlConnection connection, SqlTransaction transaction)
             {
                 _serviceProvider = serviceProvider;
                 Transaction = transaction;
-                _connection = transaction.Connection;
+                _connection = connection;
             }
 
             public SqlTransaction Transaction { get; }
@@ -58,12 +58,18 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql
                         action();
                     }
                 }
+                Dispose();
             }
 
             public void Dispose()
             {
                 Transaction.Dispose();
                 _connection.Dispose();
+            }
+
+            ~SqlQueryDispatcher()
+            {
+                Dispose();
             }
 
             public virtual async Task<T> ExecuteQuery<T>(ISqlQuery<T> query)
