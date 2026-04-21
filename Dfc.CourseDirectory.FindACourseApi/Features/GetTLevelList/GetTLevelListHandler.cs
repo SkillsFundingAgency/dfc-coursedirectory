@@ -13,10 +13,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList
 {
     public class TLevelResponse 
     {
-        public int totalTLevelCount { get; set; }
+        public int totalCount { get; set; }
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
-        public IList<TLevelListViewModel> tLevels { get; set; }
+        public IList<TLevelListViewModel> courses { get; set; }
     }
     public class TLevelRequest : IRequest<OneOf<NotFound, TLevelResponse>>
     {
@@ -38,10 +38,10 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList
             var listOfTLevels = await _sqlQueryDispatcher.ExecuteQuery(new GetTLevelsList() { PageNumber = request.PageNumber, PageSize = request.PageSize });
             var response = new TLevelResponse()
             {
-                totalTLevelCount = listOfTLevels.TLevelsCount,
+                totalCount = listOfTLevels.TLevelsCount,
                 pageNumber = request.PageNumber,
                 pageSize = request.PageSize,
-                tLevels = listOfTLevels.TLevels.Select(c => new TLevelListViewModel()
+                courses = listOfTLevels.TLevels.Select(c => new TLevelListViewModel()
                 {
                     TLevelId = c.TLevelId,
                     StartDate = c.StartDate,
