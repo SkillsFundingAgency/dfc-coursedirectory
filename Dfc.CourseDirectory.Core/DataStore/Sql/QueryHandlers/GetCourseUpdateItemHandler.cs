@@ -15,11 +15,15 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             count(cr.CourseRunId) AS CourseCount
                         FROM Pttcd.CourseRuns cr
                         LEFT JOIN Pttcd.Courses c on cr.CourseId = c.CourseId
+                        LEFT JOIN Pttcd.Venues v on v.VenueId = cr.VenueId
                         LEFT JOIN Pttcd.Providers p on c.ProviderId = p.ProviderId
                         LEFT JOIN Pttcd.ProviderContacts pc on p.ProviderId = pc.ProviderId
                         LEFT JOIN PTTCD.CourseRunSubRegions crsr on cr.CourseRunId = crsr.CourseRunId
                         LEFT JOIN pttcd.Regions sr on crsr.RegionId = sr.RegionId
-                        WHERE cr.CourseRunStatus = 1 and pc.ContactType = 'P';
+                        WHERE 
+                        (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @CutOffDate)
+                        OR (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @CutOffDate and cr.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and c.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate )))
+                        OR (cr.CourseRunStatus = 4 and cr.UpdatedOn > @CutOffDate)
 
                         SELECT
                             cr.CourseRunId AS Id,

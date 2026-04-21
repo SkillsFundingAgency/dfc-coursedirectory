@@ -12,12 +12,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
         public async Task<ListOfTLevelUpdates> Execute(SqlTransaction transaction, GetTLevelUpdates query)
         {
             var sql = $@"SELECT
-                            count(*) as TLevelCount
+                            count(t.TLevelId) as TLevelCount
                         FROM Pttcd.TLevels t
                         JOIN Pttcd.Providers p ON t.ProviderId = p.ProviderId
                         Join Pttcd.ProviderContacts pc on p.[ProviderId] = pc.[ProviderId]
                         Join Pttcd.TLevelLocations tl on t.TLevelId = tl.TLevelId
-                        where t.TLevelStatus = 1 and pc.ContactType = 'P'
+						Join Pttcd.Venues v on tl.VenueId = v.VenueId
+						WHERE
+                         (t.TLevelStatus = 1 and pc.ContactType = 'P' and t.CreatedOn > @CutOffDate) 
+                        OR (t.TLevelStatus = 1 and pc.ContactType = 'P' and ((t.CreatedOn < @CutOffDate and t.UpdatedOn > @CutOffDate) or (t.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate))) 
+                        OR (t.TLevelStatus = 2 and t.UpdatedOn > @CutOffDate)
 
                         SELECT
                             t.TLevelId,
