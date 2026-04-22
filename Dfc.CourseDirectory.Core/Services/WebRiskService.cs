@@ -1,8 +1,11 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
 using System.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Dfc.CourseDirectory.Core.Services
 {
@@ -11,16 +14,42 @@ namespace Dfc.CourseDirectory.Core.Services
         private readonly GoogleWebRiskSettings _WebRiskSettings;
         private readonly IHttpClientFactory _factory;
         private readonly ILogger<WebRiskService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public WebRiskService(IOptions<GoogleWebRiskSettings> options, IHttpClientFactory factory)
+        public WebRiskService(IOptions<GoogleWebRiskSettings> options, IHttpClientFactory factory, IHttpContextAccessor httpContextAccessor)
         {
             _WebRiskSettings = options.Value;
             _factory = factory;
             _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>();
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<bool> CheckForSecureUri(string url)
         {
+            var request = _httpContextAccessor.HttpContext?.Request;
+
+            var requestUrl = request != null
+                ? $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}"
+                : string.Empty;
+
+            var allowedEnvironments = new[]
+            {
+            "dev-coursedirectory",
+            "sit-coursedirectory",
+            "pp-coursedirectory"    
+            };
+
+            bool isPerfEnvironment = allowedEnvironments
+                .Any(env => requestUrl.Contains(env, StringComparison.OrdinalIgnoreCase));
+
+            if (_WebRiskSettings.PerformanceTesting && isPerfEnvironment)
+            {
+                _logger.LogInformation(
+                    "WebRiskService: Performance testing enabled and environment matched ({url}), skipping external service call",
+                    requestUrl
+                );
+                return true;
+            }
             using (var client = _factory.CreateClient("namedClient"))
             {
                 try
