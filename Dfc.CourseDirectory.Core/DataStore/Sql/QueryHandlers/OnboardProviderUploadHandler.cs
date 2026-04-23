@@ -45,7 +45,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                     ELSE P.ProviderUploadId
                 END) ,
                   p.ProviderStatus = pur.ProviderStatus,
-                  p.ProviderType = pur.ProviderType,
+                  p.ProviderType =  p.ProviderType | pur.ProviderType,
                   p.UpdatedOn = (CASE
                     WHEN p.providerstatus <> pur.providerstatus ANd p.providertype <> pur.providertype THEN @OnboardedOn
                     WHEN p.providerstatus = pur.providerstatus ANd p.providertype <> pur.providertype THEN @OnboardedOn
