@@ -362,14 +362,17 @@ namespace Dfc.CourseDirectory.Core.DataManagement
             var rowsAreValid = true;
 
             var upsertRecords = new List<UpsertInactiveProviderUploadRowsRecord>();
-            var filterByPreviousMonth = DateTime.Now.Month - 1;
+            var refDate = DateTime.Now.AddMonths(12 * -1);
+            var firstDayOfMonth = new DateTime(refDate.Year, refDate.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(12).AddDays(-1);
 
             foreach (var row in rows)
             {
                 var rowNumber = row.RowNumber;
 
                 var parsedRow = ParsedCsvInactiveProviderRow.FromCsvProviderRow(row.Data);
-                if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN))
+                if (upsertRecords.Any(x => x.Ukprn == parsedRow.OrgUKPRN) || !(parsedRow.ResolvedOrgStatusDate >= firstDayOfMonth
+                    && parsedRow.ResolvedOrgStatusDate <= lastDayOfMonth))
                 {
                     continue;
                 }

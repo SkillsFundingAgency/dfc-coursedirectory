@@ -145,11 +145,17 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
                         await CreateViewModel(),
                         "The selected file must use the template");
                 }
-                else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader)
+                else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader && request.InactiveProviders)
                 {
                     return new UploadFailedResult(
                         await CreateViewModel(),
-                       "The selected file must contain 7 columns");
+                       "The selected file does not match the format for an inactive report");
+                }
+                else if (saveFileResult.Status == SaveProviderFileResultStatus.InvalidHeader && !request.InactiveProviders)
+                {
+                    return new UploadFailedResult(
+                        await CreateViewModel(),
+                       "The selected file does not match the format for an active report");
                 }
                 else if (saveFileResult.Status == SaveProviderFileResultStatus.EmptyFile)
                 {
@@ -192,7 +198,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.DataManagement.Providers.Upload
         {
             RuleFor(x => x.File)
                 .NotNull()
-                    .WithMessage("Select a CSV file")
+                   .WithMessage("The selected file must be a CSV")
                 .Must(file => file == null || file.Length <= Constants.ProviderFileMaxSizeBytes)
                     .WithMessage($"The selected file must be smaller than {Constants.ProviderFileMaxSizeLabel}");
         }
