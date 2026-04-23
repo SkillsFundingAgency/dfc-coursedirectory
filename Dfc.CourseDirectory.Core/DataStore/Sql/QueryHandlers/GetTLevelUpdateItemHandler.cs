@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         (t.TLevelStatus = 1 and pc.ContactType = 'P' and t.CreatedOn > @CutOffDate) 
                         OR (t.TLevelStatus = 1 and pc.ContactType = 'P' and ((t.CreatedOn < @CutOffDate and t.UpdatedOn > @CutOffDate) or (t.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate))) 
                         OR (t.TLevelStatus = 2 and t.UpdatedOn > @CutOffDate)
-                        order by TLevelId
+                        order by  t.CreatedOn, t.TLevelId desc
                         OFFSET (@PageNumber-1)*@PageSize ROWS
                         FETCH NEXT @PageSize ROWS ONLY";
 

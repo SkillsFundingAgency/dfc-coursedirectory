@@ -79,7 +79,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         LEFT JOIN lars.LearningDelivery l on c.LearnAimRef = l.LearnAimRef
                         LEFT JOIN lars.SectorSubjectAreaTier2 SSA on l.[SectorSubjectAreaTier2] = SSA.SectorSubjectAreaTier2
                         WHERE cr.CourseRunStatus = 1 and pc.ContactType = 'P'
-                        order by Id
+                        order by cr.CreatedOn, cr.Id desc
                         OFFSET (@PageNumber-1)*@PageSize ROWS
                         FETCH NEXT @PageSize ROWS ONLY
                 ";

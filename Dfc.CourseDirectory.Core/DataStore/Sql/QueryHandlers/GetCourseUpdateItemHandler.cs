@@ -97,7 +97,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @CutOffDate)
                         OR (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @CutOffDate and cr.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and c.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate )))
                         OR (cr.CourseRunStatus = 4 and cr.UpdatedOn > @CutOffDate)
-                        order by Id
+                        order by cr.CreatedOn, cr.CourseRunId desc
                         OFFSET (@PageNumber-1)*@PageSize ROWS
                         FETCH NEXT @PageSize ROWS ONLY
                 ";

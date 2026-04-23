@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         Join Pttcd.TLevelLocations tl on t.TLevelId = tl.TLevelId
                         Join Pttcd.Venues v on tl.VenueId = v.VenueId
                         WHERE t.TLevelStatus = 1 and pc.ContactType = 'P'
-                        order by TLevelId
+                        order by t.CreatedOn, t.TLevelId desc
                         OFFSET (@PageNumber-1)*@PageSize ROWS
                         FETCH NEXT @PageSize ROWS ONLY";
 
