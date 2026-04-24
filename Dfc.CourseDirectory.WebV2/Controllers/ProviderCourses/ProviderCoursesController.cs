@@ -26,8 +26,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 {
     public class ProviderCoursesController : BaseController
     {
-        private const string SearchStateSessionKey = "ProviderCoursesSearchState";
-        private const string ProviderCoursesSessionKey = "ProviderCourses";
         private const int DefaultPageSize = 10;
 
         private ISession Session => HttpContext.Session;
@@ -112,7 +110,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var searchState = Session.GetObject<ProviderCourseSearchState>(SearchStateSessionKey)
+            var searchState = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState)
                 ?? new ProviderCourseSearchState { NonLarsCourse = nlc, PageSize = DefaultPageSize };
 
             var nonLarsCourse = searchState.NonLarsCourse;
@@ -125,7 +123,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 Session.SetString(SessionNonLarsCourse, "false");
             }
 
-            var allCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>(ProviderCoursesSessionKey);
+            var allCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>(SessionProviderCourses);
             if (allCourseRuns == null)
             {
                 var providerCourses = await GetProviderCourses(nonLarsCourse, providerId);
@@ -196,7 +194,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                     }
                 }
 
-                Session.SetObject(ProviderCoursesSessionKey, allCourseRuns);
+                Session.SetObject(SessionProviderCourses, allCourseRuns);
             }
 
             var model = new ProviderCoursesViewModel()
@@ -437,11 +435,11 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 
             searchState.PageSize = DefaultPageSize;
 
-            var existing = Session.GetObject<ProviderCourseSearchState>(SearchStateSessionKey);
+            var existing = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState);
             if (existing != null && existing.NonLarsCourse != searchState.NonLarsCourse)
-                Session.Remove(ProviderCoursesSessionKey);
+                Session.Remove(SessionProviderCourses);
 
-            Session.SetObject(SearchStateSessionKey, searchState);
+            Session.SetObject(SessionProviderCoursesSearchState, searchState);
 
             return RedirectToAction(nameof(Index), searchState.NonLarsCourse ? new { nlc = "true" } : null);
         }
@@ -450,7 +448,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
         [HttpGet]
         public IActionResult ClearFilters(bool nlc = false)
         {
-            Session.Remove(SearchStateSessionKey);
+            Session.Remove(SessionProviderCoursesSearchState);
             return RedirectToAction(nameof(Index), nlc ? new { nlc = "true" } : null);
         }
 
