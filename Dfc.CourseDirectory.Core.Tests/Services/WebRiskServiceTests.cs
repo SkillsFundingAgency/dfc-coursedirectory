@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -33,7 +34,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             httpContextAccessor.HttpContext.Request.Host =
                 new HostString("dev-coursedirectory.nationalcareersservice.org.uk");
 
-            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, httpContextAccessor);
+            var hostEnvironmentMock = new Mock<IHostEnvironment>();
+            hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
+            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, hostEnvironmentMock.Object);
             var website = "https://testsafebrowsing.appspot.com/s/malware.html";
 
             // Act
@@ -46,7 +49,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomanceTest()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true, Environments = "pp" });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -61,7 +64,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             httpContextAccessor.HttpContext.Request.Host =
                 new HostString("pp-coursedirectory.nationalcareersservice.org.uk");
 
-            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, httpContextAccessor);
+            var hostEnvironmentMock = new Mock<IHostEnvironment>();
+            hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
+            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, hostEnvironmentMock.Object);
             var website = "http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/";
 
             // Act
@@ -89,7 +94,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             httpContextAccessor.HttpContext.Request.Scheme = "https";
             httpContextAccessor.HttpContext.Request.Host =
                 new HostString("dev-coursedirectory.nationalcareersservice.org.uk");
-            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, httpContextAccessor);
+            var hostEnvironmentMock = new Mock<IHostEnvironment>();
+            hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
+            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, hostEnvironmentMock  .Object);
             var website = "https://www.google.com";
 
             // Act

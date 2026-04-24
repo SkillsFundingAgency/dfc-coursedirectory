@@ -6,6 +6,7 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 
 namespace Dfc.CourseDirectory.Core.Services
 {
@@ -14,37 +15,38 @@ namespace Dfc.CourseDirectory.Core.Services
         private readonly GoogleWebRiskSettings _WebRiskSettings;
         private readonly IHttpClientFactory _factory;
         private readonly ILogger<WebRiskService> _logger;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHostEnvironment _hostEnvironment;
 
-        public WebRiskService(IOptions<GoogleWebRiskSettings> options, IHttpClientFactory factory, IHttpContextAccessor httpContextAccessor)
+        public WebRiskService(
+            IOptions<GoogleWebRiskSettings> options,
+            IHttpClientFactory factory,
+            IHostEnvironment hostEnvironment)
         {
             _WebRiskSettings = options.Value;
             _factory = factory;
-            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>();
-            _httpContextAccessor = httpContextAccessor;
+            _hostEnvironment = hostEnvironment;
+
+            _logger = LoggerFactory.Create(builder => builder.AddConsole())
+                                   .CreateLogger<WebRiskService>();
         }
 
         public async Task<bool> CheckForSecureUri(string url)
         {
-            var request = _httpContextAccessor.HttpContext?.Request;
 
-            var requestUrl = request != null
-                ? $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}"
-                : string.Empty;
+            var currentEnvironment = _hostEnvironment.EnvironmentName;
 
-            var allowedEnvironments = _WebRiskSettings.Environments?.Split(',').Select(e => e.Trim()).ToArray() ?? Array.Empty<string>();
+            bool isNonProduction =
+                !string.Equals(currentEnvironment, "Production", StringComparison.OrdinalIgnoreCase);
 
-            bool isPerfEnvironment = allowedEnvironments
-                .Any(env => requestUrl.Contains(env, StringComparison.OrdinalIgnoreCase));
-
-            if (_WebRiskSettings.PerformanceTesting && isPerfEnvironment)
+            if (_WebRiskSettings.PerformanceTesting && isNonProduction)
             {
                 _logger.LogInformation(
-                    "WebRiskService: Performance testing enabled and environment matched ({url}), skipping external service call",
-                    requestUrl
+                    "WebRiskService: Performance testing enabled in non-production environment ({env}), skipping external service call",
+                    currentEnvironment
                 );
                 return true;
             }
+
             using (var client = _factory.CreateClient("namedClient"))
             {
                 try
