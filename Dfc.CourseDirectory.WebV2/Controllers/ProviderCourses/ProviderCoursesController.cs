@@ -51,19 +51,19 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             _providerContextProvider = providerContextProvider;
         }
 
-        internal Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.VenueId == id);
+        private static Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.VenueId == id);
 
-        internal string FormatAddress(Venue venue)
+        private static string FormatAddress(Venue venue)
         {
             if (venue == null) return string.Empty;
 
             return venue.VenueName;
         }
 
-        internal string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        private static string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
         {
-            if (list == null) list = new List<RegionItemModel>();
-            if (ids == null) ids = new List<string>();
+            list ??= new List<RegionItemModel>();
+            ids ??= new List<string>();
 
             var regionNames = (from regionItemModel in list
                                from subRegionItemModel in regionItemModel.SubRegion
@@ -73,10 +73,10 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             return string.Join(", ", regionNames);
         }
 
-        internal string FormattedRegionIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        private static string FormattedRegionIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
         {
-            if (list == null) list = new List<RegionItemModel>();
-            if (ids == null) ids = new List<string>();
+            list ??= new List<RegionItemModel>();
+            ids ??= new List<string>();
 
             var regionNames = (from regionItemModel in list
                                from subRegionItemModel in regionItemModel.SubRegion
@@ -243,7 +243,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             if (searchState.RegionFilter.Length > 0)
             {
                 List<ProviderCourseRunViewModel> allResults = model.ProviderCourseRuns.ToList();
-                List<ProviderCourseRunViewModel> filterResults = new List<ProviderCourseRunViewModel>();
+                List<ProviderCourseRunViewModel> filterResults = new();
                 foreach (var regionFilter in searchState.RegionFilter)
                 {
                     var region = _courseService.GetRegions().RegionItems
@@ -262,11 +262,11 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 
             model.ProviderCourseRuns = model.ProviderCourseRuns.OrderBy(x => x.CourseName).ToList();
 
-            List<ProviderCoursesFilterItemModel> levelFilterItems = new List<ProviderCoursesFilterItemModel>();
-            List<ProviderCoursesFilterItemModel> deliveryModelFilterItems = new List<ProviderCoursesFilterItemModel>();
-            List<ProviderCoursesFilterItemModel> venueFilterItems = new List<ProviderCoursesFilterItemModel>();
-            List<ProviderCoursesFilterItemModel> regionFilterItems = new List<ProviderCoursesFilterItemModel>();
-            List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new List<ProviderCoursesFilterItemModel>();
+            List<ProviderCoursesFilterItemModel> levelFilterItems = new();
+            List<ProviderCoursesFilterItemModel> deliveryModelFilterItems = new();
+            List<ProviderCoursesFilterItemModel> venueFilterItems = new();
+            List<ProviderCoursesFilterItemModel> regionFilterItems = new();
+            List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new();
 
             int s = 0;
 
@@ -280,27 +280,17 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                     string levelKey = string.Empty;
                     if (level.Key != null)
                         levelKey = level.Key;
-                    switch (levelKey.ToLower())
+
+                    textValue = levelKey.ToLower() switch
                     {
-                        case "e":
-                            textValue = "Entry level";
-                            break;
-                        case "x":
-                            textValue = "X - Not applicable/unknown";
-                            break;
-                        case "h":
-                            textValue = "Higher";
-                            break;
-                        case "m":
-                            textValue = "Mixed";
-                            break;
-                        default:
-                            textValue = "Level " + levelKey;
-                            break;
+                        "e" => "Entry level",
+                        "x" => "X - Not applicable/unknown",
+                        "h" => "Higher",
+                        "m" => "Mixed",
+                        _ => "Level " + levelKey,
+                    };
 
-                    }
-
-                    ProviderCoursesFilterItemModel itemModel = new ProviderCoursesFilterItemModel()
+                    ProviderCoursesFilterItemModel itemModel = new()
                     {
                         Id = "level-" + s++.ToString(),
                         Value = levelKey,
@@ -350,7 +340,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 IsSelected = searchState.AttendancePatternFilter.Length > 0 && searchState.AttendancePatternFilter.Contains(r.Key)
             }).ToList();
 
-            List<string> allRegionsList = new List<string>();
+            List<string> allRegionsList = new();
 
             var regionsForCourse = model.ProviderCourseRuns.GroupBy(x => x.Region).Where(x => !string.IsNullOrEmpty(x.Key)).OrderBy(x => x.Key).ToList();
             foreach (var regions in regionsForCourse)
@@ -408,8 +398,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                                                 , String.Empty);
 
                     notificationAnchorTag = courseRunId.HasValue
-                  ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
-                  : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
+                      ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
+                      : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
                     model.NotificationTitle = notificationTitle;
                     model.NotificationMessage = notificationAnchorTag;
                 }
