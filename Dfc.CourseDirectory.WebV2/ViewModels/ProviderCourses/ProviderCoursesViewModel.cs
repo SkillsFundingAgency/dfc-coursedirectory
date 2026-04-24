@@ -14,6 +14,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
         public List<ProviderCoursesFilterItemModel> Regions { get; set; }
         public List<ProviderCoursesFilterItemModel> AttendancePattern { get; set; }
         public int? PendingCoursesCount { get; set; }
+        public int TotalCoursesCount { get; set; }
         public string NotificationTitle { get; set; }
         public string NotificationMessage { get; set; }
         public string CourseRunId { get; set; }

@@ -25,14 +25,16 @@
 
 @if (!hasCourses)
 {
-    <div class="govuk-grid-column-full govuk-body">
-        <span class="govuk-visually-hidden">Data Unavailable</span>
-        @await Component.InvokeAsync(nameof(Notification), new NotificationModel
-        {
-            NotificationTitle = "",
-            NotificationMessage = "No courses found that match your search criteria",
-            ClassType = "error-summary"
-        })
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full govuk-body">
+            <span class="govuk-visually-hidden">Data Unavailable</span>
+            @await Component.InvokeAsync(nameof(Notification), new NotificationModel
+            {
+                NotificationTitle = "",
+                NotificationMessage = "No courses found that match your search criteria",
+                ClassType = "error-summary"
+            })
+        </div>
     </div>
 }
 else

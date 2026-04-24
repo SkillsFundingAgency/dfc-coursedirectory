@@ -12,7 +12,7 @@
         ? baseUrl + "?nlc=true&page={0}"
         : baseUrl + "?page={0}";
 
-    var hasCourses = Model.ProviderCourseRuns != null && Model.ProviderCourseRuns.Any();
+    var hasCourses = Model.TotalCoursesCount > 0;
 }
 
 @if (!hasCourses)
@@ -69,21 +69,35 @@ else
     <h1 class="govuk-heading-l">Your courses</h1>
     <p class="govuk-body-l">These courses are published on the course directory.</p>
 
-    <form asp-controller="ProviderCourses" asp-action="Search" method="post">
+    var keywordErrors = ViewData.ModelState[nameof(Model.Keyword)]?.Errors
+           ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
 
+    @if (keywordErrors.Any())
+    {
+        <govuk-error-summary>
+            <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+            <govuk-error-summary-item href="#Keyword">@ViewData.ModelState["Keyword"]?.Errors[0].ErrorMessage</govuk-error-summary-item>
+        </govuk-error-summary>
+    }
+
+    <form asp-controller="ProviderCourses" asp-action="Search" method="post">
         <input type="hidden" name="NonLarsCourse" value="@(Model.NonLarsCourse ? "true" : "false")">
 
-        <div class="govuk-form-group">
+        <div class="govuk-form-group@(keywordErrors.Any() ? " govuk-form-group--error" : string.Empty)">
+            
             <label class="govuk-label govuk-label--s" for="Keyword">
                 @(Model.NonLarsCourse ? "Search by keyword" : "Search by LARS/QAN code or keyword")
             </label>
+
+            @if (keywordErrors.Any())
+            {
+                <govuk-error-message>@keywordErrors[0].ErrorMessage</govuk-error-message>
+            }
+
             <div class="govuk-input__wrapper">
-                <input class="govuk-input govuk-input--width-20"
-                       id="Keyword" name="Keyword"
-                       type="search"
-                       value="@Model.Keyword"
-                       autocomplete="off">
-                <button type="submit" class="govuk-button govuk-button--secondary" style="margin-bottom:0">
+                <input class="govuk-input govuk-input--width-20" id="Keyword" name="Keyword" type="search" value="@Model.Keyword" autocomplete="off">
+
+                <button type="submit" class="govuk-button">
                     Search
                 </button>
             </div>
@@ -92,6 +106,11 @@ else
         @await Component.InvokeAsync(nameof(ProviderCoursesResults), Model)
 
     </form>
-
-    @await Component.InvokeAsync("GdsPagination", new { pagination = Model.Pagination, pageUrlFormat })
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">&emsp;</div>
+        <div class="govuk-grid-column-three-quarters">
+            @await Component.InvokeAsync("GdsPagination", new { pagination = Model.Pagination, pageUrlFormat })
+        </div>
+    </div>
+    
 }

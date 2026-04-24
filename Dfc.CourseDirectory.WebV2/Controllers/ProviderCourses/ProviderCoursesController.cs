@@ -200,21 +200,30 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             var model = new ProviderCoursesViewModel()
             {
                 PendingCoursesCount = 0,
+                TotalCoursesCount = allCourseRuns.Count,
                 ProviderCourseRuns = allCourseRuns.ToList(),
                 NonLarsCourse = nonLarsCourse
             };
 
-            if (!string.IsNullOrEmpty(searchState.Keyword))
+            var keywordSearch = searchState.Keyword?.Trim()?.ToLower() ?? string.Empty;
+            var keywordTooShort = keywordSearch.Length > 0 && keywordSearch.Length < 3;
+            if (keywordTooShort)
+            {
+                ModelState.AddModelError(nameof(searchState.Keyword), "Enter a minimum of 3 characters");
+                keywordSearch = string.Empty;
+            }
+
+            if (keywordSearch.Length > 0)
             {
                 model.ProviderCourseRuns = model.ProviderCourseRuns
-                    .Where(x => x.CourseName.ToLower().Contains(searchState.Keyword.ToLower())
-                                || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(searchState.Keyword.ToLower()))
-                                || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(searchState.Keyword.ToLower()))
-                                 || x.AttendancePattern.ToLower().Contains(searchState.Keyword.ToLower())
-                                  || x.DeliveryMode.ToLower().Contains(searchState.Keyword.ToLower())
-                                   || x.Venue.ToLower().Contains(searchState.Keyword.ToLower())
-                                    || x.Region.ToLower().Contains(searchState.Keyword.ToLower())
-                                || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(searchState.Keyword.ToLower()))
+                    .Where(x => x.CourseName.ToLower().Contains(keywordSearch)
+                                || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(keywordSearch))
+                                || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(keywordSearch))
+                                 || x.AttendancePattern.ToLower().Contains(keywordSearch)
+                                  || x.DeliveryMode.ToLower().Contains(keywordSearch)
+                                   || x.Venue.ToLower().Contains(keywordSearch)
+                                    || x.Region.ToLower().Contains(keywordSearch)
+                                || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(keywordSearch))
                                 ).ToList();
             }
 
@@ -408,7 +417,13 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 notificationAnchorTag = string.Empty;
             }
 
-            model.HasFilters = levelFilterItems.Any(x => x.IsSelected) || deliveryModelFilterItems.Any(x => x.IsSelected) || venueFilterItems.Any(x => x.IsSelected) || regionFilterItems.Any(x => x.IsSelected) || attendanceModeFilterItems.Any(x => x.IsSelected) || !string.IsNullOrWhiteSpace(searchState.Keyword);
+            model.HasFilters = 
+                levelFilterItems.Any(x => x.IsSelected) || 
+                deliveryModelFilterItems.Any(x => x.IsSelected) || 
+                venueFilterItems.Any(x => x.IsSelected) || 
+                regionFilterItems.Any(x => x.IsSelected) || 
+                attendanceModeFilterItems.Any(x => x.IsSelected) || 
+                !string.IsNullOrWhiteSpace(searchState.Keyword);
             model.Levels = levelFilterItems;
             model.DeliveryModes = deliveryModelFilterItems;
             model.Venues = venueFilterItems;
