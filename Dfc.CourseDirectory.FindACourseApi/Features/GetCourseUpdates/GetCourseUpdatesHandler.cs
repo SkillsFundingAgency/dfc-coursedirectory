@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,9 +48,9 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
                 cutOffDate = request.CutOffDate,
                 courses = listOfCourses.Courses.Select(c => new CourseUpdatesViewModel()
                 {
-                    UpdateType = c.UpdateType,                    
+                    UpdateType = ConvertToEnumObj<UpdateType,GetCourses.UpdateType>(c.UpdateType),                    
                     Id = c.Id,
-                    CourseRunStatus = ConvertToEnumObj<CourseStatus>(c.CourseRunStatus),
+                    CourseRunStatus = ConvertToEnumObj<CourseStatus, CourseRunStatus>(c.CourseRunStatus),
                     ContactType = c.ContactType,
                     CreatedOn = c.CreatedOn,
                     UpdatedOn = c.UpdatedOn,
@@ -61,18 +62,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
                     SectorDescription = c.SectorDescription,
                     SectorCode = c.SectorCode,
                     SectorSubjectArea = c.SectorSubjectArea,
-                    EducationLevel = ConvertToEnumObj<EducationLevel>(c.EducationLevel),
+                    EducationLevel = ConvertToEnumObj<EducationLevel,EductationLevel>(c.EducationLevel),
                     AwardingBody = c.AwardingBody,
-                    DeliveryMode = ConvertToEnumObj<CourseDeliveryMode>(c.DeliveryMode) ,
+                    DeliveryMode = ConvertToEnumObj<CourseDeliveryMode,DeliveryMode>(c.DeliveryMode) ,
                     FlexibleStartDate = c.FlexibleStartDate,
                     StartDate = c.StartDate,
                     CourseWebsite = c.CourseWebsite,
                     Cost = c.Cost,
                     CostDescription = c.CostDescription,
-                    DurationUnit = ConvertToEnumObj<CourseDurationUnit>(c.DurationUnit),
+                    DurationUnit = ConvertToEnumObj<CourseDurationUnit, DurationUnit>(c.DurationUnit),
                     DurationValue = c.DurationValue,
-                    StudyMode = ConvertToEnumObj<CourseStudyMode>(c.StudyMode),
-                    AttendancePattern = ConvertToEnumObj<CourseAttendancePattern>(c.AttendancePattern), 
+                    StudyMode = ConvertToEnumObj<CourseStudyMode, StudyMode>(c.StudyMode),
+                    AttendancePattern = ConvertToEnumObj<CourseAttendancePattern, AttendancePattern>(c.AttendancePattern), 
                     National = c.National,
                     Region = c.Region,
                     ParentRegion = c.ParentRegion,
@@ -103,13 +104,22 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
             };
             return response;
         }
-        private static EnumObj ConvertToEnumObj<T>(int? value)
+        public enum UpdateType
+        {
+            [Description("Newly Added Course")]
+            NewlyAddedCourse = 1,
+            [Description("Updated Course")]
+            UpdatedCourse = 2,
+            [Description("Deleted Course")]
+            DeletedCourse = 3
+        }
+        private static V ConvertToEnumObj<T, V>(int? value) where V : EnumObj, new()
         {
             Type enumType = typeof(T);
             if (value.HasValue && Enum.IsDefined(enumType, value))
             {
                 var description = Enum.GetName(enumType, value);
-                return new EnumObj() { Value = value, Description = description };
+                return new V() { Value = value, Description = description };
             }
             return null;
         }

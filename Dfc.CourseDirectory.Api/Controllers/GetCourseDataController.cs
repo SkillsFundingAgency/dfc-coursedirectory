@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
 using System;
+using Microsoft.VisualBasic;
 
 namespace Dfc.CourseDirectory.Api.Controllers
 {
@@ -70,9 +71,20 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CourseUpdates(DateTime cutOffDate, int pageSize, int pageNumber)
+        public async Task<IActionResult> CourseUpdates(string cutOffDate, int pageSize, int pageNumber)
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(CourseUpdates));
+
+            if (!DateTime.TryParse(cutOffDate, out var parsedCutOffDate))
+            {
+                _log.LogWarning("Invalid CutOffDate parameter provided. Response Code [BAD REQUEST]");
+                return BadRequest("CutOffDate must be a valid date.");
+            }
+            else if (parsedCutOffDate > DateTime.UtcNow)
+            {
+                _log.LogWarning("CutOffDate parameter provided is a future date. Response Code [BAD REQUEST]");
+                return BadRequest("CutOffDate cannot be a future date.");
+            }
 
             if (pageSize <= 0 || pageNumber <= 0)
             {
@@ -84,20 +96,11 @@ namespace Dfc.CourseDirectory.Api.Controllers
                 _log.LogWarning("Page Size [{PageSize}] exceeds the maximum allowed limit. Response Code [BAD REQUEST]", pageSize);
                 return BadRequest("PageSize must not exceed 100.");
             }
-            if (cutOffDate < DateTime.MinValue || cutOffDate > DateTime.MaxValue)
-            {
-                _log.LogWarning("Invalid CutOffDate parameter provided. Response Code [BAD REQUEST]");
-                return BadRequest("CutOffDate must be a valid date.");
-            }
-            else if(cutOffDate > DateTime.UtcNow)
-            {
-                _log.LogWarning("CutOffDate parameter provided is a future date. Response Code [BAD REQUEST]");
-                return BadRequest("CutOffDate cannot be a future date.");
-            }
+            
 
             var request = new CourseUpdateRequest()
             {
-                CutOffDate = cutOffDate,
+                CutOffDate = parsedCutOffDate,
                 PageSize = pageSize,
                 PageNumber = pageNumber
             };

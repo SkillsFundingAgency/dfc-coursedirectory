@@ -51,18 +51,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
                     SectorCode = c.SectorCode,
                     SectorSubjectArea = c.SectorSubjectArea,
                     SectorDescription = c.SectorDescription,
-                    EducationLevel = ConvertToEnumObj<EducationLevel>(c.EducationLevel),
+                    EducationLevel = ConvertToEnumObj<EducationLevel, EductationLevel>(c.EducationLevel),
                     AwardingBody = c.AwardingBody,
-                    DeliveryMode = ConvertToEnumObj<CourseDeliveryMode>(c.DeliveryMode) ,
+                    DeliveryMode = ConvertToEnumObj<CourseDeliveryMode, DeliveryMode>(c.DeliveryMode) ,
                     FlexibleStartDate = c.FlexibleStartDate,
                     StartDate = c.StartDate,
                     CourseWebsite = c.CourseWebsite,
                     Cost = c.Cost,
                     CostDescription = c.CostDescription,
-                    DurationUnit = ConvertToEnumObj<CourseDurationUnit>(c.DurationUnit),
+                    DurationUnit = ConvertToEnumObj<CourseDurationUnit, DurationUnit>(c.DurationUnit),
                     DurationValue = c.DurationValue,
-                    StudyMode = ConvertToEnumObj<CourseStudyMode>(c.StudyMode),
-                    AttendancePattern = ConvertToEnumObj<CourseAttendancePattern>(c.AttendancePattern), 
+                    StudyMode = ConvertToEnumObj<CourseStudyMode, StudyMode>(c.StudyMode),
+                    AttendancePattern = ConvertToEnumObj<CourseAttendancePattern, AttendancePattern>(c.AttendancePattern), 
                     National = c.National,
                     Region = c.Region,
                     ParentRegion = c.ParentRegion,
@@ -93,13 +93,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
             };
             return response;
         }
-        private static EnumObj ConvertToEnumObj<T>(int? value)
+
+        private static V ConvertToEnumObj<T, V>(int? value) where V : EnumObj, new()
         {
             Type enumType = typeof(T);
             if (value.HasValue && Enum.IsDefined(enumType, value))
             {
                 var description = Enum.GetName(enumType, value);
-                return new EnumObj() { Value = value, Description = description };
+                return new V() { Value = value, Description = description };
             }
             return null;
         }

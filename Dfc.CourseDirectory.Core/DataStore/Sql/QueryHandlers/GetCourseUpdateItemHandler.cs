@@ -104,7 +104,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
             var paramz = new
             {
-                query.CutOffDate,
+                CutOffDate = query.CutOffDate.ToString("yyyy-MM-ddTHH:mm:ss"),
                 query.PageNumber,
                 query.PageSize
             };

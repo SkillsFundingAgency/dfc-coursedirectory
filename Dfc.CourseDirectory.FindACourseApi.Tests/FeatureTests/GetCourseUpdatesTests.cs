@@ -34,7 +34,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 0;
             
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate, pageSize, pageNumber );
+            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber );
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
@@ -42,49 +42,35 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             result.Value.Should().Be("PageSize and PageNumber must be greater than zero.");
         }
         [Fact]
-        public async Task InvalidMinCutOffDate_ReturnsBadRequest()
+        public async Task InvalidCutOffDate_ReturnsBadRequest()
         {
             // Arrange
-            var pageSize = 0;
-            var pageNumber = 0;
+            var pageSize = 1;
+            var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(DateTime.MinValue, pageSize, pageNumber);
+            var response = await _controller.CourseUpdates("invalid string", pageSize, pageNumber);
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
             result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            result.Value.Should().Be("PageSize and PageNumber must be greater than zero.");
+            result.Value.Should().Be("CutOffDate must be a valid date.");
         }
-        [Fact]
-        public async Task InvalidMaxCutOffDate_ReturnsBadRequest()
-        {
-            // Arrange
-            var pageSize = 0;
-            var pageNumber = 0;
-
-            // Act
-            var response = await _controller.CourseUpdates(DateTime.MaxValue, pageSize, pageNumber);
-            var result = Assert.IsType<BadRequestObjectResult>(response);
-
-            // Assert
-            result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            result.Value.Should().Be("PageSize and PageNumber must be greater than zero.");
-        }
+        
         [Fact]
         public async Task InvalidFutureCutOffDate_ReturnsBadRequest()
         {
             // Arrange
-            var pageSize = 0;
-            var pageNumber = 0;
+            var pageSize = 1;
+            var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(DateTime.UtcNow.AddDays(1), pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(DateTime.UtcNow.AddDays(1).ToString("o"), pageSize, pageNumber);
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
             result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            result.Value.Should().Be("PageSize and PageNumber must be greater than zero.");
+            result.Value.Should().Be("CutOffDate cannot be a future date.");
         }
 
         [Fact]
@@ -95,7 +81,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate, pageSize, pageNumber); 
+            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber); 
 
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
@@ -112,7 +98,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = -1;
 
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate, pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
 
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
@@ -122,14 +108,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         }
 
         [Fact]
-        public async Task ValidPageNumberPageSize_ReturnsOk()
+        public async Task ValidCutOffDatePageNumberPageSize_ReturnsOk()
         {
             // Arrange
             var pageSize = 10;
             var pageNumber = 1;
             _mediator.Setup(m => m.Send(It.IsAny<CourseUpdateRequest>(), default)).ReturnsAsync(new CourseUpdateResponse());
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate, pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
 
             var result = Assert.IsType<OkObjectResult>(response);
 
@@ -138,14 +124,14 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
         }
 
         [Fact]
-        public async Task ValidPageNumberPageSize_ReturnsNotFound()
+        public async Task ValidCutOffDatePageNumberPageSize_ReturnsNotFound()
         {
             // Arrange
             var pageSize = 10;
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate, pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
 
             var result = Assert.IsType<NotFoundResult>(response);
 

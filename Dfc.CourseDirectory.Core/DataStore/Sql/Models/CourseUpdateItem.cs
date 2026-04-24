@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
     public class CourseUpdateItem
     {
         public Guid Id { get; set; }
-        public string UpdateType { get; set; }
+        public int? UpdateType { get; set; }
         public int? CourseRunStatus { get; set; }
         public string ContactType { get; set; }
         public DateTime? CreatedOn { get; set; }

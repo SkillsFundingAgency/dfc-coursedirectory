@@ -6,8 +6,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
     public class CourseUpdatesViewModel
     {
         public Guid Id { get; set; }
-        public string UpdateType { get; set; }
-        public EnumObj CourseRunStatus { get; set; }
+        public UpdateType UpdateType { get; set; }
+        public CourseRunStatus CourseRunStatus { get; set; }
         public string ContactType { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
@@ -19,18 +19,18 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
         public string SectorDescription { get; set; }
         public string SectorCode { get; set; }
         public string SectorSubjectArea { get; set; }
-        public EnumObj EducationLevel { get; set; }
+        public EductationLevel EducationLevel { get; set; }
         public string AwardingBody { get; set; }
-        public EnumObj DeliveryMode { get; set; }
+        public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
         public DateTime? StartDate { get; set; }
         public string CourseWebsite { get; set; }
         public decimal? Cost { get; set; }
         public string CostDescription { get; set; }
-        public EnumObj DurationUnit { get; set; }
+        public DurationUnit DurationUnit { get; set; }
         public int? DurationValue { get; set; }
-        public EnumObj StudyMode { get; set; }
-        public EnumObj AttendancePattern { get; set; }
+        public StudyMode StudyMode { get; set; }
+        public AttendancePattern AttendancePattern { get; set; }
         public bool? National { get; set; }
         public string Region { get; set; }
         public string ParentRegion { get; set; }
