@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using Dfc.CourseDirectory.WebV2.ViewComponents.GdsPagination;
 
 namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
 {
     public class ProviderCoursesViewModel
     {
-        [RegularExpression(@"[a-zA-Z0-9 \¬\!\£\$\%\^\&\*\(\)_\+\-\=\{\}\[\]\;\:\@\'\#\~\,\<\>\.\?\/\|\`\" + "\"" + @"\\]+", ErrorMessage = "Search contains invalid characters")]
-        public string Search { get; set; }
+        public string Keyword { get; set; }
         public bool HasFilters { get; set; }
-        public IList<ProviderCourseRunViewModel> ProviderCourseRuns { get; set;}
+        public IList<ProviderCourseRunViewModel> ProviderCourseRuns { get; set; }
         public List<ProviderCoursesFilterItemModel> Levels { get; set; }
         public List<ProviderCoursesFilterItemModel> DeliveryModes { get; set; }
         public List<ProviderCoursesFilterItemModel> Venues { get; set; }
@@ -19,5 +18,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
         public string NotificationMessage { get; set; }
         public string CourseRunId { get; set; }
         public bool NonLarsCourse { get; set; }
+        public GdsPaginationModel Pagination { get; set; }
     }
 }
