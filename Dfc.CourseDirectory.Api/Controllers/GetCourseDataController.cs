@@ -7,6 +7,7 @@ using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
 using System;
 using Microsoft.VisualBasic;
+using System.ComponentModel;
 
 namespace Dfc.CourseDirectory.Api.Controllers
 {
@@ -71,7 +72,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CourseUpdates(string cutOffDate, int pageSize, int pageNumber)
+        public async Task<IActionResult> CourseUpdates([Description("The cutoff date for retrieving course updates. Format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd or MM-dd-yyyy or MM/dd/yyyy")] string cutOffDate,[Description("Maximum allowed page size is 100")] int pageSize, [Description("The page number to retrieve")] int pageNumber)
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(CourseUpdates));
 
