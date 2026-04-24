@@ -45,7 +45,7 @@ else
 
             <h2 class="govuk-heading-s">Filter</h2>
 
-            <govuk-accordion id="accordion-with-filter-sections">
+            <govuk-accordion id="accordion-with-filter-sections" class="govuk-checkboxes--small">
                 @if (!Model.NonLarsCourse && Model.Levels?.Any() == true)
                 {
                     <govuk-accordion-item>
@@ -54,7 +54,7 @@ else
                             <govuk-checkboxes name="LevelFilter">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Filter by level
+                                        Which education levels do you want to filter by?
                                     </govuk-checkboxes-fieldset-legend>
                                     @foreach (var level in Model.Levels)
                                     {
@@ -66,7 +66,6 @@ else
                             </govuk-checkboxes>
                         </govuk-accordion-item-content>
                     </govuk-accordion-item>
-
                 }
 
                 @if (Model.DeliveryModes?.Any() == true)
@@ -77,7 +76,7 @@ else
                             <govuk-checkboxes name="DeliveryModeFilter">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Filter by delivery mode
+                                        Which delivery modes do you want to filter by?
                                     </govuk-checkboxes-fieldset-legend>
                                     @foreach (var deliveryMode in Model.DeliveryModes)
                                     {
@@ -90,6 +89,7 @@ else
                         </govuk-accordion-item-content>
                     </govuk-accordion-item>
                 }
+
                 @if (Model.Venues?.Any() == true)
                 {
                     <govuk-accordion-item>
@@ -98,7 +98,7 @@ else
                             <govuk-checkboxes name="VenueFilter">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Filter by venue
+                                        Which venues do you want to filter by?
                                     </govuk-checkboxes-fieldset-legend>
                                     @foreach (var venue in Model.Venues)
                                     {
@@ -111,6 +111,7 @@ else
                         </govuk-accordion-item-content>
                     </govuk-accordion-item>
                 }
+
                 @if (Model.AttendancePattern?.Any() == true)
                 {
                     <govuk-accordion-item>
@@ -119,7 +120,7 @@ else
                             <govuk-checkboxes name="AttendancePatternFilter">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Filter by attendance pattern
+                                        Which attendance patterns do you want to filter by?
                                     </govuk-checkboxes-fieldset-legend>
                                     @foreach (var attendancePattern in Model.AttendancePattern)
                                     {
@@ -132,6 +133,7 @@ else
                         </govuk-accordion-item-content>
                     </govuk-accordion-item>
                 }
+
                 @if (Model.Regions?.Any() == true)
                 {
                     <govuk-accordion-item>
@@ -140,7 +142,7 @@ else
                             <govuk-checkboxes name="RegionFilter">
                                 <govuk-checkboxes-fieldset>
                                     <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Filter by region
+                                        Which regions do you want to filter by?
                                     </govuk-checkboxes-fieldset-legend>
                                     @foreach (var region in Model.Regions)
                                     {
@@ -155,8 +157,8 @@ else
                 }
             </govuk-accordion>
 
-            <div class="govuk-button-group" style="margin-top: 1rem">
-                <button type="submit" class="govuk-button govuk-button--secondary">
+            <div class="govuk-button-group">
+                <button type="submit" class="govuk-button">
                     Apply filters
                 </button>
                 @if (Model.HasFilters)
@@ -164,11 +166,10 @@ else
                     <a class="govuk-link" href="@clearFiltersUrl">Clear filters</a>
                 }
             </div>
-
         </div>
 
         <div class="govuk-grid-column-three-quarters">
-            <div class="govuk-grid-row govuk-!-margin-bottom-4" style="align-items: flex-end">
+            <div class="govuk-grid-row govuk-!-margin-bottom-4">
                 <div class="govuk-grid-column-two-thirds">
                     @if (Model.Pagination.TotalItems > 0)
                     {
@@ -195,31 +196,32 @@ else
                         <govuk-summary-card id="@courseRun.CourseRunId">
                             <govuk-summary-card-title>@WebUtility.HtmlDecode(courseRun.CourseName)</govuk-summary-card-title>
                             <govuk-summary-card-actions>
-                                <govuk-summary-card-action href="@Url.Action("Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId })"
-                                                           visually-hidden-text="@courseRun.CourseName">
+                                <govuk-summary-card-action 
+                                    href="@Url.Action("Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId })"
+                                    visually-hidden-text="@courseRun.CourseName">
                                     View or edit
                                 </govuk-summary-card-action>
                                 @if (!courseRun.IsExpired)
                                 {
                                     <govuk-summary-card-action asp-controller="CopyCourseRun"
-                                                               asp-action="Index"
-                                                               asp-route-learnAimRef="@courseRun.LearnAimRef"
-                                                               asp-route-notionalNVQLevelv2="@courseRun.NotionalNVQLevelv2"
-                                                               asp-route-awardOrgCode="@courseRun.AwardOrgCode"
-                                                               asp-route-learnAimRefTitle="@courseRun.QualificationCourseTitle"
-                                                               asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
-                                                               asp-route-courseId="@courseRun.CourseId"
-                                                               asp-route-courseRunId="@courseRun.CourseRunId"
-                                                               visually-hidden-text="@courseRun.CourseName">
+                                        asp-action="Index"
+                                        asp-route-learnAimRef="@courseRun.LearnAimRef"
+                                        asp-route-notionalNVQLevelv2="@courseRun.NotionalNVQLevelv2"
+                                        asp-route-awardOrgCode="@courseRun.AwardOrgCode"
+                                        asp-route-learnAimRefTitle="@courseRun.QualificationCourseTitle"
+                                        asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
+                                        asp-route-courseId="@courseRun.CourseId"
+                                        asp-route-courseRunId="@courseRun.CourseRunId"
+                                        visually-hidden-text="@courseRun.CourseName">
                                         Copy course
                                     </govuk-summary-card-action>
                                 }
                                 <govuk-summary-card-action asp-controller="DeleteCourseRun"
-                                                           asp-action="Get"
-                                                           asp-route-courseId="@courseRun.CourseId"
-                                                           asp-route-courseRunId="@courseRun.CourseRunId"
-                                                           asp-route-returnUrl="@returnUrl"
-                                                           visually-hidden-text="@courseRun.CourseName">
+                                    asp-action="Get"
+                                    asp-route-courseId="@courseRun.CourseId"
+                                    asp-route-courseRunId="@courseRun.CourseRunId"
+                                    asp-route-returnUrl="@returnUrl"
+                                    visually-hidden-text="@courseRun.CourseName">
                                     Delete
                                 </govuk-summary-card-action>
                             </govuk-summary-card-actions>
