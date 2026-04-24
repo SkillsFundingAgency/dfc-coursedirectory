@@ -35,13 +35,19 @@ namespace Dfc.CourseDirectory.Core.Services
 
             var currentEnvironment = _hostEnvironment.EnvironmentName;
 
-            bool isNonProduction =
-                !string.Equals(currentEnvironment, "Production", StringComparison.OrdinalIgnoreCase);
+            var allowedEnvironments = _WebRiskSettings.AllowedEnvironments?
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        ?? Array.Empty<string>();
 
-            if (_WebRiskSettings.PerformanceTesting && isNonProduction)
+            bool isNonAllowedEnvironment = !allowedEnvironments.Contains(
+                currentEnvironment,
+                StringComparer.OrdinalIgnoreCase
+            );
+
+            if (_WebRiskSettings.PerformanceTesting && isNonAllowedEnvironment)
             {
                 _logger.LogInformation(
-                    "WebRiskService: Performance testing enabled in non-production environment ({env}), skipping external service call",
+                    "WebRiskService: Performance testing enabled in non-allowed environment ({env}), skipping external service call",
                     currentEnvironment
                 );
                 return true;

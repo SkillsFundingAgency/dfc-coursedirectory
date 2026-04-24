@@ -4,6 +4,6 @@
     {
         public string ApiKey { get; set; }
         public bool PerformanceTesting { get; set; }
-        public string Environments { get; set; }
+        public string AllowedEnvironments { get; set; }
     }
 }
