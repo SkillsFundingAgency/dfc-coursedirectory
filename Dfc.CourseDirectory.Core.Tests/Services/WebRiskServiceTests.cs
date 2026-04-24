@@ -17,7 +17,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithKnownThreat_FailsValidation()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = false });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = false , Environments = "DEV" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -43,10 +43,10 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             Assert.False(result);
         }
         [Fact]
-        public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomaceTest()
+        public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomanceTest()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true, Environments = "pp" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -59,9 +59,10 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
 
             httpContextAccessor.HttpContext.Request.Scheme = "https";
             httpContextAccessor.HttpContext.Request.Host =
-                new HostString("dev-coursedirectory.nationalcareersservice.org.uk");
+                new HostString("pp-coursedirectory.nationalcareersservice.org.uk");
+
             var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, httpContextAccessor);
-            var website = "https://testsafebrowsing.appspot.com/s/malware.html";
+            var website = "http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/";
 
             // Act
             var result = await webRiskService.CheckForSecureUri(website);

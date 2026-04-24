@@ -32,12 +32,7 @@ namespace Dfc.CourseDirectory.Core.Services
                 ? $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}"
                 : string.Empty;
 
-            var allowedEnvironments = new[]
-            {
-            "dev-coursedirectory",
-            "sit-coursedirectory",
-            "pp-coursedirectory"    
-            };
+            var allowedEnvironments = _WebRiskSettings.Environments?.Split(',').Select(e => e.Trim()).ToArray() ?? Array.Empty<string>();
 
             bool isPerfEnvironment = allowedEnvironments
                 .Any(env => requestUrl.Contains(env, StringComparison.OrdinalIgnoreCase));
