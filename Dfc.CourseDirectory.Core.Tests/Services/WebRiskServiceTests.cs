@@ -49,7 +49,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomanceTest()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true , PerformanceTestingAllowedEnvironments = "Development,SIT,PreProduction" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();

@@ -35,19 +35,19 @@ namespace Dfc.CourseDirectory.Core.Services
 
             var currentEnvironment = _hostEnvironment.EnvironmentName;
 
-            var allowedEnvironments = _WebRiskSettings.AllowedEnvironments?
+            var allowedEnvironments = _WebRiskSettings.PerformanceTestingAllowedEnvironments?
         .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
         ?? Array.Empty<string>();
 
-            bool isNonAllowedEnvironment = !allowedEnvironments.Contains(
-                currentEnvironment,
-                StringComparer.OrdinalIgnoreCase
-            );
+            bool isAllowedEnvironment = allowedEnvironments.Contains(
+        currentEnvironment,
+        StringComparer.OrdinalIgnoreCase
+    );
 
-            if (_WebRiskSettings.PerformanceTesting && isNonAllowedEnvironment)
+           if (_WebRiskSettings.PerformanceTesting && isAllowedEnvironment)
             {
                 _logger.LogInformation(
-                    "WebRiskService: Performance testing enabled in non-allowed environment ({env}), skipping external service call",
+                    "WebRiskService: Performance testing enabled in allowed environment ({env}), skipping external service call",
                     currentEnvironment
                 );
                 return true;
