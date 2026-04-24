@@ -66,8 +66,18 @@ else
         })
     }
 
-    <h1 class="govuk-heading-l">Your courses</h1>
-    <p class="govuk-body-l">These courses are published on the course directory.</p>
+    @if (Model.NonLarsCourse)
+    {
+        <h1 class="govuk-heading-l">Non-LARS courses</h1>
+        <p class="govuk-body-l">Add or edit non-LARS courses which are shown to learners on find a course.</p>
+    }
+    else
+    {
+        <h1 class="govuk-heading-l">LARS courses</h1>
+        <p class="govuk-body-l">Add or edit LARS courses which are shown to learners on find a course.</p>
+    }
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
 
     var keywordErrors = ViewData.ModelState[nameof(Model.Keyword)]?.Errors
            ?? new Microsoft.AspNetCore.Mvc.ModelBinding.ModelErrorCollection();
