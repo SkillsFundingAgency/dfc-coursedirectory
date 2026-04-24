@@ -220,7 +220,7 @@
         "WEBSITE_RUN_FROM_PACKAGE": "1",
         "GoogleWebRiskSettings__ApiKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=GoogleWebRiskApiKey)', parameters('keyVaultName'))]",
         "GoogleWebRiskSettings__PerformanceTesting": false,
-        "GoogleWebRiskSettings__AllowedEnvironments": "Development,SIT,PreProduction"
+        "GoogleWebRiskSettings__PerformanceTestingAllowedEnvironments": "Development,SIT,PreProduction"
       }
     },
     {
@@ -271,7 +271,7 @@
         "Ons:DownloadLink": "https://www.arcgis.com/sharing/rest/content/items/{0}/data",
         "Ons:DownloadInfoBlobFile": "OnsLastDownloadInfo.json",
         "GoogleWebRiskSettings:PerformanceTesting": false,
-        "GoogleWebRiskSettings:AllowedEnvironments": "Development,SIT,PreProduction"
+        "GoogleWebRiskSettings:PerformanceTestingAllowedEnvironments": "Development,SIT,PreProduction"
       }
     },
     {
