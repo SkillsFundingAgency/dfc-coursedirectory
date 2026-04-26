@@ -6,6 +6,7 @@ using Dfc.CourseDirectory.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -36,9 +37,16 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
 
             var hostEnvironmentMock = new Mock<IHostEnvironment>();
             hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
-            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, hostEnvironmentMock.Object);
+           
+            var loggerMock = new Mock<ILogger<WebRiskService>>();
+            var webRiskService = new WebRiskService(
+                options,
+                httpClientFactoryMock.Object,
+                loggerMock.Object,
+                httpContextAccessor
+            );
             var website = "https://testsafebrowsing.appspot.com/s/malware.html";
-
+                
             // Act
             var result = await webRiskService.CheckForSecureUri(website);
 
@@ -49,7 +57,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomanceTest()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true , PerformanceTestingAllowedEnvironments = "Development,SIT,PreProduction" });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true , PerformanceTestingAllowedEnvironments = "dev-coursedirectory,sit-coursedirectory,pp-coursedirectory" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -66,7 +74,14 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
 
             var hostEnvironmentMock = new Mock<IHostEnvironment>();
             hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
-            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, hostEnvironmentMock.Object);
+          
+            var loggerMock = new Mock<ILogger<WebRiskService>>();
+            var webRiskService = new WebRiskService(
+                options,
+                httpClientFactoryMock.Object,
+                loggerMock.Object,
+                 httpContextAccessor
+            );
             var website = "http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/";
 
             // Act
@@ -96,7 +111,15 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
                 new HostString("dev-coursedirectory.nationalcareersservice.org.uk");
             var hostEnvironmentMock = new Mock<IHostEnvironment>();
             hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
-            var webRiskService = new WebRiskService(options, httpClientFactoryMock.Object, hostEnvironmentMock  .Object);
+            
+            var loggerMock = new Mock<ILogger<WebRiskService>>();
+            var webRiskService = new WebRiskService(
+                options,
+                httpClientFactoryMock.Object,
+                loggerMock.Object,
+               
+                httpContextAccessor
+            );
             var website = "https://www.google.com";
 
             // Act
@@ -105,6 +128,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             // Assert
             Assert.True(result);
         }
+
+
     }
 
     public class FakeHttpMessageHandler : HttpMessageHandler
