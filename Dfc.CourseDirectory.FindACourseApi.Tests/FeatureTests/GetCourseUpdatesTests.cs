@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dfc.CourseDirectory.Api.Controllers;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
+using Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -44,22 +45,43 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             result.Value.Should().Be("PageSize and PageNumber must be greater than zero.");
         }
-        [Fact]
-        public async Task InvalidCutOffDate_ReturnsBadRequest()
+        [Theory]
+        [InlineData("this is invalid date string")]
+        [InlineData("2024-13-01")]
+        [InlineData("2024-00-01")]
+        [InlineData("2024-01-32")]
+        public async Task InvalidCutOffDateFormat_ReturnsBadRequest(string invalidDate)
         {
             // Arrange
             var pageSize = 1;
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates("invalid string", pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(invalidDate, pageSize, pageNumber);
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
             result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             result.Value.Should().Be("CutOffDate must be a valid date.");
         }
-        
+
+        [Theory]
+        [InlineData("24/11/2025")]
+        [InlineData("24/11/2025 00:00:00")]
+        [InlineData("24/11/2025 13:00:00")]
+        public async Task ValidCutOffDateFormat_ReturnsOK(string validDate)
+        {
+            // Arrange
+            var pageSize = 1;
+            var pageNumber = 1;
+            _mediator.Setup(m => m.Send(It.IsAny<CourseUpdateRequest>(), default)).ReturnsAsync(new CourseUpdateResponse());
+
+            // Act
+            var response = await _controller.CourseUpdates(validDate, pageSize, pageNumber);
+            var result = Assert.IsType<OkObjectResult>(response);
+            // Assert
+            result.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
         [Fact]
         public async Task InvalidFutureCutOffDate_ReturnsBadRequest()
         {

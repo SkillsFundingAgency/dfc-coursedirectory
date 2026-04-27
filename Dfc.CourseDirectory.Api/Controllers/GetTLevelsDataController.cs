@@ -81,12 +81,16 @@ namespace Dfc.CourseDirectory.Api.Controllers
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(TLevelUpdates));
 
-            if (!DateTime.TryParseExact(cutOffDate,"dd/MM/yyyy hh:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDate))
+            var isValidDate = DateTime.TryParseExact(cutOffDate, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDate);
+            var isValidDateTime = DateTime.TryParseExact(cutOffDate, "dd/MM/yyyy HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDateTime);
+
+            if (!isValidDate && !isValidDateTime)
             {
                 _log.LogWarning("Invalid CutOffDate parameter provided. Response Code [BAD REQUEST]");
                 return BadRequest("CutOffDate must be a valid date.");
             }
-            else if (parsedCutOffDate > DateTime.UtcNow)
+            else if ((isValidDate && parsedCutOffDate > DateTime.Now) 
+                || (isValidDateTime && parsedCutOffDateTime > DateTime.Now))
             {
                 _log.LogWarning("CutOffDate parameter provided is a future date. Response Code [BAD REQUEST]");
                 return BadRequest("CutOffDate cannot be a future date.");
@@ -105,7 +109,7 @@ namespace Dfc.CourseDirectory.Api.Controllers
            
             var request = new TLevelUpdateRequest()
             {
-                CutOffDate = parsedCutOffDate,
+                CutOffDate = isValidDate ? parsedCutOffDate : parsedCutOffDateTime,
                 PageSize = pageSize,
                 PageNumber = pageNumber
             };
