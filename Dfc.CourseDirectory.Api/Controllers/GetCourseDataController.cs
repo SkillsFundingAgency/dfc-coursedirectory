@@ -77,8 +77,8 @@ namespace Dfc.CourseDirectory.Api.Controllers
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(CourseUpdates));
 
-            var isValidDate = DateTime.TryParseExact(cutOffDate, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDate);
-            var isValidDateTime = DateTime.TryParseExact(cutOffDate, "dd/MM/yyyy HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDateTime);
+            var isValidDate = DateTime.TryParseExact(cutOffDate, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDate);
+            var isValidDateTime = DateTime.TryParseExact(cutOffDate, "yyyy-MM-ddTHH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDateTime);
 
             if (!isValidDate && !isValidDateTime)
             {

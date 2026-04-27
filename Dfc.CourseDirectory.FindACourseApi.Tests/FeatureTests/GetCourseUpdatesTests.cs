@@ -2,9 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Api.Controllers;
-using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
-using Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +24,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             _mediator = new Mock<IMediator>();
             _log = new Mock<ILogger<GetCourseDataController>>();
             _controller = new GetCourseDataController(_mediator.Object, _log.Object);
-            _cutOffdateString = DateTime.Now.AddDays(-14).ToString("dd/MM/yyyy hh:mm:ss");
-            _futureCutOffDateString = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy hh:mm:ss");
+            _cutOffdateString = DateTime.Now.AddDays(-14).ToString("yyyy-MM-ddTHH:mm:ss");
+            _futureCutOffDateString = DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm:ss");
         }
 
         [Fact]
@@ -45,30 +43,11 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             result.Value.Should().Be("PageSize and PageNumber must be greater than zero.");
         }
-        [Theory]
-        [InlineData("this is invalid date string")]
-        [InlineData("2024-13-01")]
-        [InlineData("2024-00-01")]
-        [InlineData("2024-01-32")]
-        public async Task InvalidCutOffDateFormat_ReturnsBadRequest(string invalidDate)
-        {
-            // Arrange
-            var pageSize = 1;
-            var pageNumber = 1;
-
-            // Act
-            var response = await _controller.CourseUpdates(invalidDate, pageSize, pageNumber);
-            var result = Assert.IsType<BadRequestObjectResult>(response);
-
-            // Assert
-            result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            result.Value.Should().Be("CutOffDate must be a valid date.");
-        }
 
         [Theory]
-        [InlineData("24/11/2025")]
-        [InlineData("24/11/2025 00:00:00")]
-        [InlineData("24/11/2025 13:00:00")]
+        [InlineData("2025-12-01")]
+        [InlineData("2025-12-01T00:00:00")]
+        [InlineData("2025-12-01T13:00:00")]
         public async Task ValidCutOffDateFormat_ReturnsOK(string validDate)
         {
             // Arrange
@@ -79,8 +58,28 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             // Act
             var response = await _controller.CourseUpdates(validDate, pageSize, pageNumber);
             var result = Assert.IsType<OkObjectResult>(response);
+
             // Assert
             result.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
+
+        [Theory]
+        [InlineData("this is invalid date string")]
+        [InlineData("24/11/2025")]
+        [InlineData("24/11/2025 00:00:00")]
+        [InlineData("24/11/2025 13:00:00")]
+        public async Task InValidCutOffDateFormat_ReturnsBadRequest(string invalidDate)
+        {
+            // Arrange
+            var pageSize = 1;
+            var pageNumber = 1;
+            // Act
+            var response = await _controller.CourseUpdates(invalidDate, pageSize, pageNumber);
+            var result = Assert.IsType<BadRequestObjectResult>(response);
+
+            // Assert
+            result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            result.Value.Should().Be("CutOffDate must be a valid date.");
         }
         [Fact]
         public async Task InvalidFutureCutOffDate_ReturnsBadRequest()
