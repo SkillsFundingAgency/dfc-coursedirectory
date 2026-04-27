@@ -17,13 +17,16 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
     {
         private readonly Mock<IMediator> _mediator;
         private readonly Mock<ILogger<GetCourseDataController>> _log;
-        private readonly DateTime _cutOffDate = DateTime.UtcNow.AddDays(-14);
+        private readonly string _futureCutOffDateString = string.Empty;
+        private readonly string _cutOffdateString = string.Empty;
         private readonly GetCourseDataController _controller;
         public GetCourseUpdatesTests()
         {
             _mediator = new Mock<IMediator>();
             _log = new Mock<ILogger<GetCourseDataController>>();
-            _controller = new GetCourseDataController(_mediator.Object, _log.Object);  
+            _controller = new GetCourseDataController(_mediator.Object, _log.Object);
+            _cutOffdateString = DateTime.Now.AddDays(-14).ToString("dd/MM/yyyy hh:mm:ss");
+            _futureCutOffDateString = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy hh:mm:ss");
         }
 
         [Fact]
@@ -34,7 +37,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 0;
             
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber );
+            var response = await _controller.CourseUpdates(_cutOffdateString ,pageSize, pageNumber );
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
@@ -65,7 +68,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(DateTime.UtcNow.AddDays(1).ToString("o"), pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_futureCutOffDateString, pageSize, pageNumber);
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
@@ -81,7 +84,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber); 
+            var response = await _controller.CourseUpdates(_cutOffdateString, pageSize, pageNumber); 
 
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
@@ -98,7 +101,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = -1;
 
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_cutOffdateString, pageSize, pageNumber);
 
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
@@ -115,7 +118,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
             _mediator.Setup(m => m.Send(It.IsAny<CourseUpdateRequest>(), default)).ReturnsAsync(new CourseUpdateResponse());
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_cutOffdateString, pageSize, pageNumber);
 
             var result = Assert.IsType<OkObjectResult>(response);
 
@@ -131,7 +134,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.CourseUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
+            var response = await _controller.CourseUpdates(_cutOffdateString, pageSize, pageNumber);
 
             var result = Assert.IsType<NotFoundResult>(response);
 

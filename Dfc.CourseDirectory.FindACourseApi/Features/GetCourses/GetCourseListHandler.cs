@@ -51,7 +51,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
                     SectorCode = c.SectorCode,
                     SectorSubjectArea = c.SectorSubjectArea,
                     SectorDescription = c.SectorDescription,
-                    EducationLevel = ConvertToEnumObj<EducationLevel, EductationLevel>(c.EducationLevel),
+                    EducationLevel = ConvertToEnumObj<Core.Models.EducationLevel, EducationLevel>(c.EducationLevel),
                     AwardingBody = c.AwardingBody,
                     DeliveryMode = ConvertToEnumObj<CourseDeliveryMode, DeliveryMode>(c.DeliveryMode) ,
                     FlexibleStartDate = c.FlexibleStartDate,
@@ -93,8 +93,8 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
             };
             return response;
         }
-
-        private static V ConvertToEnumObj<T, V>(int? value) where V : EnumObj, new()
+        
+        private static V ConvertToEnumObj<T, V>(int? value) where V : IEnumObj, new()
         {
             Type enumType = typeof(T);
             if (value.HasValue && Enum.IsDefined(enumType, value))
@@ -102,7 +102,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
                 var description = Enum.GetName(enumType, value);
                 return new V() { Value = value, Description = description };
             }
-            return null;
+            return default;
         }
     }
 }

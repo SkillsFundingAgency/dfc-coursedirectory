@@ -2,8 +2,6 @@
 using System.Net;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Api.Controllers;
-using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
-using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
 using Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates;
 using FluentAssertions;
 using MediatR;
@@ -18,13 +16,16 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
     {
         private readonly Mock<IMediator> _mediator;
         private readonly Mock<ILogger<GetTLevelsDataController>> _log;
-        private readonly DateTime _cutOffDate = DateTime.UtcNow.AddDays(-14);
+        private readonly string _cutOffdateString;
+        private readonly string _futureCutOffDateString;
         private readonly GetTLevelsDataController _controller;
         public GetTLevelUpdatesTests()
         {
             _mediator = new Mock<IMediator>();
             _log = new Mock<ILogger<GetTLevelsDataController>>();
-            _controller = new GetTLevelsDataController(_mediator.Object, _log.Object);  
+            _controller = new GetTLevelsDataController(_mediator.Object, _log.Object);
+            _cutOffdateString = DateTime.Now.AddDays(-14).ToString("dd/MM/yyyy hh:mm:ss");
+            _futureCutOffDateString = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy hh:mm:ss");
         }
 
         [Fact]
@@ -35,7 +36,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 0;
             
             // Act
-            var response = await _controller.TLevelUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber );
+            var response = await _controller.TLevelUpdates(_cutOffdateString, pageSize, pageNumber );
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
@@ -66,7 +67,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.TLevelUpdates(DateTime.UtcNow.AddDays(1).ToString("O"), pageSize, pageNumber);
+            var response = await _controller.TLevelUpdates(_futureCutOffDateString, pageSize, pageNumber);
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
             // Assert
@@ -82,7 +83,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.TLevelUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber); 
+            var response = await _controller.TLevelUpdates(_cutOffdateString, pageSize, pageNumber); 
 
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
@@ -99,7 +100,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = -1;
 
             // Act
-            var response = await _controller.TLevelUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
+            var response = await _controller.TLevelUpdates(_cutOffdateString, pageSize, pageNumber);
 
             var result = Assert.IsType<BadRequestObjectResult>(response);
 
@@ -116,7 +117,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
             _mediator.Setup(m => m.Send(It.IsAny<TLevelUpdateRequest>(), default)).ReturnsAsync(new TLevelUpdateResponse());
             // Act
-            var response = await _controller.TLevelUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
+            var response = await _controller.TLevelUpdates(_cutOffdateString, pageSize, pageNumber);
 
             var result = Assert.IsType<OkObjectResult>(response);
 
@@ -132,7 +133,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Tests.FeatureTests
             var pageNumber = 1;
 
             // Act
-            var response = await _controller.TLevelUpdates(_cutOffDate.ToString("O"), pageSize, pageNumber);
+            var response = await _controller.TLevelUpdates(_cutOffdateString, pageSize, pageNumber);
 
             var result = Assert.IsType<NotFoundResult>(response);
 

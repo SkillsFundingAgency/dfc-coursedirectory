@@ -8,6 +8,7 @@ using Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates;
 using System;
 using Microsoft.VisualBasic;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Dfc.CourseDirectory.Api.Controllers
 {
@@ -72,11 +73,11 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CourseUpdates([Description("The cutoff date for retrieving course updates. Format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd or MM-dd-yyyy or MM/dd/yyyy")] string cutOffDate,[Description("Maximum allowed page size is 100")] int pageSize, [Description("The page number to retrieve")] int pageNumber)
+        public async Task<IActionResult> CourseUpdates(string cutOffDate, int pageSize, int pageNumber)
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(CourseUpdates));
 
-            if (!DateTime.TryParse(cutOffDate, out var parsedCutOffDate))
+            if (!DateTime.TryParseExact(cutOffDate,"dd/MM/yyyy hh:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedCutOffDate))
             {
                 _log.LogWarning("Invalid CutOffDate parameter provided. Response Code [BAD REQUEST]");
                 return BadRequest("CutOffDate must be a valid date.");
