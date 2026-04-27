@@ -21,6 +21,12 @@ namespace Dfc.CourseDirectory.Core.Services
 
         public async Task<bool> CheckForSecureUri(string url)
         {
+            if (_WebRiskSettings.PerformanceTesting)
+            {
+                _logger.LogInformation("WebRiskService: Performance testing enabled, skipping external service call");
+                return true;
+            }
+
             using (var client = _factory.CreateClient("namedClient"))
             {
                 try
