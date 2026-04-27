@@ -41,134 +41,137 @@ else
 {
     <div class="govuk-grid-row">
 
-        <div class="govuk-grid-column-one-quarter">
+        <div class="govuk-grid-column-one-third">
+            <div class="pttcd-accordion">
+                <div class="pttcd-accordion__header">
+                    <h2 class="govuk-heading-s govuk-!-margin-0">Filter</h2>
+                </div>
+                <div class="pttcd-accordion__content">
+                    <govuk-accordion id="accordion-with-filter-sections" class="govuk-checkboxes--small">
+                        @if (!Model.NonLarsCourse && Model.Levels?.Any() == true)
+                        {
+                            <govuk-accordion-item>
+                                <govuk-accordion-item-heading>Education level</govuk-accordion-item-heading>
+                                <govuk-accordion-item-content>
+                                    <govuk-checkboxes name="LevelFilter">
+                                        <govuk-checkboxes-fieldset>
+                                            <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
+                                                Which education levels do you want to filter by?
+                                            </govuk-checkboxes-fieldset-legend>
+                                            @foreach (var level in Model.Levels)
+                                            {
+                                                <govuk-checkboxes-item id="@level.Id" value="@level.Value" checked="@level.IsSelected">
+                                                    @level.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
+                                    </govuk-checkboxes>
+                                </govuk-accordion-item-content>
+                            </govuk-accordion-item>
+                        }
 
-            <h2 class="govuk-heading-s">Filter</h2>
+                        @if (Model.DeliveryModes?.Any() == true)
+                        {
+                            <govuk-accordion-item>
+                                <govuk-accordion-item-heading>Delivery mode</govuk-accordion-item-heading>
+                                <govuk-accordion-item-content>
+                                    <govuk-checkboxes name="DeliveryModeFilter">
+                                        <govuk-checkboxes-fieldset>
+                                            <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
+                                                Which delivery modes do you want to filter by?
+                                            </govuk-checkboxes-fieldset-legend>
+                                            @foreach (var deliveryMode in Model.DeliveryModes)
+                                            {
+                                                <govuk-checkboxes-item id="@deliveryMode.Id" value="@deliveryMode.Value" checked="@deliveryMode.IsSelected">
+                                                    @deliveryMode.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
+                                    </govuk-checkboxes>
+                                </govuk-accordion-item-content>
+                            </govuk-accordion-item>
+                        }
 
-            <govuk-accordion id="accordion-with-filter-sections" class="govuk-checkboxes--small">
-                @if (!Model.NonLarsCourse && Model.Levels?.Any() == true)
-                {
-                    <govuk-accordion-item>
-                        <govuk-accordion-item-heading>Level</govuk-accordion-item-heading>
-                        <govuk-accordion-item-content>
-                            <govuk-checkboxes name="LevelFilter">
-                                <govuk-checkboxes-fieldset>
-                                    <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Which education levels do you want to filter by?
-                                    </govuk-checkboxes-fieldset-legend>
-                                    @foreach (var level in Model.Levels)
-                                    {
-                                        <govuk-checkboxes-item id="@level.Id" value="@level.Value" checked="@level.IsSelected">
-                                            @level.Text
-                                        </govuk-checkboxes-item>
-                                    }
-                                </govuk-checkboxes-fieldset>
-                            </govuk-checkboxes>
-                        </govuk-accordion-item-content>
-                    </govuk-accordion-item>
-                }
+                        @if (Model.Venues?.Any() == true)
+                        {
+                            <govuk-accordion-item>
+                                <govuk-accordion-item-heading>Venue</govuk-accordion-item-heading>
+                                <govuk-accordion-item-content>
+                                    <govuk-checkboxes name="VenueFilter">
+                                        <govuk-checkboxes-fieldset>
+                                            <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
+                                                Which venues do you want to filter by?
+                                            </govuk-checkboxes-fieldset-legend>
+                                            @foreach (var venue in Model.Venues)
+                                            {
+                                                <govuk-checkboxes-item id="@venue.Id" value="@venue.Value" checked="@venue.IsSelected">
+                                                    @venue.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
+                                    </govuk-checkboxes>
+                                </govuk-accordion-item-content>
+                            </govuk-accordion-item>
+                        }
 
-                @if (Model.DeliveryModes?.Any() == true)
-                {
-                    <govuk-accordion-item>
-                        <govuk-accordion-item-heading>Delivery mode</govuk-accordion-item-heading>
-                        <govuk-accordion-item-content>
-                            <govuk-checkboxes name="DeliveryModeFilter">
-                                <govuk-checkboxes-fieldset>
-                                    <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Which delivery modes do you want to filter by?
-                                    </govuk-checkboxes-fieldset-legend>
-                                    @foreach (var deliveryMode in Model.DeliveryModes)
-                                    {
-                                        <govuk-checkboxes-item id="@deliveryMode.Id" value="@deliveryMode.Value" checked="@deliveryMode.IsSelected">
-                                            @deliveryMode.Text
-                                        </govuk-checkboxes-item>
-                                    }
-                                </govuk-checkboxes-fieldset>
-                            </govuk-checkboxes>
-                        </govuk-accordion-item-content>
-                    </govuk-accordion-item>
-                }
+                        @if (Model.AttendancePattern?.Any() == true)
+                        {
+                            <govuk-accordion-item>
+                                <govuk-accordion-item-heading>Attendance pattern</govuk-accordion-item-heading>
+                                <govuk-accordion-item-content>
+                                    <govuk-checkboxes name="AttendancePatternFilter">
+                                        <govuk-checkboxes-fieldset>
+                                            <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
+                                                Which attendance patterns do you want to filter by?
+                                            </govuk-checkboxes-fieldset-legend>
+                                            @foreach (var attendancePattern in Model.AttendancePattern)
+                                            {
+                                                <govuk-checkboxes-item id="@attendancePattern.Id" value="@attendancePattern.Value" checked="@attendancePattern.IsSelected">
+                                                    @attendancePattern.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
+                                    </govuk-checkboxes>
+                                </govuk-accordion-item-content>
+                            </govuk-accordion-item>
+                        }
 
-                @if (Model.Venues?.Any() == true)
-                {
-                    <govuk-accordion-item>
-                        <govuk-accordion-item-heading>Venue</govuk-accordion-item-heading>
-                        <govuk-accordion-item-content>
-                            <govuk-checkboxes name="VenueFilter">
-                                <govuk-checkboxes-fieldset>
-                                    <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Which venues do you want to filter by?
-                                    </govuk-checkboxes-fieldset-legend>
-                                    @foreach (var venue in Model.Venues)
-                                    {
-                                        <govuk-checkboxes-item id="@venue.Id" value="@venue.Value" checked="@venue.IsSelected">
-                                            @venue.Text
-                                        </govuk-checkboxes-item>
-                                    }
-                                </govuk-checkboxes-fieldset>
-                            </govuk-checkboxes>
-                        </govuk-accordion-item-content>
-                    </govuk-accordion-item>
-                }
-
-                @if (Model.AttendancePattern?.Any() == true)
-                {
-                    <govuk-accordion-item>
-                        <govuk-accordion-item-heading>Attendance pattern</govuk-accordion-item-heading>
-                        <govuk-accordion-item-content>
-                            <govuk-checkboxes name="AttendancePatternFilter">
-                                <govuk-checkboxes-fieldset>
-                                    <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Which attendance patterns do you want to filter by?
-                                    </govuk-checkboxes-fieldset-legend>
-                                    @foreach (var attendancePattern in Model.AttendancePattern)
-                                    {
-                                        <govuk-checkboxes-item id="@attendancePattern.Id" value="@attendancePattern.Value" checked="@attendancePattern.IsSelected">
-                                            @attendancePattern.Text
-                                        </govuk-checkboxes-item>
-                                    }
-                                </govuk-checkboxes-fieldset>
-                            </govuk-checkboxes>
-                        </govuk-accordion-item-content>
-                    </govuk-accordion-item>
-                }
-
-                @if (Model.Regions?.Any() == true)
-                {
-                    <govuk-accordion-item>
-                        <govuk-accordion-item-heading>Region</govuk-accordion-item-heading>
-                        <govuk-accordion-item-content>
-                            <govuk-checkboxes name="RegionFilter">
-                                <govuk-checkboxes-fieldset>
-                                    <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
-                                        Which regions do you want to filter by?
-                                    </govuk-checkboxes-fieldset-legend>
-                                    @foreach (var region in Model.Regions)
-                                    {
-                                        <govuk-checkboxes-item id="@region.Id" value="@region.Value" checked="@region.IsSelected">
-                                            @region.Text
-                                        </govuk-checkboxes-item>
-                                    }
-                                </govuk-checkboxes-fieldset>
-                            </govuk-checkboxes>
-                        </govuk-accordion-item-content>
-                    </govuk-accordion-item>
-                }
-            </govuk-accordion>
-
-            <div class="govuk-button-group">
-                <button type="submit" class="govuk-button">
-                    Apply filters
-                </button>
-                @if (Model.HasFilters)
-                {
-                    <a class="govuk-link" href="@clearFiltersUrl">Clear filters</a>
-                }
+                        @if (Model.Regions?.Any() == true)
+                        {
+                            <govuk-accordion-item>
+                                <govuk-accordion-item-heading>Region</govuk-accordion-item-heading>
+                                <govuk-accordion-item-content>
+                                    <govuk-checkboxes name="RegionFilter">
+                                        <govuk-checkboxes-fieldset>
+                                            <govuk-checkboxes-fieldset-legend class="govuk-visually-hidden">
+                                                Which regions do you want to filter by?
+                                            </govuk-checkboxes-fieldset-legend>
+                                            @foreach (var region in Model.Regions)
+                                            {
+                                                <govuk-checkboxes-item id="@region.Id" value="@region.Value" checked="@region.IsSelected">
+                                                    @region.Text
+                                                </govuk-checkboxes-item>
+                                            }
+                                        </govuk-checkboxes-fieldset>
+                                    </govuk-checkboxes>
+                                </govuk-accordion-item-content>
+                            </govuk-accordion-item>
+                        }
+                    </govuk-accordion>
+                </div>
+                <div class="pttcd-accordion__footer">
+                    <button type="submit" class="govuk-button govuk-!-margin-bottom-3">
+                        Apply filters
+                    </button>
+                    @if (Model.HasFilters)
+                    {
+                        <a class="govuk-link govuk-!-display-block" href="@clearFiltersUrl">Clear filters</a>
+                    }
+                </div>
             </div>
         </div>
 
-        <div class="govuk-grid-column-three-quarters">
+        <div class="govuk-grid-column-two-thirds">
             <div class="govuk-grid-row govuk-!-margin-bottom-4">
                 <div class="govuk-grid-column-two-thirds">
                     @if (Model.Pagination.TotalItems > 0)
