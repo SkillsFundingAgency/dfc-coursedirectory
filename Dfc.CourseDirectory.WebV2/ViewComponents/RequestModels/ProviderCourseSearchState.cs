@@ -8,7 +8,6 @@
         public string[] VenueFilter { get; set; } = System.Array.Empty<string>();
         public string[] AttendancePatternFilter { get; set; } = System.Array.Empty<string>();
         public string[] RegionFilter { get; set; } = System.Array.Empty<string>();
-        public int PageSize { get; set; } = 15;
         public bool NonLarsCourse { get; set; }
     }
 }

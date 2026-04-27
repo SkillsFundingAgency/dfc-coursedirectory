@@ -110,23 +110,24 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
-            var searchState = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState)
-                ?? new ProviderCourseSearchState { NonLarsCourse = nlc, PageSize = DefaultPageSize };
+            var searchState = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState);
+            if (searchState is null)
+            {
+                searchState = new ProviderCourseSearchState { NonLarsCourse = nlc };
+                Session.Remove(SessionProviderCourses);
+            }
+            else if (searchState.NonLarsCourse != nlc)
+            {
+                searchState.NonLarsCourse = nlc;
+                Session.Remove(SessionProviderCourses);
+            }
 
-            var nonLarsCourse = searchState.NonLarsCourse;
-            if (nonLarsCourse)
-            {
-                Session.SetString(SessionNonLarsCourse, "true");
-            }
-            else
-            {
-                Session.SetString(SessionNonLarsCourse, "false");
-            }
+            Session.SetString(SessionNonLarsCourse, searchState.NonLarsCourse ? "true" : "false");
 
             var allCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>(SessionProviderCourses);
-            if (allCourseRuns == null)
+            if (allCourseRuns is null)
             {
-                var providerCourses = await GetProviderCourses(nonLarsCourse, providerId);
+                var providerCourses = await GetProviderCourses(searchState.NonLarsCourse, providerId);
 
                 var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
 
@@ -202,7 +203,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 PendingCoursesCount = 0,
                 TotalCoursesCount = allCourseRuns.Count,
                 ProviderCourseRuns = allCourseRuns.ToList(),
-                NonLarsCourse = nonLarsCourse
+                NonLarsCourse = searchState.NonLarsCourse
             };
 
             var keywordSearch = searchState.Keyword?.Trim()?.ToLower() ?? string.Empty;
@@ -277,7 +278,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 
             int s = 0;
 
-            if (!nonLarsCourse)
+            if (!searchState.NonLarsCourse)
             {
                 var textValue = string.Empty;
                 var levelFilter = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
@@ -447,12 +448,6 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
-
-            searchState.PageSize = DefaultPageSize;
-
-            var existing = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState);
-            if (existing != null && existing.NonLarsCourse != searchState.NonLarsCourse)
-                Session.Remove(SessionProviderCourses);
 
             Session.SetObject(SessionProviderCoursesSearchState, searchState);
 
