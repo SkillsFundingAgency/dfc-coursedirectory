@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
         public string SectorDescription { get; set; }
         public string SectorCode { get; set; }
         public string SectorSubjectArea { get; set; }
-        public EducationLevel EducationLevel { get; set; }
+        public CourseEducationLevel EducationLevel { get; set; }
         public string AwardingBody { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }

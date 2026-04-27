@@ -62,7 +62,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
                     SectorDescription = c.SectorDescription,
                     SectorCode = c.SectorCode,
                     SectorSubjectArea = c.SectorSubjectArea,
-                    EducationLevel = ConvertToEnumObj<Core.Models.EducationLevel, GetCourses.EducationLevel>(c.EducationLevel),
+                    EducationLevel = ConvertToEnumObj<EducationLevel, CourseEducationLevel>(c.EducationLevel),
                     AwardingBody = c.AwardingBody,
                     DeliveryMode = ConvertToEnumObj<CourseDeliveryMode,DeliveryMode>(c.DeliveryMode) ,
                     FlexibleStartDate = c.FlexibleStartDate,

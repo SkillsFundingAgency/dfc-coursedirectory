@@ -11,7 +11,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
         public string SectorDescription { get; set; }
         public string SectorCode { get; set; }
         public string SectorSubjectArea { get; set; }
-        public EducationLevel EducationLevel { get; set; }
+        public CourseEducationLevel EducationLevel { get; set; }
         public string AwardingBody { get; set; }
         public DeliveryMode DeliveryMode { get; set; }
         public bool FlexibleStartDate { get; set; }
@@ -55,7 +55,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
         public int? Value { get; set; }
         public string Description { get; set; }
     }
-    public class EducationLevel:IEnumObj
+    public class CourseEducationLevel : IEnumObj
     {
         [Description("Expected Values : 0 - Not Known, 1 - Entry Level, 2 - Level 1, 3 - Level 2, 4 - Level 3, 5 - Level 4, 6 - Level 5, 7 - Level 6, 8 - Level 7, 9 - Level 8")]
         public int? Value { get; set; }
