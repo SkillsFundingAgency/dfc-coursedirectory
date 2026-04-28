@@ -19,11 +19,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using CourseRun = Dfc.CourseDirectory.Core.DataStore.Sql.Models.CourseRun;
 using Venue = Dfc.CourseDirectory.Core.DataStore.Sql.Models.Venue;
 
 namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 {
+
     public class ProviderCoursesController : BaseController
     {
         private const int DefaultPageSize = 10;
@@ -40,69 +40,23 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             ISqlQueryDispatcher sqlQueryDispatcher,
             IProviderContextProvider providerContextProvider) : base(sqlQueryDispatcher)
         {
-            ArgumentNullException.ThrowIfNull(logger);
-            ArgumentNullException.ThrowIfNull(courseService);
-
-            _logger = logger;
-            _courseService = courseService;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
             _sqlQueryDispatcher = sqlQueryDispatcher;
             _providerContextProvider = providerContextProvider;
-        }
-
-        private static Venue GetVenueByIdFrom(IEnumerable<Venue> list, Guid id) => list.SingleOrDefault(v => v.VenueId == id);
-
-        private static string FormatAddress(Venue venue)
-        {
-            if (venue == null) return string.Empty;
-
-            return venue.VenueName;
-        }
-
-        private static string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
-        {
-            list ??= new List<RegionItemModel>();
-            ids ??= new List<string>();
-
-            var regionNames = (from regionItemModel in list
-                               from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id) || ids.Contains(regionItemModel.Id)
-                               select regionItemModel.RegionName).Distinct().OrderBy(x => x).ToList();
-
-            return string.Join(", ", regionNames);
-        }
-
-        private static string FormattedRegionIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
-        {
-            list ??= new List<RegionItemModel>();
-            ids ??= new List<string>();
-
-            var regionNames = (from regionItemModel in list
-                               from subRegionItemModel in regionItemModel.SubRegion
-                               where ids.Contains(subRegionItemModel.Id)
-                               select regionItemModel.Id).Distinct().OrderBy(x => x).ToList();
-
-            return string.Join(", ", regionNames);
-        }
-
-        [Authorize]
-        public IActionResult MigratedCourses(string UKPRN)
-        {
-            Session.SetInt32("UKPRN", Convert.ToInt32(UKPRN));
-            return RedirectToAction("Index");
         }
 
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(
             int page = 1,
+            bool nlc = false,
             Guid? courseRunId = null,
             string notificationTitle = null,
-            string notificationMessage = null,
-            bool nlc = false)
+            string notificationMessage = null)
         {
             Session.SetString("Option", "Courses");
             int? UKPRN = Session.GetInt32("UKPRN");
-
             var providerId = _providerContextProvider.GetProviderId(withLegacyFallback: true);
 
             if (!UKPRN.HasValue)
@@ -121,317 +75,54 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             Session.SetString(SessionNonLarsCourse, searchState.NonLarsCourse ? "true" : "false");
 
             var allCourseRuns = Session.GetObject<List<ProviderCourseRunViewModel>>(SessionProviderCourses);
-            if (allCourseRuns is null)
+            if (allCourseRuns == null)
             {
-                var providerCourses = await GetProviderCourses(searchState.NonLarsCourse, providerId);
-
-                var providerVenues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider() { ProviderId = providerId });
-
+                var courses = await GetProviderCourses(searchState.NonLarsCourse, providerId);
+                var venues = await _sqlQueryDispatcher.ExecuteQuery(new GetVenuesByProvider { ProviderId = providerId });
                 var allRegions = _courseService.GetRegions().RegionItems;
-
-                allCourseRuns = new List<ProviderCourseRunViewModel>();
-
-                foreach (var course in providerCourses)
-                {
-                    var filteredLiveCourseRuns = new List<CourseRun>();
-
-                    filteredLiveCourseRuns = course.CourseRuns.ToList();
-
-                    foreach (var cr in filteredLiveCourseRuns)
-                    {
-                        var national = cr.DeliveryMode == CourseDeliveryMode.WorkBased & !cr.National.HasValue ||
-                                       cr.National.GetValueOrDefault();
-
-                        ProviderCourseRunViewModel courseRunModel = new ProviderCourseRunViewModel()
-                        {
-                            AwardOrgCode = course.AwardOrgCode,
-                            LearnAimRef = course.LearnAimRef,
-                            NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
-                            QualificationType = course.LearnAimRefTitle,
-                            CourseId = course.CourseId,
-                            QualificationCourseTitle = course.LearnAimRefTypeDesc,
-                            CourseRunId = cr.CourseRunId.ToString(),
-                            CourseTextId = cr.ProviderCourseId,
-                            AttendancePattern = cr.AttendancePattern.ToDescription(),
-                            Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
-                            CourseName = cr.CourseName,
-                            DeliveryMode = cr.DeliveryMode.ToDescription(),
-                            Duration = cr.DurationValue.HasValue
-                                                            ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
-                                                            : $"0 {cr.DurationUnit.ToDescription()}",
-                            Venue = cr.VenueId.HasValue
-                                                            ? FormatAddress(GetVenueByIdFrom(providerVenues, cr.VenueId.Value))
-                                                            : string.Empty,
-                            StartDate = cr.FlexibleStartDate
-                                                            ? "Flexible start date"
-                                                            : cr.StartDate?.ToString("dd MMM yyyy"),
-                            StudyMode = !cr.StudyMode.HasValue
-                                                            ? string.Empty
-                                                            : cr.StudyMode.ToDescription(),
-                            Url = cr.CourseWebsite,
-                            National = national,
-                            CourseType = course.CourseType.ToDescription(),
-                            SectorId = course.SectorId,
-                            EducationLevel = course.EducationLevel.ToDescription(),
-                            AwardingBody = course.AwardingBody,
-                            IsExpired = course.IsExpired
-                        };
-                        //If National
-                        if (national)
-                        {
-                            courseRunModel.Region = string.Join(", ", allRegions.Select(x => x.RegionName).ToList());
-                            courseRunModel.RegionIdList = string.Join(", ", allRegions.Select(x => x.Id).ToList());
-                        }
-                        else
-                        {
-                            courseRunModel.Region = cr.SubRegionIds?.Count() > 0 ? FormattedRegionsByIds(allRegions, cr.SubRegionIds) : string.Empty;
-                            courseRunModel.RegionIdList = cr.SubRegionIds?.Count() > 0 ? FormattedRegionIds(allRegions, cr.SubRegionIds) : string.Empty;
-                        }
-                        allCourseRuns.Add(courseRunModel);
-                    }
-                }
-
+                allCourseRuns = BuildCourseRunViewModels(courses, venues, allRegions);
                 Session.SetObject(SessionProviderCourses, allCourseRuns);
             }
-
-            var model = new ProviderCoursesViewModel()
-            {
-                PendingCoursesCount = 0,
-                TotalCoursesCount = allCourseRuns.Count,
-                ProviderCourseRuns = allCourseRuns.ToList(),
-                NonLarsCourse = searchState.NonLarsCourse
-            };
 
             var keywordSearch = searchState.Keyword?.Trim()?.ToLower() ?? string.Empty;
             var keywordTooShort = keywordSearch.Length > 0 && keywordSearch.Length < 3;
             if (keywordTooShort)
             {
-                ModelState.AddModelError(nameof(searchState.Keyword), "Enter a minimum of 3 characters");
                 keywordSearch = string.Empty;
+                ModelState.AddModelError(nameof(searchState.Keyword), "Enter a minimum of 3 characters");
             }
 
-            if (keywordSearch.Length > 0)
-            {
-                model.ProviderCourseRuns = model.ProviderCourseRuns
-                    .Where(x => x.CourseName.ToLower().Contains(keywordSearch)
-                                || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(keywordSearch))
-                                || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(keywordSearch))
-                                 || x.AttendancePattern.ToLower().Contains(keywordSearch)
-                                  || x.DeliveryMode.ToLower().Contains(keywordSearch)
-                                   || x.Venue.ToLower().Contains(keywordSearch)
-                                    || x.Region.ToLower().Contains(keywordSearch)
-                                || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(keywordSearch))
-                                ).ToList();
-            }
-
-            if (searchState.LevelFilter.Length > 0)
-            {
-                model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => searchState.LevelFilter.Contains(x.NotionalNVQLevelv2)).ToList();
-            }
-
-            if (searchState.DeliveryModeFilter.Length > 0)
-            {
-                model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => searchState.DeliveryModeFilter.Contains(x.DeliveryMode)).ToList();
-            }
-
-            if (searchState.VenueFilter.Length > 0)
-            {
-                model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => searchState.VenueFilter.Contains(x.Venue)).ToList();
-            }
-
-            if (searchState.AttendancePatternFilter.Length > 0)
-            {
-                model.ProviderCourseRuns = model.ProviderCourseRuns.Where(x => searchState.AttendancePatternFilter.Contains(x.AttendancePattern)).ToList();
-            }
-
-            if (searchState.RegionFilter.Length > 0)
-            {
-                List<ProviderCourseRunViewModel> allResults = model.ProviderCourseRuns.ToList();
-                List<ProviderCourseRunViewModel> filterResults = new();
-                foreach (var regionFilter in searchState.RegionFilter)
-                {
-                    var region = _courseService.GetRegions().RegionItems
-                        .Where(x => string.Equals(x.Id, regionFilter, StringComparison.CurrentCultureIgnoreCase))
-                        .Select(d => d.RegionName).FirstOrDefault();
-
-                    var results = allResults.Where(x => x.Region.Contains(region));
-
-                    filterResults.AddRange(results);
-
-                    allResults.RemoveAll(x => x.Region.Contains(region));
-                }
-
-                model.ProviderCourseRuns = filterResults;
-            }
-
-            model.ProviderCourseRuns = model.ProviderCourseRuns.OrderBy(x => x.CourseName).ToList();
-
-            List<ProviderCoursesFilterItemModel> levelFilterItems = new();
-            List<ProviderCoursesFilterItemModel> deliveryModelFilterItems = new();
-            List<ProviderCoursesFilterItemModel> venueFilterItems = new();
-            List<ProviderCoursesFilterItemModel> regionFilterItems = new();
-            List<ProviderCoursesFilterItemModel> attendanceModeFilterItems = new();
-
-            int s = 0;
-
-            if (!searchState.NonLarsCourse)
-            {
-                var textValue = string.Empty;
-                var levelFilter = model.ProviderCourseRuns.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key).ToList();
-                foreach (var level in levelFilter)
-                {
-                    textValue = string.Empty;
-                    string levelKey = string.Empty;
-                    if (level.Key != null)
-                        levelKey = level.Key;
-
-                    textValue = levelKey.ToLower() switch
-                    {
-                        "e" => "Entry level",
-                        "x" => "X - Not applicable/unknown",
-                        "h" => "Higher",
-                        "m" => "Mixed",
-                        _ => "Level " + levelKey,
-                    };
-
-                    ProviderCoursesFilterItemModel itemModel = new()
-                    {
-                        Id = "level-" + s++.ToString(),
-                        Value = levelKey,
-                        Text = textValue,
-                        Name = "level",
-                        IsSelected = searchState.LevelFilter.Length > 0 && searchState.LevelFilter.Contains(levelKey)
-                    };
-
-                    levelFilterItems.Add(itemModel);
-                }
-
-                var entryItem = levelFilterItems.Where(x => x.Text.ToLower().Contains("entry")).SingleOrDefault();
-
-                if (entryItem != null)
-                {
-                    levelFilterItems.Remove(entryItem);
-                    levelFilterItems.Insert(0, entryItem);
-                }
-            }
-
-            s = 0;
-            deliveryModelFilterItems = model.ProviderCourseRuns.GroupBy(x => x.DeliveryMode).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
-            {
-                Id = "deliverymode-" + s++.ToString(),
-                Value = r.Key,
-                Text = r.Key,
-                Name = "deliverymode",
-                IsSelected = searchState.DeliveryModeFilter.Length > 0 && searchState.DeliveryModeFilter.Contains(r.Key)
-            }).ToList();
-
-            s = 0;
-            venueFilterItems = model.ProviderCourseRuns.Where(x => !string.IsNullOrEmpty(x.Venue)).GroupBy(x => x.Venue).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
-            {
-                Id = "venue-" + s++.ToString(),
-                Value = r.Key,
-                Text = r.Key,
-                Name = "venue",
-                IsSelected = searchState.VenueFilter.Length > 0 && searchState.VenueFilter.Contains(r.Key)
-            }).ToList();
-
-            attendanceModeFilterItems = model.ProviderCourseRuns.Where(x => x.AttendancePattern != string.Empty).GroupBy(x => x.AttendancePattern).OrderBy(x => x.Key).Select(r => new ProviderCoursesFilterItemModel()
-            {
-                Id = "attendancepattern-" + s++.ToString(),
-                Value = r.Key,
-                Text = r.Key,
-                Name = "attendancepattern",
-                IsSelected = searchState.AttendancePatternFilter.Length > 0 && searchState.AttendancePatternFilter.Contains(r.Key)
-            }).ToList();
-
-            List<string> allRegionsList = new();
-
-            var regionsForCourse = model.ProviderCourseRuns.GroupBy(x => x.Region).Where(x => !string.IsNullOrEmpty(x.Key)).OrderBy(x => x.Key).ToList();
-            foreach (var regions in regionsForCourse)
-            {
-                var regionsList = regions.Key.Split(",");
-                foreach (var region in regionsList)
-                {
-                    allRegionsList.Add(region.Trim());
-                }
-            }
-
-            allRegionsList = allRegionsList.Distinct().ToList();
-
-            s = 0;
-            foreach (var regionValue in allRegionsList)
-            {
-                var regionId = _courseService.GetRegions().RegionItems
-                    .Where(x => string.Equals(x.RegionName, regionValue, StringComparison.CurrentCultureIgnoreCase))
-                    .Select(d => d.Id).FirstOrDefault();
-
-                var regionFilterItem = new ProviderCoursesFilterItemModel
-                {
-                    Value = regionId,
-                    Text = regionValue,
-                    Id = "region-" + s++,
-                    Name = "region",
-                    IsSelected = searchState.RegionFilter.Length > 0 && searchState.RegionFilter.Contains(regionId)
-                };
-
-                regionFilterItems.Add(regionFilterItem);
-            }
-
-            var (pagedRuns, pagination) = GdsPaginationModel.Paginate(model.ProviderCourseRuns, page, DefaultPageSize);
-            model.ProviderCourseRuns = pagedRuns.ToList();
-            model.Keyword = searchState.Keyword;
-            model.Pagination = pagination;
-
-            var notificationCourseName = string.Empty;
-            var notificationAnchorTag = string.Empty;
+            var allRegionItems = _courseService.GetRegions().RegionItems;
+            var model = BuildViewModel(allCourseRuns, searchState, page, allRegionItems);
 
             if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
             {
                 model.CourseRunId = courseRunId.Value.ToString();
-                bool courseRunExists = allCourseRuns.Any(x => x.CourseRunId == courseRunId.ToString());
+                var courseRunExists = allCourseRuns.Any(x => x.CourseRunId == courseRunId.ToString());
 
-                if (courseRunExists == false)
+                if (!courseRunExists)
                 {
                     model.NotificationTitle = notificationTitle;
                     model.NotificationMessage = notificationMessage;
                 }
                 else
                 {
-                    notificationCourseName = Regex.Replace(
-                                                allCourseRuns.Where(x => x.CourseRunId == courseRunId.Value.ToString()).Select(x => x.CourseName).FirstOrDefault().ToString(), "<.*?>"
-                                                , String.Empty);
+                    var notificationCourseName = Regex.Replace(
+                        allCourseRuns.FirstOrDefault(x => x.CourseRunId == courseRunId.Value.ToString())?.CourseName ?? string.Empty,
+                        "<.*?>", string.Empty);
 
-                    notificationAnchorTag = courseRunId.HasValue
-                      ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
-                      : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
                     model.NotificationTitle = notificationTitle;
-                    model.NotificationMessage = notificationAnchorTag;
+
+                    model.NotificationMessage = courseRunId.HasValue 
+                        ? $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\" data-courserunid=\"{courseRunId}\" >{notificationMessage} {notificationCourseName}</a>"
+                      : $"<a id=\"courseeditlink\" class=\"govuk-link\" href=\"#\">{notificationMessage} {notificationCourseName}</a>";
                 }
             }
-            else
-            {
-                notificationTitle = string.Empty;
-                notificationAnchorTag = string.Empty;
-            }
 
-            model.HasFilters = 
-                levelFilterItems.Any(x => x.IsSelected) || 
-                deliveryModelFilterItems.Any(x => x.IsSelected) || 
-                venueFilterItems.Any(x => x.IsSelected) || 
-                regionFilterItems.Any(x => x.IsSelected) || 
-                attendanceModeFilterItems.Any(x => x.IsSelected) || 
-                !string.IsNullOrWhiteSpace(searchState.Keyword);
-            model.Levels = levelFilterItems;
-            model.DeliveryModes = deliveryModelFilterItems;
-            model.Venues = venueFilterItems;
-            model.AttendancePattern = attendanceModeFilterItems;
-            model.Regions = regionFilterItems;
-
-            //Setup backlink to go to the dashboard
             ViewBag.BackLinkController = "Home";
             ViewBag.BackLinkAction = "Index";
 
-            return View(model);
+            return View("Index", model);
         }
 
         [Authorize]
@@ -445,10 +136,15 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             if (!UKPRN.HasValue)
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
 
+            var existing = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState);
+            if (existing != null && existing.NonLarsCourse != searchState.NonLarsCourse)
+                Session.Remove(SessionProviderCoursesSearchState);
+
             Session.SetObject(SessionProviderCoursesSearchState, searchState);
 
             return RedirectToAction(nameof(Index), searchState.NonLarsCourse ? new { nlc = "true" } : null);
         }
+
 
         [Authorize]
         [HttpGet]
@@ -458,23 +154,300 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             return RedirectToAction(nameof(Index), nlc ? new { nlc = "true" } : null);
         }
 
-        private async Task<Core.DataStore.Sql.Models.Course[]> GetProviderCourses(bool nonLarsCourse, Guid providerId)
-        {
-            Core.DataStore.Sql.Models.Course[] providerCourses;
-            if (nonLarsCourse)
-            {
-                providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetNonLarsCoursesForProvider() { ProviderId = providerId }))
-                .ToArray();
 
-                return providerCourses;
+        private static ViewModels.ProviderCourses.ProviderCoursesViewModel BuildViewModel(
+            List<ProviderCourseRunViewModel> allCourseRuns,
+            ProviderCourseSearchState searchState,
+            int page,
+            IEnumerable<RegionItemModel> allRegions)
+        {
+            var filtered = ApplyFilters(allCourseRuns, searchState, allRegions);
+            var (hasFilters, levels, deliveryModes, venues, attendancePattern, regions) =
+                BuildFilterOptions(filtered, searchState, searchState.NonLarsCourse, allRegions);
+
+
+            var (paginatedProviderCourses, pagination) = GdsPaginationModel.Paginate(filtered, page, DefaultPageSize);
+
+            return new ViewModels.ProviderCourses.ProviderCoursesViewModel
+            {
+                Keyword = searchState.Keyword,
+                NonLarsCourse = searchState.NonLarsCourse,
+                ProviderCourseRuns = paginatedProviderCourses.ToList(),
+                HasFilters = hasFilters,
+                Levels = levels,
+                DeliveryModes = deliveryModes,
+                Venues = venues,
+                AttendancePattern = attendancePattern,
+                Regions = regions,
+                Pagination = pagination,
+                TotalCoursesCount = allCourseRuns.Count
+            };
+        }
+
+        private static List<ProviderCourseRunViewModel> ApplyFilters(
+            List<ProviderCourseRunViewModel> courseRuns,
+            ProviderCourseSearchState searchState,
+            IEnumerable<RegionItemModel> allRegions)
+        {
+            var result = courseRuns.AsEnumerable();
+            
+            if (!string.IsNullOrWhiteSpace(searchState.Keyword))
+            {
+                var keywordSearch = searchState.Keyword.Trim().ToLower();
+                result = result.Where(x =>
+                    x.CourseName.ToLower().Contains(keywordSearch)
+                    || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(keywordSearch))
+                    || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(keywordSearch))
+                    || x.AttendancePattern.ToLower().Contains(keywordSearch)
+                    || x.DeliveryMode.ToLower().Contains(keywordSearch)
+                    || x.Venue.ToLower().Contains(keywordSearch)
+                    || x.Region.ToLower().Contains(keywordSearch)
+                    || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(keywordSearch)));
             }
 
-            providerCourses = (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider() { ProviderId = providerId }))
-                    .OrderBy(c => c.LearnAimRefTypeDesc)
-                    .ThenBy(c => c.LearnAimRef)
-                    .ToArray();
+            if (searchState.LevelFilter?.Length > 0)
+                result = result.Where(x => searchState.LevelFilter.Contains(x.NotionalNVQLevelv2));
 
-            return providerCourses;
+            if (searchState.DeliveryModeFilter?.Length > 0)
+                result = result.Where(x => searchState.DeliveryModeFilter.Contains(x.DeliveryMode));
+
+            if (searchState.VenueFilter?.Length > 0)
+                result = result.Where(x => searchState.VenueFilter.Contains(x.Venue));
+
+            if (searchState.AttendancePatternFilter?.Length > 0)
+                result = result.Where(x => searchState.AttendancePatternFilter.Contains(x.AttendancePattern));
+
+            if (searchState.RegionFilter?.Length > 0)
+            {
+                var regionNames = searchState.RegionFilter
+                    .Select(id => allRegions
+                        .Where(regionItemModel => string.Equals(regionItemModel.Id, id, StringComparison.OrdinalIgnoreCase))
+                        .Select(regionItemModel => regionItemModel.RegionName)
+                        .FirstOrDefault())
+                    .Where(n => n is not null)
+                    .ToList();
+
+                result = result.Where(x => regionNames.Any(regionName => x.Region.Contains(regionName)));
+            }
+
+            return result.OrderBy(x => x.CourseName).ToList();
+        }
+
+        private static (bool hasFilters,
+            List<ProviderCoursesFilterItemModel> levels,
+            List<ProviderCoursesFilterItemModel> deliveryModes,
+            List<ProviderCoursesFilterItemModel> venues,
+            List<ProviderCoursesFilterItemModel> attendancePattern,
+            List<ProviderCoursesFilterItemModel> regions) BuildFilterOptions(
+            List<ProviderCourseRunViewModel> filtered,
+            ProviderCourseSearchState searchState,
+            bool nonLarsCourse,
+            IEnumerable<RegionItemModel> allRegions)
+        {
+            int s = 0;
+
+            var levels = new List<ProviderCoursesFilterItemModel>();
+            if (!nonLarsCourse)
+            {
+                levels = filtered.GroupBy(x => x.NotionalNVQLevelv2).OrderBy(x => x.Key)
+                    .Select(r => new ProviderCoursesFilterItemModel
+                    {
+                        Id = "level-" + s++,
+                        Value = r.Key,
+                        Text = MapLevelText(r.Key),
+                        Name = "level",
+                        IsSelected = searchState.LevelFilter?.Contains(r.Key) == true
+                    }).ToList();
+
+                var entryItem = levels.SingleOrDefault(x => x.Text.ToLower().Contains("entry"));
+                if (entryItem != null) { levels.Remove(entryItem); levels.Insert(0, entryItem); }
+            }
+
+            s = 0;
+            var deliveryModes = filtered.GroupBy(x => x.DeliveryMode).OrderBy(x => x.Key)
+                .Select(r => new ProviderCoursesFilterItemModel
+                {
+                    Id = "deliverymode-" + s++,
+                    Value = r.Key,
+                    Text = r.Key,
+                    Name = "deliverymode",
+                    IsSelected = searchState.DeliveryModeFilter?.Contains(r.Key) == true
+                }).ToList();
+
+            var venues = filtered.Where(x => !string.IsNullOrEmpty(x.Venue)).GroupBy(x => x.Venue).OrderBy(x => x.Key)
+                .Select(r => new ProviderCoursesFilterItemModel
+                {
+                    Id = "venue-" + s++,
+                    Value = r.Key,
+                    Text = r.Key,
+                    Name = "venue",
+                    IsSelected = searchState.VenueFilter?.Contains(r.Key) == true
+                }).ToList();
+
+            var attendancePattern = filtered.Where(x => !string.IsNullOrEmpty(x.AttendancePattern)).GroupBy(x => x.AttendancePattern).OrderBy(x => x.Key)
+                .Select(r => new ProviderCoursesFilterItemModel
+                {
+                    Id = "attendancepattern-" + s++,
+                    Value = r.Key,
+                    Text = r.Key,
+                    Name = "attendancepattern",
+                    IsSelected = searchState.AttendancePatternFilter?.Contains(r.Key) == true
+                }).ToList();
+
+            var allRegionsList = new List<string>();
+            foreach (var group in filtered.GroupBy(x => x.Region).Where(x => !string.IsNullOrEmpty(x.Key)).OrderBy(x => x.Key))
+                foreach (var region in group.Key.Split(","))
+                    allRegionsList.Add(region.Trim());
+
+            allRegionsList = allRegionsList.Distinct().OrderBy(x => x).ToList();
+
+            s = 0;
+            var regions = allRegionsList.Select(regionValue =>
+            {
+                var regionId = allRegions
+                    .Where(x => string.Equals(x.RegionName, regionValue, StringComparison.OrdinalIgnoreCase))
+                    .Select(d => d.Id)
+                    .FirstOrDefault();
+
+                return new ProviderCoursesFilterItemModel
+                {
+                    Value = regionId,
+                    Text = regionValue,
+                    Id = "region-" + s++,
+                    Name = "region",
+                    IsSelected = searchState.RegionFilter?.Contains(regionId) == true
+                };
+            }).ToList();
+
+            var hasFilters = levels.Any(x => x.IsSelected)
+                || deliveryModes.Any(x => x.IsSelected)
+                || venues.Any(x => x.IsSelected)
+                || attendancePattern.Any(x => x.IsSelected)
+                || regions.Any(x => x.IsSelected)
+                || !string.IsNullOrWhiteSpace(searchState.Keyword);
+
+            return (hasFilters, levels, deliveryModes, venues, attendancePattern, regions);
+        }
+
+        private static List<ProviderCourseRunViewModel> BuildCourseRunViewModels(
+            Core.DataStore.Sql.Models.Course[] courses,
+            IEnumerable<Venue> venues,
+            IEnumerable<RegionItemModel> allRegions)
+        {
+            var result = new List<ProviderCourseRunViewModel>();
+            var venueList = venues.ToList();
+            var regionList = allRegions.ToList();
+
+            foreach (var course in courses)
+            {
+                foreach (var cr in course.CourseRuns)
+                {
+                    var national = cr.DeliveryMode == CourseDeliveryMode.WorkBased && !cr.National.HasValue
+                                   || cr.National.GetValueOrDefault();
+
+                    var courseRun = new ProviderCourseRunViewModel
+                    {
+                        AwardOrgCode = course.AwardOrgCode,
+                        LearnAimRef = course.LearnAimRef,
+                        NotionalNVQLevelv2 = course.NotionalNVQLevelv2,
+                        QualificationType = course.LearnAimRefTitle,
+                        CourseId = course.CourseId,
+                        QualificationCourseTitle = course.LearnAimRefTypeDesc,
+                        CourseRunId = cr.CourseRunId.ToString(),
+                        CourseTextId = cr.ProviderCourseId,
+                        AttendancePattern = cr.AttendancePattern.ToDescription(),
+                        Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
+                        CourseName = cr.CourseName,
+                        DeliveryMode = cr.DeliveryMode.ToDescription(),
+                        Duration = cr.DurationValue.HasValue
+                            ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
+                            : $"0 {cr.DurationUnit.ToDescription()}",
+                        Venue = cr.VenueId.HasValue
+                            ? venueList.SingleOrDefault(v => v.VenueId == cr.VenueId.Value)?.VenueName ?? string.Empty
+                            : string.Empty,
+                        StartDate = cr.FlexibleStartDate
+                            ? "Flexible start date"
+                            : cr.StartDate?.ToString("dd MMM yyyy"),
+                        StudyMode = cr.StudyMode.HasValue ? cr.StudyMode.ToDescription() : string.Empty,
+                        Url = cr.CourseWebsite,
+                        National = national,
+                        CourseType = course.CourseType.ToDescription(),
+                        SectorId = course.SectorId,
+                        EducationLevel = course.EducationLevel.ToDescription(),
+                        AwardingBody = course.AwardingBody,
+                        IsExpired = course.IsExpired
+                    };
+
+                    if (national)
+                    {
+                        courseRun.Region = string.Join(", ", regionList.Select(x => x.RegionName));
+                        courseRun.RegionIdList = string.Join(", ", regionList.Select(x => x.Id));
+                    }
+                    else
+                    {
+                        courseRun.Region = cr.SubRegionIds?.Any() == true
+                            ? FormattedRegionsByIds(regionList, cr.SubRegionIds)
+                            : string.Empty;
+                        courseRun.RegionIdList = cr.SubRegionIds?.Any() == true
+                            ? FormattedRegionIds(regionList, cr.SubRegionIds)
+                            : string.Empty;
+                    }
+
+                    result.Add(courseRun);
+                }
+            }
+
+            return result;
+        }
+
+        private static string MapLevelText(string levelKey)
+        {
+            return (levelKey?.ToLower()) switch
+            {
+                "e" => "Entry level",
+                "x" => "X - Not applicable/unknown",
+                "h" => "Higher",
+                "m" => "Mixed",
+                _ => "Level " + levelKey,
+            };
+        }
+
+        private static string FormattedRegionsByIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        {
+            list ??= new List<RegionItemModel>();
+            ids ??= new List<string>();
+
+            var regionNames = (from regionItemModel in list
+                               from subRegionItemModel in regionItemModel.SubRegion
+                               where ids.Contains(subRegionItemModel.Id) || ids.Contains(regionItemModel.Id)
+                               select regionItemModel.RegionName).Distinct().OrderBy(x => x);
+            return string.Join(", ", regionNames);
+        }
+
+        private static string FormattedRegionIds(IEnumerable<RegionItemModel> list, IEnumerable<string> ids)
+        {
+            list ??= new List<RegionItemModel>();
+            ids ??= new List<string>();
+
+            var regionIds = (from regionItemModel in list
+                             from subRegionItemModel in regionItemModel.SubRegion
+                             where ids.Contains(subRegionItemModel.Id)
+                             select regionItemModel.Id).Distinct().OrderBy(x => x);
+            return string.Join(", ", regionIds);
+        }
+
+        private async Task<Core.DataStore.Sql.Models.Course[]> GetProviderCourses(bool nonLarsCourse, Guid providerId)
+        {
+            if (nonLarsCourse)
+            {
+                return (await _sqlQueryDispatcher.ExecuteQuery(
+                    new GetNonLarsCoursesForProvider { ProviderId = providerId })).ToArray();
+            }
+
+            return (await _sqlQueryDispatcher.ExecuteQuery(new GetCoursesForProvider { ProviderId = providerId }))
+                .OrderBy(c => c.LearnAimRefTypeDesc)
+                .ThenBy(c => c.LearnAimRef)
+                .ToArray();
         }
     }
 }
