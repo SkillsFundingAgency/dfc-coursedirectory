@@ -111,15 +111,11 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             }
 
             var searchState = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState);
-            if (searchState is null)
+            if (searchState is null || searchState.NonLarsCourse != nlc)
             {
                 searchState = new ProviderCourseSearchState { NonLarsCourse = nlc };
                 Session.Remove(SessionProviderCourses);
-            }
-            else if (searchState.NonLarsCourse != nlc)
-            {
-                searchState.NonLarsCourse = nlc;
-                Session.Remove(SessionProviderCourses);
+                Session.SetObject(SessionProviderCoursesSearchState, searchState);
             }
 
             Session.SetString(SessionNonLarsCourse, searchState.NonLarsCourse ? "true" : "false");

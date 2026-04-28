@@ -160,9 +160,9 @@ else
                     </govuk-accordion>
                 </div>
                 <div class="pttcd-accordion__footer">
-                    <button type="submit" class="govuk-button govuk-!-margin-bottom-3">
+                    <govuk-button type="submit" class="govuk-button govuk-!-margin-bottom-3" prevent-double-click="true">
                         Apply filters
-                    </button>
+                    </govuk-button>
                     @if (Model.HasFilters)
                     {
                         <a class="govuk-link govuk-!-display-block" href="@clearFiltersUrl">Clear filters</a>
@@ -175,16 +175,10 @@ else
             <div class="govuk-grid-row govuk-!-margin-bottom-4">
                 <div class="govuk-grid-column-two-thirds">
                     @if (Model.Pagination.TotalItems > 0)
-                    {
+                    {   
                         <p class="govuk-body govuk-!-margin-bottom-0">
-                            Showing <strong>@Model.Pagination.FirstItemOnPage</strong>–<strong>@Model.Pagination.LastItemOnPage</strong>
-                            of <strong>@Model.Pagination.TotalItems</strong>
-                            @(Model.Pagination.TotalItems == 1 ? "course" : "courses")
+                            @Model.Pagination.TotalItems results found
                         </p>
-                    }
-                    else
-                    {
-                        <p class="govuk-body govuk-!-margin-bottom-0">No courses found matching your search.</p>
                     }
                 </div>
                 <div class="govuk-grid-column-one-third">

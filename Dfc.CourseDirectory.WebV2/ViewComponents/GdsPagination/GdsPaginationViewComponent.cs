@@ -12,7 +12,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewComponents.GdsPagination
                 PageUrlFormat = pageUrlFormat
             };
 
-            return View("~/ViewComponents/GdsPagination/GdsPagination.cshtml", viewModel);
+            return View("~/ViewComponents/GdsPagination/Default.cshtml", viewModel);
         }
     }
 }
