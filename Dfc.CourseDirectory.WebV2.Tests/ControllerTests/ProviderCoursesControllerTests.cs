@@ -90,13 +90,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { Keyword = "mathematics" });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Mathematics Advanced"), MakeCourse("Art History Basic") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -109,13 +110,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { Keyword = "ab" });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Some Course") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             Assert.IsType<ViewResult>(result);
             var error = controller.ModelState["Keyword"]?.Errors.FirstOrDefault();
@@ -128,13 +130,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { Keyword = "maths" });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Maths Level 3") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -212,7 +215,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         }
 
         [Fact]
-        public void Search_LarsCourseFlag_RedirectHasNoNlcRouteValues()
+        public void Search_LarsCourseFlag_RedirectHasNoNlcRouteValue()
         {
             SetupUkprn(10012345);
             var controller = GetController();
@@ -220,7 +223,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
             var result = controller.Search(new ProviderCourseSearchState { NonLarsCourse = false });
 
             var redirect = Assert.IsType<RedirectToActionResult>(result);
-            Assert.Null(redirect.RouteValues);
+            Assert.Null(redirect.RouteValues?["nlc"]);
         }
 
         [Fact]
@@ -529,6 +532,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { Keyword = "abc123" });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -539,7 +543,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -552,6 +556,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { Keyword = "advanced" });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -562,7 +567,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -575,6 +580,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { Keyword = "prov99" });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -585,7 +591,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -598,6 +604,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { LevelFilter = new[] { "3" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -608,7 +615,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -621,6 +628,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { DeliveryModeFilter = new[] { "Online" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -631,7 +639,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -646,6 +654,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
             var venueBId = Guid.NewGuid();
 
             SetupUkprn(10012345);
+            SetupNonce("stored-nonce");
             SetupNoCourseCache();
             SetupSearchState(new ProviderCourseSearchState { VenueFilter = new[] { "Venue A" } });
             _mockSqlQueryDispatcher
@@ -664,7 +673,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -677,6 +686,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { AttendancePatternFilter = new[] { "Daytime" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -687,7 +697,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -700,6 +710,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { RegionFilter = new[] { "E12000001" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -714,7 +725,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -840,13 +851,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { LevelFilter = new[] { "3" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Level 3 Course", notionalNVQLevelv2: "3") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -880,13 +892,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { DeliveryModeFilter = new[] { "Online" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Online Course") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -923,6 +936,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
 
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { VenueFilter = new[] { "Venue A" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
@@ -932,7 +946,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Test Course", venueId) });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -965,6 +979,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { AttendancePatternFilter = new[] { "Daytime" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -974,7 +989,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1011,6 +1026,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { RegionFilter = new[] { "E12000001" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -1024,7 +1040,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1083,13 +1099,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { LevelFilter = new[] { "3" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Level 3 Course", notionalNVQLevelv2: "3") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1101,13 +1118,14 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { DeliveryModeFilter = new[] { "Online" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Online Course") });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1121,6 +1139,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
 
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { VenueFilter = new[] { "Venue A" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetVenuesByProvider>()))
@@ -1130,7 +1149,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Test Course", venueId) });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1142,6 +1161,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { AttendancePatternFilter = new[] { "Daytime" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -1151,7 +1171,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1163,6 +1183,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         {
             SetupUkprn(10012345);
             SetupNoCourseCache();
+            SetupNonce("stored-nonce");
             SetupSearchState(new ProviderCourseSearchState { RegionFilter = new[] { "E12000001" } });
             _mockSqlQueryDispatcher
                 .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
@@ -1176,7 +1197,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 });
             var controller = GetController();
 
-            var result = await controller.Index();
+            var result = await controller.Index(nce: "stored-nonce");
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<ProviderCoursesViewModel>(viewResult.Model);
@@ -1198,6 +1219,112 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
                 Times.Once);
         }
 
+        [Fact]
+        public async Task Index_WithNoNonce_ClearsCourseCache()
+        {
+            SetupUkprn(10012345);
+            SetupNoCourseCache();
+            SetupNoNonce();
+            SetupNoSearchState();
+            var controller = GetController();
+
+            await controller.Index();
+
+            _mockSession.Verify(m => m.Remove("ProviderCourses"), Times.Once);
+        }
+
+        [Fact]
+        public async Task Index_WithMismatchedNonce_ClearsCourseCache()
+        {
+            SetupUkprn(10012345);
+            SetupNoCourseCache();
+            SetupNonce("stored-nonce");
+            SetupNoSearchState();
+            var controller = GetController();
+
+            await controller.Index(nce: "different-nonce");
+
+            _mockSession.Verify(m => m.Remove("ProviderCourses"), Times.Once);
+        }
+
+        [Fact]
+        public async Task Index_FreshFetch_StoresNonceInSession()
+        {
+            SetupUkprn(10012345);
+            SetupNoCourseCache();
+            SetupNoNonce();
+            SetupNoSearchState();
+            var controller = GetController();
+
+            await controller.Index();
+
+            _mockSession.Verify(m => m.Set("ProviderCoursesNonce", It.IsAny<byte[]>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Index_FreshFetch_ModelNonceIsSet()
+        {
+            SetupUkprn(10012345);
+            SetupNoCourseCache();
+            SetupNoNonce();
+            SetupNoSearchState();
+            var controller = GetController();
+
+            var result = await controller.Index();
+
+            var viewModel = Assert.IsType<ViewResult>(result);
+            var mode = Assert.IsType<ProviderCoursesViewModel>(viewModel.Model);
+            Assert.False(string.IsNullOrEmpty(mode.Nonce));
+        }
+
+        [Fact]
+        public void Search_RedirectToIndex_IncludesNonce()
+        {
+            SetupUkprn(10012345);
+            SetupNonce("current-nonce");
+            var controller = GetController();
+
+            var result = controller.Search(new ProviderCourseSearchState { NonLarsCourse = false });
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("current-nonce", redirect.RouteValues?["nce"]?.ToString());
+        }
+
+        [Fact]
+        public void Search_NonLarsCourse_RedirectIncludesNoneAndNlc()
+        {
+            SetupUkprn(10012345);
+            SetupNonce("current-nonce");
+            var controller = GetController();
+
+            var result = controller.Search(new ProviderCourseSearchState { NonLarsCourse = true });
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("true", redirect.RouteValues?["nlc"]?.ToString());
+            Assert.Equal("current-nonce", redirect.RouteValues?["nce"]?.ToString());
+        }
+
+        [Fact]
+        public void ClearFilters_RedirectToIndex_IncludesNonce()
+        {
+            SetupNonce("current-nonce");
+            var controller = GetController();
+
+            var result = controller.ClearFilters();
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("current-nonce", redirect.RouteValues?["nce"]?.ToString());
+        }
+
+        [Fact]
+        public void ClearFilters_WithNlcTrue_RedirectIncludesNonceAndNlc()
+        {
+            SetupNonce("current-nonce");
+            var controller = GetController();
+
+            var result = controller.ClearFilters(nlc: true);
+            var redirect = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("true", redirect.RouteValues?["nlc"]?.ToString());
+            Assert.Equal("current-nonce", redirect.RouteValues?["nce"]?.ToString());
+        }
+
         private ProviderCoursesController GetController()
         {
             var controller = new ProviderCoursesController(
@@ -1212,6 +1339,18 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
             };
 
             return controller;
+        }
+
+        private void SetupNoNonce()
+        {
+            byte[] noBytes = null;
+            _mockSession.Setup(m => m.TryGetValue("ProviderCoursesNonce", out noBytes)).Returns(false);
+        }
+
+        private void SetupNonce(string nonce)
+        {
+            var bytes = Encoding.UTF8.GetBytes(nonce);
+            _mockSession.Setup(m => m.TryGetValue("ProviderCoursesNonce", out bytes)).Returns(true);
         }
 
         private void SetupUkprn(int ukprn)

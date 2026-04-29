@@ -198,7 +198,7 @@ else
                                     visually-hidden-text="@courseRun.CourseName">
                                     View or edit
                                 </govuk-summary-card-action>
-                                @if (!courseRun.IsExpired)
+                                @* @if (!courseRun.IsExpired)
                                 {
                                     <govuk-summary-card-action asp-controller="CopyCourseRun"
                                         asp-action="Index"
@@ -212,7 +212,7 @@ else
                                         visually-hidden-text="@courseRun.CourseName">
                                         Copy course
                                     </govuk-summary-card-action>
-                                }
+                                } *@
                                 <govuk-summary-card-action asp-controller="DeleteCourseRun"
                                     asp-action="Get"
                                     asp-route-courseId="@courseRun.CourseId"

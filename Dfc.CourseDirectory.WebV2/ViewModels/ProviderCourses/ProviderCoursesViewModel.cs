@@ -20,5 +20,6 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
         public string CourseRunId { get; set; }
         public bool NonLarsCourse { get; set; }
         public GdsPaginationModel Pagination { get; set; }
+        public string Nonce { get; set; }
     }
 }

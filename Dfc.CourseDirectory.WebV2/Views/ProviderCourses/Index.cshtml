@@ -7,10 +7,11 @@
     ViewData["Title"] = "Your published courses";
     Layout = "_Layout_Your_Courses";
 
+    var pageUrlBase = Model.NonLarsCourse
+        ? Url.Action("Index", "ProviderCourses", new { nlc = true, nce = Model.Nonce })
+        : Url.Action("Index", "ProviderCourses", new { nce = Model.Nonce });
+    var pageUrlFormat = pageUrlBase + "&page={0}";
     var baseUrl = Url.Action("Index", "ProviderCourses");
-    var pageUrlFormat = Model.NonLarsCourse
-        ? baseUrl + "?nlc=true&page={0}"
-        : baseUrl + "?page={0}";
 
     var hasCourses = Model.TotalCoursesCount > 0;
 }

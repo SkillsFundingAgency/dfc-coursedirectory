@@ -129,7 +129,7 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ViewComponentTests.GdsPaginationTests
 
             response.EnsureSuccessStatusCode();
             var doc = await response.GetDocument();
-            var ellipses = doc.QuerySelectorAll(".govuk-pagination__item--ellipses").ToList();
+            var ellipses = doc.QuerySelectorAll(".govuk-pagination__item--ellipsis").ToList();
             ellipses.Should().HaveCount(2);
         }
 

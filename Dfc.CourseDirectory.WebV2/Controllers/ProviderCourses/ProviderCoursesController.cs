@@ -53,7 +53,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             bool nlc = false,
             Guid? courseRunId = null,
             string notificationTitle = null,
-            string notificationMessage = null)
+            string notificationMessage = null,
+            string nce = null)
         {
             Session.SetString("Option", "Courses");
             int? UKPRN = Session.GetInt32("UKPRN");
@@ -64,11 +65,25 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 return RedirectToAction("Index", "Home", new { errmsg = "Please select a Provider." });
             }
 
+            var requestNonce = nce;
+
             var searchState = Session.GetObject<ProviderCourseSearchState>(SessionProviderCoursesSearchState);
-            if (searchState is null || searchState.NonLarsCourse != nlc)
+            var storedNonce = Session.GetString(SessionProviderCoursesNonce);
+
+            var isSearchStateSafe = searchState is not null && searchState.NonLarsCourse == nlc;
+            var isNonceSafe = !string.IsNullOrEmpty(requestNonce) && requestNonce == storedNonce;
+
+            if (!isSearchStateSafe || !isNonceSafe)
+            {
+                Session.Remove(SessionProviderCourses);
+                Session.Remove(SessionProviderCoursesNonce);
+                Session.Remove(SessionProviderCoursesSearchState);
+                searchState = null;
+            }
+
+            if (searchState is null) 
             {
                 searchState = new ProviderCourseSearchState { NonLarsCourse = nlc };
-                Session.Remove(SessionProviderCourses);
                 Session.SetObject(SessionProviderCoursesSearchState, searchState);
             }
 
@@ -82,6 +97,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 var allRegions = _courseService.GetRegions().RegionItems;
                 allCourseRuns = BuildCourseRunViewModels(courses, venues, allRegions);
                 Session.SetObject(SessionProviderCourses, allCourseRuns);
+                requestNonce = Guid.NewGuid().ToString("N");
+                Session.SetString(SessionProviderCoursesNonce, requestNonce);
             }
 
             var keywordSearch = searchState.Keyword?.Trim()?.ToLower() ?? string.Empty;
@@ -93,7 +110,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             }
 
             var allRegionItems = _courseService.GetRegions().RegionItems;
-            var model = BuildViewModel(allCourseRuns, searchState, page, allRegionItems);
+            var model = BuildViewModel(allCourseRuns, searchState, page, keywordSearch, allRegionItems);
+            model.Nonce = requestNonce;
 
             if (courseRunId.HasValue && courseRunId.Value != Guid.Empty)
             {
@@ -142,7 +160,8 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
 
             Session.SetObject(SessionProviderCoursesSearchState, searchState);
 
-            return RedirectToAction(nameof(Index), searchState.NonLarsCourse ? new { nlc = "true" } : null);
+            var sessionNonce = Session.GetString(SessionProviderCoursesNonce);
+            return RedirectToIndex(searchState.NonLarsCourse, sessionNonce);
         }
 
 
@@ -151,7 +170,15 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
         public IActionResult ClearFilters(bool nlc = false)
         {
             Session.Remove(SessionProviderCoursesSearchState);
-            return RedirectToAction(nameof(Index), nlc ? new { nlc = "true" } : null);
+            var sessionNonce = Session.GetString(SessionProviderCoursesNonce);
+            return RedirectToIndex(nlc, sessionNonce);
+        }
+
+        private RedirectToActionResult RedirectToIndex(bool nlc, string nonce)
+        {
+            return RedirectToAction(nameof(Index), nlc
+                ? new { nlc = "true", nce = nonce }
+                : new { nce = nonce });
         }
 
 
@@ -159,11 +186,13 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             List<ProviderCourseRunViewModel> allCourseRuns,
             ProviderCourseSearchState searchState,
             int page,
+            string keywordSearch,
             IEnumerable<RegionItemModel> allRegions)
         {
-            var filtered = ApplyFilters(allCourseRuns, searchState, allRegions);
+            var filtered = ApplyFilters(allCourseRuns, searchState, allRegions, keywordSearch);
+            
             var (hasFilters, levels, deliveryModes, venues, attendancePattern, regions) =
-                BuildFilterOptions(filtered, searchState, searchState.NonLarsCourse, allRegions);
+                BuildFilterOptions(filtered, searchState, searchState.NonLarsCourse, keywordSearch, allRegions);
 
 
             var (paginatedProviderCourses, pagination) = GdsPaginationModel.Paginate(filtered, page, DefaultPageSize);
@@ -187,13 +216,13 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
         private static List<ProviderCourseRunViewModel> ApplyFilters(
             List<ProviderCourseRunViewModel> courseRuns,
             ProviderCourseSearchState searchState,
-            IEnumerable<RegionItemModel> allRegions)
+            IEnumerable<RegionItemModel> allRegions,
+            string keywordSearch)
         {
             var result = courseRuns.AsEnumerable();
             
-            if (!string.IsNullOrWhiteSpace(searchState.Keyword))
+            if (!string.IsNullOrWhiteSpace(keywordSearch))
             {
-                var keywordSearch = searchState.Keyword.Trim().ToLower();
                 result = result.Where(x =>
                     x.CourseName.ToLower().Contains(keywordSearch)
                     || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(keywordSearch))
@@ -242,6 +271,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
             List<ProviderCourseRunViewModel> filtered,
             ProviderCourseSearchState searchState,
             bool nonLarsCourse,
+            string keywordSearch,
             IEnumerable<RegionItemModel> allRegions)
         {
             int s = 0;
@@ -324,7 +354,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 || venues.Any(x => x.IsSelected)
                 || attendancePattern.Any(x => x.IsSelected)
                 || regions.Any(x => x.IsSelected)
-                || !string.IsNullOrWhiteSpace(searchState.Keyword);
+                || !string.IsNullOrWhiteSpace(keywordSearch);
 
             return (hasFilters, levels, deliveryModes, venues, attendancePattern, regions);
         }
