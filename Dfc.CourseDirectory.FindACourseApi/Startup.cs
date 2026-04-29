@@ -68,6 +68,7 @@ namespace Dfc.CourseDirectory.FindACourseApi
 
                     return type.Name;
                 });
+                c.EnableAnnotations();
             });
 
             services.AddSwaggerGenNewtonsoftSupport();

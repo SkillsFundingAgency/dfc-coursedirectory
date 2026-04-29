@@ -69,6 +69,7 @@ namespace Dfc.CourseDirectory.Api
 
                     return type.Name;
                 });
+                c.EnableAnnotations();
             });
 
             services.AddSwaggerGenNewtonsoftSupport();
@@ -79,7 +80,7 @@ namespace Dfc.CourseDirectory.Api
                 .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly))
                 .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FindACourseApi.Startup).Assembly));
 
-            if (Environment.EnvironmentName != "Testing")
+            if (Environment.EnvironmentName != "Development")
             {
                 services.AddSqlDataStore(Configuration.GetConnectionString("DefaultConnection"));
 
