@@ -1,4 +1,5 @@
 ﻿using System;
+using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using Swashbuckle.AspNetCore.Annotations;
 namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
 {
@@ -7,7 +8,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
         [SwaggerSchema(Description = "The unique identifier of the T Level.")]
         public Guid TLevelId { get; set; }
         [SwaggerSchema(Description = "The type of update for the T Level.")]
-        public string UpdateType { get; set; }
+        public UpdateType UpdateType { get; set; }
         [SwaggerSchema(Description = "The name of the T Level course.")]
         public string CourseName { get; set; }
         [SwaggerSchema(Description = "The start date of the T Level course.")]

@@ -6,7 +6,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.Models
     public class TLevelUpdateItem
     {
         public Guid TLevelId { get; set; }
-        public string UpdateType { get; set; }
+        public int? UpdateType { get; set; }
         public string CourseName { get; set; }
         public DateTime? StartDate { get; set; }
         public string CourseWebsite { get; set; }

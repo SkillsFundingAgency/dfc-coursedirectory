@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using MediatR;
 using OneOf;
 using OneOf.Types;
@@ -55,7 +57,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
                 courses = listOfTLevels.TLevels.Select(c => new TLevelUpdatesViewModel()
                 {
                     TLevelId = c.TLevelId,
-                    UpdateType = c.UpdateType, 
+                    UpdateType = ConvertToEnumObj<UpdateType, GetCourses.UpdateType>(c.UpdateType), 
                     CourseName = c.CourseName,
                     StartDate = c.StartDate,
                     CourseWebsite = c.CourseWebsite,
@@ -82,6 +84,26 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
                 }).ToList()
             };
             return response;
+        }
+        public enum UpdateType
+        {
+            [Description("Newly Added Course")]
+            NewlyAddedCourse = 1,
+            [Description("Updated Course")]
+            UpdatedCourse = 2,
+            [Description("Deleted Course")]
+            DeletedCourse = 3
+        }
+
+        private static V ConvertToEnumObj<T, V>(int? value) where V : IEnumObj, new()
+        {
+            Type enumType = typeof(T);
+            if (value.HasValue && Enum.IsDefined(enumType, value))
+            {
+                var description = Enum.GetName(enumType, value);
+                return new V() { Value = value, Description = description };
+            }
+            return default;
         }
     }
 }
