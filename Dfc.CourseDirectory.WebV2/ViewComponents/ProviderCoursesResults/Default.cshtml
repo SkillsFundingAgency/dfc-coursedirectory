@@ -198,7 +198,7 @@ else
                                     visually-hidden-text="@courseRun.CourseName">
                                     View or edit
                                 </govuk-summary-card-action>
-                                @* @if (!courseRun.IsExpired)
+                                @if (!courseRun.IsExpired)
                                 {
                                     <govuk-summary-card-action asp-controller="CopyCourseRun"
                                         asp-action="Index"
@@ -212,7 +212,7 @@ else
                                         visually-hidden-text="@courseRun.CourseName">
                                         Copy course
                                     </govuk-summary-card-action>
-                                } *@
+                                }
                                 <govuk-summary-card-action asp-controller="DeleteCourseRun"
                                     asp-action="Get"
                                     asp-route-courseId="@courseRun.CourseId"
@@ -235,7 +235,7 @@ else
                                     </govuk-summary-list-row>
                                 }
 
-                                @if (courseRun.DeliveryMode == "Classroom based" && !string.IsNullOrEmpty(courseRun.Venue))
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.Venue))
                                 {
                                     <govuk-summary-list-row>
                                         <govuk-summary-list-row-key>
@@ -246,7 +246,7 @@ else
                                         </govuk-summary-list-row-value>
                                     </govuk-summary-list-row>
                                 }
-                                @if (courseRun.DeliveryMode == "Work based")
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.WorkBased)
                                 {
                                     if (courseRun.National)
                                     {
@@ -284,7 +284,7 @@ else
                                     </govuk-summary-list-row>
                                 }
 
-                                @if (courseRun.DeliveryMode == "Classroom based" && !string.IsNullOrEmpty(courseRun.StudyMode))
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.StudyMode))
                                 {
                                     <govuk-summary-list-row>
                                         <govuk-summary-list-row-key>
@@ -322,19 +322,16 @@ else
                                     }
                                 }
 
-                                @if (!string.IsNullOrEmpty(courseRun.DeliveryMode))
-                                {
-                                    <govuk-summary-list-row>
-                                        <govuk-summary-list-row-key>
-                                            Delivery mode
-                                        </govuk-summary-list-row-key>
-                                        <govuk-summary-list-row-value>
-                                            @courseRun.DeliveryMode
-                                        </govuk-summary-list-row-value>
-                                    </govuk-summary-list-row>
-                                }
+                                <govuk-summary-list-row>
+                                    <govuk-summary-list-row-key>
+                                        Delivery mode
+                                    </govuk-summary-list-row-key>
+                                    <govuk-summary-list-row-value>
+                                        @courseRun.DeliveryMode.ToDescription()
+                                    </govuk-summary-list-row-value>
+                                </govuk-summary-list-row>
 
-                                @if (courseRun.DeliveryMode == "Classroom based" && !string.IsNullOrEmpty(courseRun.AttendancePattern))
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.AttendancePattern))
                                 {
                                     <govuk-summary-list-row>
                                         <govuk-summary-list-row-key>

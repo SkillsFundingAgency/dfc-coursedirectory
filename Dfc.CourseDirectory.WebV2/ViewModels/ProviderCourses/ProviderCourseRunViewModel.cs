@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Dfc.CourseDirectory.Core.Models;
 
 namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
 {
@@ -20,7 +21,7 @@ namespace Dfc.CourseDirectory.WebV2.ViewModels.ProviderCourses
         public string Duration { get; set; }
         public string Region { get; set; }
         public string Venue { get; set; }
-        public string DeliveryMode { get; set; }
+        public CourseDeliveryMode DeliveryMode { get; set; }
         public string StudyMode { get; set; }
         public string AttendancePattern { get; set; }
         public IEnumerable<string> Regions { get; set; }

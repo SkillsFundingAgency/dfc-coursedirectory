@@ -228,7 +228,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                     || (!string.IsNullOrWhiteSpace(x.QualificationCourseTitle) && x.QualificationCourseTitle.ToLower().Contains(keywordSearch))
                     || (!string.IsNullOrWhiteSpace(x.LearnAimRef) && x.LearnAimRef.ToLower().Contains(keywordSearch))
                     || x.AttendancePattern.ToLower().Contains(keywordSearch)
-                    || x.DeliveryMode.ToLower().Contains(keywordSearch)
+                    || x.DeliveryMode.ToDescription().ToLower().Contains(keywordSearch)
                     || x.Venue.ToLower().Contains(keywordSearch)
                     || x.Region.ToLower().Contains(keywordSearch)
                     || (!string.IsNullOrEmpty(x.CourseTextId) && x.CourseTextId.ToLower().Contains(keywordSearch)));
@@ -238,7 +238,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 result = result.Where(x => searchState.LevelFilter.Contains(x.NotionalNVQLevelv2));
 
             if (searchState.DeliveryModeFilter?.Length > 0)
-                result = result.Where(x => searchState.DeliveryModeFilter.Contains(x.DeliveryMode));
+                result = result.Where(x => searchState.DeliveryModeFilter.Contains(x.DeliveryMode.ToDescription()));
 
             if (searchState.VenueFilter?.Length > 0)
                 result = result.Where(x => searchState.VenueFilter.Contains(x.Venue));
@@ -298,10 +298,10 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 .Select(r => new ProviderCoursesFilterItemModel
                 {
                     Id = "deliverymode-" + s++,
-                    Value = r.Key,
-                    Text = r.Key,
+                    Value = r.Key.ToDescription(),
+                    Text = r.Key.ToDescription(),
                     Name = "deliverymode",
-                    IsSelected = searchState.DeliveryModeFilter?.Contains(r.Key) == true
+                    IsSelected = searchState.DeliveryModeFilter?.Contains(r.Key.ToDescription()) == true
                 }).ToList();
 
             var venues = filtered.Where(x => !string.IsNullOrEmpty(x.Venue)).GroupBy(x => x.Venue).OrderBy(x => x.Key)
@@ -388,7 +388,7 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                         AttendancePattern = cr.AttendancePattern.ToDescription(),
                         Cost = cr.Cost.HasValue ? $"£ {cr.Cost.Value:0.00}" : string.Empty,
                         CourseName = cr.CourseName,
-                        DeliveryMode = cr.DeliveryMode.ToDescription(),
+                        DeliveryMode = cr.DeliveryMode,
                         Duration = cr.DurationValue.HasValue
                             ? $"{cr.DurationValue.Value} {cr.DurationUnit.ToDescription()}"
                             : $"0 {cr.DurationUnit.ToDescription()}",
