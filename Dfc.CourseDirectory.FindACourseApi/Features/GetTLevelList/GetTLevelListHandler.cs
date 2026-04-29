@@ -8,19 +8,26 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelList
 {
     public class TLevelResponse 
     {
+        [SwaggerSchema(Description = "TotalCount is the total number of T Levels available in the system.")]
         public int totalCount { get; set; }
+        [SwaggerSchema(Description = "PageNumber is used to specify the page number of the T Levels to be returned.")]
         public int pageNumber { get; set; }
+        [SwaggerSchema(Description = "PageSize is used to specify the number of T Levels to be returned in a single page. Maximum allowed value is 100.")]
         public int pageSize { get; set; }
+        [SwaggerSchema(Description = "Courses is a list of T Levels returned based on the specified page number and page size.")]
         public IList<TLevelListViewModel> courses { get; set; }
     }
     public class TLevelRequest : IRequest<OneOf<NotFound, TLevelResponse>>
     {
+        [SwaggerSchema(Description = "PageSize is used to specify the number of T Levels to be returned in a single page. Maximum allowed value is 100.")]
         public int PageSize { get; set; }
+        [SwaggerSchema(Description = "PageNumber is used to specify the page number of the T Levels to be returned.")]
         public int PageNumber { get; set; }
     }
 

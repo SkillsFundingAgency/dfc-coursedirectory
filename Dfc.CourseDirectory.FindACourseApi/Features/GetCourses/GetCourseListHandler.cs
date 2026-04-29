@@ -9,19 +9,26 @@ using Dfc.CourseDirectory.Core.Models;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
 {
     public class CourseResponse 
     {
+        [SwaggerSchema(Description = "TotalCount is the total number of courses available based on the pagination parameters.")]
         public int totalCount { get; set; }
+        [SwaggerSchema(Description = "PageNumber is the current page number based on the pagination parameters.")]
         public int pageNumber { get; set; }
+        [SwaggerSchema(Description = "PageSize is the number of courses per page based on the pagination parameters. Maximum value is 100.")]
         public int pageSize { get; set; }
+        [SwaggerSchema(Description = "The list of courses based on the pagination parameters.")]
         public IList<CourseListViewModel> courses { get; set; }
     }
     public class CourseRequest : IRequest<OneOf<NotFound, CourseResponse>>
     {
+        [SwaggerSchema(Description = "PageSize is the number of courses per page. Maximum value is 100.")]
         public int PageSize { get; set; }
+        [SwaggerSchema(Description = "PageNumber is the current page number.")]
         public int PageNumber { get; set; }
     }
 

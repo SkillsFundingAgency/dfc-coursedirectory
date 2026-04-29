@@ -80,7 +80,7 @@ namespace Dfc.CourseDirectory.Api
                 .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Startup).Assembly))
                 .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FindACourseApi.Startup).Assembly));
 
-            if (Environment.EnvironmentName != "Development")
+            if (Environment.EnvironmentName != "Testing")
             {
                 services.AddSqlDataStore(Configuration.GetConnectionString("DefaultConnection"));
 
