@@ -53,6 +53,7 @@
 		<None Remove="wwwroot\pages\helpdesk-dashboard.css" />
 		<None Remove="wwwroot\pages\provider-dashboard.css" />
 		<None Remove="wwwroot\pages\providers\provider-details.css" />
+		<None Remove="wwwroot\pages\providers\provider-courses.css" />
 		<None Remove="wwwroot\pages\data-upload.css" />
 		<None Remove="wwwroot\pages\start.css" />
 		<None Remove="wwwroot\utilities\focus-formgroup.js" />
