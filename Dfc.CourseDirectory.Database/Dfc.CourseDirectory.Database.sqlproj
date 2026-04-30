@@ -314,6 +314,7 @@
     <Build Include="Pttcd\Tables\ProviderUploads.sql" />
     <Build Include="Pttcd\Tables\ProviderUploadRows.sql" />
     <Build Include="Pttcd\Types\ProviderUploadRowTable.sql" />
+    <None Include="Scripts\Script.PreDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dfc-coursedirectory.refactorlog" />
