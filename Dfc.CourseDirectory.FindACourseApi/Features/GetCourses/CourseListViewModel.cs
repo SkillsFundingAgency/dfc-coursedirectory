@@ -102,51 +102,51 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourses
     }
     public class CourseEducationLevel : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Entry Level, 2 - Level 1, 3 - Level 2, 4 - Level 3, 5 - Level 4, 6 - Level 5, 7 - Level 6, 8 - Level 7, 9 - Level 8")]
+        [SwaggerSchema(Description = "Expected Values : 0 - Entry Level, 1 - Level 1, 2 - Level 2, 3 - Level 3, 4 - Level 4, 5 - Level 5, 6 - Level 6, 7 - Level 7, 8 - Level 8")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Entry Level, Level 1, Level 2, Level 3, Level 4, Level 5, Level 6, Level 7, Level 8")]
+        [SwaggerSchema(Description = "Expected Values : Entry Level, Level 1, Level 2, Level 3, Level 4, Level 5, Level 6, Level 7, Level 8")]
         public string Description { get; set; }
     }
     public class DeliveryMode : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Online, 2 - In Person, 3 - Blended")]
+        [SwaggerSchema(Description = "Expected Values :  1 - ClassroomBased, 2 - Online, 3 - WorkBased, 4 - BlendedLearning")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Online, In Person, Blended")]
+        [SwaggerSchema(Description = "Expected Values : ClassroomBased, Online, WorkBased, BlendedLearning")]
         public string Description { get; set; }
     }
     public class DurationUnit : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Hours, 2 - Days, 3 - Weeks, 4 - Months, 5 - Years")]
+        [SwaggerSchema(Description = "Expected Values : 1 - Days, 2 - Weeks, 3 - Months, 4 - Years, 5 - Hours, 6 - Minutes")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Hours, Days, Weeks, Months, Years")]
+        [SwaggerSchema(Description = "Expected Values : Days, Weeks, Months, Years, Hours, Minutes")]
         public string Description { get; set; }
     }
     public class StudyMode : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Full Time, 2 - Part Time, 3 - Flexible")]
+        [SwaggerSchema(Description = "Expected Values : 1 - Full Time, 2 - Part Time, 3 - Flexible")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Full Time, Part Time, Flexible")]
+        [SwaggerSchema(Description = "Expected Values : Full Time, Part Time, Flexible")]
         public string Description { get; set; }
     }
     public class AttendancePattern : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Daytime, 2 - Evening, 3 - Weekend")]
+        [SwaggerSchema(Description = "Expected Values : 1 - Daytime, 2 - Evening, 3 - Weekend, 4 - DayOrBlockRelease")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Daytime, Evening, Weekend")]
+        [SwaggerSchema(Description = "Expected Values : Daytime, Evening, Weekend, DayOrBlockRelease")]
         public string Description { get; set; }
     }
     public class UpdateType : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Newly Added Course, 2 - Updated Course, 3 - Deleted Course")]
+        [SwaggerSchema(Description = "Expected Values : 1 - Newly Added Course, 2 - Updated Course, 3 - Deleted Course")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Newly Added Course, Updated Course, Deleted Course")]
+        [SwaggerSchema(Description = "Expected Values : Newly Added Course, Updated Course, Deleted Course")]
         public string Description { get; set; }
     }
     public class CourseRunStatus : IEnumObj
     {
-        [SwaggerSchema(Description = "Expected Values : 0 - Not Known, 1 - Active, 2 - Inactive, 3 - Completed")]
+        [SwaggerSchema(Description = "Expected Values : 1 - Live, 4 - Archived")]
         public int? Value { get; set; }
-        [SwaggerSchema(Description = "Expected Values : Not Known, Active, Inactive, Completed")]
+        [SwaggerSchema(Description = "Expected Values : Live, Archived")]
         public string Description { get; set; }
     }
 }
