@@ -106,19 +106,44 @@ BEGIN CATCH
 END CATCH
 
 
--- THIS IS ONE OFF SCRIPT TO REMOVE HTML TAGS FROM COURSE DESCRIPTION AND OTHER FIELDS IN PTTCD.COURSES TABLE ----
 
-IF EXISTS(SELECT CourseId FROM Pttcd.Courses  WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
-        and CourseDescription Like '%<%'
-        or EntryRequirements Like '%<%'
-        or WhatYoullLearn Like '%<%'
-        or HowYoullLearn Like '%<%'
-        or WhatYoullNeed Like '%<%'
-        or HowYoullBeAssessed Like '%<%'
-        or WhereNext Like '%<%'
+---------------------------------------------------------------------------------------------------------------------------------
+-- USER STORY 253961 : APPLY A FIX TO REMOVE HTML TAGS FROM COURSE DATA FIELDS FOR COURSES 
+-- WHICH HAVE BEEN UPDATED IN LAST 15 MONTHS AND HAVE HTML TAGS IN ANY OF THE COURSE DATA FIELDS.
+
+-- STEP 1: STORE COURSES WITH HTML TAG DATA IN A TEMPORARY TABLE 
+SELECT [CourseId]
+      ,[ProviderId]
+      ,[CreatedOn]
+      ,[UpdatedOn]
+      ,[LearnAimRef]
+      ,[ProviderUkprn]
+      ,[CourseDescription]
+      ,[EntryRequirements]
+      ,[WhatYoullLearn]
+      ,[HowYoullLearn]
+      ,[WhatYoullNeed]
+      ,[HowYoullBeAssessed]
+      ,[WhereNext]
+   INTO #COURSES_WITH_HTML_TAGS
+   FROM [Pttcd].[Courses] WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
+        and CourseDescription Like '%<%>%'
+        or EntryRequirements Like '%<%>%'
+        or WhatYoullLearn Like '%<%>%'
+        or HowYoullLearn Like '%<%>%'
+        or WhatYoullNeed Like '%<%>%'
+        or HowYoullBeAssessed Like '%<%>%'
+        or WhereNext Like '%<%>%'
         and CourseStatus = 1
-        and UpdatedOn >= DATEADD(m, -15, GETDATE())) 
+        and UpdatedOn >= DATEADD(m, -15, GETDATE())
+
+-- STEP 2: IF THERE ARE ANY COURSES WITH HTML TAG DATA THEN CREATE A TEMP TABLE TO SAVE DATA TEMPORARILY 
+-- AND THEN UPDATE THE COURSE DATA BY REMOVING HTML TAGS ON DATA FILEDS
+-- OTHERWISE, IF THERE IS NO COURSE WITH HTML TAG DATA THEN DROP THE TEMP TABLE IF IT EXISTS
+IF EXISTS(SELECT CourseId FROM  #COURSES_WITH_HTML_TAGS) 
 BEGIN
+
+	-- CREATE A TEMP TABLE TO STORE COURSES WITH HTML TAG DATA IF NOT EXISTS
 	IF NOT EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'temp_courses')
 	BEGIN
 		CREATE TABLE Pttcd.temp_courses (
@@ -141,9 +166,12 @@ BEGIN
 			)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 			) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 	END
-
+	-- TRUNCATE THE TEMP TABLE TO REMOVE ANY EXISTING DATA BEFORE INSERTING THE COURSE DATA WITH HTML TAGS 
+	-- INTO THIS TEMP TABLE TO COMPARE THE COURSE DATA BEFORE AND AFTER UPDATION
 	TRUNCATE TABLE Pttcd.temp_courses;
 
+	-- INSERT THE COURSE DATA WITH HTML TAGS INTO TEMP TABLE TO COMPARE THE COURSE DATA BEFORE AND AFTER UPDATION 
+	-- TO ENSURE THAT ONLY HTML TAGS ARE REMOVED AND THERE IS NO OTHER CHANGE IN THE COURSE DATA FIELDS AFTER UPDATION
 	INSERT INTO  Pttcd.temp_courses 
 	SELECT [CourseId]
       ,[ProviderId]
@@ -158,16 +186,31 @@ BEGIN
       ,[WhatYoullNeed]
       ,[HowYoullBeAssessed]
       ,[WhereNext]
-   FROM [Pttcd].[Courses] WHERE NOT (CourseDescription Is null and EntryRequirements is null and WhatYoullLearn is null and HowYoullLearn is null and WhatYoullNeed is null and HowYoullBeAssessed is null and WhereNext IS null)
-        and CourseDescription Like '%<%'
-        or EntryRequirements Like '%<%'
-        or WhatYoullLearn Like '%<%'
-        or HowYoullLearn Like '%<%'
-        or WhatYoullNeed Like '%<%'
-        or HowYoullBeAssessed Like '%<%'
-        or WhereNext Like '%<%'
-        and CourseStatus = 1
-        and UpdatedOn >= DATEADD(m, -15, GETDATE())
-	EXEC [Pttcd].[usp_RemoveHTMLFromCourseFields]
+    FROM #COURSES_WITH_HTML_TAGS
+
+	-- UPDATE THE COURSE DATA FIELDS BY REMOVING HTML TAGS FOR COURSES WHICH HAVE BEEN UPDATED IN LAST 15 MONTHS 
+	-- AND HAVE HTML TAGS IN ANY OF THE COURSE DATA FIELDS
+	BEGIN TRY
+		BEGIN TRANSACTION
+				UPDATE [Pttcd].[Courses]
+					SET CourseDescription = REPLACE(CourseDescription, CourseDescription, [Pttcd].[udf_RemoveHTMLTags]([CourseDescription])),
+					EntryRequirements = REPLACE(EntryRequirements, EntryRequirements, [Pttcd].[udf_RemoveHTMLTags]([EntryRequirements])),
+					WhatYoullLearn = REPLACE(WhatYoullLearn, WhatYoullLearn, [Pttcd].[udf_RemoveHTMLTags]([WhatYoullLearn])),
+					HowYoullLearn = REPLACE(HowYoullLearn, HowYoullLearn, [Pttcd].[udf_RemoveHTMLTags]([HowYoullLearn])),
+					WhatYoullNeed = REPLACE(WhatYoullNeed, WhatYoullNeed, [Pttcd].[udf_RemoveHTMLTags]([WhatYoullNeed])),
+					HowYoullBeAssessed = REPLACE(HowYoullBeAssessed, HowYoullBeAssessed, [Pttcd].[udf_RemoveHTMLTags]([HowYoullBeAssessed])),
+					WhereNext = REPLACE(WhereNext, WhereNext, [Pttcd].[udf_RemoveHTMLTags]([WhereNext])),
+					UpdatedOn = GETDATE(),
+					UpdatedBy = 'Post Deployment Script - USER STORY 253961'
+				WHERE CourseId IN (SELECT CourseId FROM Pttcd.temp_courses)
+		COMMIT TRANSACTION
+	END TRY
+	BEGIN CATCH
+	  ROLLBACK TRANSACTION
+	END CATCH
+
 END
 
+-- STEP 3: DROP THE TEMP TABLE WHICH STORES COURSES WITH HTML TAG DATA
+DROP TABLE #COURSES_WITH_HTML_TAGS;
+---------------------------------------------------------------------------------------------------------------------------------
