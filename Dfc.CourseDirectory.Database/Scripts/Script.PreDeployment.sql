@@ -29,7 +29,7 @@ BEGIN TRY
 			  ,C.UpdatedBy = 'PreDeploymentScript - Rollback Release'
 		FROM [Pttcd].[Courses] AS C
 		JOIN [Pttcd].temp_courses AS TC ON C.CourseId = TC.CourseId AND C.ProviderId =  TC.ProviderId
-
+		DROP TABLE [Pttcd].temp_courses;
 		COMMIT TRANSACTION;
 	END
 END TRY
