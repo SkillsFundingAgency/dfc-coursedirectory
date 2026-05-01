@@ -7,22 +7,37 @@ using Dfc.CourseDirectory.Core.DataStore.Sql.Queries;
 
 namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 {
-    public class GetCourseListItemHandler : ISqlQueryHandler<GetCourseList, ListOfCourses>
+    public class GetCourseUpdateItemHandler : ISqlQueryHandler<GetCourseUpdates, ListOfCourseUpdates>
     {
-        public async Task<ListOfCourses> Execute(SqlTransaction transaction, GetCourseList query)
+        public async Task<ListOfCourseUpdates> Execute(SqlTransaction transaction, GetCourseUpdates query)
         {
             var sql = $@"SELECT 
                             count(cr.CourseRunId) AS CourseCount
                         FROM Pttcd.CourseRuns cr
                         LEFT JOIN Pttcd.Courses c on cr.CourseId = c.CourseId
+                        LEFT JOIN Pttcd.Venues v on v.VenueId = cr.VenueId
                         LEFT JOIN Pttcd.Providers p on c.ProviderId = p.ProviderId
                         LEFT JOIN Pttcd.ProviderContacts pc on p.ProviderId = pc.ProviderId
                         LEFT JOIN PTTCD.CourseRunSubRegions crsr on cr.CourseRunId = crsr.CourseRunId
                         LEFT JOIN pttcd.Regions sr on crsr.RegionId = sr.RegionId
-                        WHERE cr.CourseRunStatus = 1 and pc.ContactType = 'P';
+                        WHERE 
+                        (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @CutOffDate)
+                        OR (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @CutOffDate and cr.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and c.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate )))
+                        OR (cr.CourseRunStatus = 4 and cr.UpdatedOn > @CutOffDate)
 
                         SELECT
                             cr.CourseRunId AS Id,
+                            CASE
+                            WHEN (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @CutOffDate) THEN 1
+                            WHEN (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @CutOffDate and cr.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and c.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate))) THEN 2
+                            WHEN (cr.CourseRunStatus = 4 and cr.UpdatedOn > @CutOffDate) THEN 3
+                            END AS UpdateType,
+                            cr.CourseRunStatus,
+                            pc.ContactType,
+                            cr.CreatedOn,
+                            cr.UpdatedOn,
+                            c.UpdatedOn as courseUpdatedOn,
+                            v.UpdatedOn as venueUpdatedOn,
                             cr.CourseId,
                             cr.CourseName,
                             c.CourseType,
@@ -62,7 +77,7 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                             v.Town,
                             v.County, 
                             v.Position.Lat Latitude, 
-                            v.Position.Long Longitude,  
+                            v.Position.Long Longitude, 
                             l.LearnAimRef,
                             l.LearnAimRefTitle,
                             l.NotionalNVQLevelv2 AS QualificationLevel,
@@ -78,7 +93,10 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
                         LEFT JOIN pttcd.regions r on sr.ParentRegionId = r.RegionId
                         LEFT JOIN lars.LearningDelivery l on c.LearnAimRef = l.LearnAimRef
                         LEFT JOIN lars.SectorSubjectAreaTier2 SSA on l.[SectorSubjectAreaTier2] = SSA.SectorSubjectAreaTier2
-                        WHERE cr.CourseRunStatus = 1 and pc.ContactType = 'P'
+                        WHERE 
+                        (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and cr.CreatedOn > @CutOffDate)
+                        OR (cr.CourseRunStatus = 1 and pc.ContactType = 'P' and ((cr.CreatedOn < @CutOffDate and cr.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and c.UpdatedOn > @CutOffDate) or (cr.CreatedOn < @CutOffDate and v.UpdatedOn > @CutOffDate )))
+                        OR (cr.CourseRunStatus = 4 and cr.UpdatedOn > @CutOffDate)
                         order by cr.CreatedOn, cr.CourseRunId desc
                         OFFSET (@PageNumber-1)*@PageSize ROWS
                         FETCH NEXT @PageSize ROWS ONLY
@@ -86,15 +104,16 @@ namespace Dfc.CourseDirectory.Core.DataStore.Sql.QueryHandlers
 
             var paramz = new
             {
+                CutOffDate = query.CutOffDate.ToString("yyyy-MM-ddTHH:mm:ss"),
                 query.PageNumber,
                 query.PageSize
             };
 
             using var queryReader = await transaction.Connection.QueryMultipleAsync(sql, paramz, transaction);
             var courseCount = (await queryReader.ReadFirstOrDefaultAsync<int>());
-            var courses = (await queryReader.ReadAsync<CourseListItem>()).ToList();
+            var courses = (await queryReader.ReadAsync<CourseUpdateItem>()).ToList();
 
-            var listOfCourses = new ListOfCourses()
+            var listOfCourses = new ListOfCourseUpdates()
             {
                 CourseCount = courseCount,
                 Courses = courses
