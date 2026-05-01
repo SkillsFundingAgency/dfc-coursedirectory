@@ -208,9 +208,8 @@ BEGIN
 	BEGIN CATCH
 	  ROLLBACK TRANSACTION
 	END CATCH
-
+	-- STEP 3: DROP THE TEMP TABLE WHICH STORES COURSES WITH HTML TAG DATA
+	DROP TABLE #COURSES_WITH_HTML_TAGS;
 END
-
--- STEP 3: DROP THE TEMP TABLE WHICH STORES COURSES WITH HTML TAG DATA
-DROP TABLE #COURSES_WITH_HTML_TAGS;
 ---------------------------------------------------------------------------------------------------------------------------------
+
