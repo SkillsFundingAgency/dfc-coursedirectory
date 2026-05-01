@@ -170,10 +170,4 @@ BEGIN
         and UpdatedOn >= DATEADD(m, -15, GETDATE())
 	EXEC [Pttcd].[usp_RemoveHTMLFromCourseFields]
 END
-ELSE
-BEGIN
-	IF EXISTS(SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'temp_courses')
-	BEGIN
-		DROP TABLE Pttcd.temp_courses;
-	END	
-END
+
