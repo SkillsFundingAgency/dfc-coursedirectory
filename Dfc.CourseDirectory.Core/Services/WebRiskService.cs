@@ -43,7 +43,7 @@ namespace Dfc.CourseDirectory.Core.Services
             //var uri = new Uri(requestUrl);
             //var host = uri.Host; 
 
-            var environment = _WebRiskSettings.Environment.Split('.')[0]; 
+            var environment = _WebRiskSettings.Environment; 
 
            var allowedEnvironments = _WebRiskSettings.PerformanceTestingAllowedEnvironments?
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
