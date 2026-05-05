@@ -194,13 +194,13 @@ else
                             <govuk-summary-card-title>@WebUtility.HtmlDecode(courseRun.CourseName)</govuk-summary-card-title>
                             <govuk-summary-card-actions>
                                 <govuk-summary-card-action 
-                                    href="@Url.Action("Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId })"
-                                    visually-hidden-text="@courseRun.CourseName">
+                                    href="@Url.Action("Index", "CourseSummary", new { courseRun.CourseId, courseRun.CourseRunId })">
                                     View or edit
                                 </govuk-summary-card-action>
                                 @if (!courseRun.IsExpired)
                                 {
-                                    <govuk-summary-card-action asp-controller="CopyCourseRun"
+                                    <govuk-summary-card-action 
+                                        asp-controller="CopyCourseRun"
                                         asp-action="Index"
                                         asp-route-learnAimRef="@courseRun.LearnAimRef"
                                         asp-route-notionalNVQLevelv2="@courseRun.NotionalNVQLevelv2"
@@ -208,17 +208,16 @@ else
                                         asp-route-learnAimRefTitle="@courseRun.QualificationCourseTitle"
                                         asp-route-learnAimRefTypeDesc="@courseRun.QualificationType"
                                         asp-route-courseId="@courseRun.CourseId"
-                                        asp-route-courseRunId="@courseRun.CourseRunId"
-                                        visually-hidden-text="@courseRun.CourseName">
+                                        asp-route-courseRunId="@courseRun.CourseRunId">
                                         Copy course
                                     </govuk-summary-card-action>
                                 }
-                                <govuk-summary-card-action asp-controller="DeleteCourseRun"
+                                <govuk-summary-card-action 
+                                    asp-controller="DeleteCourseRun"
                                     asp-action="Get"
                                     asp-route-courseId="@courseRun.CourseId"
                                     asp-route-courseRunId="@courseRun.CourseRunId"
-                                    asp-route-returnUrl="@returnUrl"
-                                    visually-hidden-text="@courseRun.CourseName">
+                                    asp-route-returnUrl="@returnUrl">
                                     Delete
                                 </govuk-summary-card-action>
                             </govuk-summary-card-actions>
