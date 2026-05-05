@@ -40,10 +40,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
            
             var loggerMock = new Mock<ILogger<WebRiskService>>();
             var webRiskService = new WebRiskService(
-                options,
+                 options,
                 httpClientFactoryMock.Object,
-                loggerMock.Object,
-                httpContextAccessor
+                loggerMock.Object
             );
             var website = "https://testsafebrowsing.appspot.com/s/malware.html";
                 
@@ -79,8 +78,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var webRiskService = new WebRiskService(
                 options,
                 httpClientFactoryMock.Object,
-                loggerMock.Object,
-                 httpContextAccessor
+                loggerMock.Object
+             
             );
             var website = "http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/";
 
@@ -116,10 +115,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var webRiskService = new WebRiskService(
                 options,
                 httpClientFactoryMock.Object,
-                loggerMock.Object,
-               
-                httpContextAccessor
-            );
+                loggerMock.Object
+                          );
             var website = "https://www.google.com";
 
             // Act

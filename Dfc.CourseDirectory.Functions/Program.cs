@@ -44,8 +44,16 @@ var host = new HostBuilder()
         services.AddTransient<UkrlpSyncHelper>();
         services.AddTransient<OnspdDataImporter>();
         services.AddSingleton<IRegionCache, RegionCache>();
-        services.Configure<GoogleWebRiskSettings>(
-            configuration.GetSection(nameof(GoogleWebRiskSettings)));
+        //services.Configure<GoogleWebRiskSettings>(
+        //    configuration.GetSection(nameof(GoogleWebRiskSettings)));
+        services.Configure<GoogleWebRiskSettings>(options =>
+        {
+            configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
+              options.Environment =
+                Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT")
+                ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                ?? "Production";
+        });
         services.AddScoped<IWebRiskService, WebRiskService>();
         services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
         services.AddSingleton<CampaignDataImporter>();
@@ -64,7 +72,7 @@ var host = new HostBuilder()
     })
     .ConfigureAppConfiguration((context, config) =>
     {
-        var environment = Environment.GetEnvironmentVariable("ENVIRONMENT") ?? "Production";
+        var environment = Environment.GetEnvironmentVariable("EnvironmentName") ?? "Production";
 
         if (environment.Equals(Environments.Development, StringComparison.OrdinalIgnoreCase))
         {

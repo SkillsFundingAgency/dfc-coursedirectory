@@ -18,42 +18,32 @@ namespace Dfc.CourseDirectory.Core.Services
         private readonly ILogger<WebRiskService> _logger;
         private readonly IHostEnvironment _hostEnvironment;
 
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public WebRiskService(IOptions<GoogleWebRiskSettings> options, IHttpClientFactory factory, IHttpContextAccessor httpContextAccessor)
-        {
-            _WebRiskSettings = options.Value;
-            _factory = factory;
-            _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<WebRiskService>();
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        // Add this constructor to match the usage in your test file
         public WebRiskService(
             IOptions<GoogleWebRiskSettings> webRiskSettings,
             IHttpClientFactory factory,
-            ILogger<WebRiskService> logger,
-            IHttpContextAccessor httpContextAccessor)
+            ILogger<WebRiskService> logger
+           )
         {
             _WebRiskSettings = webRiskSettings?.Value ?? throw new ArgumentNullException(nameof(webRiskSettings));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+           
         }
 
         public async Task<bool> CheckForSecureUri(string url)
         {
 
-            var request = _httpContextAccessor.HttpContext?.Request;
+            //var request = _httpContextAccessor.HttpContext?.Request;
 
-            var requestUrl = request != null
-                ? $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}"
-                : string.Empty;
+            //var requestUrl = request != null
+            //    ? $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}"
+            //    : string.Empty;
 
-            var uri = new Uri(requestUrl);
-            var host = uri.Host; 
+            //var uri = new Uri(requestUrl);
+            //var host = uri.Host; 
 
-              var environment = host.Split('.')[0]; 
+            var environment = _WebRiskSettings.Environment.Split('.')[0]; 
 
            var allowedEnvironments = _WebRiskSettings.PerformanceTestingAllowedEnvironments?
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -68,7 +58,7 @@ namespace Dfc.CourseDirectory.Core.Services
             {
                 _logger.LogInformation(
                     "WebRiskService: Performance testing enabled in allowed environment ({env}), skipping external service call",
-                    requestUrl
+                    environment
                 );
                 return true;
             }

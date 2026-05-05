@@ -271,7 +271,7 @@
         "Ons:DownloadLink": "https://www.arcgis.com/sharing/rest/content/items/{0}/data",
         "Ons:DownloadInfoBlobFile": "OnsLastDownloadInfo.json",
         "GoogleWebRiskSettings:PerformanceTesting": false,
-        "GoogleWebRiskSettings:PerformanceTestingAllowedEnvironments": "dev-coursedirectory,sit-coursedirectory,pp-coursedirectory"
+        "GoogleWebRiskSettings:PerformanceTestingAllowedEnvironments": "Development,DEV,SIT,PreProd,PP,Staging"
       }
     },
     {
