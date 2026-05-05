@@ -46,13 +46,20 @@ var host = new HostBuilder()
         services.AddSingleton<IRegionCache, RegionCache>();
         //services.Configure<GoogleWebRiskSettings>(
         //    configuration.GetSection(nameof(GoogleWebRiskSettings)));
+        //services.Configure<GoogleWebRiskSettings>(options =>
+        //{
+        //    configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
+        //      options.Environment =
+        //        Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT")
+        //        ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+        //        ?? "Production";
+        //});
         services.Configure<GoogleWebRiskSettings>(options =>
         {
             configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
-              options.Environment =
-                Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT")
-                ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-                ?? "Production";
+
+            options.Environment = configuration["EnvironmentSettings:EnvironmentName"];
+            Console.WriteLine($"[Startup] Environment = {options.Environment}");
         });
         services.AddScoped<IWebRiskService, WebRiskService>();
         services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
@@ -72,7 +79,7 @@ var host = new HostBuilder()
     })
     .ConfigureAppConfiguration((context, config) =>
     {
-        var environment = Environment.GetEnvironmentVariable("EnvironmentName") ?? "Production";
+        var environment = Environment.GetEnvironmentVariable("ENVIRONMENT") ?? "Production";
 
         if (environment.Equals(Environments.Development, StringComparison.OrdinalIgnoreCase))
         {
