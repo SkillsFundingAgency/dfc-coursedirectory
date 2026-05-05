@@ -27,6 +27,7 @@
 		<PackageReference Include="NWebsec.AspNetCore.Mvc.TagHelpers" Version="3.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Remove="wwwroot\components\accordion.css" />
 		<None Remove="wwwroot\components\cancel-btn.css" />
 		<None Remove="wwwroot\components\cookie-banner.css" />
 		<None Remove="wwwroot\components\cookie-banner.js" />
