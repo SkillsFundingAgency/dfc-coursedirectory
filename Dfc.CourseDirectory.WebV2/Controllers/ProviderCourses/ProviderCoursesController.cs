@@ -109,6 +109,13 @@ namespace Dfc.CourseDirectory.WebV2.Controllers.ProviderCourses
                 ModelState.AddModelError(nameof(searchState.Keyword), "Enter a minimum of 3 characters");
             }
 
+            var keywordTooLong = keywordSearch.Length > 50;
+            if (keywordTooLong)
+            {
+                keywordSearch = string.Empty;
+                ModelState.AddModelError(nameof(searchState.Keyword), "Enter a maximum of 50 characters");
+            }
+
             var allRegionItems = _courseService.GetRegions().RegionItems;
             var model = BuildViewModel(allCourseRuns, searchState, page, keywordSearch, allRegionItems);
             model.Nonce = requestNonce;

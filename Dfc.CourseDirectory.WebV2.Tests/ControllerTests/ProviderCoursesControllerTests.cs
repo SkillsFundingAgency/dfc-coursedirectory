@@ -126,6 +126,26 @@ namespace Dfc.CourseDirectory.WebV2.Tests.ControllerTests
         }
 
         [Fact]
+        public async Task Index_KeywordTooLong_AddsValidationError()
+        {
+            SetupUkprn(10012345);
+            SetupNoCourseCache();
+            SetupNonce("stored-nonce");
+            SetupSearchState(new ProviderCourseSearchState { Keyword = "ugBXRaVbnooNPeRvQVmQfysCvkkoEwszUcxWsDKMDCCkTSFwFE1" });
+            _mockSqlQueryDispatcher
+                .Setup(m => m.ExecuteQuery(It.IsAny<GetCoursesForProvider>()))
+                .ReturnsAsync((IReadOnlyCollection<Course>)new[] { MakeCourse("Some Course") });
+            var controller = GetController();
+
+            var result = await controller.Index(nce: "stored-nonce");
+
+            Assert.IsType<ViewResult>(result);
+            var error = controller.ModelState["Keyword"]?.Errors.FirstOrDefault();
+            Assert.NotNull(error);
+            Assert.Equal("Enter a maximum of 50 characters", error.ErrorMessage);
+        }
+
+        [Fact]
         public async Task Index_ActiveKeywordFilter_HasFiltersIsTrue()
         {
             SetupUkprn(10012345);
