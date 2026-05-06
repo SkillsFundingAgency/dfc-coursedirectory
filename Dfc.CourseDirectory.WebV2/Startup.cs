@@ -88,7 +88,7 @@ namespace Dfc.CourseDirectory.WebV2
             {
                 Configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
 
-                options.Environment = Configuration["EnvironmentSettings__EnvironmentName"];
+                options.Environment = Configuration["EnvironmentSettings:EnvironmentName"];
                 Console.WriteLine($"[Startup] Environment = {options.Environment}");
             });
 
