@@ -49,7 +49,7 @@ var host = new HostBuilder()
         {
             configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
 
-            options.Environment = configuration["EnvironmentSettings__EnvironmentName"];
+            options.Environment = configuration["EnvironmentSettings:EnvironmentName"];
             Console.WriteLine($"[Startup] Environment = {options.Environment}");
         });
         services.AddScoped<IWebRiskService, WebRiskService>();
