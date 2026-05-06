@@ -44,21 +44,12 @@ var host = new HostBuilder()
         services.AddTransient<UkrlpSyncHelper>();
         services.AddTransient<OnspdDataImporter>();
         services.AddSingleton<IRegionCache, RegionCache>();
-        //services.Configure<GoogleWebRiskSettings>(
-        //    configuration.GetSection(nameof(GoogleWebRiskSettings)));
-        //services.Configure<GoogleWebRiskSettings>(options =>
-        //{
-        //    configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
-        //      options.Environment =
-        //        Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT")
-        //        ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-        //        ?? "Production";
-        //});
+   
         services.Configure<GoogleWebRiskSettings>(options =>
         {
             configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
 
-            options.Environment = configuration["EnvironmentSettings:EnvironmentName"];
+            options.Environment = configuration["EnvironmentSettings__EnvironmentName"];
             Console.WriteLine($"[Startup] Environment = {options.Environment}");
         });
         services.AddScoped<IWebRiskService, WebRiskService>();

@@ -83,21 +83,12 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
             services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
-            //services.Configure<GoogleWebRiskSettings>(
-            //    Configuration.GetSection(nameof(GoogleWebRiskSettings)));
-            //services.Configure<GoogleWebRiskSettings>(options =>
-            //{
-            //    Configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
-            //    options.Environment =
-            //        Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT")
-            //        ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-            //        ?? "Production";
-            //});
+      
             services.Configure<GoogleWebRiskSettings>(options =>
             {
                 Configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
 
-                options.Environment = Configuration["EnvironmentSettings:EnvironmentName"];
+                options.Environment = Configuration["EnvironmentSettings__EnvironmentName"];
                 Console.WriteLine($"[Startup] Environment = {options.Environment}");
             });
 
