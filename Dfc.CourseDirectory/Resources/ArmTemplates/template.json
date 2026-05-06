@@ -205,7 +205,7 @@
         "BlobStorageSettings__TemplatePath": "bulkuploadtemplate.csv",
         "BlobStorageSettings__InlineProcessingThreshold": "[parameters('BlobStorageSettingsInlineProcessingThreshhold')]",
         "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
-        "EnvironmentSettings__EnvironmentName": "[parameters('environmentName')]",
+        "EnvironmentSettings__EnvironmentName": "[parameters('EnvironmentName')]",
         "ApprenticeshipSettings__NationalRadius": "600",
         "ApprenticeshipSettings__SubRegionRadius": "10",
         "CourseServiceSettings__BulkUploadSecondsPerRecord": "[parameters('BulkUploadSecondsPerRecord')]",
@@ -245,6 +245,7 @@
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', variables('functionAppInsightsName')), '2015-05-01').InstrumentationKey]",
         "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
         "BlobStorageSettings__ConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectoryStorageConnectionString)', parameters('keyVaultName'))]",
+        "EnvironmentSettings__EnvironmentName": "[parameters('EnvironmentName')]",
         "AzureSearchUrl": "[concat('https://', parameters('searchDomain'), '.search.windows.net')]",
         "AzureSearchAdminKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=CourseDirectorySearchAdminPrimaryKey)', parameters('keyVaultName'))]",
         "WEBSITE_RUN_FROM_PACKAGE": "1",
@@ -271,7 +272,7 @@
         "Ons:DownloadLink": "https://www.arcgis.com/sharing/rest/content/items/{0}/data",
         "Ons:DownloadInfoBlobFile": "OnsLastDownloadInfo.json",
         "GoogleWebRiskSettings:PerformanceTesting": false,
-        "GoogleWebRiskSettings:PerformanceTestingAllowedEnvironments": "dev-coursedirectory,sit-coursedirectory,pp-coursedirectory"
+        "GoogleWebRiskSettings:PerformanceTestingAllowedEnvironments": "Development,DEV,SIT,PreProd,PP,Staging"
       }
     },
     {
