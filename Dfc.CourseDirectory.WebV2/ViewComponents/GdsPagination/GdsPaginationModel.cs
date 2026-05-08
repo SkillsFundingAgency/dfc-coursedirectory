@@ -43,6 +43,17 @@ namespace Dfc.CourseDirectory.WebV2.ViewComponents.GdsPagination
         public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
 
+        // The GDS spec requires showing: current page + at least one page immediately before/after + first and last pages.
+        // That gives a window of 3 (prev, current, next).
+        // 
+        // The widest the control ever gets when ellipsis is active is 7 i.e
+        //     [1] [...] [prev] [current] [next] [...] [last]
+        //
+        // The TotalPages <= 7 threshold means that if all the pages will fit within the 7 slots
+        // then skip the ellipsis logic entirely. 
+        // 
+        // The two constants (3 and 7) are coupled. 7 is derived from 3. Changing one requires 
+        // changing the other; they should not be treated independantly.
         public IEnumerable<int?> GetPageWindow()
         {
             var pages = new List<int?>();
