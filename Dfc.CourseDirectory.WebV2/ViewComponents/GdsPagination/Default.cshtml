@@ -15,9 +15,7 @@
             }
             else
             {
-                <govuk-pagination-item href="@string.Format(Model.PageUrlFormat, pageNumber)" current="@(pageNumber == Model.Pagination.CurrentPage)">
-                    @pageNumber
-                </govuk-pagination-item>
+                <govuk-pagination-item href="@string.Format(Model.PageUrlFormat, pageNumber)" current="@(pageNumber == Model.Pagination.CurrentPage)">@pageNumber</govuk-pagination-item>
             }
         }
         @if (Model.Pagination.HasNext)
