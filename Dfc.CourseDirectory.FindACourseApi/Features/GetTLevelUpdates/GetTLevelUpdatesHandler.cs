@@ -1,27 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dfc.CourseDirectory.Core.DataStore.Sql;
+using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
 {
     public class TLevelUpdateResponse 
     {
+        [SwaggerSchema(Description = "TotalCount is the total number of T Level updates available based on the pagination parameters and cut off date.")]
         public int totalCount { get; set; }
+        [SwaggerSchema(Description = "PageNumber is the current page number of the T Level updates.")]
         public int pageNumber { get; set; }
+        [SwaggerSchema(Description = "PageSize is the number of T Level updates per page. Maximum value is 100.")]
         public int pageSize { get; set; }
+        [SwaggerSchema(Description = "CutOffDate is the date used to filter T Level updates. Only updates on or after this date are included in the response. Expected format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd")]
         public DateTime cutOffDate { get; set; }
+        [SwaggerSchema(Description = "The list of T Level updates based on the pagination parameters and cut off date.")]
         public IList<TLevelUpdatesViewModel> courses { get; set; }
     }
     public class TLevelUpdateRequest : IRequest<OneOf<NotFound, TLevelUpdateResponse>>
     {
+        [SwaggerSchema(Description = "CutOffDate is used to get the T Level updates on or after the specified date. Expected format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd")]
         public DateTime CutOffDate { get; set; }
+        [SwaggerSchema(Description = "PageSize is used to specify the number of T Level updates to be returned in a single page. Maximum allowed value is 100.")]
         public int PageSize { get; set; }
+        [SwaggerSchema(Description = "PageNumber is used to specify the page number of the T Level updates to be returned.")]
         public int PageNumber { get; set; }
     }
 
@@ -46,7 +57,7 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
                 courses = listOfTLevels.TLevels.Select(c => new TLevelUpdatesViewModel()
                 {
                     TLevelId = c.TLevelId,
-                    UpdateType = c.UpdateType, 
+                    UpdateType = ConvertToEnumObj<UpdateType, GetCourses.UpdateType>(c.UpdateType), 
                     CourseName = c.CourseName,
                     StartDate = c.StartDate,
                     CourseWebsite = c.CourseWebsite,
@@ -73,6 +84,26 @@ namespace Dfc.CourseDirectory.FindACourseApi.Features.GetTLevelUpdates
                 }).ToList()
             };
             return response;
+        }
+        public enum UpdateType
+        {
+            [Description("Newly Added Course")]
+            NewlyAddedCourse = 1,
+            [Description("Updated Course")]
+            UpdatedCourse = 2,
+            [Description("Deleted Course")]
+            DeletedCourse = 3
+        }
+
+        private static V ConvertToEnumObj<T, V>(int? value) where V : IEnumObj, new()
+        {
+            Type enumType = typeof(T);
+            if (value.HasValue && Enum.IsDefined(enumType, value))
+            {
+                var description = Enum.GetName(enumType, value);
+                return new V() { Value = value, Description = description };
+            }
+            return default;
         }
     }
 }

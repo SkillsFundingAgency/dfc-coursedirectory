@@ -10,21 +10,30 @@ using Dfc.CourseDirectory.FindACourseApi.Features.GetCourses;
 using MediatR;
 using OneOf;
 using OneOf.Types;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Dfc.CourseDirectory.FindACourseApi.Features.GetCourseUpdates
 {
     public class CourseUpdateResponse 
     {
+        [SwaggerSchema(Description = "TotalCount is the total number of course updates available based on the CutOffDate filter.")]
         public int totalCount { get; set; }
+        [SwaggerSchema(Description = "PageNumber is used to specify the page number of the course updates to be returned.")]
         public int pageNumber { get; set; }
+        [SwaggerSchema(Description = "PageSize is used to specify the number of course updates to be returned in a single page.")]  
         public int pageSize { get; set; }
+        [SwaggerSchema(Description = "CutOffDate is used to get the course updates on or after the specified date. Expected format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd")]
         public DateTime cutOffDate { get; set; }
+        [SwaggerSchema(Description = "Courses is a list of course updates that match the CutOffDate filter and pagination parameters.")]
         public IList<CourseUpdatesViewModel> courses { get; set; }
     }
     public class CourseUpdateRequest : IRequest<OneOf<NotFound, CourseUpdateResponse>>
     {
+        [SwaggerSchema(Description = "CutOffDate is used to get the course updates on or after the specified date. Expected format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd")]
         public DateTime CutOffDate { get; set; }
+        [SwaggerSchema(Description = "PageSize is used to specify the number of course updates to be returned in a single page. Maximum allowed value is 100.")]
         public int PageSize { get; set; }
+        [SwaggerSchema(Description = "PageNumber is used to specify the page number of the course updates to be returned.")]
         public int PageNumber { get; set; }
     }
 

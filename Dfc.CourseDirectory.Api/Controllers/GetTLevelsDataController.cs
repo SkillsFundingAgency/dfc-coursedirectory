@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Dfc.CourseDirectory.Api.Controllers
 {
@@ -29,7 +30,11 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> TLevelsList(int pageSize, int pageNumber)
+        public async Task<IActionResult> TLevelsList(
+            [SwaggerSchema(Description = "PageSize is used to specify the number of course updates to be returned in a single page. Maximum allowed value is 100.")]
+            int pageSize,
+            [SwaggerSchema(Description = "PageNumber is used to specify the page number of the course updates to be returned.")]
+            int pageNumber)
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(TLevelsList));
 
@@ -77,7 +82,12 @@ namespace Dfc.CourseDirectory.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> TLevelUpdates(string cutOffDate,int pageSize, int pageNumber)
+        public async Task<IActionResult> TLevelUpdates([SwaggerSchema(Description = "CutOffDate is used to get the course updates on or after the specified date. Expected format: yyyy-MM-ddTHH:mm:ss or yyyy-MM-dd")]
+            string cutOffDate,
+            [SwaggerSchema(Description = "PageSize is used to specify the number of course updates to be returned in a single page. Maximum allowed value is 100.")]
+            int pageSize,
+            [SwaggerSchema(Description = "PageNumber is used to specify the page number of the course updates to be returned.")]
+            int pageNumber)
         {
             _log.LogInformation("Started Executing '{MethodName}' Method", nameof(TLevelUpdates));
 
