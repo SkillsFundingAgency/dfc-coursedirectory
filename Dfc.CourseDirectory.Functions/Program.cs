@@ -44,8 +44,14 @@ var host = new HostBuilder()
         services.AddTransient<UkrlpSyncHelper>();
         services.AddTransient<OnspdDataImporter>();
         services.AddSingleton<IRegionCache, RegionCache>();
-        services.Configure<GoogleWebRiskSettings>(
-            configuration.GetSection(nameof(GoogleWebRiskSettings)));
+   
+        services.Configure<GoogleWebRiskSettings>(options =>
+        {
+            configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
+
+            options.Environment = configuration["EnvironmentSettings:EnvironmentName"];
+            Console.WriteLine($"[Startup] Environment = {options.Environment}");
+        });
         services.AddScoped<IWebRiskService, WebRiskService>();
         services.AddTransient<IFileUploadProcessor, FileUploadProcessor>();
         services.AddSingleton<CampaignDataImporter>();

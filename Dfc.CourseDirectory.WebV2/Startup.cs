@@ -82,11 +82,19 @@ namespace Dfc.CourseDirectory.WebV2
             services.AddScoped<RouteValuesHelper>();
             services.AddSingleton<IProviderContextProvider, ProviderContextProvider>();
             services.AddSingleton<IProviderInfoCache, ProviderInfoCache>();
-            services.Configure<GoogleWebRiskSettings>(
-                Configuration.GetSection(nameof(GoogleWebRiskSettings)));
+            services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
+      
+            services.Configure<GoogleWebRiskSettings>(options =>
+            {
+                Configuration.GetSection(nameof(GoogleWebRiskSettings)).Bind(options);
+
+                options.Environment = Configuration["EnvironmentSettings:EnvironmentName"];
+                Console.WriteLine($"[Startup] Environment = {options.Environment}");
+            });
+
             services.AddScoped<IWebRiskService, WebRiskService>();
 
-            services.Configure<EnvironmentSettings>(Configuration.GetSection(nameof(EnvironmentSettings)));
+       
             services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
 
             services.Configure<BlobStorageBinaryStorageProviderSettings>(Configuration.GetSection(nameof(BlobStorageBinaryStorageProviderSettings)));

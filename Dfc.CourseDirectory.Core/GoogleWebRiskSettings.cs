@@ -3,5 +3,8 @@
     public class GoogleWebRiskSettings
     {
         public string ApiKey { get; set; }
+        public bool PerformanceTesting { get; set; }
+        public string PerformanceTestingAllowedEnvironments { get; set; }
+        public string Environment { get; set; }
     }
 }
