@@ -19,7 +19,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithKnownThreat_FailsValidation()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = false });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = false, Environment="DEV" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -40,10 +40,9 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
            
             var loggerMock = new Mock<ILogger<WebRiskService>>();
             var webRiskService = new WebRiskService(
-                options,
+                 options,
                 httpClientFactoryMock.Object,
-                loggerMock.Object,
-                httpContextAccessor
+                loggerMock.Object
             );
             var website = "https://testsafebrowsing.appspot.com/s/malware.html";
                 
@@ -57,7 +56,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithKnownThreat_PassesValidation_PerfomanceTest()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true , PerformanceTestingAllowedEnvironments = "dev-coursedirectory,sit-coursedirectory,pp-coursedirectory" });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true , PerformanceTestingAllowedEnvironments = "DEV", Environment = "DEV" });
 
             var expectedData = "threat";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -70,7 +69,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
 
             httpContextAccessor.HttpContext.Request.Scheme = "https";
             httpContextAccessor.HttpContext.Request.Host =
-                new HostString("pp-coursedirectory.nationalcareersservice.org.uk");
+                new HostString("dev.nationalcareersservice.org.uk");
 
             var hostEnvironmentMock = new Mock<IHostEnvironment>();
             hostEnvironmentMock.Setup(env => env.EnvironmentName).Returns("Development");
@@ -79,8 +78,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var webRiskService = new WebRiskService(
                 options,
                 httpClientFactoryMock.Object,
-                loggerMock.Object,
-                 httpContextAccessor
+                loggerMock.Object
+             
             );
             var website = "http://testsafebrowsing.appspot.com/apiv4/ANY_PLATFORM/MALWARE/URL/";
 
@@ -95,7 +94,7 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
         public async Task CheckForSecureUri_WithoutKnownThreat_PassesValidation()
         {
             // Arrange
-            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X" });
+            var options = Options.Create(new GoogleWebRiskSettings { ApiKey = "X", PerformanceTesting = true, PerformanceTestingAllowedEnvironments = "DEV", Environment = "DEV" });
 
             var expectedData = "{}";
             var httpClientFactoryMock = new Mock<IHttpClientFactory>();
@@ -116,10 +115,8 @@ namespace Dfc.CourseDirectory.Core.Tests.Services
             var webRiskService = new WebRiskService(
                 options,
                 httpClientFactoryMock.Object,
-                loggerMock.Object,
-               
-                httpContextAccessor
-            );
+                loggerMock.Object
+                          );
             var website = "https://www.google.com";
 
             // Act

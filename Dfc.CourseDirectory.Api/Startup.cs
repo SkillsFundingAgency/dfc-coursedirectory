@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 
 namespace Dfc.CourseDirectory.Api
@@ -119,12 +119,12 @@ namespace Dfc.CourseDirectory.Api
 
             app.UseSwagger(c =>
             {
-                c.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
+                c.SerializeAsV2 = true;
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
                     swaggerDoc.Servers = new List<OpenApiServer>
                     {
-                        new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
+                        new() { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
                     };
                 });
             });
