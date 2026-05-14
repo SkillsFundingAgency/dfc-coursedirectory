@@ -3820,7 +3820,7 @@
         }
 }
 
-.govuk-table, .govuk-textarea, .govuk-warning-text {
+.govuk-table, .govuk-textarea {
     line-height: 1.25;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale
@@ -3941,43 +3941,6 @@
     border: 4px solid #b10e1e;
 }
 
-.govuk-warning-text {
-    font-weight: 400;
-    font-size: 16px;
-    font-size: 1rem;
-    color: #0b0c0c;
-    position: relative;
-    margin-bottom: 20px;
-    padding: 10px 0
-}
-
-@media print {
-    .govuk-warning-text {
-        font-family: sans-serif
-    }
-}
-
-@media (min-width:40.0625em) {
-    .govuk-warning-text {
-        font-size: 19px;
-        font-size: 1.1875rem;
-        line-height: 1.31579;
-        margin-bottom: 30px
-    }
-}
-
-@media print {
-    .govuk-warning-text {
-        font-size: 14pt;
-        line-height: 1.15;
-        color: #000
-    }
-
-    .govuk-warning-text__icon {
-        font-family: sans-serif
-    }
-}
-
 .govuk-warning-text__assistive {
     position: absolute !important;
     width: 1px !important;
@@ -3991,31 +3954,6 @@
     white-space: nowrap !important
 }
 
-.govuk-warning-text__icon {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 700;
-    display: inline-block;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    min-width: 32px;
-    min-height: 29px;
-    margin-top: -20px;
-    padding-top: 3px;
-    border: 3px solid #0b0c0c;
-    border-radius: 50%;
-    color: #fff;
-    background: #0b0c0c;
-    font-size: 1.6em;
-    line-height: 29px;
-    text-align: center;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none
-}
-
 .govuk-visually-hidden, .govuk-visually-hidden-focusable {
     position: absolute !important;
     width: 1px !important;
@@ -4023,11 +3961,6 @@
     margin: 0 !important;
     overflow: hidden !important;
     white-space: nowrap !important
-}
-
-.govuk-warning-text__text {
-    display: block;
-    padding-left: 50px
 }
 
 .govuk-clearfix:after {
