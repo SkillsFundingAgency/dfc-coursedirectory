@@ -10,7 +10,7 @@
                 Menu
             </button>
             <ul id="navigation" class="govuk-service-navigation__list">
-                <li class="govuk-service-navigation__item@(currentController == "Home" && currentAction == "Index" ? " govuk-service-navigation__item--active" : null)">
+                <li class="govuk-service-navigation__item@(currentController == "ProviderDashboard" ? " govuk-service-navigation__item--active" : null)">
                     <a asp-action="Index" asp-controller="ProviderDashboard" asp-all-route-data="@ProviderContext.RouteValues" class="govuk-service-navigation__link" data-testid="topnav-home">
                         Home
                     </a>
