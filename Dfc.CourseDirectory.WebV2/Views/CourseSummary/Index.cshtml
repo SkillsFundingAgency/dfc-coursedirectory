@@ -109,7 +109,7 @@
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Qualification Level
+                        Education Level
                     </dt>
                     <dd class="govuk-summary-list__value" style="word-break: break-word;">
                         @if (string.IsNullOrEmpty(Model.NotionalNVQLevelv2))
@@ -172,17 +172,28 @@
                 </div>
             }
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Status
-                </dt>
-                <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                    <span class="govuk-tag phase-tag-published">Published</span>
-                </dd>
-                <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                    &nbsp;
-                </dd>
-            </div>
+            
+            @if (Model.NonLarsCourse)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Course type
+                    </dt>
+                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
+                        @if (!Model.CourseType.HasValue)
+                        {
+                            <span class="govuk-visually-hidden">Data Unavailable</span>
+                        }
+                        else
+                        {
+                            @Model.CourseType.Value.ToDescription()
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
+                        &nbsp;
+                    </dd>
+                </div>
+            }
         </dl>
 
         <h3 class="govuk-heading-m">Course details</h3>
@@ -229,25 +240,6 @@
 
             @if (Model.NonLarsCourse)
             {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Course type
-                    </dt>
-                    <dd class="govuk-summary-list__value" style="word-break: break-word;">
-                        @if (!Model.CourseType.HasValue)
-                        {
-                            <span class="govuk-visually-hidden">Data Unavailable</span>
-                        }
-                        else
-                        {
-                            @Model.CourseType.Value.ToDescription()
-                        }
-                    </dd>
-                    <dd class="govuk-summary-list__actions govuk-summary-list__checkedit">
-                        &nbsp;
-                    </dd>
-                </div>
-
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Sector
