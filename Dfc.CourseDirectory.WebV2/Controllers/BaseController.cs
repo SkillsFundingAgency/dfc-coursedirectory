@@ -30,6 +30,9 @@ namespace Dfc.CourseDirectory.WebV2.Controllers
         protected const string SessionNotionalNvqLevelV2 = "NotionalNVQLevelv2";
         protected const string SessionLearnAimRefTypeDesc = "LearnAimRefTypeDesc";
         protected const string SessionSectors = "Sectors";
+        protected const string SessionProviderCoursesSearchState = "ProviderCoursesSearchState";
+        protected const string SessionProviderCourses = "ProviderCourses";
+        protected const string SessionProviderCoursesNonce = "ProviderCoursesNonce";
         protected const int DefaultSectorId = 1;
 
         public BaseController(ISqlQueryDispatcher sqlQueryDispatcher)

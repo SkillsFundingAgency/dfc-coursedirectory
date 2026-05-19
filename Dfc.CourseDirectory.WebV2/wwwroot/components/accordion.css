@@ -1,0 +1,18 @@
+﻿.pttcd-accordion {
+    border: 1px solid #b1b4b6;
+}
+
+.pttcd-accordion__header {
+    padding: 15px;
+    background-color: #f3f2f1;
+}
+
+.pttcd-accordion__content {
+    padding: 15px 15px 0 15px;
+}
+
+.pttcd-accordion__footer {
+    padding: 0 15px 15px 15px;
+}
+
+

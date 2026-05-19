@@ -1,0 +1,26 @@
+@model Dfc.CourseDirectory.WebV2.ViewComponents.GdsPagination.GdsPaginationViewModel
+
+@if (Model?.Pagination != null && Model.Pagination.TotalPages > 1)
+{
+    <govuk-pagination>
+        @if (Model.Pagination.HasPrevious)
+        {
+            <govuk-pagination-previous href="@string.Format(Model.PageUrlFormat, Model.Pagination.CurrentPage - 1)" />
+        }
+        @foreach (var pageNumber in Model.Pagination.GetPageWindow())
+        {
+            if (pageNumber == null)
+            {
+                <govuk-pagination-ellipsis />
+            }
+            else
+            {
+                <govuk-pagination-item href="@string.Format(Model.PageUrlFormat, pageNumber)" current="@(pageNumber == Model.Pagination.CurrentPage)">@pageNumber</govuk-pagination-item>
+            }
+        }
+        @if (Model.Pagination.HasNext)
+        {
+            <govuk-pagination-next href="@string.Format(Model.PageUrlFormat, Model.Pagination.CurrentPage + 1)" />
+        }
+    </govuk-pagination>
+}

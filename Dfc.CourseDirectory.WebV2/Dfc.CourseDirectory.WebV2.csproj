@@ -10,7 +10,7 @@
 		<PackageReference Include="CsvHelper" Version="33.1.0" />
 		<PackageReference Include="Flurl" Version="4.0.0" />
 		<PackageReference Include="FormFlow" Version="0.4.4" />
-		<PackageReference Include="GovUk.Frontend.AspNetCore" Version="3.3.0" />
+		<PackageReference Include="GovUk.Frontend.AspNetCore" Version="3.4.0" />
 		<PackageReference Include="JWT" Version="11.0.0" />
 		<PackageReference Include="MediatR" Version="12.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.11" />
@@ -27,6 +27,7 @@
 		<PackageReference Include="NWebsec.AspNetCore.Mvc.TagHelpers" Version="3.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Remove="wwwroot\components\accordion.css" />
 		<None Remove="wwwroot\components\cancel-btn.css" />
 		<None Remove="wwwroot\components\cookie-banner.css" />
 		<None Remove="wwwroot\components\cookie-banner.js" />
@@ -53,6 +54,7 @@
 		<None Remove="wwwroot\pages\helpdesk-dashboard.css" />
 		<None Remove="wwwroot\pages\provider-dashboard.css" />
 		<None Remove="wwwroot\pages\providers\provider-details.css" />
+		<None Remove="wwwroot\pages\providers\provider-courses.css" />
 		<None Remove="wwwroot\pages\data-upload.css" />
 		<None Remove="wwwroot\pages\start.css" />
 		<None Remove="wwwroot\utilities\focus-formgroup.js" />
