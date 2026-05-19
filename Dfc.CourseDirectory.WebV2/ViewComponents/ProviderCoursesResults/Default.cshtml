@@ -234,41 +234,16 @@ else
                                     </govuk-summary-list-row>
                                 }
 
-                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.Venue))
+                                @if (Model.NonLarsCourse && !string.IsNullOrEmpty(courseRun.CourseType))
                                 {
                                     <govuk-summary-list-row>
                                         <govuk-summary-list-row-key>
-                                            Venue
+                                            Course type
                                         </govuk-summary-list-row-key>
                                         <govuk-summary-list-row-value>
-                                            @WebUtility.HtmlDecode(courseRun.Venue)
+                                            @WebUtility.HtmlDecode(courseRun.CourseType)
                                         </govuk-summary-list-row-value>
                                     </govuk-summary-list-row>
-                                }
-                                @if (courseRun.DeliveryMode == CourseDeliveryMode.WorkBased)
-                                {
-                                    if (courseRun.National)
-                                    {
-                                        <govuk-summary-list-row>
-                                            <govuk-summary-list-row-key>
-                                                Regions
-                                            </govuk-summary-list-row-key>
-                                            <govuk-summary-list-row-value>
-                                                National
-                                            </govuk-summary-list-row-value>
-                                        </govuk-summary-list-row>
-                                    }
-                                    else if (!string.IsNullOrEmpty(courseRun.Region))
-                                    {
-                                        <govuk-summary-list-row>
-                                            <govuk-summary-list-row-key>
-                                                Regions
-                                            </govuk-summary-list-row-key>
-                                            <govuk-summary-list-row-value>
-                                                @courseRun.Region
-                                            </govuk-summary-list-row-value>
-                                        </govuk-summary-list-row>
-                                    }
                                 }
 
                                 @if (!string.IsNullOrEmpty(courseRun.CourseTextId))
@@ -279,18 +254,6 @@ else
                                         </govuk-summary-list-row-key>
                                         <govuk-summary-list-row-value>
                                             @WebUtility.HtmlDecode(courseRun.CourseTextId)
-                                        </govuk-summary-list-row-value>
-                                    </govuk-summary-list-row>
-                                }
-
-                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.StudyMode))
-                                {
-                                    <govuk-summary-list-row>
-                                        <govuk-summary-list-row-key>
-                                            Course hours
-                                        </govuk-summary-list-row-key>
-                                        <govuk-summary-list-row-value>
-                                            @courseRun.StudyMode
                                         </govuk-summary-list-row-value>
                                     </govuk-summary-list-row>
                                 }
@@ -330,6 +293,43 @@ else
                                     </govuk-summary-list-row-value>
                                 </govuk-summary-list-row>
 
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.Venue))
+                                {
+                                    <govuk-summary-list-row>
+                                        <govuk-summary-list-row-key>
+                                            Venue
+                                        </govuk-summary-list-row-key>
+                                        <govuk-summary-list-row-value>
+                                            @WebUtility.HtmlDecode(courseRun.Venue)
+                                        </govuk-summary-list-row-value>
+                                    </govuk-summary-list-row>
+                                }
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.WorkBased)
+                                {
+                                    if (courseRun.National)
+                                    {
+                                        <govuk-summary-list-row>
+                                            <govuk-summary-list-row-key>
+                                                Regions
+                                            </govuk-summary-list-row-key>
+                                            <govuk-summary-list-row-value>
+                                                National
+                                            </govuk-summary-list-row-value>
+                                        </govuk-summary-list-row>
+                                    }
+                                    else if (!string.IsNullOrEmpty(courseRun.Region))
+                                    {
+                                        <govuk-summary-list-row>
+                                            <govuk-summary-list-row-key>
+                                                Regions
+                                            </govuk-summary-list-row-key>
+                                            <govuk-summary-list-row-value>
+                                                @courseRun.Region
+                                            </govuk-summary-list-row-value>
+                                        </govuk-summary-list-row>
+                                    }
+                                }
+
                                 @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.AttendancePattern))
                                 {
                                     <govuk-summary-list-row>
@@ -342,6 +342,18 @@ else
                                     </govuk-summary-list-row>
                                 }
 
+                                @if (courseRun.DeliveryMode == CourseDeliveryMode.ClassroomBased && !string.IsNullOrEmpty(courseRun.StudyMode))
+                                {
+                                    <govuk-summary-list-row>
+                                        <govuk-summary-list-row-key>
+                                            Course hours
+                                        </govuk-summary-list-row-key>
+                                        <govuk-summary-list-row-value>
+                                            @courseRun.StudyMode
+                                        </govuk-summary-list-row-value>
+                                    </govuk-summary-list-row>
+                                }
+                               
                                 @if (!string.IsNullOrEmpty(courseRun.StartDate))
                                 {
                                     <govuk-summary-list-row>
